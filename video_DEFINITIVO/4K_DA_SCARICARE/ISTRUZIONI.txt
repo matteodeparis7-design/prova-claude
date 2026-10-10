@@ -1,0 +1,17 @@
+COME SCARICARE IL VIDEO 4K (3840x2160, 4:20, circa 496 MB)
+
+1) Scarica questi 6 file nella STESSA cartella (per esempio sul Desktop):
+   - SuperFreddo_4K.mp4.pezzo1
+   - SuperFreddo_4K.mp4.pezzo2
+   - SuperFreddo_4K.mp4.pezzo3
+   - SuperFreddo_4K.mp4.pezzo4
+   - SuperFreddo_4K.mp4.pezzo5
+   - UNISCI_VIDEO_WINDOWS.bat   (oppure UNISCI_VIDEO_MAC.command se usi un Mac)
+
+2) WINDOWS: fai doppio clic su UNISCI_VIDEO_WINDOWS.bat
+   (se compare l'avviso blu di Windows: "Ulteriori informazioni" -> "Esegui comunque")
+   MAC: tasto destro su UNISCI_VIDEO_MAC.command -> Apri
+
+3) Dopo pochi secondi nella cartella trovi SuperFreddo_DEFINITIVO_4K.mp4:
+   e il video completo in 4K, pronto da mettere su chiavetta USB per il maxi schermo.
+   I file "pezzo" a quel punto puoi cancellarli.
