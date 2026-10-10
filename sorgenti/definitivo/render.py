@@ -580,9 +580,9 @@ def draw_outro(cv, tl, dur):
     p2 = e_o5(prog(tl, 0.8, 1.2))
     AS.logo_sf.draw(cv, lx, 1130 + (1 - p2) * 50, 0.5, p2 * A_)
     p3 = e_o5(prog(tl, 1.4, 1.0))
-    if not hasattr(AS, 'pill2'): AS.pill2 = pill_sprite(int(AS.t_date.w * .82 + 120), 128, RED)
+    if not hasattr(AS, 'pill2'): AS.pill2 = pill_sprite(int(AS.t_date.w * .66 + 110), 112, RED)
     AS.pill2.draw(cv, lx, 1560 + (1 - p3) * 40, 1.0, p3 * A_)
-    AS.t_date.draw(cv, lx, 1564 + (1 - p3) * 40, 0.82, clamp(p3 * 1.4 - .3) * A_)
+    AS.t_date.draw(cv, lx, 1563 + (1 - p3) * 40, 0.66, clamp(p3 * 1.4 - .3) * A_)
     # right column: store + app
     rx = 2980
     q1 = e_o5(prog(tl, 1.6, 1.0)); AS.t_wait.draw(cv, rx, 470 + (1 - q1) * 40, 1, q1 * A_)

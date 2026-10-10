@@ -288,7 +288,7 @@ def cut_sprite(x, maxw=1900, maxh=1250):
     sp.shadow = Sprite(rgba)
     return sp
 
-def price_sprite(ip, cp, unit, note=None, scale=1.0):
+def price_sprite(ip, cp, unit, note=None, scale=1.0, tight=False):
     S_ = scale
     fi, fc, fe = font(900, int(340 * S_)), font(900, int(170 * S_)), font(800, int(96 * S_))
     pc = c255(RED)
@@ -297,7 +297,8 @@ def price_sprite(ip, cp, unit, note=None, scale=1.0):
     cap = bi[3] - bi[1]
     pad = int(66 * S_); gap = int(10 * S_)
     colw = max(wc, we)
-    bw = pad + wi + gap + wcm + gap + colw + pad
+    g1, g2 = (int(2 * S_), -int(wcm * 0.55)) if tight else (gap, gap)
+    bw = pad + wi + g1 + wcm + g2 + colw + pad
     bh = pad + cap + pad
     strips = []
     if unit: strips.append((unit, c255(NAVY)))
@@ -311,9 +312,9 @@ def price_sprite(ip, cp, unit, note=None, scale=1.0):
     d.rounded_rectangle([ox, 0, ox + bw - 1, bh - 1], int(56 * S_), fill=(255, 255, 255, 255))
     y = pad - bi[1]; x = ox + pad - bi[0]
     d.text((x, y), ip, font=fi, fill=pc)
-    x2 = ox + pad + wi + gap
+    x2 = ox + pad + wi + g1
     d.text((x2 - bcm[0], y), ',', font=fi, fill=pc)
-    x3 = x2 + wcm + gap
+    x3 = x2 + wcm + g2
     d.text((x3 + (colw - wc) // 2 - bc[0], pad - bc[1]), cp, font=fc, fill=pc)
     ey = pad + (bc[3] - bc[1]) + int(22 * S_)
     d.text((x3 + (colw - we) // 2 - be[0], ey - be[1]), '€', font=fe, fill=pc)
@@ -339,7 +340,7 @@ def build_hero(key):
         for (x, nm, sub, pr) in h['items']:
             sp = cut_sprite(x, 900, 760)
             o['items'].append((sp, tsprite(nm, 62, 800, (255, 255, 255), 2), tsprite(sub, 44, 600, (255, 240, 210), 2),
-                               price_sprite(pr[0], pr[1], '', note=TRIO_NOTE, scale=0.55)))
+                               price_sprite(pr[0], pr[1], '', note=TRIO_NOTE, scale=0.55, tight=True)))
         o['title'] = tsprite(h['title'], 150, 900, (255, 255, 255), 3)
         o['sub'] = tsprite(h['sub'], 58, 600, (255, 236, 196), 8)
         return o
