@@ -33,7 +33,7 @@ ffmpeg -f concat -safe 0 -i lista.txt -c copy SuperFreddo_DEFINITIVO_4K.mp4
 | 2:26 | Pagina 6 (pasticceria) |
 | 2:44 | **Animazione freezer** che si apre sulle grandi marche |
 | 2:52 | Pagina 7 (confezionati) |
-| 3:10 | Spot Essere Decò |
+| 3:10 | Carta Essere Decò: nuova presentazione animata (1 € = 1 punto, sconti e premi, prezzi con carta, gratuita e personale, come richiederla) + animazione app originale |
 | 3:56 | Pagina 8 (Super Concorso, Colleferro evidenziato) |
 | 4:10 | Chiusura: Ti aspettiamo a Colleferro, Via dei Pioppi 24 + QR app |
 

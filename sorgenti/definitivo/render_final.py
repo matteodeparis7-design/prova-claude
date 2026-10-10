@@ -11,6 +11,7 @@ import vignettes as V
 from cards_def import CARDS
 for _pg, _cs in zip(R.PAGES, CARDS): _pg['cards'] = list(_cs)
 import render_b as RB
+import essere as ES
 
 # ---------------- timeline
 SEQ = []; t = 0.0
@@ -43,6 +44,15 @@ _orig_scene_draw = R.scene_draw
 def scene_draw(cv, sc, tg):
     if sc[0] == 'vig':
         cv[:] = V.render_vig(sc[3], tg - sc[1]); return
+    if sc[0] == 'spot' and sc[3]['key'] == 'card':
+        tl = tg - sc[1]
+        if tl < ES.CUT:
+            cv[:] = ES.render_essere(tl)
+            k = (tl - (ES.CUT - ES.XF)) / ES.XF
+            if k > 0:
+                k = k * k * (3 - 2 * k)
+                cv *= 1 - k; cv += R.spot_frame(sc[3], ES.CUT) * k
+            return
     if sc[0] == 'anniv':
         draw_anniv(cv, tg - sc[1], sc[2]); return
     _orig_scene_draw(cv, sc, tg)

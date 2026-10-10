@@ -331,6 +331,24 @@ def blip(f0=800, f1=1500):
     n = int(.22 * SR); t = np.arange(n) / SR
     f = f0 + (f1 - f0) * (1 - np.exp(-t / .02))
     return (np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / .07) * (1 - np.exp(-t / .002)) * .5).astype(np.float32)
+import essere as ES
+def clink(f=2400):
+    n = int(0.35 * SR); t = np.arange(n) / SR
+    y = sum(np.sin(2 * np.pi * f * r * t) * np.exp(-t / d) * g for r, d, g in ((1, .09, .5), (2.76, .05, .3), (5.4, .03, .2)))
+    return (y * (1 - np.exp(-t / .001)) * .5).astype(np.float32)
+def pop():
+    n = int(0.3 * SR); t = np.arange(n) / SR
+    return (bp(rng.standard_normal(n).astype(np.float32), 300, 4000) * np.exp(-t / 0.03) * 1.2 + np.sin(2 * np.pi * 180 * t) * np.exp(-t / 0.05) * 0.6).astype(np.float32)
+for x in RF.SEQ:
+    if x[0] == 'spot' and x[3]['key'] == 'card':
+        st = x[1]
+        add(fx, st + 0.2, whoosh(1.6, 0.4, 250, 6000, 1.0), 0.5)
+        add(fx, st + 1.85, whoosh(1.2, 0.5, 2000, 12000, 1.0), 0.18, 0.3)
+        for t0, _ in ES.COINS: add(fx, st + t0 + 0.72, clink(2300 + 120 * (int(t0 * 10) % 4)), 0.45, 0.2)
+        for sx in (ES.S2, ES.S3, ES.S4, ES.S5, ES.S6): add(fx, st + sx - 0.45, whoosh(1.1, 0.45, 300, 5000, 1.0), 0.35, -0.2)
+        add(fx, st + ES.S3 + 1.85, pop(), 0.7); add(fx, st + ES.S3 + 1.9, splash(0.8, 1.4) * 0.3, 0.6)
+        for k in range(3): add(fx, st + ES.S4 + 0.6 + 0.25 * k + 0.3, blip(900 + 150 * k, 1600 + 150 * k), 0.35, -0.4 + 0.4 * k)
+        for k in range(3): add(fx, st + ES.S5 + 0.6 + 0.3 * k + 0.25, blip(800 + 150 * k, 1500 + 150 * k), 0.35, -0.4 + 0.4 * k)
 for x in RF.SEQ:
     if x[0] == 'anniv':
         add(fx, x[1] + 0.1, whoosh(1.0, 0.4, 400, 6000, 1.0), 0.3)
