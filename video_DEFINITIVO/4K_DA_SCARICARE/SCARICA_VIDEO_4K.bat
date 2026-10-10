@@ -1,6 +1,6 @@
 @echo off
 title Scarico il video SuperFreddo 4K
-cd /d "%USERPROFILE%\Desktop"
+cd /d "%~dp0"
 echo.
 echo  Sto scaricando il video SuperFreddo 4K (circa 500 MB).
 echo  Non chiudere questa finestra, ci vogliono alcuni minuti.
@@ -24,11 +24,13 @@ echo  Unisco le parti...
 copy /b SF_parte1.tmp + SF_parte2.tmp + SF_parte3.tmp + SF_parte4.tmp + SF_parte5.tmp "SuperFreddo_DEFINITIVO_4K.mp4" >nul
 del SF_parte1.tmp SF_parte2.tmp SF_parte3.tmp SF_parte4.tmp SF_parte5.tmp
 echo.
-echo  FATTO! Il video "SuperFreddo_DEFINITIVO_4K.mp4" e sul tuo DESKTOP.
+echo  FATTO! Il video "SuperFreddo_DEFINITIVO_4K.mp4" e nella stessa cartella di questo file (di solito Download). Ora la apro.
 echo.
+explorer /select,"%~dp0SuperFreddo_DEFINITIVO_4K.mp4"
 pause
 exit /b
 :errore
 echo.
 echo  Errore nel download: controlla la connessione internet e riprova.
+explorer /select,"%~dp0SuperFreddo_DEFINITIVO_4K.mp4"
 pause
