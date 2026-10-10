@@ -327,6 +327,14 @@ def plink(f=1800):
 def click():
     n = int(0.08 * SR); t = np.arange(n) / SR
     return (bp(rng.standard_normal(n).astype(np.float32), 1500, 5000) * np.exp(-t / 0.008) + np.sin(2 * np.pi * 900 * t) * np.exp(-t / 0.01) * 0.5).astype(np.float32)
+def blip(f0=800, f1=1500):
+    n = int(.22 * SR); t = np.arange(n) / SR
+    f = f0 + (f1 - f0) * (1 - np.exp(-t / .02))
+    return (np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / .07) * (1 - np.exp(-t / .002)) * .5).astype(np.float32)
+for x in RF.SEQ:
+    if x[0] == 'anniv':
+        add(fx, x[1] + 0.1, whoosh(1.0, 0.4, 400, 6000, 1.0), 0.3)
+        for k in range(3): add(fx, x[1] + 0.25 + 0.18 * k + 0.55, blip(800 + 120 * k, 1500 + 160 * k), 0.4, -0.4 + 0.4 * k)
 for x in RF.SEQ:
     if x[0] != 'vig': continue
     st = x[1]

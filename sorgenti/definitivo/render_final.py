@@ -8,6 +8,9 @@ sys.argv = _argv
 import numpy as np
 from PIL import Image
 import vignettes as V
+from cards_def import CARDS
+for _pg, _cs in zip(R.PAGES, CARDS): _pg['cards'] = list(_cs)
+import render_b as RB
 
 # ---------------- timeline
 SEQ = []; t = 0.0
@@ -20,6 +23,7 @@ def block(pages):
     add('pages', t0, sched)
 add('intro', R.INTRO)
 block([0])
+add('anniv', 6.0)
 add('vig', 8.0, 'fish')
 block([1, 2, 3])
 add('spot', R.SPOT1['dur'], R.SPOT1)
@@ -34,23 +38,34 @@ add('outro', R.OUTRO)
 TOTAL = t
 R.SEQ = SEQ; R.TOTAL = TOTAL
 
-# ---------------- multi-store: no store marks
-for pg in R.PAGES: pg.pop('mark', None)
 
 _orig_scene_draw = R.scene_draw
 def scene_draw(cv, sc, tg):
     if sc[0] == 'vig':
         cv[:] = V.render_vig(sc[3], tg - sc[1]); return
+    if sc[0] == 'anniv':
+        draw_anniv(cv, tg - sc[1], sc[2]); return
     _orig_scene_draw(cv, sc, tg)
 R.scene_draw = scene_draw
 
+ANNIV = {}
+def draw_anniv(cv, tl, dur):
+    if 'bg' not in ANNIV:
+        ANNIV['bg'] = RB.build_color_bg(RB.GOLD['col'], RB.GOLD['col2'])
+        ANNIV['o'] = RB.build_hero((2, 0))
+    cv[:] = ANNIV['bg']
+    RB.draw_flakes(cv, tl, alpha=.9)
+    RB.FOOT_DEFER[0] = True
+    RB.d_trio(cv, tl, dict(dur=dur), ANNIV['o'])
+    RB.FOOT_DEFER[0] = False
+    R.draw_footer(cv, tl, 1.0)
+
 def setup():
     R.setup()
-    ts = R.text_sprite
-    R.AS.foot_store = ts("SCARICA L'APP DECÒ", 46, 600, (169, 211, 240), track=6)
-    R.AS.t_wait = ts('LE OFFERTE TI ASPETTANO', 60, 600, (169, 211, 240), track=12)
-    R.AS.t_city = ts('NEI PUNTI VENDITA', 132, 800, (255, 255, 255), track=4)
-    R.AS.t_addr = ts('DECÒ SUPERFREDDO', 96, 700, (159, 208, 242), track=8)
+    rng = np.random.default_rng(11); import math
+    RB.AS.flake = [RB.snowflake_sprite(r, RB.WHITE, max(2.5, r / 22)) for r in (40, 70, 110, 160)]
+    RB.AS.fl = [dict(x=rng.random() * R.W, y=rng.random() * R.H, k=int(rng.integers(0, 4)), rot=rng.random() * 60, vr=rng.uniform(-6, 6),
+                     vy=rng.uniform(8, 28), vx=rng.uniform(-8, 8), a=rng.uniform(.10, .26)) for _ in range(22)]
 
 def to8(f): return (np.clip(f, 0, 1) * 255 + 0.5).astype(np.uint8)
 
