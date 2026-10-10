@@ -32,5 +32,4 @@ exit /b
 :errore
 echo.
 echo  Errore nel download: controlla la connessione internet e riprova.
-explorer /select,"%~dp0SuperFreddo_DEFINITIVO_4K.mp4"
 pause
