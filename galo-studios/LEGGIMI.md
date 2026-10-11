@@ -20,7 +20,7 @@ Apri `src/galo-studios.html`, cerca il blocco `CONFIGURAZIONE` all'inizio dello 
 | `open` / `close` | Orario dello studio in ore intere (ora: 16 e 19) |
 | `closedWeekdays` | Giorni di chiusura (ora: `[0,1,6]` = domenica, lunedì, sabato → aperto dal martedì al venerdì) |
 | `closedDates` | Giorni chiusi, es. `['2026-12-25']` |
-| `busy` | Ore già occupate, es. `{'2026-10-20':[14,15,16]}` |
+| `busy` | Ore già occupate, es. `{'2026-10-20':[16,17]} (= martedì 20 occupato dalle 16 alle 18)` |
 | `SERVICES` | Nome, descrizione e prezzo dei quattro servizi |
 
 I prezzi compaiono anche come testo nella sezione Listino, nel titolo principale e nelle Domande frequenti: se li cambi, aggiorna anche quei punti (cerca `€` nel file).

@@ -738,7 +738,7 @@ var CFG={
   closedWeekdays:[0,1,6],   /* giorni chiusi: 0 = domenica, 1 = lunedì, 6 = sabato → aperto mar-ven */
   leadDays:1, horizonDays:90,
   closedDates:[],           /* es. ['2026-12-25'] */
-  busy:{}                   /* es. {'2026-10-20':[14,15,16]} ore già occupate */
+  busy:{}                   /* es. {'2026-10-20':[16,17]} (= martedì 20 occupato dalle 16 alle 18) ore già occupate */
 };
 var SERVICES=[
   {id:'beat',  name:'Solo Beat',                    desc:'Produzione strumentale',                 price:30, studio:false},
