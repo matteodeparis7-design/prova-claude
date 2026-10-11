@@ -243,6 +243,12 @@ svg.defs{position:absolute;width:0;height:0;overflow:hidden}
 .v{display:none}
 body[data-view=home] .v-home,body[data-view=book] .v-book,body[data-view=beat] .v-beat{display:block}
 body:not([data-view]) .v-home{display:block}
+:root:not(.js) .v-book:target,:root:not(.js) .v-beat:target{display:block}
+:root:not(.js) body:has(.v:target) .v-home{display:none}
+:root:not(.js) .split{display:none}
+.nojs-card{padding:26px;border:1px solid var(--line2);border-radius:18px;background:var(--bg2);display:grid;gap:14px;max-width:640px}
+.nojs-card p{color:var(--ink2)}
+.nojs-card .btn{justify-self:start}
 .vh-head{position:relative;overflow:hidden;isolation:isolate;padding:64px 0 44px;border-bottom:1px solid var(--line);background:radial-gradient(60% 90% at 85% 0%,rgba(185,197,240,.13),transparent 70%),linear-gradient(var(--bg),var(--bg2))}
 .vh-wm{position:absolute;right:max(2%,calc(50% - 560px));top:50%;height:130%;width:auto;transform:translateY(-50%);opacity:.07;z-index:-1}
 .back{display:inline-flex;gap:8px;align-items:center;min-height:44px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);text-decoration:none;margin-bottom:22px;transition:color .2s}
@@ -299,9 +305,8 @@ label.chip input{width:18px;height:18px;margin:0;accent-color:#d5d8e2}
 .opt.svc>span:first-child span{display:block}
 .opt.svc .pr{flex:none;font:700 22px var(--ui);letter-spacing:-.02em;color:var(--ink);font-variant-numeric:tabular-nums}
 .opt.svc[aria-pressed="true"] .pr{background:var(--silver);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
-.durs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.durs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .durs .opt{text-align:center;padding:12px 8px}
-@media(max-width:420px){.durs{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .calhead b{font-size:13px;font-weight:700;letter-spacing:.2em;text-transform:uppercase}
 .calhead button{width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:transparent;font-size:20px;line-height:1;padding:0}
@@ -513,7 +518,7 @@ label.chip input{width:18px;height:18px;margin:0;accent-color:#d5d8e2}
         <a class="btn" href="#prenota" data-svc="full">Prenota il pacchetto</a>
       </article>
     </div>
-    <p class="pnote rv">Prezzi in euro. Sul sito non si paga nulla: la richiesta arriva a Galó, che ti risponde per confermare giorno, orario e dettagli. Per progetti con più brani o richieste particolari ricevi un preventivo dedicato.</p>
+    <p class="pnote rv">Lo studio è aperto <span data-hours>dal martedì al venerdì, dalle 16:00 alle 19:00</span>. Prezzi in euro. Sul sito non si paga nulla: la richiesta arriva a Galó, che ti risponde per confermare giorno, orario e dettagli. Per progetti con più brani o richieste particolari ricevi un preventivo dedicato.</p>
   </div>
 </section>
 
@@ -572,6 +577,7 @@ label.chip input{width:18px;height:18px;margin:0;accent-color:#d5d8e2}
     <div class="faq">
       <details><summary>Quanto costano i servizi?</summary><div class="a"><ul><li>Solo Beat (produzione strumentale): 30 €</li><li>Solo registrazione (sessione di registrazione vocale): 40 €</li><li>Registrazione + Mix &amp; Master: 60 €</li><li>Pacchetto completo (beat, registrazione, mix &amp; master): 70 €</li></ul></div></details>
       <details><summary>Cosa include il pacchetto completo?</summary><div class="a"><p>Un beat prodotto da Galó, la sessione di registrazione vocale, il mixaggio e il mastering del brano. Presi singolarmente costerebbero 90 €: con il pacchetto paghi 70 €.</p></div></details>
+      <details><summary>Quando è aperto lo studio?</summary><div class="a"><p>Lo studio è aperto <span data-hours>dal martedì al venerdì, dalle 16:00 alle 19:00</span>. Nel calendario trovi solo i giorni e gli orari prenotabili.</p></div></details>
       <details><summary>La sessione è confermata quando invio la richiesta?</summary><div class="a"><p>No. La sessione è confermata quando Galó ti risponde. Fino ad allora l'orario resta una richiesta.</p></div></details>
       <details><summary>Come arriva la richiesta a Galó?</summary><div class="a"><p>Il sito prepara un messaggio con tutti i dati e un codice. Lo invii su Instagram con un tocco, oppure lo copi e lo incolli dove preferisci.</p></div></details>
       <details><summary>Si paga online?</summary><div class="a"><p>No, sul sito non si paga nulla. Modalità e tempi di pagamento li concordi direttamente con Galó quando ti conferma la richiesta.</p></div></details>
@@ -592,7 +598,7 @@ label.chip input{width:18px;height:18px;margin:0;accent-color:#d5d8e2}
 </div>
 
 <!-- ================= PRENOTA ================= -->
-<div class="v v-book">
+<div class="v v-book" id="prenota">
 <section class="vh-head" aria-labelledby="bookT">
   <svg class="vh-wm" viewBox="0 0 187.5 284" aria-hidden="true"><use href="#gs"/></svg>
   <div class="wrap">
@@ -600,11 +606,11 @@ label.chip input{width:18px;height:18px;margin:0;accent-color:#d5d8e2}
     <p class="eyebrow">Prenotazione</p>
     <h1 id="bookT">Prenota la tua <em>sessione</em> in studio</h1>
     <p class="vh-sub">Scegli il servizio, il giorno e l'orario, lascia i tuoi dati e invia la richiesta a Galó. Niente pagamento online: la sessione è confermata quando Galó ti risponde.</p>
-    <ol class="steps3"><li><b>1</b><span>Scegli servizio, giorno e orario</span></li><li><b>2</b><span>Lascia i tuoi dati</span></li><li><b>3</b><span>Invia la richiesta</span></li></ol>
+    <ol class="steps3"><li><b>1</b><span>Scegli servizio, giorno e orario (<span data-hours>dal martedì al venerdì, dalle 16:00 alle 19:00</span>)</span></li><li><b>2</b><span>Lascia i tuoi dati</span></li><li><b>3</b><span>Invia la richiesta</span></li></ol>
   </div>
 </section>
 <section class="sec nopad" aria-label="Modulo di prenotazione">
-  <div class="wrap"><div class="split" id="bk"></div></div>
+  <div class="wrap"><noscript><div class="nojs-card"><p><b>Questa pagina ha bisogno di JavaScript per funzionare.</b> Probabilmente la stai vedendo in un'anteprima (per esempio un file aperto da WhatsApp, Mail o File su iPhone). Apri il sito in Safari o Chrome, oppure scrivi direttamente a Galó.</p><a class="btn" href="https://ig.me/m/prod.galo_" target="_blank" rel="noopener">Scrivi a Galó su Instagram</a></div></noscript><div class="split" id="bk"></div></div>
 </section>
 <section class="sec after" aria-label="Dopo l'invio della prenotazione"><div class="wrap">
   <ol class="steps3">
@@ -617,7 +623,7 @@ label.chip input{width:18px;height:18px;margin:0;accent-color:#d5d8e2}
 </div>
 
 <!-- ================= BEAT ================= -->
-<div class="v v-beat">
+<div class="v v-beat" id="beat">
 <section class="vh-head" aria-labelledby="beatT">
   <svg class="vh-wm" viewBox="0 0 187.5 284" aria-hidden="true"><use href="#gs"/></svg>
   <div class="wrap">
@@ -629,7 +635,7 @@ label.chip input{width:18px;height:18px;margin:0;accent-color:#d5d8e2}
   </div>
 </section>
 <section class="sec nopad" aria-label="Scheda del beat">
-  <div class="wrap">
+  <div class="wrap"><noscript><div class="nojs-card"><p><b>Questa pagina ha bisogno di JavaScript per funzionare.</b> Probabilmente la stai vedendo in un'anteprima (per esempio un file aperto da WhatsApp, Mail o File su iPhone). Apri il sito in Safari o Chrome, oppure scrivi direttamente a Galó.</p><a class="btn" href="https://ig.me/m/prod.galo_" target="_blank" rel="noopener">Scrivi a Galó su Instagram</a></div></noscript>
     <div class="split">
       <div id="brief">
         <div class="step"><h3><i>1</i>Cosa ti serve</h3>
@@ -728,8 +734,8 @@ var CFG={
   ig:'prod.galo_',          /* profilo Instagram */
   whatsapp:'',              /* es. '393331234567' (prefisso senza +). Vuoto = pulsante nascosto */
   email:'',                 /* es. 'info@galostudios.it'. Vuoto = nascosto */
-  open:10, close:22,        /* orario studio (ore intere) */
-  closedWeekdays:[0],       /* 0 = domenica, 6 = sabato */
+  open:16, close:19,        /* orario studio (ore intere): dalle 16:00 alle 19:00 */
+  closedWeekdays:[0,1,6],   /* giorni chiusi: 0 = domenica, 1 = lunedì, 6 = sabato → aperto mar-ven */
   leadDays:1, horizonDays:90,
   closedDates:[],           /* es. ['2026-12-25'] */
   busy:{}                   /* es. {'2026-10-20':[14,15,16]} ore già occupate */
@@ -740,7 +746,7 @@ var SERVICES=[
   {id:'recmix',name:'Registrazione + Mix & Master', desc:'Registrazione vocale, mixaggio e mastering', price:60, studio:true},
   {id:'full',  name:'Pacchetto completo',           desc:'Beat + Registrazione + Mix & Master',    price:70, studio:true}
 ];
-var DURS=[1,2,3,4];
+var DURS=[1,2,3].filter(function(d){return d<=CFG.close-CFG.open});
 var REC_WHAT=['Voce','Voce e cori','Voce e strumenti','Più artisti / featuring'];
 var GENRES=['Trap','Rap','Drill','R&B','Urban','Pop','Pop rap','Indie','Rock','Pop rock','Pop punk','Afro','Reggaeton','Dancehall','Elettronica','House','Lo-fi','Cantautorato','Altro'];
 var MOODS=['Scuro','Aggressivo','Malinconico','Romantico','Estivo','Notturno','Epico','Energico','Sognante','Ballabile'];
@@ -767,6 +773,16 @@ var mkCode=function(p){var a='ABCDEFGHJKMNPQRSTUVWXYZ23456789',s='';for(var i=0;
 var kdate=function(k){var p=k.split('-').map(Number);return new Date(p[0],p[1]-1,p[2])};
 var dkey=function(d){return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())};
 var fmtDate=function(k){var p=k.split('-').map(Number);var d=new Date(p[0],p[1]-1,p[2]);return GGF[d.getDay()]+' '+p[2]+' '+MESI[p[1]-1].toLowerCase()+' '+p[0]};
+var GGS=['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'];
+function hoursText(){
+  var open=[1,2,3,4,5,6,0].filter(function(d){return CFG.closedWeekdays.indexOf(d)<0});
+  var days;
+  if(!open.length)days='su appuntamento';
+  else if(open.length===7)days='tutti i giorni';
+  else{var order=[1,2,3,4,5,6,0],idx=open.map(function(d){return order.indexOf(d)}),run=idx.every(function(v,i){return !i||v===idx[i-1]+1});
+    days=open.length===1?'il '+GGS[open[0]]:run?'dal '+GGS[open[0]]+' al '+GGS[open[open.length-1]]:open.map(function(d){return GGS[d]}).join(', ')}
+  return days+', dalle '+pad2(CFG.open)+':00 alle '+pad2(CFG.close)+':00';
+}
 var toastT;
 function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('show')},2400)}
 function copyText(text){
@@ -776,7 +792,7 @@ function copyText(text){
 function legacyCopy(text){
   try{var ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:0;left:0;opacity:0;font-size:16px';document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,text.length);var ok=document.execCommand&&document.execCommand('copy');document.body.removeChild(ta);return !!ok}catch(e){return false}
 }
-guard(function(){var y=$('#yr');if(y)y.textContent=new Date().getFullYear()});
+guard(function(){var y=$('#yr');if(y)y.textContent=new Date().getFullYear();$$('[data-hours]').forEach(function(e){e.textContent=hoursText()})});
 
 /* ---------- menu, progresso, glow, reveal ---------- */
 var menu=$('#menu'),burger=$('#burger');
@@ -1016,19 +1032,19 @@ var lastCount=0;
 function renderBooking(scroll){
   var s=svcById(S.svc),html='',steps=0;
   steps++;html+='<div class="step"><h3><i>1</i>Scegli il servizio</h3><div class="opts">'+BOOK_SVCS.map(function(x){return '<button class="opt svc" type="button" data-svc="'+x.id+'" aria-pressed="'+(S.svc===x.id)+'"><span><b>'+esc(x.name)+'</b><span>'+esc(x.desc)+'</span></span><span class="pr">'+eur(x.price)+'</span></button>'}).join('')+'</div><p class="legend">Ti serve solo il beat? <a href="#beat" data-svc="beat">Richiedilo qui (30 €)</a>.</p></div>';
-  if(s){steps++;html+='<div class="step"><h3><i>2</i>Quanto tempo ti serve in studio</h3><p class="hint">Serve a riservare lo studio. Se hai dubbi, Galó te lo conferma nella risposta.</p><div class="durs">'+DURS.map(function(d){return '<button class="opt" type="button" data-dur="'+d+'" aria-pressed="'+(S.dur===d)+'"><b>'+d+(d>1?' ore':' ora')+'</b></button>'}).join('')+'</div></div>'}
+  if(s){steps++;html+='<div class="step"><h3><i>2</i>Quanto tempo ti serve in studio</h3><p class="hint">Serve a riservare lo studio (aperto dalle '+pad2(CFG.open)+':00 alle '+pad2(CFG.close)+':00). Se hai dubbi, Galó te lo conferma nella risposta.</p><div class="durs">'+DURS.map(function(d){return '<button class="opt" type="button" data-dur="'+d+'" aria-pressed="'+(S.dur===d)+'"><b>'+d+(d>1?' ore':' ora')+'</b></button>'}).join('')+'</div></div>'}
   if(s&&S.dur){
     steps++;
     var y=S.month.getFullYear(),m=S.month.getMonth(),first=(new Date(y,m,1).getDay()+6)%7,days=new Date(y,m+1,0).getDate();
     var cells=GG.map(function(g){return '<div class="dw" aria-hidden="true">'+g+'</div>'}).join('')+new Array(first+1).join('<span></span>');
     for(var d=1;d<=days;d++){var dt=new Date(y,m,d),k=dkey(dt),ok=dayOk(dt,S.dur);cells+='<button type="button" data-date="'+k+'" '+(ok?'':'disabled')+' aria-pressed="'+(S.date===k)+'" aria-label="'+GGF[dt.getDay()]+' '+d+' '+MESI[m]+(ok?'':', non disponibile')+'"'+(dt.getTime()===today.getTime()?' class="today"':'')+'>'+d+'</button>'}
     var prevOff=new Date(y,m,1)<=new Date(minD.getFullYear(),minD.getMonth(),1)?'disabled':'',nextOff=new Date(y,m+1,1)>maxD?'disabled':'';
-    html+='<div class="step"><h3><i>3</i>Giorno</h3><div class="calhead"><button type="button" data-mv="-1" '+prevOff+' aria-label="Mese precedente">‹</button><b aria-live="polite">'+MESI[m]+' '+y+'</b><button type="button" data-mv="1" '+nextOff+' aria-label="Mese successivo">›</button></div><div class="cal">'+cells+'</div><p class="legend">I giorni attenuati sono chiusi o non disponibili. Si prenota a partire da domani, la domenica lo studio è chiuso.</p></div>';
+    html+='<div class="step"><h3><i>3</i>Giorno</h3><div class="calhead"><button type="button" data-mv="-1" '+prevOff+' aria-label="Mese precedente">‹</button><b aria-live="polite">'+MESI[m]+' '+y+'</b><button type="button" data-mv="1" '+nextOff+' aria-label="Mese successivo">›</button></div><div class="cal">'+cells+'</div><p class="legend">Lo studio è aperto '+esc(hoursText())+'. I giorni attenuati sono chiusi o non disponibili; si prenota a partire da domani.</p></div>';
   }
   if(s&&S.dur&&S.date){
-    steps++;var groups={Mattina:'',Pomeriggio:'',Sera:''};
-    for(var t=CFG.open;t+S.dur<=CFG.close;t++){var bad=!startOk(S.date,t,S.dur),g=t<13?'Mattina':t<18?'Pomeriggio':'Sera';groups[g]+='<button class="opt" type="button" data-time="'+t+'" aria-pressed="'+(S.time===t)+'" '+(bad?'disabled':'')+' aria-label="Dalle '+pad2(t)+':00 alle '+pad2(t+S.dur)+':00">'+pad2(t)+':00</button>'}
-    html+='<div class="step"><h3><i>4</i>Orario di inizio</h3>'+Object.keys(groups).filter(function(g){return groups[g]}).map(function(g){return '<p class="grp">'+g+'</p><div class="slots">'+groups[g]+'</div>'}).join('')+'</div>';
+    steps++;var slots='';
+    for(var t=CFG.open;t+S.dur<=CFG.close;t++){var bad=!startOk(S.date,t,S.dur);slots+='<button class="opt" type="button" data-time="'+t+'" aria-pressed="'+(S.time===t)+'" '+(bad?'disabled':'')+' aria-label="Dalle '+pad2(t)+':00 alle '+pad2(t+S.dur)+':00">'+pad2(t)+':00</button>'}
+    html+='<div class="step"><h3><i>4</i>Orario di inizio</h3><p class="hint">'+fmtDate(S.date)+' · '+S.dur+(S.dur>1?' ore':' ora')+'. Finisci entro le '+pad2(CFG.close)+':00.</p><div class="slots">'+slots+'</div></div>';
   }
   if(s&&S.dur&&S.date&&S.time!==null){
     steps++;var e=S.errors;
@@ -1200,7 +1216,7 @@ guard(function(){
     if(!dayOk(dt,1))continue;var k=dkey(dt);
     for(var h=CFG.open;h<CFG.close;h++){if(startOk(k,h,1)){found={k:k,h:h};break}}
   }
-  if(found){chip.querySelector('span').textContent='Prima data disponibile: '+fmtDate(found.k);chip.hidden=false}
+  if(found){chip.querySelector('span').textContent='Prima data disponibile: '+fmtDate(found.k)+' · ore '+pad2(CFG.open)+'–'+pad2(CFG.close);chip.hidden=false}
 });
 
 /* ---------- viste: home / prenota / beat ---------- */

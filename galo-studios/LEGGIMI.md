@@ -17,8 +17,8 @@ Apri `src/galo-studios.html`, cerca il blocco `CONFIGURAZIONE` all'inizio dello 
 | `ig` | Profilo Instagram a cui arrivano le richieste (`prod.galo_`) |
 | `whatsapp` | Numero WhatsApp con prefisso e senza `+` (es. `393331234567`). Se lo inserisci compare il pulsante "Invia su WhatsApp" |
 | `email` | Email facoltativa mostrata nella finestra di invio |
-| `open` / `close` | Orario dello studio (ore intere) |
-| `closedWeekdays` | Giorni di chiusura (0 = domenica) |
+| `open` / `close` | Orario dello studio in ore intere (ora: 16 e 19) |
+| `closedWeekdays` | Giorni di chiusura (ora: `[0,1,6]` = domenica, lunedì, sabato → aperto dal martedì al venerdì) |
 | `closedDates` | Giorni chiusi, es. `['2026-12-25']` |
 | `busy` | Ore già occupate, es. `{'2026-10-20':[14,15,16]}` |
 | `SERVICES` | Nome, descrizione e prezzo dei quattro servizi |
