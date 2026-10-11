@@ -17,10 +17,9 @@ Apri `src/galo-studios.html`, cerca il blocco `CONFIGURAZIONE` all'inizio dello 
 | `ig` | Profilo Instagram a cui arrivano le richieste (`prod.galo_`) |
 | `whatsapp` | Numero WhatsApp con prefisso e senza `+` (es. `393331234567`). Se lo inserisci compare il pulsante "Invia su WhatsApp" |
 | `email` | Email facoltativa mostrata nella finestra di invio |
-| `open` / `close` | Orario dello studio in ore intere (ora: 16 e 19) |
+| `booking` | Link della pagina di prenotazione Google Calendar di Galó (`https://calendar.app.google/NAn1qdoeCUBPVAHu9`) |
+| `open` / `close` | Orario mostrato sul sito, in ore intere (ora: 16 e 19). Deve coincidere con la disponibilità impostata nel calendario Google |
 | `closedWeekdays` | Giorni di chiusura (ora: `[0,1,6]` = domenica, lunedì, sabato → aperto dal martedì al venerdì) |
-| `closedDates` | Giorni chiusi, es. `['2026-12-25']` |
-| `busy` | Ore già occupate, es. `{'2026-10-20':[16,17]} (= martedì 20 occupato dalle 16 alle 18)` |
 | `SERVICES` | Nome, descrizione e prezzo dei quattro servizi |
 
 I prezzi compaiono anche come testo nella sezione Listino, nel titolo principale e nelle Domande frequenti: se li cambi, aggiorna anche quei punti (cerca `€` nel file).
@@ -31,6 +30,8 @@ Dopo ogni modifica rigenera `index.html`:
 python3 build.py
 ```
 
-## Come arrivano le richieste
+## Come arrivano prenotazioni e richieste
 
-Il sito non invia nulla da solo. Quando un cliente completa la prenotazione o la scheda del beat, il sito prepara un messaggio con tutti i dati e un codice (`GS-…` per le sessioni, `BM-…` per i beat). Il cliente lo copia e lo manda su Instagram (o su WhatsApp, se configurato). La sessione è confermata solo quando rispondi.
+**Sessioni in studio:** il cliente sceglie il servizio sul sito e prenota giorno e orario sul calendario Google di Galó. Riceve subito un'email di conferma da Google; l'appuntamento compare nel calendario di Galó e l'orario non è più disponibile per altri. Giorni chiusi, ferie e orari occupati si gestiscono solo dal calendario Google: il sito non va toccato.
+
+**Beat:** il cliente compila la scheda del beat; il sito prepara un messaggio con tutti i dettagli e un codice (`BM-…`), che il cliente copia e manda a Galó su Instagram (o su WhatsApp, se configurato). Il sito non invia nulla da solo: la richiesta arriva solo se il cliente manda il messaggio. Se il cliente non segue Galó, il messaggio finisce in "Richieste di messaggi" su Instagram.

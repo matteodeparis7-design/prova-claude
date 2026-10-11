@@ -274,7 +274,8 @@ body:not([data-view]) .v-home{display:block}
 .split>*{min-width:0}
 @media(max-width:959px){.split{grid-template-columns:minmax(0,1fr)}}
 .step{padding:26px;border:1px solid var(--line);border-radius:18px;background:var(--bg);margin-bottom:14px;scroll-margin-top:calc(var(--hdr) + 14px)}
-.step.new{animation:rise .45s both}
+.step.off{opacity:.45}
+.step .btn{margin-top:4px}
 .step>h3{display:flex;align-items:center;gap:12px;font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin-bottom:20px}
 .step>h3 i{font-style:normal;flex:none;display:grid;place-items:center;width:28px;height:28px;border:1px solid var(--line2);border-radius:8px;font-family:var(--mono);font-size:12px;letter-spacing:0}
 .step .hint{font-size:13px;color:var(--mute);margin:-8px 0 16px}
@@ -305,26 +306,7 @@ label.chip input{width:18px;height:18px;margin:0;accent-color:#d5d8e2}
 .opt.svc>span:first-child span{display:block}
 .opt.svc .pr{flex:none;font:700 22px var(--ui);letter-spacing:-.02em;color:var(--ink);font-variant-numeric:tabular-nums}
 .opt.svc[aria-pressed="true"] .pr{background:var(--silver);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
-.durs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.durs .opt{text-align:center;padding:12px 8px}
-.calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-.calhead b{font-size:13px;font-weight:700;letter-spacing:.2em;text-transform:uppercase}
-.calhead button{width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:transparent;font-size:20px;line-height:1;padding:0}
-.calhead button:disabled{opacity:.3;cursor:default}
-.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
-.cal .dw{font-size:10px;color:var(--mute);text-align:center;letter-spacing:.14em;text-transform:uppercase;padding-bottom:4px}
-.cal button{aspect-ratio:1;min-height:38px;width:100%;border-radius:10px;border:1px solid var(--line);background:var(--bg2);font-size:14px;padding:0;font-variant-numeric:tabular-nums;transition:transform .12s,border-color .12s}
-.cal button:not(:disabled):hover{border-color:var(--ink2);transform:scale(1.06)}
-.cal button:disabled{opacity:.22;background:transparent;cursor:default}
-.cal button[aria-pressed="true"]{background:var(--silver);color:var(--on-silver);border-color:transparent;font-weight:700}
-.cal .today{box-shadow:inset 0 0 0 1px var(--ice)}
-@media(max-width:380px){.cal{gap:4px}.cal button{min-height:34px;border-radius:8px;font-size:13px}}
 .legend{margin-top:14px;font-size:12.5px;color:var(--mute)}
-.grp{font-size:10px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--mute);margin:16px 0 8px}
-.grp:first-child{margin-top:0}
-.slots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.slots .opt{min-height:50px;padding:0;text-align:center;font-family:var(--mono);font-size:14px}
-@media(max-width:520px){.slots{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .fields>*{min-width:0}
 .fields .full{grid-column:1/-1}
@@ -332,12 +314,8 @@ label.chip input{width:18px;height:18px;margin:0;accent-color:#d5d8e2}
 .err{color:var(--bad);font-size:12.5px;margin-top:6px}
 .err:empty{display:none}
 @media(max-width:600px){.fields{grid-template-columns:minmax(0,1fr)}}
-.checkrow{display:flex;gap:12px;align-items:center;min-height:50px;padding:0 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg2);font-size:14px;cursor:pointer}
-.checkrow input{width:20px;height:20px;margin:0;accent-color:#d5d8e2;flex:none}
 .sum{position:-webkit-sticky;position:sticky;top:calc(var(--hdr) + 18px + env(safe-area-inset-top,0px));padding:24px;border:1px solid var(--line2);border-radius:18px;background:var(--bg)}
 .sum h3{font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin-bottom:14px}
-.meter{height:3px;border-radius:2px;background:var(--line);margin-bottom:18px;overflow:hidden}
-.meter i{display:block;height:100%;background:var(--silver);transition:width .5s cubic-bezier(.2,.7,.2,1)}
 .sum dl{margin:0 0 18px;display:grid;gap:10px;font-size:14px}
 .sum dl div{display:flex;justify-content:space-between;gap:14px;padding-bottom:10px;border-bottom:1px solid var(--line)}
 .sum dt{color:var(--mute);flex:none}.sum dd{margin:0;text-align:right;font-weight:500;min-width:0;overflow-wrap:anywhere}
@@ -346,11 +324,6 @@ label.chip input{width:18px;height:18px;margin:0;accent-color:#d5d8e2}
 .total b{font-size:34px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 .sum small{display:block;margin-top:14px;font-size:12px;line-height:1.5;color:var(--mute)}
 @media(max-width:959px){.sum{position:static}}
-.mine{margin-top:20px;font-size:13px;color:var(--ink2);display:grid;gap:8px}
-.mine p{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
-.mine div{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
-.mine div>span{min-width:0;overflow-wrap:anywhere}
-.mine button{flex:none;background:none;border:0;color:var(--bad);font-size:12px;padding:10px;min-height:44px}
 
 /* beat brief */
 .rng{display:flex;align-items:center;gap:14px}
@@ -518,7 +491,7 @@ label.chip input{width:18px;height:18px;margin:0;accent-color:#d5d8e2}
         <a class="btn" href="#prenota" data-svc="full">Prenota il pacchetto</a>
       </article>
     </div>
-    <p class="pnote rv">Lo studio è aperto <span data-hours>dal martedì al venerdì, dalle 16:00 alle 19:00</span>. Prezzi in euro. Sul sito non si paga nulla: la richiesta arriva a Galó, che ti risponde per confermare giorno, orario e dettagli. Per progetti con più brani o richieste particolari ricevi un preventivo dedicato.</p>
+    <p class="pnote rv">Lo studio è aperto <span data-hours>dal martedì al venerdì, dalle 16:00 alle 19:00</span>. Prezzi in euro. Sul sito non si paga nulla: le sessioni si prenotano dal calendario di Galó, con conferma immediata via email; i beat si richiedono con la scheda. Per progetti con più brani o richieste particolari ricevi un preventivo dedicato.</p>
   </div>
 </section>
 
@@ -528,9 +501,9 @@ label.chip input{width:18px;height:18px;margin:0;accent-color:#d5d8e2}
     <div class="wrap pin-in">
       <p class="eyebrow">Come funziona</p>
       <div class="pps">
-        <div class="pp on"><span class="pn">01</span><h2>Scegli</h2><p>Scegli il servizio dal listino, poi il giorno e l'orario. Per un beat compili la scheda: ci metti due minuti.</p></div>
-        <div class="pp"><span class="pn">02</span><h2>Invia</h2><p>Il sito prepara un messaggio completo e ordinato. Lo mandi a Galó su Instagram con un tocco.</p></div>
-        <div class="pp"><span class="pn">03</span><h2>Conferma</h2><p>Galó ti risponde per confermare giorno, orario e dettagli. Poi si entra in studio.</p></div>
+        <div class="pp on"><span class="pn">01</span><h2>Scegli</h2><p>Scegli il servizio dal listino. Per un beat compili la scheda: ci metti due minuti.</p></div>
+        <div class="pp"><span class="pn">02</span><h2>Prenota</h2><p>Scegli giorno e orario liberi dal calendario di Galó. Per un beat, il sito prepara il messaggio da mandargli su Instagram.</p></div>
+        <div class="pp"><span class="pn">03</span><h2>Conferma</h2><p>Ricevi subito l'email di conferma della sessione. Poi si entra in studio.</p></div>
       </div>
       <div class="pd" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
     </div>
@@ -578,11 +551,11 @@ label.chip input{width:18px;height:18px;margin:0;accent-color:#d5d8e2}
       <details><summary>Quanto costano i servizi?</summary><div class="a"><ul><li>Solo Beat (produzione strumentale): 30 €</li><li>Solo registrazione (sessione di registrazione vocale): 40 €</li><li>Registrazione + Mix &amp; Master: 60 €</li><li>Pacchetto completo (beat, registrazione, mix &amp; master): 70 €</li></ul></div></details>
       <details><summary>Cosa include il pacchetto completo?</summary><div class="a"><p>Un beat prodotto da Galó, la sessione di registrazione vocale, il mixaggio e il mastering del brano. Presi singolarmente costerebbero 90 €: con il pacchetto paghi 70 €.</p></div></details>
       <details><summary>Quando è aperto lo studio?</summary><div class="a"><p>Lo studio è aperto <span data-hours>dal martedì al venerdì, dalle 16:00 alle 19:00</span>. Nel calendario trovi solo i giorni e gli orari prenotabili.</p></div></details>
-      <details><summary>La sessione è confermata quando invio la richiesta?</summary><div class="a"><p>No. La sessione è confermata quando Galó ti risponde. Fino ad allora l'orario resta una richiesta.</p></div></details>
-      <details><summary>Come arriva la richiesta a Galó?</summary><div class="a"><p>Il sito prepara un messaggio con tutti i dati e un codice. Lo invii su Instagram con un tocco, oppure lo copi e lo incolli dove preferisci.</p></div></details>
+      <details><summary>Come prenoto una sessione e come ricevo la conferma?</summary><div class="a"><p>Scegli il servizio, poi il giorno e l'orario dal calendario di Galó (Google Calendar) e inserisci nome, email e telefono. Ricevi subito un'email di conferma con tutti i dettagli e l'orario non è più disponibile per altri.</p></div></details>
+      <details><summary>Come richiedo un beat?</summary><div class="a"><p>Compila la scheda del beat: il sito prepara un messaggio con tutti i dettagli e un codice, che invii a Galó su Instagram con un tocco. Galó ti risponde con tempi e dettagli.</p></div></details>
       <details><summary>Si paga online?</summary><div class="a"><p>No, sul sito non si paga nulla. Modalità e tempi di pagamento li concordi direttamente con Galó quando ti conferma la richiesta.</p></div></details>
       <details><summary>Quali generi produce Galó?</summary><div class="a"><p>Il suo stile nasce da trap, rap e urban, ma puoi chiedere un beat anche pop, indie, rock, R&amp;B, drill, afro, reggaeton, elettronica, lo-fi e altro. Nella scheda del beat scegli uno o più generi.</p></div></details>
-      <details><summary>Posso cambiare o annullare una richiesta?</summary><div class="a"><p>Sì. Scrivi a Galó indicando il codice della richiesta: potete accordarvi su un nuovo orario oppure annullare.</p></div></details>
+      <details><summary>Posso spostare o annullare una prenotazione?</summary><div class="a"><p>Sì: usa il link nell'email di conferma, oppure scrivi a Galó su Instagram.</p></div></details>
     </div>
   </div>
 </section>
@@ -590,7 +563,7 @@ label.chip input{width:18px;height:18px;margin:0;accent-color:#d5d8e2}
 <section class="sec close" aria-labelledby="closeT">
   <div class="wrap">
     <div class="box rv">
-      <div><h2 id="closeT">Hai un pezzo in testa? Diamogli una voce.</h2><p>Scegli un servizio, prenota il giorno e invia la richiesta. Galó ti risponde per confermare.</p></div>
+      <div><h2 id="closeT">Hai un pezzo in testa? Diamogli una voce.</h2><p>Scegli un servizio e prenota giorno e orario: la conferma ti arriva subito via email.</p></div>
       <div class="cta-row"><a class="btn" href="#prenota">Prenota una sessione</a><a class="btn line" href="#beat">Richiedi un beat</a></div>
     </div>
   </div>
@@ -605,19 +578,14 @@ label.chip input{width:18px;height:18px;margin:0;accent-color:#d5d8e2}
     <a class="back" href="#top">← Torna alla home</a>
     <p class="eyebrow">Prenotazione</p>
     <h1 id="bookT">Prenota la tua <em>sessione</em> in studio</h1>
-    <p class="vh-sub">Scegli il servizio, il giorno e l'orario, lascia i tuoi dati e invia la richiesta a Galó. Niente pagamento online: la sessione è confermata quando Galó ti risponde.</p>
-    <ol class="steps3"><li><b>1</b><span>Scegli servizio, giorno e orario (<span data-hours>dal martedì al venerdì, dalle 16:00 alle 19:00</span>)</span></li><li><b>2</b><span>Lascia i tuoi dati</span></li><li><b>3</b><span>Invia la richiesta</span></li></ol>
+    <p class="vh-sub">Scegli il servizio, poi il giorno e l'orario dal calendario di Galó. Ricevi subito un'email di conferma e l'orario è tuo. Niente pagamento online.</p>
+    <ol class="steps3"><li><b>1</b><span>Scegli il servizio</span></li><li><b>2</b><span>Scegli giorno e orario (<span data-hours>dal martedì al venerdì, dalle 16:00 alle 19:00</span>)</span></li><li><b>3</b><span>Ricevi l'email di conferma</span></li></ol>
   </div>
 </section>
 <section class="sec nopad" aria-label="Modulo di prenotazione">
   <div class="wrap"><noscript><div class="nojs-card"><p><b>Questa pagina ha bisogno di JavaScript per funzionare.</b> Probabilmente la stai vedendo in un'anteprima (per esempio un file aperto da WhatsApp, Mail o File su iPhone). Apri il sito in Safari o Chrome, oppure scrivi direttamente a Galó.</p><a class="btn" href="https://ig.me/m/prod.galo_" target="_blank" rel="noopener">Scrivi a Galó su Instagram</a></div></noscript><div class="split" id="bk"></div></div>
 </section>
-<section class="sec after" aria-label="Dopo l'invio della prenotazione"><div class="wrap">
-  <ol class="steps3">
-    <li><b>1</b><span>Premi <em>Richiedi</em>: si apre un messaggio già scritto con tutti i tuoi dati.</span></li>
-    <li><b>2</b><span>Lo mandi a Galó su Instagram con un tocco.</span></li>
-    <li><b>3</b><span>Galó ti risponde per confermare giorno e orario.</span></li>
-  </ol>
+<section class="sec after" aria-label="Altri servizi"><div class="wrap">
   <a class="swap" href="#beat"><span><small>Ti serve solo la base?</small><strong>Richiedi un beat su misura · 30 €</strong><em>Descrivi il beat che vorresti e Galó lo produce per te.</em></span><i aria-hidden="true">→</i></a>
 </div></section>
 </div>
@@ -734,11 +702,10 @@ var CFG={
   ig:'prod.galo_',          /* profilo Instagram */
   whatsapp:'',              /* es. '393331234567' (prefisso senza +). Vuoto = pulsante nascosto */
   email:'',                 /* es. 'info@galostudios.it'. Vuoto = nascosto */
-  open:16, close:19,        /* orario studio (ore intere): dalle 16:00 alle 19:00 */
-  closedWeekdays:[0,1,6],   /* giorni chiusi: 0 = domenica, 1 = lunedì, 6 = sabato → aperto mar-ven */
-  leadDays:1, horizonDays:90,
-  closedDates:[],           /* es. ['2026-12-25'] */
-  busy:{}                   /* es. {'2026-10-20':[16,17]} (= martedì 20 occupato dalle 16 alle 18) ore già occupate */
+  booking:'https://calendar.app.google/NAn1qdoeCUBPVAHu9', /* pagina di prenotazione Google Calendar di Galó */
+  /* Orari mostrati sul sito: devono coincidere con quelli impostati nel calendario Google */
+  open:16, close:19,        /* dalle 16:00 alle 19:00 */
+  closedWeekdays:[0,1,6]    /* giorni chiusi: 0 = domenica, 1 = lunedì, 6 = sabato → aperto mar-ven */
 };
 var SERVICES=[
   {id:'beat',  name:'Solo Beat',                    desc:'Produzione strumentale',                 price:30, studio:false},
@@ -746,8 +713,6 @@ var SERVICES=[
   {id:'recmix',name:'Registrazione + Mix & Master', desc:'Registrazione vocale, mixaggio e mastering', price:60, studio:true},
   {id:'full',  name:'Pacchetto completo',           desc:'Beat + Registrazione + Mix & Master',    price:70, studio:true}
 ];
-var DURS=[1,2,3].filter(function(d){return d<=CFG.close-CFG.open});
-var REC_WHAT=['Voce','Voce e cori','Voce e strumenti','Più artisti / featuring'];
 var GENRES=['Trap','Rap','Drill','R&B','Urban','Pop','Pop rap','Indie','Rock','Pop rock','Pop punk','Afro','Reggaeton','Dancehall','Elettronica','House','Lo-fi','Cantautorato','Altro'];
 var MOODS=['Scuro','Aggressivo','Malinconico','Romantico','Estivo','Notturno','Epico','Energico','Sognante','Ballabile'];
 var INSTR=['Piano','Chitarra acustica','Chitarra elettrica','Batteria','808 profonde','Basso','Synth','Archi','Fiati','Campioni vocali'];
@@ -761,18 +726,12 @@ var pad2=function(n){return (n<10?'0':'')+n};
 var clamp=function(v,a,b){return Math.max(a===undefined?0:a,Math.min(b===undefined?1:b,v))};
 var eur=function(n){return n+' €'};
 var svcById=function(id){return SERVICES.filter(function(s){return s.id===id})[0]||null};
-var MESI=['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
-var GG=['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
-var GGF=['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'];
 var RM=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 var store={
   get:function(k,f){try{var v=localStorage.getItem(k);return v?JSON.parse(v):f}catch(e){return f}},
   set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 };
 var mkCode=function(p){var a='ABCDEFGHJKMNPQRSTUVWXYZ23456789',s='';for(var i=0;i<4;i++)s+=a.charAt(Math.floor(Math.random()*a.length));return p+'-'+s};
-var kdate=function(k){var p=k.split('-').map(Number);return new Date(p[0],p[1]-1,p[2])};
-var dkey=function(d){return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())};
-var fmtDate=function(k){var p=k.split('-').map(Number);var d=new Date(p[0],p[1]-1,p[2]);return GGF[d.getDay()]+' '+p[2]+' '+MESI[p[1]-1].toLowerCase()+' '+p[0]};
 var GGS=['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'];
 function hoursText(){
   var open=[1,2,3,4,5,6,0].filter(function(d){return CFG.closedWeekdays.indexOf(d)<0});
@@ -1008,104 +967,30 @@ function deliver(title,code,text,after){
 
 /* ---------- prenotazione ---------- */
 var root=$('#bk');
-var S={svc:null,dur:null,date:null,time:null,month:null,what:REC_WHAT[0],name:'',phone:'',email:'',via:'Instagram',note:'',beat:'',errors:{}};
-var mine=store.get('gs_mine',[]);if(!Array.isArray(mine))mine=[];
-var today=new Date();today.setHours(0,0,0,0);
-var minD=new Date(today);minD.setDate(minD.getDate()+CFG.leadDays);
-var maxD=new Date(today);maxD.setDate(maxD.getDate()+CFG.horizonDays);
-S.month=new Date(minD.getFullYear(),minD.getMonth(),1);
-(function(){var w=store.get('gs_who',null);if(w&&typeof w==='object'){S.name=String(w.name||'');S.phone=String(w.phone||'')}})();
+var S={svc:null};
 var BOOK_SVCS=SERVICES.filter(function(s){return s.studio});
-function hourFree(k,h){
-  if((CFG.busy[k]||[]).indexOf(h)>-1)return false;
-  return !mine.some(function(b){return b.date===k&&h>=b.start&&h<b.start+b.dur});
-}
-function startOk(k,t,d){if(t+d>CFG.close)return false;for(var h=t;h<t+d;h++)if(!hourFree(k,h))return false;return true}
-function dayOk(dt,d){
-  if(dt<minD||dt>maxD)return false;
-  if(CFG.closedWeekdays.indexOf(dt.getDay())>-1)return false;
-  var k=dkey(dt);if(CFG.closedDates.indexOf(k)>-1)return false;
-  for(var t=CFG.open;t+d<=CFG.close;t++)if(startOk(k,t,d))return true;
-  return false;
-}
-var lastCount=0;
-function renderBooking(scroll){
-  var s=svcById(S.svc),html='',steps=0;
-  steps++;html+='<div class="step"><h3><i>1</i>Scegli il servizio</h3><div class="opts">'+BOOK_SVCS.map(function(x){return '<button class="opt svc" type="button" data-svc="'+x.id+'" aria-pressed="'+(S.svc===x.id)+'"><span><b>'+esc(x.name)+'</b><span>'+esc(x.desc)+'</span></span><span class="pr">'+eur(x.price)+'</span></button>'}).join('')+'</div><p class="legend">Ti serve solo il beat? <a href="#beat" data-svc="beat">Richiedilo qui (30 €)</a>.</p></div>';
-  if(s){steps++;html+='<div class="step"><h3><i>2</i>Quanto tempo ti serve in studio</h3><p class="hint">Serve a riservare lo studio (aperto dalle '+pad2(CFG.open)+':00 alle '+pad2(CFG.close)+':00). Se hai dubbi, Galó te lo conferma nella risposta.</p><div class="durs">'+DURS.map(function(d){return '<button class="opt" type="button" data-dur="'+d+'" aria-pressed="'+(S.dur===d)+'"><b>'+d+(d>1?' ore':' ora')+'</b></button>'}).join('')+'</div></div>'}
-  if(s&&S.dur){
-    steps++;
-    var y=S.month.getFullYear(),m=S.month.getMonth(),first=(new Date(y,m,1).getDay()+6)%7,days=new Date(y,m+1,0).getDate();
-    var cells=GG.map(function(g){return '<div class="dw" aria-hidden="true">'+g+'</div>'}).join('')+new Array(first+1).join('<span></span>');
-    for(var d=1;d<=days;d++){var dt=new Date(y,m,d),k=dkey(dt),ok=dayOk(dt,S.dur);cells+='<button type="button" data-date="'+k+'" '+(ok?'':'disabled')+' aria-pressed="'+(S.date===k)+'" aria-label="'+GGF[dt.getDay()]+' '+d+' '+MESI[m]+(ok?'':', non disponibile')+'"'+(dt.getTime()===today.getTime()?' class="today"':'')+'>'+d+'</button>'}
-    var prevOff=new Date(y,m,1)<=new Date(minD.getFullYear(),minD.getMonth(),1)?'disabled':'',nextOff=new Date(y,m+1,1)>maxD?'disabled':'';
-    html+='<div class="step"><h3><i>3</i>Giorno</h3><div class="calhead"><button type="button" data-mv="-1" '+prevOff+' aria-label="Mese precedente">‹</button><b aria-live="polite">'+MESI[m]+' '+y+'</b><button type="button" data-mv="1" '+nextOff+' aria-label="Mese successivo">›</button></div><div class="cal">'+cells+'</div><p class="legend">Lo studio è aperto '+esc(hoursText())+'. I giorni attenuati sono chiusi o non disponibili; si prenota a partire da domani.</p></div>';
-  }
-  if(s&&S.dur&&S.date){
-    steps++;var slots='';
-    for(var t=CFG.open;t+S.dur<=CFG.close;t++){var bad=!startOk(S.date,t,S.dur);slots+='<button class="opt" type="button" data-time="'+t+'" aria-pressed="'+(S.time===t)+'" '+(bad?'disabled':'')+' aria-label="Dalle '+pad2(t)+':00 alle '+pad2(t+S.dur)+':00">'+pad2(t)+':00</button>'}
-    html+='<div class="step"><h3><i>4</i>Orario di inizio</h3><p class="hint">'+fmtDate(S.date)+' · '+S.dur+(S.dur>1?' ore':' ora')+'. Finisci entro le '+pad2(CFG.close)+':00.</p><div class="slots">'+slots+'</div></div>';
-  }
-  if(s&&S.dur&&S.date&&S.time!==null){
-    steps++;var e=S.errors;
-    html+='<div class="step"><h3><i>5</i>I tuoi dati</h3><div class="fields">'+
-      '<div><label for="f_name">Nome e cognome (o nome d\'arte)</label><input class="field" id="f_name" data-f="name" value="'+esc(S.name)+'" autocomplete="name" maxlength="80"'+(e.name?' aria-invalid="true" aria-describedby="fe_name"':'')+'><div class="err" id="fe_name">'+esc(e.name||'')+'</div></div>'+
-      '<div><label for="f_phone">Telefono</label><input class="field" id="f_phone" data-f="phone" value="'+esc(S.phone)+'" type="tel" inputmode="tel" autocomplete="tel" maxlength="20"'+(e.phone?' aria-invalid="true" aria-describedby="fe_phone"':'')+'><div class="err" id="fe_phone">'+esc(e.phone||'')+'</div></div>'+
-      '<div><label for="f_email">Email (facoltativa)</label><input class="field" id="f_email" data-f="email" value="'+esc(S.email)+'" type="email" inputmode="email" autocomplete="email" maxlength="120"'+(e.email?' aria-invalid="true" aria-describedby="fe_email"':'')+'><div class="err" id="fe_email">'+esc(e.email||'')+'</div></div>'+
-      '<div><label for="f_what">Cosa registri</label><select class="field" id="f_what" data-f="what">'+REC_WHAT.map(function(v){return '<option'+(S.what===v?' selected':'')+'>'+esc(v)+'</option>'}).join('')+'</select></div>'+
-      '<div><label for="f_via">Preferisci essere ricontattato su</label><select class="field" id="f_via" data-f="via">'+['Instagram','WhatsApp','Telefono','Email'].map(function(v){return '<option'+(S.via===v?' selected':'')+'>'+v+'</option>'}).join('')+'</select></div>'+
-      (S.svc==='full'?'<div class="full"><label for="f_beat">Il beat che vuoi (genere, mood, riferimenti)</label><textarea class="field" id="f_beat" data-f="beat" rows="3" maxlength="800" placeholder="Per esempio: trap notturna, piano malinconico, 140 BPM, tipo… Se vuoi dare più dettagli, dopo l\'invio puoi compilare anche la scheda del beat.">'+esc(S.beat)+'</textarea></div>':'')+
-      '<div class="full"><label for="f_note">Note sul progetto (facoltative)</label><textarea class="field" id="f_note" data-f="note" rows="3" maxlength="800" placeholder="Titolo del brano, riferimenti, cosa vuoi ottenere.">'+esc(S.note)+'</textarea></div></div></div>';
-  }
-  var ready=!!(s&&S.dur&&S.date&&S.time!==null),stepNo=!s?1:!S.dur?2:!S.date?3:S.time===null?4:5;
-  var mineHtml=mine.length?'<div class="mine" aria-label="Le tue richieste su questo dispositivo"><p>Le tue richieste</p>'+mine.map(function(b,i){var sv=svcById(b.svc);return '<div><span><b class="mono">'+esc(b.code)+'</b> · '+(sv?esc(sv.name)+' · ':'')+esc(fmtDate(b.date))+' ore '+pad2(b.start)+':00 · in attesa di conferma</span><button type="button" data-cancel="'+i+'" aria-label="Rimuovi la richiesta '+esc(b.code)+'">Rimuovi</button></div>'}).join('')+'</div>':'';
-  var sum='<aside class="sum" aria-label="Riepilogo prenotazione"><h3>Riepilogo</h3><div class="meter" aria-hidden="true"><i style="width:'+(ready?100:(stepNo-1)*22+8)+'%"></i></div><dl>'+
+function renderBooking(){
+  var s=svcById(S.svc),html='';
+  html+='<div class="step"><h3><i>1</i>Scegli il servizio</h3><div class="opts">'+BOOK_SVCS.map(function(x){return '<button class="opt svc" type="button" data-svc="'+x.id+'" aria-pressed="'+(S.svc===x.id)+'"><span><b>'+esc(x.name)+'</b><span>'+esc(x.desc)+'</span></span><span class="pr">'+eur(x.price)+'</span></button>'}).join('')+'</div><p class="legend">Ti serve solo il beat? <a href="#beat" data-svc="beat">Richiedilo qui (30 €)</a>.</p></div>';
+  html+='<div class="step'+(s?'':' off')+'" id="bk_cal"><h3><i>2</i>Scegli giorno e orario</h3>'+(s?
+    '<p class="hint">Si apre il calendario di Galó con gli orari ancora liberi ('+esc(hoursText())+'). Inserisci nome, email e telefono e, alla domanda sul servizio, scrivi <b>'+esc(s.name)+'</b>.</p><a class="btn" href="'+esc(CFG.booking)+'" target="_blank" rel="noopener">Apri il calendario e prenota ↗</a>'+(s.id==='full'?'<p class="legend">Per il beat del pacchetto compila anche la <a href="#beat" data-svc="full">scheda del beat</a>: così Galó sa già cosa produrre.</p>':''):
+    '<p class="hint" style="margin:0">Prima scegli il servizio qui sopra.</p>')+'</div>';
+  html+='<div class="step"><h3><i>3</i>Ricevi la conferma</h3><p class="hint" style="margin:0">Appena prenoti ricevi da Google un\'email di conferma con giorno e orario, e la sessione compare nel calendario di Galó. L\'orario non è più prenotabile da altri. Per spostare o annullare usa il link nell\'email.</p></div>';
+  var sum='<aside class="sum" aria-label="Riepilogo prenotazione"><h3>Riepilogo</h3><dl>'+
     '<div><dt>Servizio</dt><dd>'+(s?esc(s.name):'—')+'</dd></div>'+
-    '<div><dt>Durata</dt><dd>'+(S.dur?S.dur+(S.dur>1?' ore':' ora'):'—')+'</dd></div>'+
-    '<div><dt>Giorno</dt><dd>'+(S.date?esc(fmtDate(S.date)):'—')+'</dd></div>'+
-    '<div><dt>Orario</dt><dd class="mono">'+(S.time!==null&&S.dur?pad2(S.time)+':00 – '+pad2(S.time+S.dur)+':00':'—')+'</dd></div></dl>'+
+    '<div><dt>Orari studio</dt><dd>'+esc(hoursText())+'</dd></div></dl>'+
     '<div class="total"><span>Prezzo</span><b>'+(s?eur(s.price):'—')+'</b></div>'+
-    '<button class="btn wide" type="button" id="bk_send"'+(ready?'':' disabled')+'>Richiedi la sessione</button>'+
-    '<small>'+(ready?'Controlla i tuoi dati e premi Richiedi: si apre il messaggio da inviare a Galó.':'Completa i passaggi a sinistra per inviare la richiesta.')+' Nessun pagamento online.</small></aside>';
-  var ae=document.activeElement,active=ae&&root.contains(ae)&&ae.getAttribute&&ae.getAttribute('data-f');
-  var pos=null;try{pos=active&&ae.selectionStart}catch(x){}
-  root.innerHTML='<div>'+html+mineHtml+'</div>'+sum;
-  if(active){var el=$('[data-f="'+active+'"]',root);if(el){el.focus({preventScroll:true});try{if(pos!==null)el.setSelectionRange(pos,pos)}catch(x){}}}
-  if(scroll&&steps>lastCount){var stp=$$('.step',root),n=stp[stp.length-1];if(n&&lastCount>0){n.classList.add('new');if(!active&&n.scrollIntoView)n.scrollIntoView({behavior:RM?'auto':'smooth',block:'start'})}}
-  lastCount=steps;
-}
-function validate(){
-  var e={};
-  if(S.name.trim().length<2)e.name='Inserisci il tuo nome.';
-  var ph=S.phone.replace(/[\s.\-()\/]/g,'');
-  if(!/^\+?[0-9]{7,15}$/.test(ph))e.phone='Numero non valido: inserisci solo cifre, anche con +39 davanti.';
-  if(S.email.trim()&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(S.email.trim()))e.email='Email non valida: controlla che sia scritta come nome@dominio.it.';
-  S.errors=e;return !Object.keys(e).length;
-}
-function sendBooking(){
-  var sv=svcById(S.svc),code=mkCode('GS');
-  var L=['Ciao Galó, vorrei prenotare una sessione.','Codice: '+code,'Servizio: '+sv.name+' ('+eur(sv.price)+')','Cosa registro: '+S.what,'Giorno: '+fmtDate(S.date),'Orario: '+pad2(S.time)+':00 - '+pad2(S.time+S.dur)+':00 ('+S.dur+(S.dur>1?' ore':' ora')+')','Nome: '+S.name.trim(),'Telefono: '+S.phone.trim()];
-  if(S.email.trim())L.push('Email: '+S.email.trim());
-  L.push('Contatto preferito: '+S.via);
-  if(S.svc==='full'&&S.beat.trim())L.push('','Il beat che vorrei:',S.beat.trim());
-  if(S.note.trim())L.push('','Note:',S.note.trim());
-  mine.push({code:code,svc:S.svc,date:S.date,start:S.time,dur:S.dur});store.set('gs_mine',mine);store.set('gs_who',{name:S.name.trim(),phone:S.phone.trim()});
-  deliver('Richiesta pronta',code,L.join('\n'));
-  S.svc=null;S.dur=null;S.date=null;S.time=null;S.note='';S.beat='';S.errors={};lastCount=0;renderBooking(false);
+    (s?'<a class="btn wide" href="'+esc(CFG.booking)+'" target="_blank" rel="noopener">Scegli giorno e orario ↗</a>':'<button class="btn wide" type="button" disabled>Scegli giorno e orario</button>')+
+    '<small>'+(s?'La prenotazione avviene sul calendario Google di Galó. Il pagamento si concorda con Galó, sul sito non si paga nulla.':'Scegli prima il servizio.')+'</small></aside>';
+  root.innerHTML='<div>'+html+'</div>'+sum;
 }
 root.addEventListener('click',function(e){
-  var b=e.target.closest('button');if(!b||!root.contains(b))return;
-  if(b.hasAttribute('data-svc')){S.svc=b.getAttribute('data-svc');if(S.date&&!(S.dur&&dayOk(kdate(S.date),S.dur))){S.date=null;S.time=null}renderBooking(true)}
-  else if(b.hasAttribute('data-dur')){S.dur=+b.getAttribute('data-dur');S.date=null;S.time=null;renderBooking(true)}
-  else if(b.hasAttribute('data-mv')){S.month=new Date(S.month.getFullYear(),S.month.getMonth()+(+b.getAttribute('data-mv')),1);renderBooking(false);var nb=$('[data-mv="'+b.getAttribute('data-mv')+'"]',root);if(nb&&!nb.disabled)nb.focus({preventScroll:true})}
-  else if(b.hasAttribute('data-date')){S.date=b.getAttribute('data-date');S.time=null;renderBooking(true)}
-  else if(b.hasAttribute('data-time')){S.time=+b.getAttribute('data-time');renderBooking(true)}
-  else if(b.hasAttribute('data-cancel')){mine.splice(+b.getAttribute('data-cancel'),1);store.set('gs_mine',mine);toast('Richiesta rimossa da questo dispositivo');renderBooking(false)}
-  else if(b.id==='bk_send'){if(validate())sendBooking();else{renderBooking(false);var f=$('[aria-invalid="true"]',root);if(f){f.focus({preventScroll:true});if(f.scrollIntoView)f.scrollIntoView({behavior:RM?'auto':'smooth',block:'center'})}}}
+  var b=e.target.closest('button[data-svc]');if(!b||!root.contains(b))return;
+  S.svc=b.getAttribute('data-svc');renderBooking();
+  var c=$('#bk_cal');if(c&&c.scrollIntoView)c.scrollIntoView({behavior:RM?'auto':'smooth',block:'nearest'});
+  var nb=$('[data-svc="'+S.svc+'"]',root);if(nb)nb.focus({preventScroll:true});
 });
-root.addEventListener('input',function(e){var f=e.target.getAttribute('data-f');if(f&&e.target.type!=='checkbox'){S[f]=e.target.value;if(S.errors[f]){delete S.errors[f];e.target.removeAttribute('aria-invalid');var er=$('#fe_'+f);if(er)er.textContent=''}}});
-root.addEventListener('change',function(e){var f=e.target.getAttribute('data-f');if(f)S[f]=e.target.type==='checkbox'?e.target.checked:e.target.value});
-function preselectBooking(id){if(svcById(id)&&svcById(id).studio&&S.svc!==id){S.svc=id;S.time=null;if(S.date&&S.dur&&!dayOk(kdate(S.date),S.dur))S.date=null;lastCount=0;renderBooking(false)}}
+function preselectBooking(id){var sv=svcById(id);if(sv&&sv.studio&&S.svc!==id){S.svc=id;renderBooking()}}
 
 /* ---------- beat su misura ---------- */
 var pst={x:.5,y:.5,touched:false},bsvc='beat';
@@ -1121,7 +1006,7 @@ function updBrief(){
   $('#s_mood').textContent=m.length?m.join(', '):'—';
   $('#s_pad').textContent=pst.touched?w.a+' · energia '+w.e:'—';
   $('#s_bpm').textContent=$('#b_bpmfree').checked?'decide Galó':$('#b_bpm').value+' BPM';
-  $('#s_note').textContent=bsvc==='full'?'Il pacchetto include anche registrazione, mix e master: giorno e orario della sessione li concordi con Galó nella risposta. Nessun pagamento in questa fase.':'La richiesta parte solo quando invii il messaggio a Galó. Nessun pagamento in questa fase.';
+  $('#s_note').textContent=bsvc==='full'?'Il pacchetto include anche registrazione, mix e master: dopo aver inviato la scheda, prenota la sessione dalla pagina Prenota. Nessun pagamento in questa fase.':'La richiesta parte solo quando invii il messaggio a Galó. Nessun pagamento in questa fase.';
 }
 function padUI(){
   var p=$('#pad');p.style.setProperty('--px',pst.x);p.style.setProperty('--py',pst.y);
@@ -1182,14 +1067,14 @@ guard(function(){
       'Atmosfera: '+(pst.touched?w.a+' ('+w.ax+'/100), energia '+w.e+' ('+w.ey+'/100)':'da definire'),
       'BPM: '+($('#b_bpmfree').checked?'decidi tu':$('#b_bpm').value),'Tonalità: '+($('#b_key').value||'decidi tu'),'Voce: '+$('#b_lang').value,
       'Suoni: '+(ins.length?ins.join(', '):'decidi tu'),'Tempi: '+$('#b_when').value];
-    if(bsvc==='full')L.push('Sessione di registrazione: da concordare');
+    if(bsvc==='full')L.push('Sessione di registrazione: la prenoto dal calendario');
     L.push('','Come lo vorrei:',d);
     var rf=$('#b_refs').value.trim();if(rf)L.push('','Riferimenti:',rf);
     deliver(bsvc==='full'?'Richiesta pacchetto pronta':'Richiesta beat pronta',code,L.join('\n'));
   });
 });
 
-renderBooking(false);
+renderBooking();
 
 /* ---------- intro, cursore, magnetismo, prossimo giorno libero ---------- */
 guard(function(){
@@ -1209,14 +1094,7 @@ guard(function(){
       b.addEventListener('pointerleave',function(){b.style.transform=''});
     });
   }
-  var chip=$('#nextfree');
-  var now=new Date(),found=null;
-  for(var i=0;i<=CFG.horizonDays&&!found;i++){
-    var dt=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i);
-    if(!dayOk(dt,1))continue;var k=dkey(dt);
-    for(var h=CFG.open;h<CFG.close;h++){if(startOk(k,h,1)){found={k:k,h:h};break}}
-  }
-  if(found){chip.querySelector('span').textContent='Prima data disponibile: '+fmtDate(found.k)+' · ore '+pad2(CFG.open)+'–'+pad2(CFG.close);chip.hidden=false}
+  var chip=$('#nextfree');chip.querySelector('span').textContent='Prenotazioni aperte '+hoursText();chip.hidden=false;
 });
 
 /* ---------- viste: home / prenota / beat ---------- */
@@ -1224,7 +1102,11 @@ guard(function(){
   var body=document.body,TT={home:'Galó Studios',book:'Prenota una sessione · Galó Studios',beat:'Beat su misura · Galó Studios'},cur=null;
   var VIEWS={prenota:'book',beat:'beat'};
   function jump(f){var p=de.style.scrollBehavior;de.style.scrollBehavior='auto';void de.offsetHeight;try{f()}catch(e){}void de.offsetHeight;de.style.scrollBehavior=p}
-  function toTop(){jump(function(){try{window.scrollTo({top:0,left:0,behavior:'instant'})}catch(e){window.scrollTo(0,0)}if(window.pageYOffset)window.scrollTo(0,0)})}
+  function toTop(){
+    var n=0;
+    function z(){jump(function(){try{window.scrollTo({top:0,left:0,behavior:'instant'})}catch(e){window.scrollTo(0,0)}if(window.pageYOffset)window.scrollTo(0,0)})}
+    z();(function again(){if(++n>3)return;requestAnimationFrame(function(){if(window.pageYOffset>0&&window.pageYOffset<40)z();again()})})();
+  }
   function show(v,anchor){
     var changed=v!==cur;cur=v;
     body.setAttribute('data-view',v);try{document.title=TT[v]}catch(e){}
