@@ -382,9 +382,8 @@ def draw_title(cv, pi, t_rel, d):
     bw = 150 * pin * (1 - pout)
     if bw > 1:
         cv[ytop:ytop + 10, x:x + int(bw)] = RED
-    ln(lab, ytop + 30, 0.05, 0.0)
-    ln(l1, ytop + 100, 0.12, 0.05)
-    ln(l2, ytop + 100 + l1.ink_bot - 6, 0.2, 0.1)
+    ln(l1, ytop + 45, 0.08, 0.05)
+    ln(l2, ytop + 45 + l1.ink_bot - 6, 0.16, 0.1)
 
 def card_pose(pi, ci, t_c, pcx, pcy, ps, hold_len):
     sp, sh = AS.cards[pi][ci]
