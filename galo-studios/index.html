@@ -231,6 +231,17 @@ svg.defs{position:absolute;width:0;height:0;overflow:hidden}
 .foot a{text-decoration:none;color:var(--ink2)}
 .foot a:hover{color:var(--ink)}
 @media(max-width:959px){.foot{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}}
+.credit{display:flex;flex-direction:column;align-items:center;gap:10px;margin:40px auto 0;padding:28px var(--gut) 0;max-width:1160px;border-top:1px solid var(--line);text-align:center}
+.credit small{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--mute)}
+.credit a{display:flex;flex-direction:column;align-items:center;gap:10px;text-decoration:none;color:var(--ink2);border-radius:10px;padding:6px 10px;transition:color .2s}
+.credit a:hover{color:var(--ink)}
+.credit svg{width:118px;max-width:100%;height:auto;overflow:visible}
+.credit svg text{font-family:var(--ui);font-weight:800;fill:none;stroke:currentColor;stroke-width:1.2;stroke-linejoin:round}
+.credit .nm{font-size:11px;letter-spacing:.18em;text-transform:uppercase;line-height:1.5}
+.credit .nm b{font-weight:700;color:var(--ink)}
+@media(max-width:480px){.credit .nm{font-size:10px;letter-spacing:.1em}}
+.credit .ig{font-family:var(--mono);font-size:12px;letter-spacing:.02em;color:var(--mute)}
+.credit a:hover .ig{color:var(--ink2)}
 
 /* dock */
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:38;display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border-top:1px solid var(--line2);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -678,6 +689,14 @@ label.chip input{width:18px;height:18px;margin:0;accent-color:#d5d8e2}
 <footer class="foot">
   <div class="giant" aria-hidden="true">Galó Studios</div>
   <div class="wrap"><span>Collabora. Crea. Distinguiti.</span><a href="https://instagram.com/prod.galo_" target="_blank" rel="noopener">Instagram @prod.galo_</a><span>© <span id="yr">2026</span> Galó Studios</span></div>
+  <div class="credit">
+    <small>Sito realizzato da</small>
+    <a href="https://instagram.com/dpm.agency" target="_blank" rel="noopener" aria-label="DPM, Digital Presence Marketing Office, Instagram @dpm.agency">
+      <svg viewBox="-2 -2 134 70" aria-hidden="true"><text x="0" y="62" font-size="86" textLength="54" lengthAdjust="spacingAndGlyphs">D</text><text x="37" y="61" font-size="88" textLength="49" lengthAdjust="spacingAndGlyphs">P</text><text x="68" y="63" font-size="80" textLength="62" lengthAdjust="spacingAndGlyphs">M</text></svg>
+      <span class="nm"><b>DPM</b> | Digital Presence Marketing Office</span>
+      <span class="ig">@dpm.agency</span>
+    </a>
+  </div>
 </footer>
 
 <nav class="dock" aria-label="Azioni rapide">
