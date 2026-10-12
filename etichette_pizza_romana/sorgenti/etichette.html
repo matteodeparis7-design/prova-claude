@@ -152,16 +152,28 @@ const DATI = {
     <rect x="5.2" y="5.2" width="139.6" height="89.6" rx="1" fill="none" stroke="#B8894A" stroke-width=".08"/>
 
     <!-- pinsa: l'eroe dell'etichetta, sorge dal bordo inferiore -->
-    <image href="assets/pinsa_margherita.svg" x="-3.1" y="43.2" width="156.2" height="105.6"/>
+    <image href="assets/pinsa_margherita.svg" x="-3.1" y="46.4" width="156.2" height="105.6"/>
 
     <!-- testata -->
     <image href="assets/logo_gustoso.svg" x="46" y="7.6" width="58" height="19.93"/>
-    <text x="75" y="40.6" text-anchor="middle" font-family="Cinzel" font-weight="700" font-size="9.4" letter-spacing="1.25" fill="#9A2A1C">PIZZA ROMANA</text>
-    <g transform="translate(75,43.6)">
-      <line x1="-30" x2="-3" stroke="#B8894A" stroke-width=".16"/><line x1="3" x2="30" stroke="#B8894A" stroke-width=".16"/>
-      <path d="M0,-1 1,0 0,1 -1,0Z" fill="#B8894A"/>
+    <text x="75" y="39.6" text-anchor="middle" font-family="Cinzel" font-weight="700" font-size="9.4" letter-spacing="1.25" fill="#9A2A1C">PIZZA ROMANA</text>
+    <g transform="translate(75,45.1)">
+      <line x1="-31" x2="-12.6" stroke="#B8894A" stroke-width=".16"/><line x1="12.6" x2="31" stroke="#B8894A" stroke-width=".16"/>
+      <circle cx="-31.8" r=".42" fill="#B8894A"/><circle cx="31.8" r=".42" fill="#B8894A"/>
     </g>
-    <text x="75" y="49.4" text-anchor="middle" font-family="Cormorant" font-style="italic" font-weight="600" font-size="4.55" fill="#2A2421">Base per pizza romana surgelata</text>
+    <text x="75" y="46.7" text-anchor="middle" font-family="Cormorant" font-style="italic" font-weight="600" font-size="5.3" fill="#2A2421">surgelata</text>
+
+    <!-- nastro: prodotto artigianale italiano -->
+    <g transform="translate(75,53.6)">
+      <!-- code piegate -->
+      <path d="M-50,-2.4 H-40 V6.2 H-50 L-46.6,1.9Z" fill="#7E2015"/>
+      <path d="M50,-2.4 H40 V6.2 H50 L46.6,1.9Z" fill="#7E2015"/>
+      <path d="M-43.4,6.2 L-40,3.6 V6.2Z M43.4,6.2 L40,3.6 V6.2Z" fill="#4E120B"/>
+      <path d="M-43.4,-4.4 H43.4 V3.6 H-43.4Z" fill="#9A2A1C"/>
+      <line x1="-42.2" y1="-3.4" x2="42.2" y2="-3.4" stroke="#E9C987" stroke-width=".16"/>
+      <line x1="-42.2" y1="2.6" x2="42.2" y2="2.6" stroke="#E9C987" stroke-width=".16"/>
+      <text x="0" y=".85" text-anchor="middle" font-family="Cinzel" font-weight="700" font-size="3.55" letter-spacing=".32" fill="#F7EFDE">PRODOTTO ARTIGIANALE ITALIANO</text>
+    </g>
 
     <!-- angolo sinistro: surgelato -->
     <g transform="translate(12.2,15.6)">
@@ -176,23 +188,6 @@ const DATI = {
     <text x="137.4" y="12.8" text-anchor="end" font-family="BarlowC" font-weight="600" font-size="2.3" letter-spacing=".42" fill="#8A6A40">PESO NETTO</text>
     <g id="peso" transform="translate(137.4,20.6)" color="#2A2421"></g>
     <text x="137.4" y="25" text-anchor="end" font-family="BarlowC" font-weight="600" font-size="2.15" letter-spacing=".3" fill="#9A2A1C">PRODOTTO IN ITALIA</text>
-
-    <!-- sigillo: prodotto artigianale italiano -->
-    <g transform="translate(127.2,63.6) rotate(-9)">
-      <path id="dentelli" fill="#9A2A1C"/>
-      <circle r="12.2" fill="none" stroke="#E9C987" stroke-width=".3"/>
-      <circle r="6.65" fill="none" stroke="#E9C987" stroke-width=".25"/>
-      <text font-family="Cinzel" font-weight="700" font-size="2.2" fill="#F7EFDE">
-        <textPath href="#arcoSigillo" startOffset="0" textLength="57.2" lengthAdjust="spacing">PRODOTTO ARTIGIANALE ITALIANO ·</textPath></text>
-      <!-- Colosseo stilizzato -->
-      <g fill="none" stroke="#F7EFDE" stroke-width=".26" stroke-linejoin="round" transform="translate(0,.5)">
-        <path d="M-4.9,2.6 V-1.7 L-4.2,-2.9 H4.9 V2.6Z"/>
-        <path d="M-4.9,-.2 H4.9 M-4.6,1.2 H4.9 M-4.2,-1.6 H4.9"/>
-        <path d="M-3.4,2.6 V1.9 a.55,.55 0 0 1 1.1,0 V2.6 M-1.6,2.6 V1.9 a.55,.55 0 0 1 1.1,0 V2.6 M.2,2.6 V1.9 a.55,.55 0 0 1 1.1,0 V2.6 M2,2.6 V1.9 a.55,.55 0 0 1 1.1,0 V2.6 M3.6,2.6 V1.9 a.5,.5 0 0 1 1,0 V2.6"/>
-        <path d="M-3.4,1.2 V.6 a.55,.55 0 0 1 1.1,0 V1.2 M-1.6,1.2 V.6 a.55,.55 0 0 1 1.1,0 V1.2 M.2,1.2 V.6 a.55,.55 0 0 1 1.1,0 V1.2 M2,1.2 V.6 a.55,.55 0 0 1 1.1,0 V1.2 M3.6,1.2 V.6 a.5,.5 0 0 1 1,0 V1.2"/>
-        <path d="M-2.6,-.2 V-.8 a.5,.5 0 0 1 1,0 V-.2 M-.8,-.2 V-.8 a.5,.5 0 0 1 1,0 V-.2 M1,-.2 V-.8 a.5,.5 0 0 1 1,0 V-.2 M2.8,-.2 V-.8 a.5,.5 0 0 1 1,0 V-.2"/>
-      </g>
-    </g>
 
     <!-- dicitura obbligatoria per l'immagine -->
     <rect x="104.6" y="92" width="38.4" height="3.9" rx="1.95" fill="#F7EFDE" opacity=".92"/>
@@ -213,7 +208,7 @@ const DATI = {
     <line x1="-10" y1="19.55" x2="140" y2="19.55" stroke="#A97A36" stroke-width=".13"/>
     <image href="assets/logo_gustoso_chiaro.svg" x="6.6" y="3.5" width="31" height="10.65"/>
     <text x="123.4" y="9.6" text-anchor="end" font-family="Cinzel" font-weight="700" font-size="5.2" letter-spacing=".5" fill="#F4E8D0"><tspan font-family="Cormorant" font-style="italic" font-weight="600" font-size="6.6" letter-spacing="0" fill="#D4A65F">Pizza </tspan>ROMANA</text>
-    <text x="123.4" y="14.9" text-anchor="end" font-family="Cormorant" font-style="italic" font-weight="600" font-size="3.55" fill="#F4E8D0">Base per pizza romana surgelata</text>
+    <text x="123.4" y="14.9" text-anchor="end" font-family="Cormorant" font-style="italic" font-weight="600" font-size="3.55" fill="#F4E8D0">Pizza romana surgelata · Prodotto artigianale italiano</text>
     <!-- piede rosso -->
     <image href="assets/affresco_rosso.jpg" x="-10" y="85.2" width="150" height="14" preserveAspectRatio="none"/>
     <line x1="-10" y1="85.2" x2="140" y2="85.2" stroke="#D4A65F" stroke-width=".45"/>
@@ -281,16 +276,6 @@ const mark = bleed ? 6 : 0;
 document.documentElement.style.setProperty('--b', bleed + 'mm');
 document.documentElement.style.setProperty('--m', mark + 'mm');
 
-// bordo dentellato del sigillo
-{
-  let d = '';
-  const N = 36;
-  for (let i = 0; i <= 2*N; i++) {
-    const a = i / (2*N) * 2 * Math.PI, r = i % 2 ? 12.9 : 13.7;
-    d += (i ? 'L' : 'M') + (r*Math.cos(a)).toFixed(3) + ',' + (r*Math.sin(a)).toFixed(3);
-  }
-  document.getElementById('dentelli').setAttribute('d', d + 'Z');
-}
 // peso netto: valore oppure spazio da compilare (allineato a destra)
 const p = document.getElementById('peso');
 const eSym = x => `<svg x="${x}" y="-4.3" width="3.5" height="4.25" viewBox="0 0 10 12"><use href="#eStimato"/></svg>`;
