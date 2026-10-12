@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Gustoso · Pizza Romana · Etichette</title>
+<!--
+  Etichette "Pizza Romana" surgelata – Gustoso Cucina Italiana
+  Fronte 150 × 100 mm · Retro 130 × 88 mm
+  Parametri URL:  ?p=fronte | ?p=retro      &bleed=3   (abbondanza in mm, aggiunge anche i crocini di taglio)
+  I dati variabili (peso, lotto, TMC) si modificano nel blocco DATI qui sotto.
+-->
+<style>
+@font-face{font-family:Cinzel;font-weight:500;src:url(assets/fonts/cinzel-latin-500-normal.woff2)}
+@font-face{font-family:Cinzel;font-weight:600;src:url(assets/fonts/cinzel-latin-600-normal.woff2)}
+@font-face{font-family:Cinzel;font-weight:700;src:url(assets/fonts/cinzel-latin-700-normal.woff2)}
+@font-face{font-family:Cormorant;font-weight:500;src:url(assets/fonts/cormorant-garamond-latin-500-normal.woff2)}
+@font-face{font-family:Cormorant;font-weight:600;src:url(assets/fonts/cormorant-garamond-latin-600-normal.woff2)}
+@font-face{font-family:Cormorant;font-weight:500;font-style:italic;src:url(assets/fonts/cormorant-garamond-latin-500-italic.woff2)}
+@font-face{font-family:Cormorant;font-weight:600;font-style:italic;src:url(assets/fonts/cormorant-garamond-latin-600-italic.woff2)}
+@font-face{font-family:BarlowC;font-weight:400;src:url(assets/fonts/barlow-condensed-latin-400-normal.woff2)}
+@font-face{font-family:BarlowC;font-weight:500;src:url(assets/fonts/barlow-condensed-latin-500-normal.woff2)}
+@font-face{font-family:BarlowC;font-weight:600;src:url(assets/fonts/barlow-condensed-latin-600-normal.woff2)}
+@font-face{font-family:BarlowC;font-weight:700;src:url(assets/fonts/barlow-condensed-latin-700-normal.woff2)}
+@font-face{font-family:Barlow;font-weight:400;src:url(assets/fonts/barlow-latin-400-normal.woff2)}
+@font-face{font-family:Barlow;font-weight:400;font-style:italic;src:url(assets/fonts/barlow-latin-400-italic.woff2)}
+@font-face{font-family:Barlow;font-weight:500;src:url(assets/fonts/barlow-latin-500-normal.woff2)}
+@font-face{font-family:Barlow;font-weight:600;src:url(assets/fonts/barlow-latin-600-normal.woff2)}
+@font-face{font-family:Barlow;font-weight:700;src:url(assets/fonts/barlow-latin-700-normal.woff2)}
+
+:root{
+  --ink:#231F20;        /* nero del logo */
+  --grigio:#5C6265;     /* grigio "Cucina Italiana" del logo */
+  --oro:#E8B87C;        /* oro del logo */
+  --rosso:#8E3424;      /* rosso pompeiano */
+  --seppia:#6E5133;
+  --sabbia:#E3CFAC;
+  --gelo:#3E6470;       /* blu-ottanio per le indicazioni di surgelazione */
+  --carta:#F3E9D6;
+  --b:0mm;              /* abbondanza */
+  --m:0mm;              /* area crocini */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#fff}
+body{-webkit-print-color-adjust:exact;print-color-adjust:exact;color:var(--ink);font-family:Barlow,sans-serif}
+.foglio{position:relative;width:calc(var(--w) + 2*var(--b) + 2*var(--m));height:calc(var(--h) + 2*var(--b) + 2*var(--m));overflow:hidden;background:#fff}
+.fondo{position:absolute;left:var(--m);top:var(--m);width:calc(var(--w) + 2*var(--b));height:calc(var(--h) + 2*var(--b));
+  background:var(--carta) var(--tex) center/cover no-repeat}
+.rif{position:absolute;left:calc(var(--m) + var(--b));top:calc(var(--m) + var(--b));width:var(--w);height:var(--h)}
+.rif > *{position:absolute}
+.crocini{position:absolute;inset:0;pointer-events:none}
+.fronte{--w:150mm;--h:100mm;--tex:url(assets/carta_fronte.jpg)}
+.retro{--w:130mm;--h:88mm;--tex:url(assets/carta_retro.jpg)}
+.nascosto{display:none}
+
+/* ---------- FRONTE ---------- */
+.cornice{inset:3.6mm}
+.cornice svg{width:100%;height:100%;overflow:visible}
+.logo{left:50%;top:11.7mm;width:74mm;transform:translateX(-50%)}
+.logo img{width:100%;display:block}
+.divisore{left:50%;top:38.3mm;width:62mm;transform:translateX(-50%)}
+.titolo{left:0;right:0;top:42.2mm;text-align:center;font-family:Cinzel;font-weight:700;font-size:28.5pt;letter-spacing:.055em;
+  color:var(--rosso);line-height:1;padding-left:.055em}
+.alloro{top:43.6mm;width:17.5mm}
+.alloro.sx{left:17.2mm;transform:scaleX(-1) rotate(-4deg)}
+.alloro.dx{right:17.2mm;transform:rotate(-4deg)}
+.denominazione{left:0;right:0;top:53.9mm;text-align:center;font-family:Cormorant;font-style:italic;font-weight:600;font-size:13.2pt;color:var(--ink);line-height:1}
+.denominazione b{font-weight:600;color:var(--gelo);font-style:normal;font-family:BarlowC;letter-spacing:.14em;font-size:9.4pt;text-transform:uppercase;
+  border:.25mm solid var(--gelo);border-radius:.6mm;padding:.15mm 1.4mm .05mm 1.6mm;margin-left:1.6mm;position:relative;top:-.5mm}
+.claim{left:0;right:0;top:60.2mm;text-align:center;font-family:BarlowC;font-weight:500;font-size:7.6pt;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--seppia)}
+.claim svg{width:1.7mm;height:1.7mm;margin:0 1.6mm 0 1.2mm;vertical-align:-.05mm}
+.skyline{left:50%;bottom:11.3mm;width:86mm;transform:translateX(-50%)}
+.skyline img{width:100%;display:block}
+.sigillo{left:9.2mm;top:63.6mm;width:25.5mm;height:25.5mm}
+.peso{right:9.6mm;top:66.2mm;width:24mm;height:21mm;text-align:center}
+.peso .cart{position:absolute;inset:0}
+.peso .et{position:absolute;left:0;right:0;top:3.1mm;font-family:BarlowC;font-weight:600;font-size:6.6pt;letter-spacing:.22em;color:var(--seppia);padding-left:.22em}
+.peso .val{position:absolute;left:0;right:0;top:7.4mm;font-family:BarlowC;font-weight:700;font-size:17pt;line-height:1;color:var(--ink);white-space:nowrap}
+.peso .val .vuoto{display:inline-block;width:10mm;margin-right:.8mm;border-bottom:.3mm solid var(--ink);height:5mm;vertical-align:-.4mm}
+.peso .val svg{height:3.6mm;vertical-align:-.1mm;margin-left:1.1mm}
+.peso .orig{position:absolute;left:0;right:0;bottom:2.6mm;font-family:BarlowC;font-weight:500;font-size:6.2pt;letter-spacing:.07em;color:var(--seppia);padding-left:.07em}
+
+/* ---------- RETRO ---------- */
+.r-cornice{inset:2.4mm}
+.r-cornice svg{width:100%;height:100%;overflow:visible}
+.r-logo{left:6.6mm;top:5.5mm;width:29mm}
+.r-logo img{width:100%;display:block}
+.r-testa{left:40mm;right:6.6mm;top:6.2mm;text-align:right}
+.r-testa .t{font-family:Cinzel;font-weight:700;font-size:14pt;letter-spacing:.06em;color:var(--rosso);line-height:1}
+.r-testa .d{font-family:Cormorant;font-style:italic;font-weight:600;font-size:10pt;color:var(--ink);margin-top:1.1mm;line-height:1}
+.r-testa .d b{font-family:BarlowC;font-style:normal;font-weight:600;font-size:7pt;letter-spacing:.14em;color:var(--gelo);
+  border:.2mm solid var(--gelo);border-radius:.5mm;padding:.15mm 1mm 0 1.15mm;margin-left:1.2mm;position:relative;top:-.35mm}
+.r-greca{left:6.6mm;right:6.6mm;top:17.3mm;height:2.6mm}
+.r-greca svg{width:100%;height:100%;display:block}
+h3{font-family:BarlowC;font-weight:700;font-size:7.6pt;letter-spacing:.16em;text-transform:uppercase;color:var(--rosso);line-height:1;margin-bottom:1.15mm}
+.txt{font-family:Barlow;font-size:7pt;line-height:1.24;color:var(--ink)}
+.txt b{font-weight:700}
+.col{top:22.4mm}
+.c1{left:6.6mm;width:38.6mm}
+.c2{left:48.8mm;width:38.4mm}
+.c3{left:89.8mm;width:33.6mm}
+
+table.nutri{width:100%;border-collapse:collapse;font-family:BarlowC;font-weight:500;font-size:7.2pt;line-height:1.05;color:var(--ink);
+  border-top:.55mm solid var(--ink);border-bottom:.55mm solid var(--ink)}
+table.nutri th{font-weight:700;font-size:7pt;text-align:left;padding:.7mm 0 .55mm;letter-spacing:.03em;border-bottom:.3mm solid var(--ink)}
+table.nutri th:last-child{text-align:right}
+table.nutri td{padding:.5mm 0 .4mm;border-bottom:.12mm solid rgba(35,31,32,.35)}
+table.nutri td:last-child{text-align:right;white-space:nowrap;font-weight:600}
+table.nutri tr.sub td:first-child{padding-left:2mm;font-weight:400;font-style:italic}
+table.nutri tr.e td{font-weight:700}
+table.nutri tr:last-child td{border-bottom:0}
+
+.conserva{width:100%;border-collapse:collapse;font-family:BarlowC;font-size:7.2pt;line-height:1.05}
+.conserva td{padding:.45mm 0 .35mm;border-bottom:.12mm solid rgba(62,100,112,.45);color:var(--ink);font-weight:500}
+.conserva td:first-child{color:var(--gelo);font-weight:600;white-space:nowrap}
+.conserva td:last-child{text-align:right;font-weight:600}
+.stelle svg{height:2.2mm;width:auto;vertical-align:-.35mm;margin-right:.3mm}
+.avviso{margin-top:1.3mm;background:var(--gelo);color:#fff;font-family:BarlowC;font-weight:600;font-size:7.2pt;letter-spacing:.03em;
+  line-height:1.12;padding:1mm 1.2mm .9mm;border-radius:.6mm;text-align:center}
+.campi{top:62.8mm;left:6.6mm;width:38.6mm;height:11.2mm;border:.22mm solid var(--seppia);border-radius:.7mm;background:rgba(255,255,255,.6)}
+.campi div{position:absolute;left:1.3mm;right:1.3mm;font-family:BarlowC;font-weight:600;font-size:7pt;color:var(--seppia);line-height:1}
+.campi div em{font-style:normal;color:var(--ink);font-weight:700;margin-left:1mm}
+.campi .tmc{top:1.2mm}
+.campi .tmc em{display:block;margin:1mm 0 0;height:2.6mm}
+.campi .lot{top:7.6mm}
+.campi hr{position:absolute;left:1.3mm;right:1.3mm;top:6.6mm;border:0;border-top:.12mm dashed var(--seppia)}
+.riciclo{left:6.6mm;width:41mm;top:75.6mm;display:flex;align-items:center;gap:1.5mm}
+.riciclo svg{flex:none}
+.riciclo .txt{font-family:BarlowC;font-size:6.8pt;line-height:1.12}
+.prod{top:68.6mm;left:48.8mm;width:38.4mm}
+.barre{top:58.4mm;left:89.8mm;width:33.6mm;height:23.4mm;background:#fff;border-radius:.8mm;padding:.8mm .7mm}
+.barre img{width:100%;height:100%;display:block}
+.barre-n{left:91mm;width:32.4mm;top:78.9mm;text-align:center;font-family:BarlowC;font-weight:500;font-size:5.6pt;letter-spacing:.12em;color:var(--seppia)}
+</style>
+</head>
+<body>
+
+<!-- ===================== DATI VARIABILI ===================== -->
+<script>
+const DATI = {
+  peso: '',            // es. '250' -> "250 g ℮". Vuoto = campo da compilare/timbrare
+  lotto: '',           // vuoto = campo per timbratura
+  tmc: ''              // vuoto = campo per timbratura
+};
+</script>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="stella" viewBox="0 0 10 10">
+      <path d="M5,.4 6.15,3.7 9.6,3.75 6.85,5.85 7.85,9.2 5,7.2 2.15,9.2 3.15,5.85 .4,3.75 3.85,3.7Z" fill="#3E6470"/>
+    </symbol>
+    <symbol id="eStimato" viewBox="0 0 10 12">
+      <!-- simbolo ℮ (Dir. 76/211/CEE) -->
+      <path d="M1.6,6.1 H8.6 C8.6,3.3 7.1,1.5 5,1.5 C2.8,1.5 1.2,3.5 1.2,6.1 C1.2,8.7 2.8,10.6 5.1,10.6 C6.6,10.6 7.7,9.8 8.3,8.6"
+            fill="none" stroke="#231F20" stroke-width="1.05" stroke-linecap="butt"/>
+    </symbol>
+    <symbol id="rosetta" viewBox="-10 -10 20 20">
+      <g fill="#8E3424">
+        <circle r="1.7"/>
+        <g id="petalo"><path d="M0,-2.4 C1.6,-4 1.4,-7.3 0,-9 C-1.4,-7.3 -1.6,-4 0,-2.4Z"/></g>
+        <use href="#petalo" transform="rotate(45)"/><use href="#petalo" transform="rotate(90)"/><use href="#petalo" transform="rotate(135)"/>
+        <use href="#petalo" transform="rotate(180)"/><use href="#petalo" transform="rotate(225)"/><use href="#petalo" transform="rotate(270)"/><use href="#petalo" transform="rotate(315)"/>
+      </g>
+      <circle r=".75" fill="#E8B87C"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ===================== FRONTE 150 × 100 mm ===================== -->
+<section class="foglio fronte" id="fronte">
+  <div class="fondo"></div>
+  <div class="rif">
+    <!-- cornice + fregi -->
+    <div class="cornice">
+      <svg viewBox="0 0 142.8 92.8" preserveAspectRatio="none">
+        <rect x=".3" y=".3" width="142.2" height="92.2" fill="none" stroke="#8E3424" stroke-width=".55"/>
+        <rect x="1.25" y="1.25" width="140.3" height="90.3" fill="none" stroke="#8E3424" stroke-width=".16"/>
+        <!-- fregio superiore -->
+        <g transform="translate(9.4,2.6)">
+          <g transform="scale(0.45926) translate(-1,0)"><path d="M1,9.42 V1 H9 V7 H4 V4 H6.5 M11,9.42 V1 H19 V7 H14 V4 H16.5 M21,9.42 V1 H29 V7 H24 V4 H26.5 M31,9.42 V1 H39 V7 H34 V4 H36.5 M41,9.42 V1 H49 V7 H44 V4 H46.5 M51,9.42 V1 H59 V7 H54 V4 H56.5 M61,9.42 V1 H69 V7 H64 V4 H66.5 M71,9.42 V1 H79 V7 H74 V4 H76.5 M81,9.42 V1 H89 V7 H84 V4 H86.5 M91,9.42 V1 H99 V7 H94 V4 H96.5 M101,9.42 V1 H109 V7 H104 V4 H106.5 M111,9.42 V1 H119 V7 H114 V4 H116.5 M121,9.42 V1 H129 V7 H124 V4 H126.5 M131,9.42 V1 H139 V7 H134 V4 H136.5 M141,9.42 V1 H149 V7 H144 V4 H146.5 M151,9.42 V1 H159 V7 H154 V4 H156.5 M161,9.42 V1 H169 V7 H164 V4 H166.5 M171,9.42 V1 H179 V7 H174 V4 H176.5 M181,9.42 V1 H189 V7 H184 V4 H186.5 M191,9.42 V1 H199 V7 H194 V4 H196.5 M201,9.42 V1 H209 V7 H204 V4 H206.5 M211,9.42 V1 H219 V7 H214 V4 H216.5 M221,9.42 V1 H229 V7 H224 V4 H226.5 M231,9.42 V1 H239 V7 H234 V4 H236.5 M241,9.42 V1 H249 V7 H244 V4 H246.5 M251,9.42 V1 H259 V7 H254 V4 H256.5 M261,9.42 V1 H269 V7 H264 V4 H266.5 M271,9.42 V1 M1,9.42 H271" fill="none" stroke="#8E3424" stroke-width="1.15" stroke-linecap="square" stroke-linejoin="miter"/></g>
+          <line x1="0" y1="-.55" x2="124" y2="-.55" stroke="#8E3424" stroke-width=".16"/>
+          <line x1="0" y1="5.15" x2="124" y2="5.15" stroke="#8E3424" stroke-width=".16"/>
+        </g>
+        <!-- fregio inferiore -->
+        <g transform="translate(9.4,85.6)">
+          <g transform="scale(0.45926) translate(-1,0)"><path d="M1,9.42 V1 H9 V7 H4 V4 H6.5 M11,9.42 V1 H19 V7 H14 V4 H16.5 M21,9.42 V1 H29 V7 H24 V4 H26.5 M31,9.42 V1 H39 V7 H34 V4 H36.5 M41,9.42 V1 H49 V7 H44 V4 H46.5 M51,9.42 V1 H59 V7 H54 V4 H56.5 M61,9.42 V1 H69 V7 H64 V4 H66.5 M71,9.42 V1 H79 V7 H74 V4 H76.5 M81,9.42 V1 H89 V7 H84 V4 H86.5 M91,9.42 V1 H99 V7 H94 V4 H96.5 M101,9.42 V1 H109 V7 H104 V4 H106.5 M111,9.42 V1 H119 V7 H114 V4 H116.5 M121,9.42 V1 H129 V7 H124 V4 H126.5 M131,9.42 V1 H139 V7 H134 V4 H136.5 M141,9.42 V1 H149 V7 H144 V4 H146.5 M151,9.42 V1 H159 V7 H154 V4 H156.5 M161,9.42 V1 H169 V7 H164 V4 H166.5 M171,9.42 V1 H179 V7 H174 V4 H176.5 M181,9.42 V1 H189 V7 H184 V4 H186.5 M191,9.42 V1 H199 V7 H194 V4 H196.5 M201,9.42 V1 H209 V7 H204 V4 H206.5 M211,9.42 V1 H219 V7 H214 V4 H216.5 M221,9.42 V1 H229 V7 H224 V4 H226.5 M231,9.42 V1 H239 V7 H234 V4 H236.5 M241,9.42 V1 H249 V7 H244 V4 H246.5 M251,9.42 V1 H259 V7 H254 V4 H256.5 M261,9.42 V1 H269 V7 H264 V4 H266.5 M271,9.42 V1 M1,9.42 H271" fill="none" stroke="#8E3424" stroke-width="1.15" stroke-linecap="square" stroke-linejoin="miter"/></g>
+          <line x1="0" y1="-.55" x2="124" y2="-.55" stroke="#8E3424" stroke-width=".16"/>
+          <line x1="0" y1="5.15" x2="124" y2="5.15" stroke="#8E3424" stroke-width=".16"/>
+        </g>
+        <!-- rosette d'angolo -->
+        <use href="#rosetta" x="1.4" y="1.3" width="6.6" height="6.6"/>
+        <use href="#rosetta" x="134.8" y="1.3" width="6.6" height="6.6"/>
+        <use href="#rosetta" x="1.4" y="84.9" width="6.6" height="6.6"/>
+        <use href="#rosetta" x="134.8" y="84.9" width="6.6" height="6.6"/>
+      </svg>
+    </div>
+
+    <div class="logo"><img src="assets/logo_gustoso.svg" alt="Gustoso – Cucina Italiana"></div>
+
+    <div class="divisore">
+      <svg viewBox="0 0 62 3" width="100%">
+        <line x1="2" y1="1.5" x2="27" y2="1.5" stroke="#6E5133" stroke-width=".18"/>
+        <line x1="35" y1="1.5" x2="60" y2="1.5" stroke="#6E5133" stroke-width=".18"/>
+        <circle cx="1.2" cy="1.5" r=".55" fill="#E8B87C"/><circle cx="60.8" cy="1.5" r=".55" fill="#E8B87C"/>
+        <path d="M31,0 L32.5,1.5 L31,3 L29.5,1.5Z" fill="#8E3424"/>
+        <circle cx="28" cy="1.5" r=".42" fill="#8E3424"/><circle cx="34" cy="1.5" r=".42" fill="#8E3424"/>
+      </svg>
+    </div>
+
+    <img class="alloro sx" src="assets/alloro.svg" alt="">
+    <img class="alloro dx" src="assets/alloro.svg" alt="">
+    <div class="titolo">Pizza Romana</div>
+    <div class="denominazione">Base per pizza romana surgelata<b>Surgelato</b></div>
+    <div class="claim">Impasto con lievito naturale<svg viewBox="0 0 10 10"><path d="M5,0 10,5 5,10 0,5Z" fill="#E8B87C"/></svg>Farine di grano, soia e riso</div>
+
+    <div class="skyline"><img src="assets/skyline_roma.svg" alt=""></div>
+
+    <!-- sigillo surgelato -->
+    <svg class="sigillo" viewBox="0 0 100 100">
+      <defs><path id="arcoSu" d="M14.5,50 A35.5,35.5 0 0,1 85.5,50"/><path id="arcoGiu" d="M9.6,50 A40.4,40.4 0 0,0 90.4,50"/></defs>
+      <circle cx="50" cy="50" r="48.6" fill="#F6EEDF" stroke="#3E6470" stroke-width="1.6"/>
+      <circle cx="50" cy="50" r="45.4" fill="none" stroke="#3E6470" stroke-width=".55"/>
+      <circle cx="50" cy="50" r="29.2" fill="none" stroke="#3E6470" stroke-width=".55"/>
+      <circle cx="50" cy="50" r="27.4" fill="#3E6470"/>
+      <text font-family="BarlowC" font-weight="600" font-size="10" letter-spacing="1.25" fill="#3E6470" text-anchor="middle">
+        <textPath href="#arcoSu" startOffset="50%">PRODOTTO SURGELATO</textPath></text>
+      <text font-family="BarlowC" font-weight="600" font-size="10" letter-spacing="1.6" fill="#3E6470" text-anchor="middle">
+        <textPath href="#arcoGiu" startOffset="50%">NON RICONGELARE</textPath></text>
+      <path d="M8.6,50 l2.4,-2.4 2.4,2.4 -2.4,2.4Z M86.6,50 l2.4,-2.4 2.4,2.4 -2.4,2.4Z" fill="#8E3424"/>
+      <!-- fiocco -->
+      <g transform="translate(50,40.5)" stroke="#F3E9D6" stroke-width="1.5" stroke-linecap="round" fill="none">
+        <g id="raggio"><path d="M0,0 V-11.5 M0,-7 L-3,-10 M0,-7 L3,-10 M0,-3.6 L-2.2,-5.6 M0,-3.6 L2.2,-5.6"/></g>
+        <use href="#raggio" transform="rotate(60)"/><use href="#raggio" transform="rotate(120)"/>
+        <use href="#raggio" transform="rotate(180)"/><use href="#raggio" transform="rotate(240)"/><use href="#raggio" transform="rotate(300)"/>
+      </g>
+      <text x="50" y="68.6" text-anchor="middle" font-family="BarlowC" font-weight="700" font-size="13" fill="#F3E9D6" letter-spacing=".3">−18 °C</text>
+    </svg>
+
+    <!-- peso netto -->
+    <div class="peso">
+      <svg class="cart" viewBox="0 0 24 21" preserveAspectRatio="none">
+        <path d="M2.2,.5 H21.8 A1.7,1.7 0 0 0 23.5,2.2 V18.8 A1.7,1.7 0 0 0 21.8,20.5 H2.2 A1.7,1.7 0 0 0 .5,18.8 V2.2 A1.7,1.7 0 0 0 2.2,.5Z"
+              fill="#F6EEDF" stroke="#6E5133" stroke-width=".35"/>
+        <path d="M2.6,1.4 H21.4 A1.4,1.4 0 0 0 22.6,2.6 V18.4 A1.4,1.4 0 0 0 21.4,19.6 H2.6 A1.4,1.4 0 0 0 1.4,18.4 V2.6 A1.4,1.4 0 0 0 2.6,1.4Z"
+              fill="none" stroke="#6E5133" stroke-width=".12"/>
+        <line x1="5" y1="14.6" x2="19" y2="14.6" stroke="#6E5133" stroke-width=".12"/>
+      </svg>
+      <div class="et">PESO NETTO</div>
+      <div class="val"><span id="pesoVal"></span> g<svg viewBox="0 0 10 12"><use href="#eStimato"/></svg></div>
+      <div class="orig">PRODOTTO IN ITALIA</div>
+    </div>
+  </div>
+  <svg class="crocini"></svg>
+</section>
+
+<!-- ===================== RETRO 130 × 88 mm ===================== -->
+<section class="foglio retro" id="retro">
+  <div class="fondo"></div>
+  <div class="rif">
+    <div class="r-cornice">
+      <svg viewBox="0 0 125.2 83.2" preserveAspectRatio="none">
+        <rect x=".25" y=".25" width="124.7" height="82.7" rx="1.2" fill="none" stroke="#8E3424" stroke-width=".45"/>
+        <rect x="1.05" y="1.05" width="123.1" height="81.1" rx=".8" fill="none" stroke="#8E3424" stroke-width=".13"/>
+      </svg>
+    </div>
+    <div class="r-logo"><img src="assets/logo_gustoso.svg" alt="Gustoso – Cucina Italiana"></div>
+    <div class="r-testa">
+      <div class="t">Pizza Romana</div>
+      <div class="d">Base per pizza romana surgelata<b>SURGELATO</b></div>
+    </div>
+    <div class="r-greca">
+      <svg viewBox="0 0 116.8 2.6" preserveAspectRatio="none">
+        <line x1="0" y1=".2" x2="116.8" y2=".2" stroke="#8E3424" stroke-width=".14"/>
+        <g transform="translate(0,.55)"><g transform="scale(0.17176) translate(-1,0)"><path d="M1,9.42 V1 H9 V7 H4 V4 H6.5 M11,9.42 V1 H19 V7 H14 V4 H16.5 M21,9.42 V1 H29 V7 H24 V4 H26.5 M31,9.42 V1 H39 V7 H34 V4 H36.5 M41,9.42 V1 H49 V7 H44 V4 H46.5 M51,9.42 V1 H59 V7 H54 V4 H56.5 M61,9.42 V1 H69 V7 H64 V4 H66.5 M71,9.42 V1 H79 V7 H74 V4 H76.5 M81,9.42 V1 H89 V7 H84 V4 H86.5 M91,9.42 V1 H99 V7 H94 V4 H96.5 M101,9.42 V1 H109 V7 H104 V4 H106.5 M111,9.42 V1 H119 V7 H114 V4 H116.5 M121,9.42 V1 H129 V7 H124 V4 H126.5 M131,9.42 V1 H139 V7 H134 V4 H136.5 M141,9.42 V1 H149 V7 H144 V4 H146.5 M151,9.42 V1 H159 V7 H154 V4 H156.5 M161,9.42 V1 H169 V7 H164 V4 H166.5 M171,9.42 V1 H179 V7 H174 V4 H176.5 M181,9.42 V1 H189 V7 H184 V4 H186.5 M191,9.42 V1 H199 V7 H194 V4 H196.5 M201,9.42 V1 H209 V7 H204 V4 H206.5 M211,9.42 V1 H219 V7 H214 V4 H216.5 M221,9.42 V1 H229 V7 H224 V4 H226.5 M231,9.42 V1 H239 V7 H234 V4 H236.5 M241,9.42 V1 H249 V7 H244 V4 H246.5 M251,9.42 V1 H259 V7 H254 V4 H256.5 M261,9.42 V1 H269 V7 H264 V4 H266.5 M271,9.42 V1 H279 V7 H274 V4 H276.5 M281,9.42 V1 H289 V7 H284 V4 H286.5 M291,9.42 V1 H299 V7 H294 V4 H296.5 M301,9.42 V1 H309 V7 H304 V4 H306.5 M311,9.42 V1 H319 V7 H314 V4 H316.5 M321,9.42 V1 H329 V7 H324 V4 H326.5 M331,9.42 V1 H339 V7 H334 V4 H336.5 M341,9.42 V1 H349 V7 H344 V4 H346.5 M351,9.42 V1 H359 V7 H354 V4 H356.5 M361,9.42 V1 H369 V7 H364 V4 H366.5 M371,9.42 V1 H379 V7 H374 V4 H376.5 M381,9.42 V1 H389 V7 H384 V4 H386.5 M391,9.42 V1 H399 V7 H394 V4 H396.5 M401,9.42 V1 H409 V7 H404 V4 H406.5 M411,9.42 V1 H419 V7 H414 V4 H416.5 M421,9.42 V1 H429 V7 H424 V4 H426.5 M431,9.42 V1 H439 V7 H434 V4 H436.5 M441,9.42 V1 H449 V7 H444 V4 H446.5 M451,9.42 V1 H459 V7 H454 V4 H456.5 M461,9.42 V1 H469 V7 H464 V4 H466.5 M471,9.42 V1 H479 V7 H474 V4 H476.5 M481,9.42 V1 H489 V7 H484 V4 H486.5 M491,9.42 V1 H499 V7 H494 V4 H496.5 M501,9.42 V1 H509 V7 H504 V4 H506.5 M511,9.42 V1 H519 V7 H514 V4 H516.5 M521,9.42 V1 H529 V7 H524 V4 H526.5 M531,9.42 V1 H539 V7 H534 V4 H536.5 M541,9.42 V1 H549 V7 H544 V4 H546.5 M551,9.42 V1 H559 V7 H554 V4 H556.5 M561,9.42 V1 H569 V7 H564 V4 H566.5 M571,9.42 V1 H579 V7 H574 V4 H576.5 M581,9.42 V1 H589 V7 H584 V4 H586.5 M591,9.42 V1 H599 V7 H594 V4 H596.5 M601,9.42 V1 H609 V7 H604 V4 H606.5 M611,9.42 V1 H619 V7 H614 V4 H616.5 M621,9.42 V1 H629 V7 H624 V4 H626.5 M631,9.42 V1 H639 V7 H634 V4 H636.5 M641,9.42 V1 H649 V7 H644 V4 H646.5 M651,9.42 V1 H659 V7 H654 V4 H656.5 M661,9.42 V1 H669 V7 H664 V4 H666.5 M671,9.42 V1 H679 V7 H674 V4 H676.5 M681,9.42 V1 M1,9.42 H681" fill="none" stroke="#8E3424" stroke-width="1.15" stroke-linecap="square" stroke-linejoin="miter"/></g></g>
+        <line x1="0" y1="2.4" x2="116.8" y2="2.4" stroke="#8E3424" stroke-width=".14"/>
+      </svg>
+    </div>
+
+    <!-- colonna 1: dichiarazione nutrizionale -->
+    <div class="col c1">
+      <h3 style="letter-spacing:.075em">Dichiarazione nutrizionale</h3>
+      <table class="nutri">
+        <tr><th>Valori medi</th><th>per 100 g</th></tr>
+        <tr class="e"><td>Energia</td><td>967 kJ / 231 kcal</td></tr>
+        <tr><td>Grassi</td><td>0,8 g</td></tr>
+        <tr class="sub"><td>di cui acidi grassi saturi</td><td>0,1 g</td></tr>
+        <tr><td>Carboidrati</td><td>32 g</td></tr>
+        <tr class="sub"><td>di cui zuccheri</td><td>2,2 g</td></tr>
+        <tr><td>Fibre</td><td>1,6 g</td></tr>
+        <tr><td>Proteine</td><td>22 g</td></tr>
+        <tr><td>Sale</td><td>0,8 g</td></tr>
+      </table>
+    </div>
+    <div class="campi">
+      <div class="tmc">Da consumarsi preferibilmente entro il:<em id="tmcVal"></em></div>
+      <hr>
+      <div class="lot">Lotto:<em id="lottoVal"></em></div>
+    </div>
+    <div class="riciclo">
+      <svg viewBox="0 0 24 22" width="7mm" height="6.4mm"><path d="M13.80,4.73 L19.42,14.48" stroke="#231F20" stroke-width="1.25" stroke-linecap="round"/><path d="M21.12,17.42 L17.77,15.43 L21.07,13.53Z" fill="#231F20"/><path d="M19.00,20.00 L7.76,20.00" stroke="#231F20" stroke-width="1.25" stroke-linecap="round"/><path d="M4.37,20.00 L7.76,18.10 L7.76,21.90Z" fill="#231F20"/><path d="M3.20,16.87 L8.82,7.12" stroke="#231F20" stroke-width="1.25" stroke-linecap="round"/><path d="M10.52,4.18 L10.47,8.07 L7.17,6.17Z" fill="#231F20"/><text x="12" y="16.4" text-anchor="middle" font-family="BarlowC" font-weight="700" font-size="7.8" fill="#231F20">7</text></svg>
+      <p class="txt"><b>Sacchetto: PLASTICA 7 (O)</b><br>Raccolta plastica. Verifica le<br>disposizioni del tuo Comune.</p>
+    </div>
+
+    <!-- colonna 2: ingredienti, preparazione, operatore -->
+    <div class="col c2">
+      <h3>Ingredienti</h3>
+      <p class="txt">Farina di <b>grano</b> tenero tipo 0, semola rimacinata di <b>grano</b> duro, farina di <b>soia</b>, pasta acida (<b>glutine</b>), farina di riso, sale, olio extravergine di oliva, lievito naturale, aromi.</p>
+      <p class="txt" style="margin-top:.8mm">Può contenere tracce di <b>frutta a guscio</b> e <b>sesamo</b>.</p>
+      <h3 style="margin-top:2.2mm">Preparazione</h3>
+      <p class="txt">Cuocere senza scongelare in forno statico preriscaldato a 250 °C per <span style="white-space:nowrap">6–8 minuti</span>, fino a doratura. Condire a piacere.</p>
+    </div>
+    <div class="prod">
+      <p class="txt">Prodotto e confezionato da:<br><b>Caffè 6x6 di Boccuccia Angelo</b><br>Via Giorgioli, 29 – 00033 Cave (RM)<br>P.IVA 13331521008 · Origine: Italia</p>
+    </div>
+
+    <!-- colonna 3: conservazione + codice a barre -->
+    <div class="col c3">
+      <h3>Conservazione</h3>
+      <table class="conserva">
+        <tr><td class="stelle"><svg viewBox="0 0 43 10"><use href="#stella" width="10" height="10"/><use href="#stella" x="11" width="10" height="10"/><use href="#stella" x="22" width="10" height="10"/><use href="#stella" x="33" width="10" height="10"/></svg> −18 °C</td><td>fino alla data</td></tr>
+        <tr><td class="stelle"><svg viewBox="0 0 32 10"><use href="#stella" width="10" height="10"/><use href="#stella" x="11" width="10" height="10"/><use href="#stella" x="22" width="10" height="10"/></svg> −18 °C</td><td>1 mese</td></tr>
+        <tr><td class="stelle"><svg viewBox="0 0 21 10"><use href="#stella" width="10" height="10"/><use href="#stella" x="11" width="10" height="10"/></svg> −12 °C</td><td>1 settimana</td></tr>
+        <tr><td class="stelle"><svg viewBox="0 0 10 10"><use href="#stella" width="10" height="10"/></svg> −6 °C</td><td>3 giorni</td></tr>
+        <tr><td>Frigorifero</td><td>24 ore</td></tr>
+      </table>
+      <div class="avviso">Una volta scongelato, il prodotto non deve essere ricongelato</div>
+    </div>
+    <div class="barre"><img src="assets/barcode_8052675470031.svg" alt="EAN 8052675470031"></div>
+  </div>
+  <svg class="crocini"></svg>
+</section>
+
+<script>
+const q = new URLSearchParams(location.search);
+const pag = q.get('p'), bleed = parseFloat(q.get('bleed') || 0);
+if (pag) document.querySelectorAll('.foglio').forEach(s => { if (s.id !== pag) s.classList.add('nascosto'); });
+const mark = bleed ? 6 : 0;
+document.documentElement.style.setProperty('--b', bleed + 'mm');
+document.documentElement.style.setProperty('--m', mark + 'mm');
+
+document.getElementById('pesoVal').innerHTML = DATI.peso ? DATI.peso : '<span class="vuoto"></span>';
+document.getElementById('lottoVal').textContent = DATI.lotto;
+document.getElementById('tmcVal').textContent = DATI.tmc;
+
+// crocini di taglio (solo con abbondanza)
+if (bleed) document.querySelectorAll('.foglio').forEach(s => {
+  const w = parseFloat(getComputedStyle(s).getPropertyValue('--w')), h = parseFloat(getComputedStyle(s).getPropertyValue('--h'));
+  const W = w + 2*(bleed+mark), H = h + 2*(bleed+mark), o = bleed + mark, L = mark - 1;
+  const svg = s.querySelector('.crocini'); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  let d = '';
+  for (const x of [o, o + w]) d += `M${x},0 V${L} M${x},${H} V${H-L} `;
+  for (const y of [o, o + h]) d += `M0,${y} H${L} M${W},${y} H${W-L} `;
+  svg.innerHTML = `<path d="${d}" stroke="#000" stroke-width=".12" fill="none"/>`;
+});
+</script>
+</body>
+</html>
