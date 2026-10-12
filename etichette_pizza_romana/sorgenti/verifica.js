@@ -41,13 +41,15 @@ const check = (cond, msg) => (cond ? ok : ko).push(msg);
   }
   // 4) diciture obbligatorie
   const obbl = [['PIZZA ROMANA', 'Denominazione (fronte)'], ['surgelata', 'Indicazione "surgelata" accanto alla denominazione (D.Lgs. 110/1992)'],
-    ['PESO NETTO', 'Campo quantità netta con simbolo ℮ (fronte)'], ['conservare a −18 °C', 'Temperatura di conservazione sul fronte'],
+    ['PESO NETTO', 'Campo quantità netta con simbolo ℮ (fronte)'], ['PRODOTTO SURGELATO', 'Indicazione "prodotto surgelato" e temperatura −18 °C sul fronte (sigillo)'],
     ['Una volta scongelato, il prodotto non deve essere ricongelato', 'Avvertenza "non ricongelare" (D.Lgs. 110/1992)'],
     ['Da consumarsi preferibilmente entro il', 'Termine minimo di conservazione (campo per timbratura)'], ['Lotto', 'Lotto (campo per timbratura)'],
     ['Caffè 6x6 di Boccuccia Angelo', 'Operatore responsabile'], ['Via Giorgioli, 29 – 00033 Cave (RM)', 'Indirizzo operatore'], ['P.IVA 13331521008', 'Partita IVA'],
     ['Origine: Italia', 'Origine'], ['PLASTICA 7 (O)', 'Etichettatura ambientale (D.Lgs. 116/2020)'], ['PRODOTTO ARTIGIANALE ITALIANO', 'Claim "Prodotto artigianale italiano" sul fronte'],
     ['Preparazione', 'Istruzioni per l\'uso']];
   for (const [k, m] of obbl) check(T.includes(k), m);
+  check(!/base per|impasto/i.test(testo), 'Nessuna dicitura "base per pizza" o "impasto": il prodotto è una pizza romana surgelata');
+  check(!/condire/i.test(testo), 'Istruzioni coerenti con una pizza pronta (nessun "condire a piacere")');
   // 5) leggibilita': altezza della x >= 1,2 mm (Reg. 1169/2011 art. 13)
   const b = await chromium.launch(); const p = await b.newPage();
   await p.goto(SRC); await p.evaluate(() => document.fonts.ready);
@@ -83,7 +85,7 @@ const check = (cond, msg) => (cond ? ok : ko).push(msg);
   warn.push('"Prodotto artigianale": il claim va usato solo se il produttore è impresa artigiana (L. 443/1985) e la lavorazione è effettivamente artigianale.');
   warn.push('Allergene "pasta acida (glutine)": è il testo fornito; per maggiore precisione si può indicare il cereale, es. "pasta acida (di grano)".');
   warn.push('Sale indicato come 0,80 g: per valori sotto 1 g le linee guida UE sulle tolleranze prevedono due decimali (dato originale 0,8).');
-  warn.push('Gusto "CLASSICA": segnaposto. Per ogni gusto vanno aggiornati gusto, ingredienti e valori nutrizionali (blocco DATI e retro).');
+  warn.push('Ingredienti: l\'elenco fornito non contiene condimenti (pomodoro, mozzarella...). Se la pizza è condita vanno aggiunti, con i valori nutrizionali del prodotto finito.');
   const rep = `# Verifica etichette Gustoso – Pizza romana surgelata\n\n## Controlli superati (${ok.length})\n${ok.map(s => '- ✅ ' + s).join('\n')}\n\n` +
     (ko.length ? `## Controlli NON superati (${ko.length})\n${ko.map(s => '- ❌ ' + s).join('\n')}\n\n` : '## Controlli non superati\nNessuno.\n\n') +
     `## Da confermare con il produttore\n${warn.map(s => '- ⚠️ ' + s).join('\n')}\n`;

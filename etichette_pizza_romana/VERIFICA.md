@@ -1,6 +1,6 @@
 # Verifica etichette Gustoso – Pizza romana surgelata
 
-## Controlli superati (34)
+## Controlli superati (36)
 - ✅ Valore nutrizionale presente e uguale alla fonte: Energia 967 kJ / 231 kcal
 - ✅ Valore nutrizionale presente e uguale alla fonte: Grassi 0,8 g
 - ✅ Valore nutrizionale presente e uguale alla fonte: di cui acidi grassi saturi 0,1 g
@@ -21,7 +21,7 @@
 - ✅ Denominazione (fronte)
 - ✅ Indicazione "surgelata" accanto alla denominazione (D.Lgs. 110/1992)
 - ✅ Campo quantità netta con simbolo ℮ (fronte)
-- ✅ Temperatura di conservazione sul fronte
+- ✅ Indicazione "prodotto surgelato" e temperatura −18 °C sul fronte (sigillo)
 - ✅ Avvertenza "non ricongelare" (D.Lgs. 110/1992)
 - ✅ Termine minimo di conservazione (campo per timbratura)
 - ✅ Lotto (campo per timbratura)
@@ -32,6 +32,8 @@
 - ✅ Etichettatura ambientale (D.Lgs. 116/2020)
 - ✅ Claim "Prodotto artigianale italiano" sul fronte
 - ✅ Istruzioni per l'uso
+- ✅ Nessuna dicitura "base per pizza" o "impasto": il prodotto è una pizza romana surgelata
+- ✅ Istruzioni coerenti con una pizza pronta (nessun "condire a piacere")
 - ✅ Altezza minima della x nei testi obbligatori: 1.25 mm (≥ 1,2 mm) – testo più piccolo: "Farina di grano tenero tipo 0, semola ri (Barlow)"
 - ✅ Formati esatti: fronte 150 × 100 mm, retro 130 × 88 mm
 - ✅ Tutti i caratteri incorporati, nessun carattere di sostituzione
@@ -46,4 +48,4 @@ Nessuno.
 - ⚠️ "Prodotto artigianale": il claim va usato solo se il produttore è impresa artigiana (L. 443/1985) e la lavorazione è effettivamente artigianale.
 - ⚠️ Allergene "pasta acida (glutine)": è il testo fornito; per maggiore precisione si può indicare il cereale, es. "pasta acida (di grano)".
 - ⚠️ Sale indicato come 0,80 g: per valori sotto 1 g le linee guida UE sulle tolleranze prevedono due decimali (dato originale 0,8).
-- ⚠️ Gusto "CLASSICA": segnaposto. Per ogni gusto vanno aggiornati gusto, ingredienti e valori nutrizionali (blocco DATI e retro).
+- ⚠️ Ingredienti: l'elenco fornito non contiene condimenti (pomodoro, mozzarella...). Se la pizza è condita vanno aggiunti, con i valori nutrizionali del prodotto finito.
