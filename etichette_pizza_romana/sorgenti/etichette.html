@@ -96,6 +96,7 @@ table.nutri tr:last-child td{border-bottom:0}
 <!-- ===================== DATI VARIABILI ===================== -->
 <script>
 const DATI = {
+  gusto: 'CLASSICA',   // nome del gusto sulla targa in bronzo (es. MARGHERITA, DIAVOLA, BIANCA...)
   peso: '',            // es. '250' -> "250 g ℮". Vuoto = spazio da compilare/timbrare
   lotto: '',           // vuoto = spazio per timbratura
   tmc: ''              // vuoto = spazio per timbratura
@@ -140,58 +141,85 @@ const DATI = {
  <div class="vivo"><div class="rif">
   <svg class="tavola" viewBox="0 0 150 100">
     <defs>
-      <radialGradient id="gAlone" cx="75" cy="92" r="70" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stop-color="#EBC28A" stop-opacity=".45"/><stop offset=".6" stop-color="#EBC28A" stop-opacity=".12"/><stop offset="1" stop-color="#EBC28A" stop-opacity="0"/></radialGradient>
-      <path id="arcoSigillo" d="M0,0 m-9.35,0 a9.35,9.35 0 1,1 18.7,0 a9.35,9.35 0 1,1 -18.7,0"/>
+      <radialGradient id="gMed" cx="75" cy="42" r="22" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#FFFBF1"/><stop offset=".75" stop-color="#F7EEDB"/><stop offset="1" stop-color="#EADBB9"/></radialGradient>
+      <linearGradient id="gOroBordo" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#F3D89A"/><stop offset=".5" stop-color="#C89A4E"/><stop offset="1" stop-color="#8E6426"/></linearGradient>
+      <linearGradient id="gBronzo" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#F1D69A"/><stop offset=".45" stop-color="#D9AD62"/><stop offset="1" stop-color="#A97A36"/></linearGradient>
     </defs>
     <image href="assets/carta_fronte.jpg" x="-15" y="-15" width="180" height="130" preserveAspectRatio="none"/>
-    <rect x="-15" y="-15" width="180" height="130" fill="url(#gAlone)"/>
 
-    <!-- filetto di cornice -->
-    <rect x="4.2" y="4.2" width="141.6" height="91.6" rx="1.4" fill="none" stroke="#B8894A" stroke-width=".22"/>
-    <rect x="5.2" y="5.2" width="139.6" height="89.6" rx="1" fill="none" stroke="#B8894A" stroke-width=".08"/>
+    <!-- ===== fascia superiore rossa ===== -->
+    <image href="assets/rosso_vivo.jpg" x="-15" y="-15" width="180" height="46" preserveAspectRatio="none"/>
+    <g transform="translate(6.5,25.0) scale(0.40294,0.29000) translate(-1,0)"><path d="M1,9.42 V1 H9 V7 H4 V4 H6.5 M11,9.42 V1 H19 V7 H14 V4 H16.5 M21,9.42 V1 H29 V7 H24 V4 H26.5 M31,9.42 V1 H39 V7 H34 V4 H36.5 M41,9.42 V1 H49 V7 H44 V4 H46.5 M51,9.42 V1 H59 V7 H54 V4 H56.5 M61,9.42 V1 H69 V7 H64 V4 H66.5 M71,9.42 V1 H79 V7 H74 V4 H76.5 M81,9.42 V1 H89 V7 H84 V4 H86.5 M91,9.42 V1 H99 V7 H94 V4 H96.5 M101,9.42 V1 H109 V7 H104 V4 H106.5 M111,9.42 V1 H119 V7 H114 V4 H116.5 M121,9.42 V1 H129 V7 H124 V4 H126.5 M131,9.42 V1 H139 V7 H134 V4 H136.5 M141,9.42 V1 H149 V7 H144 V4 H146.5 M151,9.42 V1 H159 V7 H154 V4 H156.5 M161,9.42 V1 H169 V7 H164 V4 H166.5 M171,9.42 V1 H179 V7 H174 V4 H176.5 M181,9.42 V1 H189 V7 H184 V4 H186.5 M191,9.42 V1 H199 V7 H194 V4 H196.5 M201,9.42 V1 H209 V7 H204 V4 H206.5 M211,9.42 V1 H219 V7 H214 V4 H216.5 M221,9.42 V1 H229 V7 H224 V4 H226.5 M231,9.42 V1 H239 V7 H234 V4 H236.5 M241,9.42 V1 H249 V7 H244 V4 H246.5 M251,9.42 V1 H259 V7 H254 V4 H256.5 M261,9.42 V1 H269 V7 H264 V4 H266.5 M271,9.42 V1 H279 V7 H274 V4 H276.5 M281,9.42 V1 H289 V7 H284 V4 H286.5 M291,9.42 V1 H299 V7 H294 V4 H296.5 M301,9.42 V1 H309 V7 H304 V4 H306.5 M311,9.42 V1 H319 V7 H314 V4 H316.5 M321,9.42 V1 H329 V7 H324 V4 H326.5 M331,9.42 V1 H339 V7 H334 V4 H336.5 M341,9.42 V1 M1,9.42 H341" fill="none" stroke="#D9B36C" stroke-width="0.32" vector-effect="non-scaling-stroke"/></g>
+    <line x1="-15" y1="30.9" x2="165" y2="30.9" stroke="#C89A4E" stroke-width=".6"/>
+    <line x1="-15" y1="32.0" x2="165" y2="32.0" stroke="#C89A4E" stroke-width=".14"/>
+    <image href="assets/logo_gustoso_chiaro.svg" x="49" y="3.6" width="52" height="17.87"/>
 
-    <!-- pinsa: l'eroe dell'etichetta, sorge dal bordo inferiore -->
-    <image href="assets/pinsa_margherita.svg" x="-3.1" y="46.4" width="156.2" height="105.6"/>
-
-    <!-- testata -->
-    <image href="assets/logo_gustoso.svg" x="46" y="7.6" width="58" height="19.93"/>
-    <text x="75" y="39.6" text-anchor="middle" font-family="Cinzel" font-weight="700" font-size="9.4" letter-spacing="1.25" fill="#9A2A1C">PIZZA ROMANA</text>
-    <g transform="translate(75,45.1)">
-      <line x1="-31" x2="-12.6" stroke="#B8894A" stroke-width=".16"/><line x1="12.6" x2="31" stroke="#B8894A" stroke-width=".16"/>
-      <circle cx="-31.8" r=".42" fill="#B8894A"/><circle cx="31.8" r=".42" fill="#B8894A"/>
+    <!-- surgelato -->
+    <g transform="translate(13.2,13.2)">
+      <circle r="5.1" fill="none" stroke="#E9C987" stroke-width=".3"/>
+      <circle r="4.4" fill="none" stroke="#E9C987" stroke-width=".1"/>
+      <use href="#fiocco" stroke="#F7EFDE" stroke-width=".42" transform="scale(.68)"/>
     </g>
-    <text x="75" y="46.7" text-anchor="middle" font-family="Cormorant" font-style="italic" font-weight="600" font-size="5.3" fill="#2A2421">surgelata</text>
+    <text x="20.6" y="11.6" font-family="Cinzel" font-weight="700" font-size="3" letter-spacing=".35" fill="#F7EFDE">SURGELATO</text>
+    <text x="20.6" y="16.2" font-family="Cormorant" font-style="italic" font-weight="600" font-size="3.4" fill="#F1DDB0">conservare a −18 °C</text>
 
-    <!-- nastro: prodotto artigianale italiano -->
-    <g transform="translate(75,53.6)">
-      <!-- code piegate -->
-      <path d="M-50,-2.4 H-40 V6.2 H-50 L-46.6,1.9Z" fill="#7E2015"/>
-      <path d="M50,-2.4 H40 V6.2 H50 L46.6,1.9Z" fill="#7E2015"/>
-      <path d="M-43.4,6.2 L-40,3.6 V6.2Z M43.4,6.2 L40,3.6 V6.2Z" fill="#4E120B"/>
-      <path d="M-43.4,-4.4 H43.4 V3.6 H-43.4Z" fill="#9A2A1C"/>
-      <line x1="-42.2" y1="-3.4" x2="42.2" y2="-3.4" stroke="#E9C987" stroke-width=".16"/>
-      <line x1="-42.2" y1="2.6" x2="42.2" y2="2.6" stroke="#E9C987" stroke-width=".16"/>
-      <text x="0" y=".85" text-anchor="middle" font-family="Cinzel" font-weight="700" font-size="3.55" letter-spacing=".32" fill="#F7EFDE">PRODOTTO ARTIGIANALE ITALIANO</text>
+    <!-- peso netto -->
+    <text x="138.2" y="10.4" text-anchor="end" font-family="BarlowC" font-weight="600" font-size="2.3" letter-spacing=".42" fill="#E9C987">PESO NETTO</text>
+    <g id="peso" transform="translate(138.2,17.6)" color="#F7EFDE"></g>
+
+    <!-- ===== colonne ioniche ===== -->
+    <g transform="translate(7.7,0) scale(.86,1) translate(-10.2,0)"><rect x="6.70" y="36.20" width="7.00" height=".9" fill="#F3E6C9" stroke="#B8894A" stroke-width=".18"/><path d="M7.00,37.10 H13.40 Q12.80,38.60 10.20,38.70 Q7.60,38.60 7.00,37.10Z" fill="#F3E6C9" stroke="#B8894A" stroke-width=".18"/><circle cx="7.45" cy="38.20" r="1.12" fill="#F3E6C9" stroke="#B8894A" stroke-width=".18"/><path d="M7.45,37.10 a1.1,1.1 0 1,0 0,2.2 a.75,.75 0 1,0 0,-1.5 a.42,.42 0 1,0 0,.84" fill="none" stroke="#B8894A" stroke-width=".14"/><circle cx="12.95" cy="38.20" r="1.12" fill="#F3E6C9" stroke="#B8894A" stroke-width=".18"/><path d="M12.95,37.10 a1.1,1.1 0 1,1 0,2.2 a.75,.75 0 1,1 0,-1.5 a.42,.42 0 1,1 0,.84" fill="none" stroke="#B8894A" stroke-width=".14"/><rect x="7.87" y="39.10" width="4.66" height=".5" fill="#F3E6C9" stroke="#B8894A" stroke-width=".14"/><path d="M8.17,39.60 L7.60,78.80 H12.80 L12.23,39.60Z" fill="#F3E6C9" stroke="#B8894A" stroke-width=".18"/><line x1="8.98" y1="40.20" x2="8.64" y2="78.20" stroke="#B8894A" stroke-width=".1"/><line x1="9.79" y1="40.20" x2="9.68" y2="78.20" stroke="#B8894A" stroke-width=".1"/><line x1="10.61" y1="40.20" x2="10.72" y2="78.20" stroke="#B8894A" stroke-width=".1"/><line x1="11.42" y1="40.20" x2="11.76" y2="78.20" stroke="#B8894A" stroke-width=".1"/><rect x="7.10" y="78.80" width="6.20" height=".8" rx=".4" fill="#F3E6C9" stroke="#B8894A" stroke-width=".14"/><rect x="6.70" y="79.60" width="7.00" height=".9" rx=".45" fill="#F3E6C9" stroke="#B8894A" stroke-width=".14"/><rect x="6.40" y="80.50" width="7.60" height=".9" fill="#F3E6C9" stroke="#B8894A" stroke-width=".14"/></g>
+    <g transform="translate(142.3,0) scale(.86,1) translate(-139.8,0)"><rect x="136.30" y="36.20" width="7.00" height=".9" fill="#F3E6C9" stroke="#B8894A" stroke-width=".18"/><path d="M136.60,37.10 H143.00 Q142.40,38.60 139.80,38.70 Q137.20,38.60 136.60,37.10Z" fill="#F3E6C9" stroke="#B8894A" stroke-width=".18"/><circle cx="137.05" cy="38.20" r="1.12" fill="#F3E6C9" stroke="#B8894A" stroke-width=".18"/><path d="M137.05,37.10 a1.1,1.1 0 1,0 0,2.2 a.75,.75 0 1,0 0,-1.5 a.42,.42 0 1,0 0,.84" fill="none" stroke="#B8894A" stroke-width=".14"/><circle cx="142.55" cy="38.20" r="1.12" fill="#F3E6C9" stroke="#B8894A" stroke-width=".18"/><path d="M142.55,37.10 a1.1,1.1 0 1,1 0,2.2 a.75,.75 0 1,1 0,-1.5 a.42,.42 0 1,1 0,.84" fill="none" stroke="#B8894A" stroke-width=".14"/><rect x="137.47" y="39.10" width="4.66" height=".5" fill="#F3E6C9" stroke="#B8894A" stroke-width=".14"/><path d="M137.77,39.60 L137.20,78.80 H142.40 L141.83,39.60Z" fill="#F3E6C9" stroke="#B8894A" stroke-width=".18"/><line x1="138.58" y1="40.20" x2="138.24" y2="78.20" stroke="#B8894A" stroke-width=".1"/><line x1="139.39" y1="40.20" x2="139.28" y2="78.20" stroke="#B8894A" stroke-width=".1"/><line x1="140.21" y1="40.20" x2="140.32" y2="78.20" stroke="#B8894A" stroke-width=".1"/><line x1="141.02" y1="40.20" x2="141.36" y2="78.20" stroke="#B8894A" stroke-width=".1"/><rect x="136.70" y="78.80" width="6.20" height=".8" rx=".4" fill="#F3E6C9" stroke="#B8894A" stroke-width=".14"/><rect x="136.30" y="79.60" width="7.00" height=".9" rx=".45" fill="#F3E6C9" stroke="#B8894A" stroke-width=".14"/><rect x="136.00" y="80.50" width="7.60" height=".9" fill="#F3E6C9" stroke="#B8894A" stroke-width=".14"/></g>
+
+    <!-- ===== medaglione: elmo da legionario e corona d'alloro ===== -->
+    <circle cx="75.5" cy="47.4" r="20.6" fill="#5A1A10" opacity=".22"/>
+    <circle cx="75" cy="46.6" r="20.6" fill="url(#gOroBordo)"/>
+    <circle cx="75" cy="46.6" r="19.75" fill="url(#gMed)"/>
+    <g fill="#B8894A"><circle cx="94.050" cy="46.600" r=".26"/><circle cx="93.946" cy="48.591" r=".26"/><circle cx="93.634" cy="50.561" r=".26"/><circle cx="93.118" cy="52.487" r=".26"/><circle cx="92.403" cy="54.348" r=".26"/><circle cx="91.498" cy="56.125" r=".26"/><circle cx="90.412" cy="57.797" r=".26"/><circle cx="89.157" cy="59.347" r=".26"/><circle cx="87.747" cy="60.757" r=".26"/><circle cx="86.197" cy="62.012" r=".26"/><circle cx="84.525" cy="63.098" r=".26"/><circle cx="82.748" cy="64.003" r=".26"/><circle cx="80.887" cy="64.718" r=".26"/><circle cx="78.961" cy="65.234" r=".26"/><circle cx="76.991" cy="65.546" r=".26"/><circle cx="75.000" cy="65.650" r=".26"/><circle cx="73.009" cy="65.546" r=".26"/><circle cx="71.039" cy="65.234" r=".26"/><circle cx="69.113" cy="64.718" r=".26"/><circle cx="67.252" cy="64.003" r=".26"/><circle cx="65.475" cy="63.098" r=".26"/><circle cx="63.803" cy="62.012" r=".26"/><circle cx="62.253" cy="60.757" r=".26"/><circle cx="60.843" cy="59.347" r=".26"/><circle cx="59.588" cy="57.797" r=".26"/><circle cx="58.502" cy="56.125" r=".26"/><circle cx="57.597" cy="54.348" r=".26"/><circle cx="56.882" cy="52.487" r=".26"/><circle cx="56.366" cy="50.561" r=".26"/><circle cx="56.054" cy="48.591" r=".26"/><circle cx="55.950" cy="46.600" r=".26"/><circle cx="56.054" cy="44.609" r=".26"/><circle cx="56.366" cy="42.639" r=".26"/><circle cx="56.882" cy="40.713" r=".26"/><circle cx="57.597" cy="38.852" r=".26"/><circle cx="58.502" cy="37.075" r=".26"/><circle cx="59.588" cy="35.403" r=".26"/><circle cx="60.843" cy="33.853" r=".26"/><circle cx="62.253" cy="32.443" r=".26"/><circle cx="63.803" cy="31.188" r=".26"/><circle cx="65.475" cy="30.102" r=".26"/><circle cx="67.252" cy="29.197" r=".26"/><circle cx="69.113" cy="28.482" r=".26"/><circle cx="71.039" cy="27.966" r=".26"/><circle cx="73.009" cy="27.654" r=".26"/><circle cx="75.000" cy="27.550" r=".26"/><circle cx="76.991" cy="27.654" r=".26"/><circle cx="78.961" cy="27.966" r=".26"/><circle cx="80.887" cy="28.482" r=".26"/><circle cx="82.748" cy="29.197" r=".26"/><circle cx="84.525" cy="30.102" r=".26"/><circle cx="86.197" cy="31.188" r=".26"/><circle cx="87.747" cy="32.443" r=".26"/><circle cx="89.157" cy="33.853" r=".26"/><circle cx="90.412" cy="35.403" r=".26"/><circle cx="91.498" cy="37.075" r=".26"/><circle cx="92.403" cy="38.852" r=".26"/><circle cx="93.118" cy="40.713" r=".26"/><circle cx="93.634" cy="42.639" r=".26"/><circle cx="93.946" cy="44.609" r=".26"/></g>
+    <circle cx="75" cy="46.6" r="18.2" fill="none" stroke="#B8894A" stroke-width=".14"/>
+    <image href="assets/corona_alloro.svg" x="57.06" y="37.2" width="35.88" height="31.2"/>
+    <image href="assets/elmo_romano.svg" x="63.2" y="30.2" width="23.4" height="27.35"/>
+
+    <!-- ===== nome ===== -->
+    <text id="tPizza" x="52.6" y="50" text-anchor="end" font-family="Cinzel" font-weight="700" font-size="7.9" letter-spacing=".3" fill="#9A2A1C">PIZZA</text>
+    <text id="tRomana" x="97.6" y="50" font-family="Cinzel" font-weight="700" font-size="7.9" letter-spacing=".3" fill="#9A2A1C">ROMANA</text>
+    <line x1="22" y1="54" x2="52" y2="54" stroke="#B8894A" stroke-width=".18"/>
+    <line x1="98" y1="54" x2="128" y2="54" stroke="#B8894A" stroke-width=".18"/>
+    <circle cx="21.2" cy="54" r=".45" fill="#B8894A"/><circle cx="128.8" cy="54" r=".45" fill="#B8894A"/>
+
+    <!-- claim laterali -->
+    <g transform="translate(35.6,63.6)"><use href="#spiga" fill="#B8894A" stroke="#B8894A" transform="scale(.55)"/></g>
+    <text x="35.6" y="71.6" text-anchor="middle" font-family="BarlowC" font-weight="600" font-size="2.5" letter-spacing=".38" fill="#5A3E22">CON LIEVITO</text>
+    <text x="35.6" y="74.6" text-anchor="middle" font-family="BarlowC" font-weight="600" font-size="2.5" letter-spacing=".38" fill="#5A3E22">NATURALE</text>
+    <g transform="translate(114.4,63.6)" fill="#B8894A">
+      <path d="M0,-3.4 C1.6,-1.2 2.3,.2 2.3,1.3 C2.3,2.7 1.3,3.6 0,3.6 C-1.3,3.6 -2.3,2.7 -2.3,1.3 C-2.3,.2 -1.6,-1.2 0,-3.4Z"/>
+      <path d="M-.9,1.2 C-.9,2.1 -.4,2.6 .3,2.7" fill="none" stroke="#F7EFDE" stroke-width=".28" stroke-linecap="round"/>
+    </g>
+    <text x="114.4" y="71.6" text-anchor="middle" font-family="BarlowC" font-weight="600" font-size="2.5" letter-spacing=".38" fill="#5A3E22">OLIO EXTRAVERGINE</text>
+    <text x="114.4" y="74.6" text-anchor="middle" font-family="BarlowC" font-weight="600" font-size="2.5" letter-spacing=".38" fill="#5A3E22">DI OLIVA</text>
+
+    <!-- surgelata -->
+    <text x="75" y="72.3" text-anchor="middle" font-family="Cormorant" font-style="italic" font-weight="600" font-size="4.9" fill="#2A2421">surgelata</text>
+
+    <!-- ===== gusto: tabula ansata in bronzo ===== -->
+    <g transform="translate(75,78.7)">
+      <path d="M-24,-3.7 H24 L31,-3.7 L27,0 L31,3.7 H24 H-24 L-31,3.7 L-27,0 L-31,-3.7Z" fill="#5A1A10" opacity=".22" transform="translate(.4,.5)"/>
+      <path d="M-24,-3.7 H24 L31,-3.7 L27,0 L31,3.7 H-31 L-27,0 L-31,-3.7Z" fill="url(#gBronzo)"/>
+      <path d="M-23.2,-2.9 H23.2 V2.9 H-23.2Z" fill="none" stroke="#7E5520" stroke-width=".18"/>
+      <circle cx="-27.6" cy="0" r=".55" fill="#7E5520"/><circle cx="27.6" cy="0" r=".55" fill="#7E5520"/>
+      <text id="gustoTxt" x="0" y="1.55" text-anchor="middle" font-family="Cinzel" font-weight="700" font-size="4.2" letter-spacing=".55" fill="#4A2A0C"></text>
     </g>
 
-    <!-- angolo sinistro: surgelato -->
-    <g transform="translate(12.2,15.6)">
-      <circle r="5.2" fill="#2F4F5C"/>
-      <use href="#fiocco" stroke="#F7EFDE" stroke-width=".42" transform="scale(.76)"/>
-    </g>
-    <text x="19.4" y="14.1" font-family="Cinzel" font-weight="700" font-size="2.95" letter-spacing=".35" fill="#2F4F5C">SURGELATO</text>
-    <text x="19.4" y="18.6" font-family="Cormorant" font-style="italic" font-weight="600" font-size="3.3" fill="#2A2421">conservare a −18 °C</text>
-    <text x="19.4" y="22.4" font-family="BarlowC" font-weight="600" font-size="2.15" letter-spacing=".3" fill="#9A2A1C">NON RICONGELARE</text>
-
-    <!-- angolo destro: peso netto -->
-    <text x="137.4" y="12.8" text-anchor="end" font-family="BarlowC" font-weight="600" font-size="2.3" letter-spacing=".42" fill="#8A6A40">PESO NETTO</text>
-    <g id="peso" transform="translate(137.4,20.6)" color="#2A2421"></g>
-    <text x="137.4" y="25" text-anchor="end" font-family="BarlowC" font-weight="600" font-size="2.15" letter-spacing=".3" fill="#9A2A1C">PRODOTTO IN ITALIA</text>
-
-    <!-- dicitura obbligatoria per l'immagine -->
-    <rect x="104.6" y="92" width="38.4" height="3.9" rx="1.95" fill="#F7EFDE" opacity=".92"/>
-    <text x="123.8" y="94.75" text-anchor="middle" font-family="BarlowC" font-weight="500" font-size="2.1" letter-spacing=".2" fill="#2A2421">SUGGERIMENTO DI PRESENTAZIONE</text>
+    <!-- ===== fascia inferiore rossa ===== -->
+    <image href="assets/rosso_vivo.jpg" x="-15" y="84.6" width="180" height="30" preserveAspectRatio="none"/>
+    <line x1="-15" y1="84.7" x2="165" y2="84.7" stroke="#C89A4E" stroke-width=".6"/>
+    <line x1="-15" y1="85.8" x2="165" y2="85.8" stroke="#C89A4E" stroke-width=".14"/>
+    <text x="75" y="94.3" text-anchor="middle" font-family="Cinzel" font-weight="700" font-size="4.3" letter-spacing=".62" fill="#F7EFDE">PRODOTTO ARTIGIANALE ITALIANO</text>
+    <image href="assets/rametto_sx.svg" x="5.5" y="88.4" width="14" height="6.4"/>
+    <image href="assets/rametto_dx.svg" x="130.5" y="88.4" width="14" height="6.4"/>
   </svg>
  </div></div>
  <svg class="crocini"></svg>
@@ -203,14 +231,14 @@ const DATI = {
   <svg class="tavola" viewBox="0 0 130 88">
     <image href="assets/carta_retro.jpg" x="-10" y="-10" width="150" height="108" preserveAspectRatio="none"/>
     <!-- testata: zoccolo nero -->
-    <image href="assets/zoccolo_nero.jpg" x="-10" y="-10" width="150" height="28.4" preserveAspectRatio="none"/>
-    <line x1="-10" y1="18.4" x2="140" y2="18.4" stroke="#D4A65F" stroke-width=".55"/>
+    <image href="assets/rosso_vivo.jpg" x="-10" y="-10" width="150" height="28.4" preserveAspectRatio="none"/>
+    <line x1="-10" y1="18.4" x2="140" y2="18.4" stroke="#C89A4E" stroke-width=".55"/>
     <line x1="-10" y1="19.55" x2="140" y2="19.55" stroke="#A97A36" stroke-width=".13"/>
     <image href="assets/logo_gustoso_chiaro.svg" x="6.6" y="3.5" width="31" height="10.65"/>
     <text x="123.4" y="9.6" text-anchor="end" font-family="Cinzel" font-weight="700" font-size="5.2" letter-spacing=".5" fill="#F4E8D0"><tspan font-family="Cormorant" font-style="italic" font-weight="600" font-size="6.6" letter-spacing="0" fill="#D4A65F">Pizza </tspan>ROMANA</text>
-    <text x="123.4" y="14.9" text-anchor="end" font-family="Cormorant" font-style="italic" font-weight="600" font-size="3.55" fill="#F4E8D0">Pizza romana surgelata · Prodotto artigianale italiano</text>
+    <text x="123.4" y="14.9" text-anchor="end" font-family="Cormorant" font-style="italic" font-weight="600" font-size="3.55" fill="#F4E8D0">Pizza romana surgelata · gusto <tspan class="gustoRetro" font-weight="600"></tspan></text>
     <!-- piede rosso -->
-    <image href="assets/affresco_rosso.jpg" x="-10" y="85.2" width="150" height="14" preserveAspectRatio="none"/>
+    <image href="assets/rosso_vivo.jpg" x="-10" y="85.2" width="150" height="14" preserveAspectRatio="none"/>
     <line x1="-10" y1="85.2" x2="140" y2="85.2" stroke="#D4A65F" stroke-width=".45"/>
   </svg>
 
@@ -226,7 +254,7 @@ const DATI = {
       <tr class="sub"><td>di cui zuccheri</td><td>2,2 g</td></tr>
       <tr><td>Fibre</td><td>1,6 g</td></tr>
       <tr><td>Proteine</td><td>22 g</td></tr>
-      <tr><td>Sale</td><td>0,8 g</td></tr>
+      <tr><td>Sale</td><td>0,80 g</td></tr>
     </table>
   </div>
   <div class="campi">
@@ -280,11 +308,13 @@ document.documentElement.style.setProperty('--m', mark + 'mm');
 const p = document.getElementById('peso');
 const eSym = x => `<svg x="${x}" y="-4.3" width="3.5" height="4.25" viewBox="0 0 10 12"><use href="#eStimato"/></svg>`;
 if (DATI.peso) {
-  p.innerHTML = `<text x="-4.4" text-anchor="end" font-family="BarlowC" font-weight="700" font-size="6.6" fill="#2A2421">${DATI.peso} g</text>${eSym(-3.5)}`;
+  p.innerHTML = `<text x="-4.4" text-anchor="end" font-family="BarlowC" font-weight="700" font-size="6.6" fill="#F7EFDE">${DATI.peso} g</text>${eSym(-3.5)}`;
 } else {
-  p.innerHTML = `<line x1="-21" x2="-9" y1=".35" y2=".35" stroke="#2A2421" stroke-width=".25"/>
-    <text x="-4.4" text-anchor="end" font-family="BarlowC" font-weight="700" font-size="6.6" fill="#2A2421">g</text>${eSym(-3.5)}`;
+  p.innerHTML = `<line x1="-21" x2="-9" y1=".35" y2=".35" stroke="#F7EFDE" stroke-width=".25"/>
+    <text x="-4.4" text-anchor="end" font-family="BarlowC" font-weight="700" font-size="6.6" fill="#F7EFDE">g</text>${eSym(-3.5)}`;
 }
+document.getElementById('gustoTxt').textContent = DATI.gusto.toUpperCase();
+document.querySelectorAll('.gustoRetro').forEach(el => el.textContent = DATI.gusto.charAt(0).toUpperCase() + DATI.gusto.slice(1).toLowerCase());
 document.getElementById('lottoVal').textContent = DATI.lotto;
 document.getElementById('tmcVal').textContent = DATI.tmc;
 

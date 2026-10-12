@@ -62,4 +62,22 @@ def corona(out, foglia='#A97A36', foglia2='#C39552', ramo='#8A5F28', bacca='#7B2
 
 corona('assets/corona_alloro.svg')
 # ghirlanda ribassata da mettere sotto il nome del prodotto
-corona('assets/ghirlanda.svg', R=38, a0=91.2, a1=140, n=9, vb=(5, 18.5, 78, 29.5), leaf=.92)
+
+
+def rametto(out, verso=1, col='#E3BE78', col2='#C99A50'):
+    """Rametto d'alloro orizzontale (14 x 6.4 mm) per le fasce rosse; verso=-1 lo specchia."""
+    o = ['<path d="M.6,3.4 Q7,3.9 13.4,2.6" stroke="%s" stroke-width=".32" fill="none" stroke-linecap="round"/>' % col2]
+    for i in range(6):
+        t = .1 + i*.15
+        x = .6 + 12.8*t; y = 3.4 + .5*math.sin(math.pi*t) - .8*t
+        s = 1 - .35*t
+        for rot, c in ((-40, col), (36, col2)):
+            o.append(f'<g transform="translate({f(x)},{f(y)}) rotate({rot})"><path d="M0,0 C{f(.9*s)},{f(-.9*s)} {f(2.4*s)},{f(-.8*s)} {f(3.1*s)},0 C{f(2.4*s)},{f(.8*s)} {f(.9*s)},{f(.9*s)} 0,0Z" fill="{c}"/></g>')
+    o.append(f'<g transform="translate(13.3,2.65) rotate(-10)"><path d="M0,0 C.8,-.8 2,-.7 2.6,0 C2,.7 .8,.8 0,0Z" fill="{col}"/></g>')
+    g = ''.join(o)
+    if verso < 0:
+        g = f'<g transform="translate(14,0) scale(-1,1)">{g}</g>'
+    open(out, 'w').write(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 6.4" width="14mm" height="6.4mm">{g}</svg>')
+
+rametto('assets/rametto_dx.svg', 1)
+rametto('assets/rametto_sx.svg', -1)
