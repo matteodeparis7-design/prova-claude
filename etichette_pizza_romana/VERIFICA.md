@@ -1,6 +1,6 @@
 # Verifica etichette Gustoso – Pizza romana surgelata
 
-## Controlli superati (36)
+## Controlli superati (37)
 - ✅ Valore nutrizionale presente e uguale alla fonte: Energia 967 kJ / 231 kcal
 - ✅ Valore nutrizionale presente e uguale alla fonte: Grassi 0,8 g
 - ✅ Valore nutrizionale presente e uguale alla fonte: di cui acidi grassi saturi 0,1 g
@@ -20,7 +20,6 @@
 - ✅ Codice a barre decodificato dal PDF di stampa (rasterizzato a 1200 dpi): 8052675470031
 - ✅ Denominazione (fronte)
 - ✅ Indicazione "surgelata" accanto alla denominazione (D.Lgs. 110/1992)
-- ✅ Campo quantità netta con simbolo ℮ (fronte)
 - ✅ Indicazione "prodotto surgelato" e temperatura −18 °C sul fronte (sigillo)
 - ✅ Avvertenza "non ricongelare" (D.Lgs. 110/1992)
 - ✅ Termine minimo di conservazione (campo per timbratura)
@@ -32,6 +31,8 @@
 - ✅ Etichettatura ambientale (D.Lgs. 116/2020)
 - ✅ Claim "Prodotto artigianale italiano" sul fronte
 - ✅ Istruzioni per l'uso
+- ✅ Peso netto (con ℮) sul retro nello stesso campo visivo della denominazione "Pizza romana surgelata" (art. 13.5)
+- ✅ Bollino tricolore "Prodotto in Italia" sul fronte
 - ✅ Nessuna dicitura "base per pizza" o "impasto": il prodotto è una pizza romana surgelata
 - ✅ Istruzioni coerenti con una pizza pronta (nessun "condire a piacere")
 - ✅ Altezza minima della x nei testi obbligatori: 1.25 mm (≥ 1,2 mm) – testo più piccolo: "Farina di grano tenero tipo 0, semola ri (Barlow)"

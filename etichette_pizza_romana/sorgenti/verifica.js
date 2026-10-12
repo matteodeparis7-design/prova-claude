@@ -41,13 +41,18 @@ const check = (cond, msg) => (cond ? ok : ko).push(msg);
   }
   // 4) diciture obbligatorie
   const obbl = [['PIZZA ROMANA', 'Denominazione (fronte)'], ['surgelata', 'Indicazione "surgelata" accanto alla denominazione (D.Lgs. 110/1992)'],
-    ['PESO NETTO', 'Campo quantità netta con simbolo ℮ (fronte)'], ['PRODOTTO SURGELATO', 'Indicazione "prodotto surgelato" e temperatura −18 °C sul fronte (sigillo)'],
+     ['PRODOTTO SURGELATO', 'Indicazione "prodotto surgelato" e temperatura −18 °C sul fronte (sigillo)'],
     ['Una volta scongelato, il prodotto non deve essere ricongelato', 'Avvertenza "non ricongelare" (D.Lgs. 110/1992)'],
     ['Da consumarsi preferibilmente entro il', 'Termine minimo di conservazione (campo per timbratura)'], ['Lotto', 'Lotto (campo per timbratura)'],
     ['Caffè 6x6 di Boccuccia Angelo', 'Operatore responsabile'], ['Via Giorgioli, 29 – 00033 Cave (RM)', 'Indirizzo operatore'], ['P.IVA 13331521008', 'Partita IVA'],
     ['Origine: Italia', 'Origine'], ['PLASTICA 7 (O)', 'Etichettatura ambientale (D.Lgs. 116/2020)'], ['PRODOTTO ARTIGIANALE ITALIANO', 'Claim "Prodotto artigianale italiano" sul fronte'],
     ['Preparazione', 'Istruzioni per l\'uso']];
   for (const [k, m] of obbl) check(T.includes(k), m);
+  // quantita' netta sul retro, nello stesso campo visivo della denominazione (Reg. 1169/2011 art. 13.5)
+  const retro = N(execFileSync('pdftotext', ['-raw', '-f', '2', '-l', '2', PDF, '-']).toString());
+  check(retro.includes(N('PESO NETTO')) && retro.includes(N('Pizza romana surgelata')), 'Peso netto (con ℮) sul retro nello stesso campo visivo della denominazione "Pizza romana surgelata" (art. 13.5)');
+  const fronte = N(execFileSync('pdftotext', ['-raw', '-f', '1', '-l', '1', PDF, '-']).toString());
+  check(fronte.includes(N('PRODOTTO IN ITALIA')), 'Bollino tricolore "Prodotto in Italia" sul fronte');
   check(!/base per|impasto/i.test(testo), 'Nessuna dicitura "base per pizza" o "impasto": il prodotto è una pizza romana surgelata');
   check(!/condire/i.test(testo), 'Istruzioni coerenti con una pizza pronta (nessun "condire a piacere")');
   // 5) leggibilita': altezza della x >= 1,2 mm (Reg. 1169/2011 art. 13)

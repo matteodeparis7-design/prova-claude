@@ -8,9 +8,9 @@ const SRC = 'file://' + path.resolve(__dirname, 'etichette.html');
 const DPR = 600 / 96;
 const ELEMENTI = {
   fronte: [['fregio superiore', '.cornice svg g[transform="translate(9.4,2.6)"]'], ['fregio inferiore', '.cornice svg g[transform="translate(9.4,85.6)"]'],
-    ['logo', '.logo'], ['sigillo surgelato', '.sigillo'], ['riquadro peso', '.peso'], ['titolo PIZZA ROMANA', '.titolo'],
+    ['logo', '.logo'], ['sigillo surgelato', '.sigillo'], ['bollino tricolore', '.bollino'], ['titolo PIZZA ROMANA', '.titolo'],
     ['alloro sx', '.alloro.sx'], ['alloro dx', '.alloro.dx'], ['surgelata', '.denominazione'], ['nastro artigianale', '.nastro'], ['panorama', '.skyline']],
-  retro: [['cornice', '.r-cornice'], ['logo', '.r-logo'], ['titolo', '.r-testa .t'], ['sottotitolo', '.r-testa .d'], ['greca', '.r-greca'],
+  retro: [['cornice', '.r-cornice'], ['logo', '.r-logo'], ['titolo', '.r-testa .t'], ['sottotitolo', '.r-testa .d'], ['peso netto', '.r-peso'], ['greca', '.r-greca'],
     ['nutrizionale', '.c1'], ['ingredienti', '.c2'], ['conservazione', '.c3'], ['TMC/lotto', '.campi'], ['riciclo', '.riciclo'],
     ['produttore', '.prod'], ['codice a barre', '.barre']],
 };
