@@ -38,7 +38,7 @@ const ALLERGENI = ['grano', 'frumento', 'farro', 'kamut', 'segale', 'orzo', 'ave
     if (v.sale < 1 && !/[.,]\d\d$/.test(String(n.sale))) warn.push('Sale sotto 1 g: le linee guida UE prevedono due decimali (es. 0,80 g).');
     if (v.proteine > 15) warn.push(`Proteine ${v.proteine} g/100 g: valore insolitamente alto per una pizza – da verificare con le analisi.`);
   }
-  if (!D.ingredienti) daCompilare.push('Elenco ingredienti (allergeni tra **asterischi** per il grassetto)');
+  if (!D.ingredienti) warn.push('Ingredienti e tracce di allergeni: area lasciata libera per la patch adesiva di ogni gusto (allergeni in grassetto sulla patch, art. 21 Reg. 1169/2011).');
   else {
     check(T.includes(N(D.ingredienti.replace(/\*\*/g, ''))), 'Elenco ingredienti riportato integralmente');
     // ogni parola-allergene nel testo deve stare dentro **...**
@@ -46,7 +46,7 @@ const ALLERGENI = ['grano', 'frumento', 'farro', 'kamut', 'segale', 'orzo', 'ave
     const scoperti = ALLERGENI.filter(a => new RegExp('\\b' + a).test(fuori));
     check(scoperti.length === 0, scoperti.length ? `Allergeni non evidenziati in grassetto: ${scoperti.join(', ')}` : 'Tutti gli allergeni riconosciuti negli ingredienti sono in grassetto (art. 21)');
   }
-  if (!D.tracce) daCompilare.push('Eventuali tracce di allergeni (se non ce ne sono, lasciare vuoto e togliere la riga)');
+
   if (!D.preparazione) daCompilare.push('Modalità di preparazione/cottura');
   if (!D.imballaggio.materiale) daCompilare.push('Imballaggio: componente, materiale e codice (etichettatura ambientale D.Lgs. 116/2020)');
   if (!D.peso) daCompilare.push('Peso netto in grammi (cifre ≥ 4 mm tra 200 g e 1 kg: già garantito dal layout)');

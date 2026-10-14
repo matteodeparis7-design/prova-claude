@@ -1,11 +1,9 @@
 # Verifica etichette Gustoso – Pizza romana surgelata
 
-**Stato: MODELLO DA COMPILARE – 6 campi del prodotto ancora vuoti**
+**Stato: MODELLO DA COMPILARE – 4 campi del prodotto ancora vuoti**
 
-## Campi del prodotto da compilare (6)
+## Campi del prodotto da compilare (4)
 - 📝 Dichiarazione nutrizionale (tutti i valori per 100 g)
-- 📝 Elenco ingredienti (allergeni tra **asterischi** per il grassetto)
-- 📝 Eventuali tracce di allergeni (se non ce ne sono, lasciare vuoto e togliere la riga)
 - 📝 Modalità di preparazione/cottura
 - 📝 Imballaggio: componente, materiale e codice (etichettatura ambientale D.Lgs. 116/2020)
 - 📝 Peso netto in grammi (cifre ≥ 4 mm tra 200 g e 1 kg: già garantito dal layout)
@@ -39,5 +37,6 @@
 Nessuno.
 
 ## Note
+- ⚠️ Ingredienti e tracce di allergeni: area lasciata libera per la patch adesiva di ogni gusto (allergeni in grassetto sulla patch, art. 21 Reg. 1169/2011).
 - ⚠️ TMC e lotto: lasciati come spazi per la timbratura in produzione.
 - ⚠️ "Prodotto artigianale": il claim va usato solo se il produttore è impresa artigiana (L. 443/1985).
