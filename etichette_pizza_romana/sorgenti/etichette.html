@@ -135,17 +135,40 @@ table.nutri tr:last-child td{border-bottom:0}
 .prod{top:68.6mm;left:48.8mm;width:38.4mm}
 .barre{top:58.4mm;left:89.8mm;width:33.6mm;height:23.4mm;background:#fff;border-radius:.8mm;padding:.8mm .7mm}
 .barre img{width:100%;height:100%;display:block}
+/* campi da compilare (modello vuoto) */
+.vuoto-campo{color:#A08C6E;font-style:italic;font-weight:400}
+.righe-vuote{display:block;height:var(--hr,9mm);margin-top:.6mm;
+  background:repeating-linear-gradient(to bottom,transparent 0,transparent 2.85mm,rgba(160,140,110,.55) 2.85mm,rgba(160,140,110,.55) 3mm)}
+table.nutri td.vuoto-n{color:#A08C6E;font-weight:400}
 .barre-n{left:91mm;width:32.4mm;top:78.9mm;text-align:center;font-family:BarlowC;font-weight:500;font-size:5.6pt;letter-spacing:.12em;color:var(--seppia)}
 </style>
 </head>
 <body>
 
-<!-- ===================== DATI VARIABILI ===================== -->
+<!-- ===================== DATI DEL PRODOTTO ===================== -->
+<!--
+  Tutti i dati del prodotto stanno qui. Un campo vuoto ('') viene mostrato in etichetta
+  come spazio "da compilare". Allergeni: racchiuderli tra **asterischi doppi** per il grassetto,
+  es. "farina di **grano** tenero tipo 0, ..." (Reg. UE 1169/2011 art. 21).
+-->
 <script>
 const DATI = {
-  peso: '',            // es. '250' -> "250 g ℮". Vuoto = campo da compilare/timbrare
-  lotto: '',           // vuoto = campo per timbratura
-  tmc: ''              // vuoto = campo per timbratura
+  // quantita' e campi per timbratura
+  peso: '',                 // es. '350'  -> "350 g ℮"
+  lotto: '',                // vuoto = spazio per timbratura
+  tmc: '',                  // vuoto = spazio per timbratura
+  // composizione
+  ingredienti: '',          // elenco in ordine decrescente di peso, allergeni tra **...**
+  tracce: '',               // es. 'frutta a guscio e sesamo' (senza "Può contenere tracce di")
+  // dichiarazione nutrizionale per 100 g (numeri con virgola o punto)
+  nutrizione: { energia_kj: '', energia_kcal: '', grassi: '', saturi: '', carboidrati: '', zuccheri: '', fibre: '', proteine: '', sale: '' },
+  // istruzioni d'uso
+  preparazione: '',
+  // etichettatura ambientale dell'imballaggio (D.Lgs. 116/2020)
+  imballaggio: { componente: '', materiale: '', codice: '', raccolta: '' },   // es. 'Sacchetto', 'Plastica', 'PP 5', 'Plastica'
+  // operatore responsabile (fisso)
+  produttore: { ragione: 'Caffè 6x6 di Boccuccia Angelo', indirizzo: 'Contrada Toce, 9 – 00033 Cave (RM)', piva: '13331521008', origine: 'Italia' },
+  ean: '8052675470031'
 };
 </script>
 
@@ -302,14 +325,14 @@ const DATI = {
       <h3 style="letter-spacing:.075em">Dichiarazione nutrizionale</h3>
       <table class="nutri">
         <tr><th>Valori medi</th><th>per 100 g</th></tr>
-        <tr class="e"><td>Energia</td><td>967 kJ / 231 kcal</td></tr>
-        <tr><td>Grassi</td><td>0,8 g</td></tr>
-        <tr class="sub"><td>di cui acidi grassi saturi</td><td>0,1 g</td></tr>
-        <tr><td>Carboidrati</td><td>32 g</td></tr>
-        <tr class="sub"><td>di cui zuccheri</td><td>2,2 g</td></tr>
-        <tr><td>Fibre</td><td>1,6 g</td></tr>
-        <tr><td>Proteine</td><td>22 g</td></tr>
-        <tr><td>Sale</td><td>0,80 g</td></tr>
+        <tr class="e"><td>Energia</td><td data-n="energia"></td></tr>
+        <tr><td>Grassi</td><td data-n="grassi"></td></tr>
+        <tr class="sub"><td>di cui acidi grassi saturi</td><td data-n="saturi"></td></tr>
+        <tr><td>Carboidrati</td><td data-n="carboidrati"></td></tr>
+        <tr class="sub"><td>di cui zuccheri</td><td data-n="zuccheri"></td></tr>
+        <tr><td>Fibre</td><td data-n="fibre"></td></tr>
+        <tr><td>Proteine</td><td data-n="proteine"></td></tr>
+        <tr><td>Sale</td><td data-n="sale"></td></tr>
       </table>
     </div>
     <div class="campi">
@@ -318,20 +341,20 @@ const DATI = {
       <div class="lot">Lotto:<em id="lottoVal"></em></div>
     </div>
     <div class="riciclo">
-      <svg viewBox="0 0 24 22" width="7mm" height="6.4mm"><path d="M13.80,4.73 L19.42,14.48" stroke="#231F20" stroke-width="1.25" stroke-linecap="round"/><path d="M21.12,17.42 L17.77,15.43 L21.07,13.53Z" fill="#231F20"/><path d="M19.00,20.00 L7.76,20.00" stroke="#231F20" stroke-width="1.25" stroke-linecap="round"/><path d="M4.37,20.00 L7.76,18.10 L7.76,21.90Z" fill="#231F20"/><path d="M3.20,16.87 L8.82,7.12" stroke="#231F20" stroke-width="1.25" stroke-linecap="round"/><path d="M10.52,4.18 L10.47,8.07 L7.17,6.17Z" fill="#231F20"/><text x="12" y="16.4" text-anchor="middle" font-family="BarlowC" font-weight="700" font-size="7.8" fill="#231F20">7</text></svg>
-      <p class="txt"><b>Sacchetto: PLASTICA 7 (O)</b><br>Raccolta plastica. Verifica le<br>disposizioni del tuo Comune.</p>
+      <svg id="iconaRiciclo" viewBox="0 0 24 22" width="7mm" height="6.4mm"><path d="M13.80,4.73 L19.42,14.48" stroke="#231F20" stroke-width="1.25" stroke-linecap="round"/><path d="M21.12,17.42 L17.77,15.43 L21.07,13.53Z" fill="#231F20"/><path d="M19.00,20.00 L7.76,20.00" stroke="#231F20" stroke-width="1.25" stroke-linecap="round"/><path d="M4.37,20.00 L7.76,18.10 L7.76,21.90Z" fill="#231F20"/><path d="M3.20,16.87 L8.82,7.12" stroke="#231F20" stroke-width="1.25" stroke-linecap="round"/><path d="M10.52,4.18 L10.47,8.07 L7.17,6.17Z" fill="#231F20"/><text id="codiceRiciclo" x="12" y="16.2" text-anchor="middle" font-family="BarlowC" font-weight="700" font-size="5.6" fill="#231F20"></text></svg>
+      <p class="txt" id="testoRiciclo"></p>
     </div>
 
     <!-- colonna 2: ingredienti, preparazione, operatore -->
     <div class="col c2">
       <h3>Ingredienti</h3>
-      <p class="txt">Farina di <b>grano</b> tenero tipo 0, semola rimacinata di <b>grano</b> duro, farina di <b>soia</b>, pasta acida (<b>glutine</b>), farina di riso, sale, olio extravergine di oliva, lievito naturale, aromi.</p>
-      <p class="txt" style="margin-top:.8mm">Può contenere tracce di <b>frutta a guscio</b> e <b>sesamo</b>.</p>
+      <p class="txt" id="testoIngredienti"></p>
+      <p class="txt" id="testoTracce" style="margin-top:.8mm"></p>
       <h3 style="margin-top:2.2mm">Preparazione</h3>
-      <p class="txt">Cuocere senza scongelare in forno statico preriscaldato a 250 °C per <span style="white-space:nowrap">6–8 minuti</span>, fino a doratura. <span style="white-space:nowrap">Servire calda.</span></p>
+      <p class="txt" id="testoPreparazione"></p>
     </div>
     <div class="prod">
-      <p class="txt">Prodotto e confezionato da:<br><b>Caffè 6x6 di Boccuccia Angelo</b><br>Via Giorgioli, 29 – 00033 Cave (RM)<br>P.IVA 13331521008 · Origine: Italia</p>
+      <p class="txt" id="testoProduttore"></p>
     </div>
 
     <!-- colonna 3: conservazione + codice a barre -->
@@ -361,6 +384,31 @@ document.documentElement.style.setProperty('--m', mark + 'mm');
 
 document.getElementById('pesoVal').innerHTML = DATI.peso ? DATI.peso : '<span class="vuoto"></span>';
 document.getElementById('lottoVal').textContent = DATI.lotto;
+// --- rendering dei campi di composizione (vuoti = spazi da compilare)
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const conGrassetto = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+  .replace(/(\d+\s?[–-]\s?\d+\s(?:minuti|min|°C|g|ore|secondi))/g, '<span style="white-space:nowrap">$1</span>');   // intervalli numerici non spezzati
+const vuoto = (etichetta, righe) => `<span class="vuoto-campo">${etichetta}</span><span class="righe-vuote" style="--hr:${(righe*3).toFixed(1)}mm"></span>`;
+const num = v => String(v).trim().replace('.', ',');
+document.getElementById('testoIngredienti').innerHTML = DATI.ingredienti ? conGrassetto(DATI.ingredienti) : vuoto('Elenco ingredienti – allergeni in grassetto', 4);
+document.getElementById('testoTracce').innerHTML = DATI.tracce ? 'Può contenere tracce di ' + conGrassetto(DATI.tracce) + '.' : '<span class="vuoto-campo">Eventuali tracce di allergeni</span>';
+document.getElementById('testoPreparazione').innerHTML = DATI.preparazione ? conGrassetto(DATI.preparazione) : vuoto('Modalità di cottura', 2);
+const n = DATI.nutrizione;
+document.querySelectorAll('table.nutri td[data-n]').forEach(td => {
+  const k = td.dataset.n;
+  if (k === 'energia') {
+    if (n.energia_kj && n.energia_kcal) td.textContent = `${num(n.energia_kj)} kJ / ${num(n.energia_kcal)} kcal`;
+    else { td.textContent = '… kJ / … kcal'; td.classList.add('vuoto-n'); }
+  } else if (n[k] !== '') td.textContent = num(n[k]) + ' g';
+  else { td.textContent = '… g'; td.classList.add('vuoto-n'); }
+});
+const im = DATI.imballaggio;
+document.getElementById('codiceRiciclo').textContent = im.codice ? im.codice.replace(/\D/g, '') : '';
+document.getElementById('testoRiciclo').innerHTML = im.materiale
+  ? `<b>${esc(im.componente || 'Imballaggio')}: ${esc(im.materiale.toUpperCase())}${im.codice ? ' ' + esc(im.codice) : ''}</b><br>Raccolta ${esc((im.raccolta || im.materiale).toLowerCase())}. Verifica le<br>disposizioni del tuo Comune.`
+  : '<b class="vuoto-campo" style="font-weight:600">Imballaggio: materiale e codice</b><br>Raccolta … Verifica le<br>disposizioni del tuo Comune.';
+const pr = DATI.produttore;
+document.getElementById('testoProduttore').innerHTML = `Prodotto e confezionato da:<br><b>${esc(pr.ragione)}</b><br>${esc(pr.indirizzo)}<br>P.IVA ${esc(pr.piva)} · Origine: ${esc(pr.origine)}`;
 document.getElementById('tmcVal').textContent = DATI.tmc;
 
 // crocini di taglio (solo con abbondanza)
