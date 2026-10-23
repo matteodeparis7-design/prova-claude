@@ -17,7 +17,7 @@ Apri `src/galo-studios.html`, cerca il blocco `CONFIGURAZIONE` all'inizio dello 
 | `ig` | Profilo Instagram a cui arrivano le richieste (`prod.galo_`) |
 | `whatsapp` | Numero WhatsApp con prefisso e senza `+` (es. `393331234567`). Se lo inserisci compare il pulsante "Invia su WhatsApp" |
 | `email` | Email facoltativa mostrata nella finestra di invio |
-| `calendly` | Link dell'evento Calendly di Galó Studios (es. `https://calendly.com/galostudios/sessione`). Se è vuoto, le prenotazioni arrivano come messaggio su Instagram |
+| `calendly` | Link dell'evento Calendly di Galó Studios (ora: `https://calendly.com/galobeat-prod/rec-session`). Se è vuoto, le prenotazioni arrivano come messaggio su Instagram |
 | `open` / `close` | Orario mostrato sul sito, in ore intere (ora: 16 e 19). Deve coincidere con la disponibilità impostata su Calendly |
 | `closedWeekdays` | Giorni di chiusura (ora: `[0,1,6]` = domenica, lunedì, sabato → aperto dal martedì al venerdì) |
 | `SERVICES` | Nome, descrizione e prezzo dei quattro servizi |
