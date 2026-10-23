@@ -487,7 +487,7 @@ label.chip input{width:18px;height:18px;margin:0;accent-color:#d5d8e2}
         <p class="kind">Studio</p>
         <h3>Solo registrazione</h3>
         <div class="amount"><b>40</b><span>€</span></div>
-        <ul class="incl"><li>Sessione di registrazione vocale</li><li>Da 1 a 3 ore: scegli tu durata, giorno e orario</li></ul>
+        <ul class="incl"><li>Sessione di registrazione vocale</li><li>Sessione da 2 ore: scegli tu giorno e orario</li></ul>
         <a class="btn line" href="#prenota" data-svc="rec">Prenota la sessione</a>
       </article>
       <article class="price rv" style="--i:2">
@@ -565,7 +565,7 @@ label.chip input{width:18px;height:18px;margin:0;accent-color:#d5d8e2}
     <div class="faq">
       <details><summary>Quanto costano i servizi?</summary><div class="a"><ul><li>Solo Beat (produzione strumentale): 30 €</li><li>Solo registrazione (sessione di registrazione vocale): 40 €</li><li>Registrazione + Mix &amp; Master: 60 €</li><li>Pacchetto completo (beat, registrazione, mix &amp; master): 70 €</li></ul></div></details>
       <details><summary>Cosa include il pacchetto completo?</summary><div class="a"><p>Un beat prodotto da Galó, la sessione di registrazione vocale, il mixaggio e il mastering del brano. Presi singolarmente costerebbero 90 €: con il pacchetto paghi 70 €.</p></div></details>
-      <details><summary>Quando è aperto lo studio?</summary><div class="a"><p>Lo studio è aperto <span data-hours>dal martedì al venerdì, dalle 16:00 alle 19:00</span>. Una sessione può durare 1, 2 o 3 ore: la durata la scegli tu al momento della prenotazione. Nel calendario trovi solo i giorni e gli orari ancora liberi.</p></div></details>
+      <details><summary>Quando è aperto lo studio?</summary><div class="a"><p>Lo studio è aperto <span data-hours>dal martedì al venerdì, dalle 16:00 alle 19:00</span>. Ogni sessione dura 2 ore. Nel calendario trovi solo i giorni e gli orari ancora liberi.</p></div></details>
       <details><summary>Come prenoto una sessione e come ricevo la conferma?</summary><div class="a"><p class="m-cal">Scegli il servizio, poi il giorno e l'orario dal calendario di Galó e inserisci nome ed email. Ricevi subito un'email di conferma con tutti i dettagli e l'orario non è più disponibile per altri.</p><p class="m-msg" hidden>Scegli il servizio e scrivi quando preferiresti venire. Il sito prepara un messaggio che invii a Galó su Instagram: lui ti risponde confermando giorno e orario.</p></div></details>
       <details><summary>Come richiedo un beat?</summary><div class="a"><p>Compila la scheda del beat: il sito prepara un messaggio con tutti i dettagli e un codice, che invii a Galó su Instagram con un tocco. Galó ti risponde con tempi e dettagli.</p></div></details>
       <details><summary>Si paga online?</summary><div class="a"><p>No, sul sito non si paga nulla. Modalità e tempi di pagamento li concordi direttamente con Galó quando ti conferma la richiesta.</p></div></details>
@@ -1005,18 +1005,18 @@ function renderBooking(){
   var beatNote=s&&s.id==='full'?'<p class="legend">Per il beat del pacchetto compila anche la <a href="#beat" data-svc="full">scheda del beat</a>: così Galó sa già cosa produrre.</p>':'';
   html+='<div class="step'+(s?'':' off')+'" id="bk_cal"><h3><i>2</i>Scegli giorno e orario</h3>';
   if(!s)html+='<p class="hint" style="margin:0">Prima scegli il servizio qui sopra.</p>';
-  else if(cal)html+='<p class="hint">Nel calendario scegli prima la durata (1, 2 o 3 ore), poi il giorno e l\'orario libero ('+esc(hoursText())+'), e inserisci nome ed email. Il servizio <b>'+esc(s.name)+'</b> è già indicato.</p><iframe class="cal-embed" src="'+esc(calUrl(s))+'" title="Calendario prenotazioni Galó Studios" loading="lazy"></iframe><p class="legend">Il calendario non si vede? <a href="'+esc(calUrl(s))+'" target="_blank" rel="noopener">Aprilo in una nuova scheda ↗</a></p>'+beatNote;
+  else if(cal)html+='<p class="hint">Ogni sessione dura 2 ore. Scegli il giorno e l\'orario libero ('+esc(hoursText())+') e inserisci nome ed email. Il servizio <b>'+esc(s.name)+'</b> è già indicato.</p><iframe class="cal-embed" src="'+esc(calUrl(s))+'" title="Calendario prenotazioni Galó Studios" loading="lazy"></iframe><p class="legend">Il calendario non si vede? <a href="'+esc(calUrl(s))+'" target="_blank" rel="noopener">Aprilo in una nuova scheda ↗</a></p>'+beatNote;
   else html+='<p class="hint">Lo studio è aperto '+esc(hoursText())+'. Scrivi quando preferiresti venire: Galó ti risponde con l\'orario confermato.</p><div class="fields">'+
       '<div><label for="k_name">Nome o nome d\'arte</label><input class="field" type="text" id="k_name" data-k="name" maxlength="80" autocomplete="name" value="'+esc(S.name)+'"><div class="err" id="ke_name"></div></div>'+
       '<div><label for="k_contact">Telefono o @instagram</label><input class="field" type="text" id="k_contact" data-k="contact" maxlength="80" autocomplete="tel" value="'+esc(S.contact)+'"><div class="err" id="ke_contact"></div></div>'+
-      '<div class="full"><label for="k_when">Giorni e orari che preferisci</label><textarea class="field" id="k_when" data-k="when" rows="3" maxlength="400" placeholder="Per esempio: martedì 28 o giovedì 30, dalle 16, per 2 ore">'+esc(S.when)+'</textarea><div class="err" id="ke_when"></div></div></div>'+
+      '<div class="full"><label for="k_when">Giorni e orari che preferisci</label><textarea class="field" id="k_when" data-k="when" rows="3" maxlength="400" placeholder="Per esempio: martedì 28 o giovedì 30, dalle 16">'+esc(S.when)+'</textarea><div class="err" id="ke_when"></div></div></div>'+
       '<button class="btn" type="button" id="k_send" style="margin-top:18px">Prepara la richiesta</button>'+beatNote;
   html+='</div>';
   html+='<div class="step"><h3><i>3</i>Ricevi la conferma</h3><p class="hint" style="margin:0">'+(cal?'Appena prenoti ricevi un\'email di conferma con giorno e orario, e l\'orario non è più prenotabile da altri. Per spostare o annullare usa il link nell\'email.':'Mandi il messaggio a Galó su Instagram e lui ti risponde confermando giorno e orario.')+'</p></div>';
   var act=!s?'<button class="btn wide" type="button" disabled>Scegli giorno e orario</button>':cal?'<a class="btn wide" href="#bk_cal" data-jump="bk_cal">Scegli giorno e orario</a>':'<button class="btn wide" type="button" data-jump="k_name">Indica giorno e orario</button>';
   var sum='<aside class="sum" aria-label="Riepilogo prenotazione"><h3>Riepilogo</h3><dl>'+
     '<div><dt>Servizio</dt><dd>'+(s?esc(s.name):'—')+'</dd></div>'+
-    '<div><dt>Durata</dt><dd>1, 2 o 3 ore'+(cal?' (la scegli nel calendario)':'')+'</dd></div>'+
+    '<div><dt>Durata</dt><dd>2 ore</dd></div>'+
     '<div><dt>Orari studio</dt><dd>'+esc(hoursText())+'</dd></div></dl>'+
     '<div class="total"><span>Prezzo</span><b>'+(s?eur(s.price):'—')+'</b></div>'+act+
     '<small>'+(s?'Il pagamento si concorda con Galó, sul sito non si paga nulla.':'Scegli prima il servizio.')+'</small></aside>';
