@@ -286,7 +286,9 @@ body:not([data-view]) .v-home{display:block}
 @media(max-width:959px){.split{grid-template-columns:minmax(0,1fr)}}
 .step{padding:26px;border:1px solid var(--line);border-radius:18px;background:var(--bg);margin-bottom:14px;scroll-margin-top:calc(var(--hdr) + 14px)}
 .step.off{opacity:.45}
-.cal-embed{display:block;width:100%;height:720px;border:0;border-radius:14px;background:#fff}
+.cal-embed{display:block;width:100%;height:700px;border:0;border-radius:14px;background:#fff}
+.split.bk-wide{grid-template-columns:minmax(0,1fr)}
+.split.bk-wide .sum{position:static}
 @media(max-width:600px){.cal-embed{height:860px}}
 .step .btn{margin-top:4px}
 .step>h3{display:flex;align-items:center;gap:12px;font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin-bottom:20px}
@@ -993,7 +995,7 @@ var S={svc:null,name:'',contact:'',when:''};
 var BOOK_SVCS=SERVICES.filter(function(s){return s.studio});
 (function(){var w=store.get('gs_who',null);if(w&&typeof w==='object'){S.name=String(w.name||'');S.contact=String(w.phone||'')}})();
 function calUrl(s){
-  var u=CFG.calendly,q=['embed_type=Inline','hide_gdpr_banner=1','a1='+encodeURIComponent(s.name+' ('+eur(s.price)+')')];
+  var u=CFG.calendly,q=['embed_type=Inline','hide_event_type_details=1','hide_gdpr_banner=1','a1='+encodeURIComponent(s.name+' ('+eur(s.price)+')')];
   if(location.hostname)q.push('embed_domain='+encodeURIComponent(location.hostname));
   return u+(u.indexOf('?')>-1?'&':'?')+q.join('&');
 }
@@ -1018,6 +1020,7 @@ function renderBooking(){
     '<div class="total"><span>Prezzo</span><b>'+(s?eur(s.price):'—')+'</b></div>'+act+
     '<small>'+(s?'Il pagamento si concorda con Galó, sul sito non si paga nulla.':'Scegli prima il servizio.')+'</small></aside>';
   root.innerHTML='<div>'+html+'</div>'+sum;
+  root.classList.toggle('bk-wide',cal);
 }
 function sendKnock(){
   var s=svcById(S.svc),e={};
