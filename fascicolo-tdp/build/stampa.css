@@ -1,0 +1,21 @@
+/* versione per il PDF: una colonna, soluzioni aperte, capitoli su pagina nuova */
+@page { size: A4; margin: 16mm 15mm 18mm; }
+html { scroll-behavior: auto; }
+body { font-size: 10.5pt; line-height: 1.45; padding: 0 !important; background: #fff; }
+.pagina { display: block; max-width: none; padding: 0; }
+.lato, .strumenti, .fatto, .piede { display: none !important; }
+.testata { padding: 0 0 14px; break-after: page; border: 0; }
+.testata h1 { font-size: 40pt; }
+.capitolo { break-before: page; padding-top: 0; border: 0; }
+.capitolo:first-child { break-before: auto; }
+.capitolo h1 { font-size: 22pt; }
+.capitolo h2 { font-size: 15pt; break-after: avoid; }
+.capitolo h3 { break-after: avoid; }
+.capitolo p, .capitolo li { max-width: none; }
+figure.codice, .box, details, table, tr { break-inside: avoid; }
+figure.codice pre { white-space: pre-wrap; word-break: break-word; font-size: 8.6pt; }
+pre code { font-size: 8.6pt; }
+details > summary { list-style: none; }
+details > summary::-webkit-details-marker { display: none; }
+details.sol > summary::before { content: ""; }
+.tab { overflow: visible; }

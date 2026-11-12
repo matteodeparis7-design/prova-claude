@@ -1,0 +1,258 @@
+<title>Fascicolo di Tecniche della Programmazione</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: indice fisso a sinistra (desktop) + colonna di lettura da ~70 caratteri; su telefono l'indice diventa un pannello richiudibile in cima. */
+:root {
+  --bg: #f3f5f8;
+  --surface: #ffffff;
+  --ink: #17202d;
+  --muted: #586374;
+  --rule: #d9dfe7;
+  --accent: #1f5ea8;
+  --accent-soft: #e5eef9;
+  --esame: #1f5ea8;     --esame-bg: #e8f0fa;
+  --errore: #b3261e;    --errore-bg: #fbedeb;
+  --nota: #2b6a4c;      --nota-bg: #e7f3ec;
+  --esercizio: #6a48b0; --esercizio-bg: #f0ebfa;
+  --sol: #2b6a4c;
+  --code-bg: #eef2f7;
+  --code-ink: #1d2633;
+  --syn-kw: #8a2b72;
+  --syn-type: #0a6b86;
+  --syn-str: #2f7a2f;
+  --syn-com: #6a7686;
+  --syn-num: #a8530a;
+  --syn-pre: #6b46c1;
+  --syn-fun: #1f5ea8;
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-text: "Source Sans 3", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f141b; --surface: #151c26; --ink: #e2e8f0; --muted: #9aa6b6; --rule: #2a3442;
+    --accent: #82b4f0; --accent-soft: #1a2738;
+    --esame: #82b4f0; --esame-bg: #172435;
+    --errore: #f1928b; --errore-bg: #2d1a1a;
+    --nota: #8dd3ad; --nota-bg: #152a21;
+    --esercizio: #bba4f2; --esercizio-bg: #221c33;
+    --sol: #8dd3ad;
+    --code-bg: #0b1017; --code-ink: #dbe3ee;
+    --syn-kw: #e48cce; --syn-type: #63c9e2; --syn-str: #9fd681; --syn-com: #7f8b9b;
+    --syn-num: #f2a85e; --syn-pre: #b9a0ff; --syn-fun: #8fbaf6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f141b; --surface: #151c26; --ink: #e2e8f0; --muted: #9aa6b6; --rule: #2a3442;
+  --accent: #82b4f0; --accent-soft: #1a2738;
+  --esame: #82b4f0; --esame-bg: #172435;
+  --errore: #f1928b; --errore-bg: #2d1a1a;
+  --nota: #8dd3ad; --nota-bg: #152a21;
+  --esercizio: #bba4f2; --esercizio-bg: #221c33;
+  --sol: #8dd3ad;
+  --code-bg: #0b1017; --code-ink: #dbe3ee;
+  --syn-kw: #e48cce; --syn-type: #63c9e2; --syn-str: #9fd681; --syn-com: #7f8b9b;
+  --syn-num: #f2a85e; --syn-pre: #b9a0ff; --syn-fun: #8fbaf6;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--f-text); font-size: 17px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+a { color: var(--accent); }
+a:focus-visible, summary:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.pagina { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 48px; padding-block: 32px 64px; }
+
+/* intestazione */
+.testata { grid-column: 1 / -1; display: grid; gap: 18px; padding-block: 8px 28px; border-bottom: 1px solid var(--rule); }
+.occhiello { margin: 0; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.testata h1 { margin: 0; font-family: var(--f-display); font-weight: 800; font-size: clamp(34px, 6vw, 60px); line-height: 1.02; letter-spacing: -.02em; text-wrap: balance; }
+.testata h1 span { color: var(--accent); }
+.sottotitolo { margin: 0; max-width: 62ch; color: var(--muted); font-size: 18px; }
+.dati { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 0; padding: 0; list-style: none; }
+.dati li { display: grid; gap: 0; }
+.dati b { font-family: var(--f-display); font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.dati small { color: var(--muted); font-size: 13px; letter-spacing: .04em; text-transform: uppercase; }
+.avviso { margin: 0; font-size: 14px; color: var(--muted); }
+
+/* indice */
+.lato { position: sticky; top: env(safe-area-inset-top, 0px); align-self: start; max-height: 100vh; overflow-y: auto; padding-block: 8px 24px; }
+.lato details > summary { list-style: none; cursor: pointer; font-family: var(--f-display); font-weight: 600; font-size: 15px; letter-spacing: .02em; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding-block: 6px; }
+.lato details > summary::-webkit-details-marker { display: none; }
+.progresso { font-family: var(--f-text); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.barra { height: 4px; background: var(--rule); border-radius: 2px; overflow: hidden; margin-block: 6px 14px; }
+.barra i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .3s; }
+.toc, .toc ol { list-style: none; margin: 0; padding: 0; }
+.toc-parte > p { margin: 14px 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); font-weight: 700; }
+.toc li li { display: flex; align-items: flex-start; gap: 6px; }
+.toc a { flex: 1; display: flex; gap: 8px; text-decoration: none; color: var(--ink); font-size: 15px; line-height: 1.35; padding: 4px 6px; border-radius: 6px; }
+.toc a:hover { background: var(--accent-soft); }
+.toc-n { min-width: 1.6em; color: var(--muted); font-variant-numeric: tabular-nums; }
+.fatto { margin-top: 7px; accent-color: var(--accent); width: 16px; height: 16px; flex: none; cursor: pointer; }
+.strumenti { display: grid; gap: 8px; margin-top: 18px; }
+.strumenti button { font: inherit; font-size: 14px; padding: 7px 12px; border-radius: 8px; border: 1px solid var(--rule); background: var(--surface); color: var(--ink); cursor: pointer; text-align: left; }
+.strumenti button:hover { border-color: var(--accent); }
+
+/* contenuto */
+main { min-width: 0; }
+.capitolo { padding-block: 40px 8px; border-bottom: 1px solid var(--rule); }
+.capitolo:first-child { padding-top: 8px; }
+.cap-testa { margin-bottom: 18px; }
+.cap-num { margin: 0 0 4px; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+.capitolo h1 { margin: 0; font-family: var(--f-display); font-weight: 800; font-size: clamp(28px, 4vw, 38px); line-height: 1.1; letter-spacing: -.015em; text-wrap: balance; }
+.capitolo h2 { font-family: var(--f-display); font-weight: 600; font-size: 24px; line-height: 1.25; margin: 34px 0 10px; text-wrap: balance; }
+.capitolo h3 { font-size: 19px; margin: 24px 0 6px; font-weight: 700; }
+.capitolo p, .capitolo li { max-width: 72ch; }
+.capitolo > p:first-of-type em { color: var(--muted); }
+.capitolo ul, .capitolo ol { padding-left: 1.3em; }
+.capitolo li + li { margin-top: 4px; }
+blockquote { margin: 12px 0; padding: 8px 16px; border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; }
+code, pre { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0, "dlig" 0; }
+code { font-family: var(--f-mono); font-size: .86em; background: var(--code-bg); color: var(--code-ink); padding: .08em .35em; border-radius: 4px; }
+pre code { padding: 0; background: none; border-radius: 0; font-size: 14px; }
+
+/* tabelle */
+table { border-collapse: collapse; width: 100%; font-size: 15px; font-variant-numeric: tabular-nums; }
+.tab { overflow-x: auto; margin: 14px 0; border: 1px solid var(--rule); border-radius: 10px; background: var(--surface); }
+th, td { text-align: left; padding: 7px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-weight: 700; background: var(--accent-soft); }
+tr:last-child td { border-bottom: 0; }
+
+/* codice */
+figure.codice { margin: 14px 0; background: var(--code-bg); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+figure.codice figcaption { font-family: var(--f-mono); font-size: 12px; color: var(--muted); padding: 6px 14px; border-bottom: 1px solid var(--rule); }
+figure.codice pre { margin: 0; padding: 12px 14px; overflow-x: auto; color: var(--code-ink); line-height: 1.5; tab-size: 2; }
+figure.schema pre { line-height: 1.35; }
+.codice .k, .codice .kr { color: var(--syn-kw); font-weight: 600; }
+.codice .kt, .codice .nc { color: var(--syn-type); }
+.codice .s, .codice .s1, .codice .s2, .codice .sc, .codice .se { color: var(--syn-str); }
+.codice .c, .codice .c1, .codice .cm, .codice .cs { color: var(--syn-com); font-style: italic; }
+.codice .cp, .codice .cpf { color: var(--syn-pre); }
+.codice .m, .codice .mi, .codice .mf, .codice .mh { color: var(--syn-num); }
+.codice .nf { color: var(--syn-fun); font-weight: 600; }
+.codice .nb { color: var(--syn-fun); }
+
+/* riquadri */
+.box { margin: 18px 0; padding: 12px 16px 4px; border-radius: 10px; border: 1px solid var(--rule); background: var(--surface); }
+.box-titolo { margin: 0 0 6px; font-weight: 700; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; }
+.box-esame { background: var(--esame-bg); border-color: transparent; }
+.box-esame .box-titolo { color: var(--esame); }
+.box-errore { background: var(--errore-bg); border-color: transparent; }
+.box-errore .box-titolo { color: var(--errore); }
+.box-nota { background: var(--nota-bg); border-color: transparent; }
+.box-nota .box-titolo { color: var(--nota); }
+.box-esercizio { background: var(--esercizio-bg); border-color: transparent; }
+.box-esercizio .box-titolo { color: var(--esercizio); }
+.box .tab, .box figure.codice { background: var(--surface); }
+.box figure.codice { background: var(--code-bg); }
+li.check { list-style: none; position: relative; }
+.casella { display: inline-block; width: 14px; height: 14px; border: 2px solid currentColor; border-radius: 3px; margin-right: 8px; vertical-align: -2px; opacity: .7; }
+
+/* soluzioni e domande */
+details.sol, details.domanda { margin: 10px 0 18px; border: 1px solid var(--rule); border-radius: 10px; background: var(--surface); }
+details.sol > summary, details.domanda > summary { cursor: pointer; padding: 10px 16px; font-weight: 700; }
+details.sol > summary { color: var(--sol); }
+details.domanda > summary { font-weight: 600; }
+details[open] > summary { border-bottom: 1px solid var(--rule); }
+.sol-corpo { padding: 4px 16px 6px; }
+
+.piede { grid-column: 2; color: var(--muted); font-size: 14px; padding-top: 24px; }
+
+@media (max-width: 900px) {
+  .pagina { grid-template-columns: minmax(0, 1fr); gap: 20px; padding-block: 20px 48px; }
+  .lato { position: static; max-height: none; overflow: visible; border: 1px solid var(--rule); border-radius: 12px; background: var(--surface); padding: 6px 14px; }
+  .piede { grid-column: 1; }
+  body { font-size: 16px; }
+}
+</style>
+<!--STAMPA-->
+
+<div class="pagina">
+  <header class="testata">
+    <p class="occhiello">Ingegneria dell'Informazione · sede di Latina · A.A. 2026/27</p>
+    <h1>Tecniche della <span>Programmazione</span></h1>
+    <p class="sottotitolo">Fascicolo per preparare l'esame del corso del prof. Marco Temperini: teoria spiegata in modo semplice, codice C collaudato, le tracce d'esame risolte e quelle per esercitarsi.</p>
+    <ul class="dati">
+      <li><b>22 gen 2027</b><small>primo appello</small></li>
+      <li><b>2 h 30</b><small>prova scritta</small></li>
+      <li><b>13 + 10 + 7</b><small>punti per esercizio</small></li>
+      <li><b>ANSI C</b><small>linguaggio</small></li>
+    </ul>
+    <p class="avviso">Materiale di studio non ufficiale, costruito sul programma e sui materiali pubblicati sul sito del corso. Per regole e date fanno fede il sito e Classroom.</p>
+  </header>
+
+  <nav class="lato" aria-label="Indice">
+    <details id="pannello-indice" open>
+      <summary>Indice <span class="progresso" id="progresso">0 di 21 studiati</span></summary>
+      <div class="barra" aria-hidden="true"><i id="barra"></i></div>
+      {{INDICE}}
+      <div class="strumenti">
+        <button type="button" id="apri-soluzioni">Mostra tutte le soluzioni</button>
+      </div>
+    </details>
+  </nav>
+
+  <main>
+{{CORPO}}
+  </main>
+
+  <p class="piede">Tutti i programmi del fascicolo sono stati compilati con <code>gcc -std=c89 -pedantic -Wall</code> ed eseguiti. Buono studio!</p>
+</div>
+
+<script>
+(function () {
+  var caselle = Array.prototype.slice.call(document.querySelectorAll('.fatto'));
+  var chiave = 'tdp-fascicolo-studiati';
+  var stato = {};
+  try { stato = JSON.parse(localStorage.getItem(chiave) || '{}') || {}; } catch (e) { stato = {}; }
+  function aggiorna() {
+    var n = caselle.filter(function (c) { return c.checked; }).length;
+    document.getElementById('progresso').textContent = n + ' di ' + caselle.length + ' studiati';
+    document.getElementById('barra').style.width = (100 * n / caselle.length) + '%';
+  }
+  caselle.forEach(function (c) {
+    c.checked = !!stato[c.dataset.cap];
+    c.addEventListener('change', function () {
+      stato[c.dataset.cap] = c.checked;
+      try { localStorage.setItem(chiave, JSON.stringify(stato)); } catch (e) {}
+      aggiorna();
+    });
+  });
+  aggiorna();
+
+  var pannello = document.getElementById('pannello-indice');
+  if (window.matchMedia && window.matchMedia('(max-width: 900px)').matches) pannello.open = false;
+  document.querySelectorAll('.toc a').forEach(function (a) {
+    a.addEventListener('click', function () {
+      if (window.matchMedia('(max-width: 900px)').matches) pannello.open = false;
+    });
+  });
+
+  var bottone = document.getElementById('apri-soluzioni');
+  var aperte = false;
+  bottone.addEventListener('click', function () {
+    aperte = !aperte;
+    document.querySelectorAll('details.sol, details.domanda').forEach(function (d) { d.open = aperte; });
+    bottone.textContent = aperte ? 'Nascondi tutte le soluzioni' : 'Mostra tutte le soluzioni';
+  });
+
+  document.querySelectorAll('main table').forEach(function (t) {
+    if (t.parentNode.classList.contains('tab')) return;
+    var w = document.createElement('div');
+    w.className = 'tab';
+    t.parentNode.insertBefore(w, t);
+    w.appendChild(t);
+  });
+})();
+</script>
