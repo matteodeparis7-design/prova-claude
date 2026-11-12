@@ -64,7 +64,7 @@ Le date possono cambiare: controlla sempre la [pagina esami del corso](https://w
 
 ## Come usare questo fascicolo
 
-Il fascicolo segue l'ordine del corso. Ogni capitolo ha spiegazioni semplici, codice C commentato e provato, riquadri colorati ed esercizi con soluzione nascosta (clicca su "Soluzione" solo dopo averci provato davvero).
+Prima di tutto leggi il [Laboratorio](#laboratorio): spiega come si **impara a programmare in C** davvero (ambiente, errori del compilatore, debugging, metodo). Alla fine del fascicolo c'è la [Palestra di programmazione](#palestra), con 25 esercizi graduati da fare al computer man mano che studi. Il fascicolo segue l'ordine del corso. Ogni capitolo ha spiegazioni semplici, codice C commentato e provato, riquadri colorati ed esercizi con soluzione nascosta (clicca su "Soluzione" solo dopo averci provato davvero).
 
 ::: esame All'esame
 Questi riquadri dicono che cosa serve **proprio per lo scritto o l'orale**.
@@ -80,16 +80,16 @@ Approfondimenti e collegamenti tra argomenti.
 
 ### Un piano di studio consigliato (circa 8 settimane prima di gennaio)
 
-| Settimana | Cosa studiare | Capitoli |
+| Settimana | Teoria | Pratica al computer |
 |---|---|---|
-| 1 | Architettura, rappresentazione dei numeri, basi del C | 1, 2, 3 |
-| 2 | Istruzioni di controllo, funzioni, record di attivazione | 4, 5 |
-| 3 | Array, file, puntatori | 6, 7, 8 |
-| 4 | Stringhe, allocazione dinamica, struct e tabelle | 9, 10 |
-| 5 | Ricorsione, ricerca e ordinamento, test | 11, 12, 13 |
-| 6 | **Liste** (tutte le operazioni, a memoria e capite) | 14 |
-| 7 | Alberi (cenni), metodo per lo scritto, tracce risolte | 15, 16, 17 |
-| 8 | Tracce di esercitazione **a tempo** (2h30 su carta), orale | 18, 19, 20 |
+| 1 | Laboratorio; architettura, rappresentazione dei numeri, basi del C | installa Dev-C++; Palestra livello 1 |
+| 2 | Istruzioni di controllo, funzioni, record di attivazione | Palestra livelli 2 e 3 |
+| 3 | Array, file, puntatori | Palestra livello 4; esercizi dei capitoli 6-8 |
+| 4 | Stringhe, allocazione dinamica, struct e tabelle | Palestra livelli 5 e 6 |
+| 5 | Ricorsione, ricerca e ordinamento, test | esercizi dei capitoli 11-13 |
+| 6 | **Liste** (tutte le operazioni, a memoria e capite) | Palestra livello 7; esercizi del capitolo 14 |
+| 7 | Alberi (cenni), metodo per lo scritto, tracce risolte | tracce del capitolo 17 rifatte da solo |
+| 8 | Orale, formulario, autoverifica | tracce del capitolo 18 **su carta, a tempo** |
 
 ::: nota Il segreto per passare
 Lo scritto premia chi ha **scritto a mano tante funzioni sulle liste**. Leggere le soluzioni non basta: prendi una traccia, chiudi il fascicolo, scrivi su carta in 2h30, poi correggi confrontando con le soluzioni e provando il codice al computer (Dev-C++, come al corso).

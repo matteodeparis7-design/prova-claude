@@ -86,6 +86,17 @@ Differenze tra puntatori allo stesso array danno il numero di elementi tra loro 
 
 **Differenza importante**: un puntatore è una variabile e si può spostare (`p++`); il nome di un array è un indirizzo costante (`v++` è un errore).
 
+**Riuso di una funzione su una parte di array** (lezione 14): poiché una funzione su array riceve solo un indirizzo e una dimensione, le si può passare **un pezzo** dell'array. Con `int v[10]` e la funzione `massimo(int v[], int dim)`:
+
+```c
+massimo(v, 10);        /* massimo di tutto l'array              */
+massimo(v, 5);         /* massimo dei primi 5 elementi          */
+massimo(v + 5, 5);     /* massimo degli ultimi 5: v[5] ... v[9] */
+massimo(&v[3], 4);     /* massimo di v[3] ... v[6]              */
+```
+
+Dentro la funzione, `v[0]` è l'elemento da cui si è partiti.
+
 ## Funzioni che restituiscono puntatori
 
 Una funzione può restituire un indirizzo, ad esempio quello di un elemento trovato in un array, o `NULL` se non lo trova:

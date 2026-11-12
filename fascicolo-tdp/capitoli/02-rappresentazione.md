@@ -73,6 +73,19 @@ Con **n bit** si hanno 2<sup>n</sup> numerali, quindi si rappresentano i numeri 
 
 Se il risultato non sta negli n bit si ha **overflow**.
 
+**Sottrazione binaria** (con il "prestito", come in decimale): 0-0=0, 1-0=1, 1-1=0, 0-1=1 **con prestito** di 1 dalla cifra a sinistra.
+
+```text
+    1 1 0 1 0     (26)         colonna per colonna, da destra:
+  -   1 1 1 1     (15)         0-1: prendo in prestito -> 10-1 = 1
+  -----------                  1-1 (meno il prestito) ... e cosi` via
+    0 1 0 1 1     (11)         verifica: 26 - 15 = 11 = 01011   ok
+```
+
+Nei calcolatori però non si sottrae così: si **somma il complemento a due** del sottraendo (vedi sotto), così basta un solo circuito.
+
+**Quanti bit servono al minimo?** Per un numero N ≥ 0 in binario puro serve il più piccolo n tale che 2<sup>n</sup> > N, cioè 2<sup>n</sup> - 1 ≥ N. Esempi: 121 < 128 = 2<sup>7</sup>, quindi **7 bit**; 591 < 1024 = 2<sup>10</sup> (e 591 > 511), quindi **10 bit**; 256 = 2<sup>8</sup> richiede **9 bit** (con 8 si arriva solo a 255). In complemento a due bisogna che il numero stia in [-2<sup>n-1</sup>, 2<sup>n-1</sup>-1]: per 121 servono 8 bit, per -591 ne servono 11.
+
 ## Interi con segno
 
 ### Modulo e segno

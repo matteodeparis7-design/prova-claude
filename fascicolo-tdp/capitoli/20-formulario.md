@@ -84,6 +84,35 @@ Caso base + caso ricorsivo che si avvicina al caso base. RDA: una per chiamata, 
 - Leggi tutto il testo, poi i tipi, poi `eser1`, `eser2`, esercizio 3, rilettura con la checklist del capitolo 16.
 - Scrivi in modo ordinato e commenta l'algoritmo.
 
+## Autoverifica: sei pronto se...
+
+Prima di iscriverti all'appello, controlla di saper fare **ognuna** di queste cose **senza guardare il fascicolo**. Se una ti manca, torna al capitolo indicato.
+
+::: esame Esercizi 1 e 2 (23 punti)
+- [ ] Dal testo di una traccia, scrivo i tipi corretti (stringa esatta, stringa fissa, lista) in meno di 15 minuti. *(cap. 16, 17)*
+- [ ] Scrivo una funzione che scorre una lista e restituisce 3 risultati (uno col `return`, due con parametri puntatore). *(cap. 8, 14)*
+- [ ] Scrivo a memoria: inserimento in testa, in coda (con e senza record generatore), ordinato, eliminazione di un nodo, eliminazione di tutti i nodi con una proprietà, deallocazione. *(cap. 14, 18)*
+- [ ] Riempio un nodo con una stringa esatta (`malloc(strlen+1)` + `strcpy`) e la libero prima del nodo. *(cap. 9)*
+- [ ] Per ogni funzione che scrivo, controllo i casi: lista vuota, primo, ultimo, in mezzo, assente. *(cap. 16)*
+- [ ] Ho svolto su carta, a tempo (2h30), almeno 3 tracce (Guasti, Marmotte, Biblioteca o Officina) e le ho corrette. *(cap. 17, 18)*
+:::
+
+::: esame Esercizio 3 (7 punti)
+- [ ] Descrivo i metodi a scatola nera e trasparente e progetto una tabella di test motivati per una funzione data. *(cap. 13, 17)*
+- [ ] Converto un reale in floating point a 32 bit (e viceversa) senza errori, verificando il risultato. *(cap. 2)*
+- [ ] Converto in complemento a due con il numero minimo di bit ed eseguo somme e sottrazioni. *(cap. 2)*
+- [ ] Scrivo una funzione ricorsiva su lista o array e ne disegno la pila dei record di attivazione, andata e ritorno. *(cap. 11, 17)*
+- [ ] Scrivo le tre visite di un albero e le applico a un albero di 9 nodi. *(cap. 15)*
+:::
+
+::: esame Orale
+- [ ] So spiegare ogni riga del mio scritto e correggerne gli errori.
+- [ ] Rispondo a voce, con un disegno, alle domande del capitolo 19 (Von Neumann, RDA, passaggio dei parametri, puntatori e array, memoria dinamica, file, ordinamenti, ricorsione, test, liste).
+- [ ] So scrivere un algoritmo in pseudocodice, disegnarne il diagramma di flusso e farne l'esecuzione simulata. *(cap. 3, 4)*
+:::
+
+Se hai spuntato tutto, sei pronto per l'esame.
+
 ## Fonti
 
 Materiale consultato sul sito del corso (prof. Marco Temperini), A.A. 2026/27:

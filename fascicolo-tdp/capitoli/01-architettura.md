@@ -84,6 +84,12 @@ Per eseguirlo ("RUN") si mette nel PC l'indirizzo della prima istruzione; da lì
 
 ## Il software di base
 
+Il calcolatore si può vedere **a livelli** (macchine "virtuali" una sopra l'altra): hardware, poi linguaggio macchina, poi sistema operativo, poi i linguaggi ad alto livello e le applicazioni. Ogni livello offre delle **funzionalità** a quello superiore e le realizza usando quelle del livello sottostante. Per questo chi programma in C non deve sapere come funzionano i circuiti.
+
+- **Software di base**: il sistema operativo e i programmi che servono a far funzionare e programmare la macchina (compilatori, linker, editor).
+- **Software applicativo**: i programmi per l'utente (browser, videogiochi, il tuo programma dei voli). Per usare le risorse (memoria, file, video) chiede i servizi al software di base.
+- Un **programma** è un testo (un file); un **processo** è un programma **in esecuzione**, con la sua memoria e il suo stato. Lo stesso programma lanciato due volte dà due processi.
+
 - **Sistema operativo (SO)**: il programma che gestisce la macchina e la mette a disposizione degli altri programmi: gestisce i processi (programmi in esecuzione), la memoria, le periferiche e il **file system**.
 - **File system**: organizza i dati della memoria di massa in **file** e **cartelle** (directory) in una struttura ad albero. Un file si identifica con il suo **percorso** (es. `C:\esercizi\voli.c`).
 

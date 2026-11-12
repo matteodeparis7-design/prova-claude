@@ -8,6 +8,70 @@ Un **algoritmo** è una sequenza **finita** di passi **precisi** (non ambigui) c
 
 La **programmazione strutturata** (teorema di Böhm-Jacopini) dice che ogni algoritmo si può scrivere usando solo tre strutture: **sequenza**, **selezione** (`if`) e **iterazione** (`while`). Niente salti `goto`.
 
+## Scrivere un algoritmo: pseudocodice e diagrammi di flusso
+
+A lezione gli algoritmi si scrivono prima in **pseudocodice**: passi **numerati**, in italiano, con `INPUT(...)` per leggere i dati e `OUTPUT(...)` per comunicare i risultati. Solo dopo si traduce in C, e nel codice si indica con un commento quale istruzione realizza quale passo.
+
+**Esempio (lezione 3): massimo comun divisore di due interi positivi n e m.** Idea: il MCD non può essere più grande del minore dei due; parto da lì e scendo finché trovo un numero che divide entrambi (al limite arrivo a 1, che divide tutto, quindi il ciclo termina sempre).
+
+```text
+1) INPUT(n, m)
+2) ris = il minore tra n e m
+3) finche' (n % ris != 0) OPPURE (m % ris != 0)
+     3.1) ris = ris - 1
+4) OUTPUT(ris)
+```
+
+```c
+#include <stdio.h>
+
+int main(void) {
+  int n, m, ris;
+  scanf("%d %d", &n, &m);                    /* 1) INPUT(n, m)          */
+  if (n < m)                                 /* 2) ris = min(n, m)      */
+    ris = n;
+  else
+    ris = m;
+  while (n % ris != 0 || m % ris != 0)       /* 3) finche' non divide   */
+    ris = ris - 1;                           /* 3.1)                    */
+  printf("MCD = %d\n", ris);                 /* 4) OUTPUT(ris)          */
+  return 0;
+}
+```
+
+Nota la condizione del passo 3: "continua finché ris **non** divide entrambi" è la **negazione** di "ris divide n **e** divide m", e per De Morgan diventa un **OR** (vedi più avanti).
+
+Lo stesso algoritmo si può disegnare come **diagramma di flusso** (diagramma a blocchi). I simboli:
+
+```text
+  ( INIZIO / FINE )      ovale: inizio e fine
+  /  INPUT / OUTPUT /    parallelogramma: lettura o scrittura di dati
+  [  ris = ris - 1  ]    rettangolo: istruzione (assegnamento, calcolo)
+  <  condizione ?   >    rombo: decisione con due uscite, VERO e FALSO
+        |                frecce: l'ordine di esecuzione (il flusso)
+        v
+```
+
+```text
+        ( INIZIO )
+            |
+      / INPUT(n, m) /
+            |
+   [ ris = min(n, m) ]
+            |
+            v
+  +-> < n%ris != 0  OR  m%ris != 0 ? > --FALSO--+
+  |         | VERO                              |
+  |   [ ris = ris - 1 ]                         v
+  +---------+                           / OUTPUT(ris) /
+                                                |
+                                            ( FINE )
+```
+
+Un diagramma è **strutturato** se è fatto solo con sequenze, selezioni e iterazioni annidate (nessuna freccia che "salta" dentro o fuori da un blocco). I diagrammi strutturati si traducono direttamente in C.
+
+**Esecuzione simulata** dell'algoritmo con n = 12, m = 18: ris = 12 (non divide 18) → 11 → 10 → 9 → 8 → 7 → **6** (divide entrambi): OUTPUT 6. Saperla fare a mano, scrivendo i valori delle variabili passo per passo, è un'abilità richiesta all'orale e in alcuni esercizi.
+
 ## Il primo programma
 
 ```c
@@ -30,7 +94,7 @@ int main(void) {                 /* qui comincia l'esecuzione                 */
 
 ## Variabili e tipi semplici
 
-Una **variabile** è una locazione di memoria con un **nome**, un **tipo** e un **valore**. Il tipo dice quanti byte occupa e come interpretare i bit.
+Una **variabile** ha quattro aspetti, come insiste il professore: un **identificatore** (il nome), una **locazione** di memoria con il suo **indirizzo**, un **tipo** e un **valore** (il contenuto della locazione). **Leggere** una variabile (usarla in un'espressione) non ne cambia il valore; **scriverla** (assegnamento, `scanf`) sostituisce il vecchio valore, che va perso. Il tipo dice quanti byte occupa e come interpretare i bit.
 
 | Tipo | Cosa contiene | Dimensione tipica | Formato printf/scanf |
 |---|---|---|---|

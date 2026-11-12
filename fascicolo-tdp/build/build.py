@@ -130,7 +130,7 @@ def capitolo(percorso, numero):
         contatore[0] += 1
         return '<h2 id="%s-%d">%s</h2>' % (ident, contatore[0], mm.group(1))
     corpo = re.sub(r"<h2>(.*?)</h2>", ancora, corpo)
-    etichetta = "Introduzione" if numero == 0 else "Capitolo %d" % numero
+    etichetta = {0: "Introduzione", -1: "Laboratorio"}.get(numero, "Capitolo %d" % numero)
     sezione = ('<section class="capitolo" id="%s" aria-labelledby="t-%s">'
                '<header class="cap-testa"><p class="cap-num">%s</p><h1 id="t-%s">%s</h1></header>%s</section>'
                % (ident, ident, etichetta, ident, titolo, corpo))
@@ -142,16 +142,19 @@ def main():
     capitoli = []
     for f in file:
         numero = int(f.name[:2])
+        if f.name[2] != "-":          # es. 00b-laboratorio: sezione senza numero
+            numero = -1
         capitoli.append(capitolo(f, numero))
 
     parti = [
-        ("Per cominciare", [0]),
+        ("Per cominciare", [0, -1]),
         ("Il calcolatore", [1, 2]),
         ("Programmare in C", [3, 4, 5, 6, 7]),
         ("Memoria e dati strutturati", [8, 9, 10]),
         ("Metodo", [11, 12, 13]),
         ("Strutture dati dinamiche", [14, 15]),
         ("Verso l'esame", [16, 17, 18, 19, 20]),
+        ("Allenamento", [21]),
     ]
     per_numero = {c[1]: c for c in capitoli}
     indice = []
@@ -159,7 +162,7 @@ def main():
         voci = []
         for n in numeri:
             ident, num, titolo, _ = per_numero[n]
-            pref = "" if num == 0 else '<span class="toc-n">%d</span>' % num
+            pref = "" if num <= 0 else '<span class="toc-n">%d</span>' % num
             voci.append('<li><a href="#%s">%s<span class="toc-t">%s</span></a>'
                         '<input type="checkbox" class="fatto" id="fatto-%s" data-cap="%s" aria-label="Segna come studiato: %s"></li>'
                         % (ident, pref, titolo, ident, ident, html.escape(titolo)))

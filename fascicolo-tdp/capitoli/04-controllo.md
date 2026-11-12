@@ -86,6 +86,44 @@ while (condizione) {
 
 `break` esce subito dal ciclo; `continue` salta al prossimo giro. Usali poco: rendono i cicli più difficili da leggere.
 
+## Come si progetta un ciclo: INIT, CHECK, USE, ADVANCE
+
+Nelle slide della lezione 6 ogni ciclo si costruisce rispondendo a quattro domande:
+
+| Parte | Domanda | Esempio: sommare i numeri da 1 a n |
+|---|---|---|
+| **INIT** (inizializzazione) | Che valori devono avere le variabili **prima** del ciclo? | `i = 1; somma = 0;` |
+| **CHECK** (condizione) | Quando devo **ripetere**? (e quindi quando smetto?) | `i <= n` |
+| **USE** (corpo) | Che lavoro faccio a ogni giro? | `somma = somma + i;` |
+| **ADVANCE** (avanzamento) | Come mi **avvicino alla fine**? | `i = i + 1;` |
+
+```c
+i = 1;  somma = 0;            /* INIT    */
+while (i <= n) {              /* CHECK   */
+  somma = somma + i;          /* USE     */
+  i = i + 1;                  /* ADVANCE */
+}
+```
+
+Nel `for` le quattro parti sono tutte visibili: `for (INIT; CHECK; ADVANCE) USE`.
+
+### Terminazione
+
+Un ciclo deve **terminare**: l'ADVANCE deve far diventare prima o poi falsa la condizione. Se nel corpo nessuna istruzione modifica le variabili della condizione, il ciclo è **infinito**:
+
+```c
+i = 1;
+while (i <= 10)
+  printf("%d\n", i);          /* manca i++ : ciclo infinito */
+```
+
+Altro caso classico: `while (x != 0) x = x - 2;` termina solo se x parte pari e positivo. Quando scrivi un ciclo chiediti sempre: **"perché sono sicuro che finisce?"**. Nell'esempio del MCD del capitolo 3 la risposta è: ris scende di 1 a ogni giro e quando arriva a 1 la condizione è sicuramente falsa (1 divide tutto).
+
+### Variabili contatore e variabili "flag"
+
+- Una variabile **contatore** conta le iterazioni (o gli eventi) e spesso decide quando fermarsi (`for (i = 0; i < 5; i++)` per ripetere 5 volte).
+- Una variabile **flag** ("bandiera", detta anche sentinella) vale 0 finché non accade un evento, poi viene "alzata" a 1; la condizione del ciclo la controlla (`while (!trovato && ...)`). Serve per **fermarsi appena** si trova quello che si cerca.
+
 ## Gli schemi di ciclo da sapere a memoria
 
 Quasi tutti gli esercizi sono combinazioni di questi schemi. All'esame, sulle liste, li userai identici.
