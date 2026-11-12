@@ -32,6 +32,18 @@ TITOLI_BOX = {
 }
 
 
+PARTI = [
+    ("Per cominciare", [0, -1]),
+    ("Il calcolatore", [1, 2]),
+    ("Programmare in C", [3, 4, 5, 6, 7]),
+    ("Memoria e dati strutturati", [8, 9, 10]),
+    ("Metodo", [11, 12, 13]),
+    ("Strutture dati dinamiche", [14, 15]),
+    ("Verso l'esame", [16, 17, 18, 19, 20]),
+    ("Allenamento", [21]),
+]
+
+
 def regione(file, tag):
     testo = (CODICE / file).read_text(encoding="utf-8")
     m = re.search(r"/\* >>> %s \*/\n(.*?)/\* <<< %s \*/" % (re.escape(tag), re.escape(tag)), testo, re.S)
@@ -146,16 +158,7 @@ def main():
             numero = -1
         capitoli.append(capitolo(f, numero))
 
-    parti = [
-        ("Per cominciare", [0, -1]),
-        ("Il calcolatore", [1, 2]),
-        ("Programmare in C", [3, 4, 5, 6, 7]),
-        ("Memoria e dati strutturati", [8, 9, 10]),
-        ("Metodo", [11, 12, 13]),
-        ("Strutture dati dinamiche", [14, 15]),
-        ("Verso l'esame", [16, 17, 18, 19, 20]),
-        ("Allenamento", [21]),
-    ]
+    parti = PARTI
     per_numero = {c[1]: c for c in capitoli}
     indice = []
     for nome, numeri in parti:
@@ -174,12 +177,79 @@ def main():
     pagina = modello.replace("{{INDICE}}", indice_html).replace("{{CORPO}}", corpo)
     (USCITA / "fascicolo.html").write_text(pagina, encoding="utf-8")
 
-    stampa = ("<!doctype html><html lang=\"it\"><head><meta charset=\"utf-8\">"
-              "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
-              + pagina.replace("<!--STAMPA-->", '<style>' + (RADICE / "build" / "stampa.css").read_text(encoding="utf-8") + '</style>')
-              + "</html>")
-    (RADICE / "build" / "fascicolo-stampa.html").write_text(stampa, encoding="utf-8")
+    scrivi_stampa(modello, parti, per_numero, pagine={})
     print("ok:", len(capitoli), "capitoli,", len(pagina) // 1024, "KB")
+
+
+def scrivi_stampa(modello, parti, per_numero, pagine):
+    """Versione per il PDF: copertina, indice con numeri di pagina, capitoli.
+    `pagine` mappa ident -> numero di pagina (vuoto al primo passaggio)."""
+    testa = modello[:modello.index("<!--STAMPA-->")]
+    stile = "<style>" + (RADICE / "build" / "stampa.css").read_text(encoding="utf-8") + "</style>"
+    copertina = (
+        '<section class="copertina">'
+        '<p class="cop-occhiello">Sapienza Università di Roma · Ingegneria dell\'Informazione · sede di Latina</p>'
+        '<h1 class="cop-titolo">Tecniche della<br><span>Programmazione</span></h1>'
+        '<p class="cop-sotto">Fascicolo di preparazione all\'esame<br>corso del prof. Marco Temperini · A.A. 2026/27</p>'
+        '<ul class="cop-lista">'
+        '<li>Teoria spiegata in modo semplice, nell\'ordine del corso</li>'
+        '<li>Laboratorio per imparare a programmare in C</li>'
+        '<li>Codice ANSI C compilato e collaudato</li>'
+        '<li>Le tracce d\'esame del professore risolte</li>'
+        '<li>Tracce di esercitazione, palestra di 25 esercizi, orale</li>'
+        '</ul>'
+        '<p class="cop-nota">Materiale di studio non ufficiale, costruito sul programma e sui materiali '
+        'pubblicati sul sito del corso. Per regole e date fanno fede il sito del corso e Classroom.</p>'
+        '</section>')
+    righe = []
+    for nome, numeri in parti:
+        righe.append('<li class="ind-parte">%s</li>' % nome)
+        for n in numeri:
+            ident, num, titolo, _ = per_numero[n]
+            etich = "" if num <= 0 else "%d" % num
+            righe.append('<li class="ind-voce"><span class="ind-n">%s</span><span class="ind-t">%s</span>'
+                         '<span class="ind-punti"></span><span class="ind-p">%s</span></li>'
+                         % (etich, titolo, pagine.get(ident, "00")))
+    indice = '<section class="indice-stampa"><h1>Indice</h1><ol>%s</ol></section>' % "".join(righe)
+    corpo = []
+    for nome, numeri in parti:
+        for n in numeri:
+            ident, num, titolo, sezione = per_numero[n]
+            # marcatore invisibile per ritrovare nel PDF la pagina d'inizio del capitolo
+            sezione = sezione.replace('<header class="cap-testa">',
+                                      '<header class="cap-testa"><span class="marca">@@CAP:%s@@</span>' % ident, 1)
+            corpo.append(sezione)
+    html_stampa = ('<!doctype html><html lang="it"><head><meta charset="utf-8">' + testa + stile +
+                   '</head><body><main class="stampa">' + copertina + indice + "\n".join(corpo) +
+                   '</main></body></html>')
+    (RADICE / "build" / "fascicolo-stampa.html").write_text(html_stampa, encoding="utf-8")
+    # elenco dei capitoli per l'impaginazione (ident, etichetta, titolo)
+    import json
+    elenco = []
+    for nome, numeri in parti:
+        for n in numeri:
+            ident, num, titolo, _ = per_numero[n]
+            etich = {0: "Introduzione", -1: "Laboratorio"}.get(num, "Capitolo %d" % num)
+            elenco.append([ident, etich, re.sub(r"<[^>]+>", "", titolo)])
+    (RADICE / "build" / "capitoli.json").write_text(json.dumps(elenco, ensure_ascii=False), encoding="utf-8")
+
+
+def solo_stampa(pagine):
+    """Rigenera solo la versione di stampa con i numeri di pagina noti."""
+    main_stampa(pagine)
+
+
+def main_stampa(pagine):
+    file = sorted(CAPITOLI.glob("*.md"))
+    capitoli = []
+    for f in file:
+        numero = int(f.name[:2])
+        if f.name[2] != "-":
+            numero = -1
+        capitoli.append(capitolo(f, numero))
+    per_numero = {c[1]: c for c in capitoli}
+    modello = (RADICE / "build" / "modello.html").read_text(encoding="utf-8")
+    scrivi_stampa(modello, PARTI, per_numero, pagine)
 
 
 if __name__ == "__main__":

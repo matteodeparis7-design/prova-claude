@@ -2,7 +2,7 @@
 
 Fascicolo di preparazione all'esame di *Tecniche della Programmazione* (prof. Marco Temperini, Ingegneria dell'Informazione, sede di Latina, A.A. 2026/27).
 
-- `Fascicolo-Tecniche-della-Programmazione.pdf`: versione da stampare (A4, soluzioni visibili).
+- `Fascicolo-Tecniche-della-Programmazione.pdf`: versione da stampare (A4): copertina, indice con numeri di pagina e segnalibri, ogni capitolo su un foglio nuovo, soluzioni visibili.
 - `fascicolo.html`: versione web, con indice, caselle "studiato" e soluzioni a scomparsa.
 - `capitoli/`: il testo dei capitoli (Markdown).
 - `codice/`: tutti i programmi C del fascicolo, completi e compilabili (in `codice/palestra/` i 25 esercizi graduati).
@@ -21,6 +21,7 @@ In Dev-C++ basta aprire il file `.c` e compilare (con l'opzione "Supporto progra
 ## Rigenerare il fascicolo
 
 ```bash
-pip install markdown pygments
-python3 build/build.py
+pip install markdown pygments pypdf reportlab
+python3 build/build.py          # versione web
+python3 build/impagina.py       # PDF impaginato (serve Playwright)
 ```
