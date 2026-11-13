@@ -254,14 +254,143 @@ details[open] > summary { border-bottom: 1px solid var(--rule); }
 </table>
 <p>Totale: 30 punti. Attenzione al <strong>-1</strong> dell'esercizio 3: una risposta sbagliata o confusa può toglierti un punto. Rispondi con ordine.</p>
 <aside class="box box-nota"><p class="box-titolo">Come leggere i testi d&#x27;esame</p><p>In tutti gli elementi da memorizzare c'è <strong>una stringa "di lunghezza non nota a priori"</strong> (descrizione, cognome e nome...). È un segnale preciso: va rappresentata come <code>char *</code> e allocata <strong>esattamente</strong> con <code>malloc(strlen(...)+1)</code> (capitolo 9). Ci sono poi <strong>stringhe di lunghezza fissa</strong> ("codice di 9 caratteri", "grado di 8 caratteri"): quelle diventano <code>char campo[9+1]</code>. Gli altri campi sono <code>int</code>, <code>char</code> o <code>double</code>.</p></aside>
-<h2 id="esame-3">Testi di riferimento</h2>
+<h2 id="esame-3">Il programma ufficiale, voce per voce</h2>
+<p>Ogni voce del programma 2026/27 pubblicato dal professore, con il capitolo del fascicolo che la tratta. Spunta le voci man mano che le studi.</p>
+<table>
+<thead>
+<tr>
+<th>Voce del programma ufficiale</th>
+<th>Fonti indicate dal professore</th>
+<th>Capitolo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Architettura: macchina di Von Neumann, CPU, memoria centrale, periferiche</td>
+<td>slide, testo1 cap. 1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Rappresentazione dell'informazione: sistemi numerici, interi, floating point</td>
+<td>slide, complementi, testo1 app. D</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Linguaggio macchina, assembler, esecuzione di un programma in linguaggio macchina</td>
+<td>slide, complementi, testo1 cap. 4.1-4.4</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Software di base: sistema operativo, file system; compilazione ed esecuzione</td>
+<td>slide, testo1 cap. 2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Concetto di algoritmo; variabile; tipi semplici</td>
+<td>slide, testo1 cap. 3 e 6</td>
+<td>3</td>
+</tr>
+<tr>
+<td>Operatori, espressioni e loro valutazione</td>
+<td>slide, complementi, testo1 cap. 5, 8, app. C</td>
+<td>3</td>
+</tr>
+<tr>
+<td>Librerie di funzioni per l'input/output</td>
+<td>slide, complementi, testo1 cap. 5, 6, app. B</td>
+<td>3, 7</td>
+</tr>
+<tr>
+<td>Programmazione strutturata, istruzioni e blocchi, selezione e iterazione</td>
+<td>slide, complementi, testo1 cap. 4, 5, 7, 9</td>
+<td>3, 4</td>
+</tr>
+<tr>
+<td>Array</td>
+<td>slide, testo1 cap. 10</td>
+<td>6</td>
+</tr>
+<tr>
+<td>Funzioni, visibilità e ciclo di vita delle variabili</td>
+<td>slide, complementi, testo1 cap. 11</td>
+<td>5</td>
+</tr>
+<tr>
+<td>File testuali</td>
+<td>slide, video, complementi, testo1 cap. 17</td>
+<td>7</td>
+</tr>
+<tr>
+<td>Puntatori</td>
+<td>slide, testo1 cap. 14</td>
+<td>8</td>
+</tr>
+<tr>
+<td>Stringhe di caratteri</td>
+<td>slide, testo1 cap. 13</td>
+<td>9</td>
+</tr>
+<tr>
+<td>Allocazione dinamica: malloc, free, realloc; array statici e dinamici</td>
+<td>slide, complementi, testo1 cap. 14, app. B</td>
+<td>9</td>
+</tr>
+<tr>
+<td>Stringhe con allocazione "esatta"</td>
+<td>slide, complementi</td>
+<td>9</td>
+</tr>
+<tr>
+<td>Strutture (struct)</td>
+<td>slide, testo1 cap. 20</td>
+<td>10</td>
+</tr>
+<tr>
+<td>Ricorsione</td>
+<td>slide, complementi, testo1 cap. 15</td>
+<td>11</td>
+</tr>
+<tr>
+<td>File binari</td>
+<td>slide, video, complementi, testo1 cap. 17</td>
+<td>7</td>
+</tr>
+<tr>
+<td>Progettazione e implementazione di programmi C; ricerca e ordinamento</td>
+<td>slide, EG, testo1 cap. 11-12, testo2 cap. 1-2</td>
+<td>12, Laboratorio, Palestra</td>
+</tr>
+<tr>
+<td>Metodologie di sviluppo e tecniche di test dei programmi</td>
+<td>slide, video, testo2 cap. 1-2</td>
+<td>13</td>
+</tr>
+<tr>
+<td>Strutture di dati astratte (ADT); tabelle (array di strutture)</td>
+<td>slide, EG</td>
+<td>10</td>
+</tr>
+<tr>
+<td>Strutture dinamiche: liste concatenate</td>
+<td>slide, EG, testo2 cap. 6</td>
+<td>14</td>
+</tr>
+<tr>
+<td>Strutture dinamiche: alberi (cenni, quanto visto a lezione)</td>
+<td>slide, EG, testo2 cap. 8</td>
+<td>15</td>
+</tr>
+</tbody>
+</table>
+<p>I capitoli 16-21 non aggiungono argomenti nuovi: servono a <strong>prepararti alla prova</strong> (metodo, tracce risolte e da svolgere, orale, formulario, palestra).</p>
+<h2 id="esame-4">Testi di riferimento</h2>
 <ul>
 <li><strong>testo1</strong>: A. Bellini, A. Guidi, <em>Linguaggio C</em>, McGraw-Hill. È il testo principale, nuovo da quest'anno: il professore preferisce che lo adottiate.</li>
 <li><strong>testo2</strong>: D. Calvanese, P. Liberatore, F. Massacci, R. Rosati, <em>Programmazione di strutture dati in C</em>, Progetto Leonardo. Serve per <strong>test</strong>, <strong>liste</strong> (cap. 6) e <strong>alberi</strong> (cap. 8). Dalla lezione sulle liste in poi il corso lo usa "ufficialmente".</li>
 <li>In alternativa al testo1 si può usare il Deitel &amp; Deitel (testo degli anni scorsi), seguendo le annotazioni del programma 2024/25.</li>
 </ul>
 <p>Nel fascicolo, accanto a ogni capitolo, trovi tra parentesi i capitoli del testo indicati dal programma.</p>
-<h2 id="esame-4">Le date (A.A. 2026/27, dal sito del corso)</h2>
+<h2 id="esame-5">Le date (A.A. 2026/27, dal sito del corso)</h2>
 <table>
 <thead>
 <tr>
@@ -309,7 +438,7 @@ details[open] > summary { border-bottom: 1px solid var(--rule); }
 </tbody>
 </table>
 <p>Le date possono cambiare: controlla sempre la <a href="https://www.diag.uniroma1.it/marte/homepage/didattica/tdp-latina/tdp-esami.html">pagina esami del corso</a> e Classroom.</p>
-<h2 id="esame-5">Come usare questo fascicolo</h2>
+<h2 id="esame-6">Come usare questo fascicolo</h2>
 <p>Prima di tutto leggi il <a href="#laboratorio">Laboratorio</a>: spiega come si <strong>impara a programmare in C</strong> davvero (ambiente, errori del compilatore, debugging, metodo). Alla fine del fascicolo c'è la <a href="#palestra">Palestra di programmazione</a>, con 25 esercizi graduati da fare al computer man mano che studi. Il fascicolo segue l'ordine del corso. Ogni capitolo ha spiegazioni semplici, codice C commentato e provato, riquadri colorati ed esercizi con soluzione nascosta (clicca su "Soluzione" solo dopo averci provato davvero).</p>
 <aside class="box box-esame"><p class="box-titolo">All&#x27;esame</p><p>Questi riquadri dicono che cosa serve <strong>proprio per lo scritto o l'orale</strong>.</p></aside>
 <aside class="box box-errore"><p class="box-titolo">Errore tipico</p><p>Questi riquadri mostrano gli sbagli che costano punti.</p></aside>
@@ -377,6 +506,54 @@ details[open] > summary { border-bottom: 1px solid var(--rule); }
 </ol>
 <p>Alternative: su Mac o Linux il compilatore <code>gcc</code> dal terminale (<code>gcc -std=c89 -pedantic -Wall prova.c -o prova</code> e poi <code>./prova</code>); da telefono o da un PC qualsiasi, un compilatore online come OnlineGDB (scegli il linguaggio <strong>C</strong>).</p>
 <aside class="box box-nota"><p class="box-titolo">Se la finestra si chiude subito</p><p>In alcune versioni di Dev-C++ la finestra del programma si chiude appena finisce. Esegui dal menu <em>Esegui</em> (che di solito aspetta un tasto) oppure aggiungi prima di <code>return 0;</code> le righe <code>printf("premi invio"); getchar(); getchar();</code>.</p></aside>
+<aside class="box box-errore"><p class="box-titolo">C, non C++</p><p>Il corso usa il linguaggio <strong>C</strong> (standard ANSI), non il C++, anche se l'ambiente si chiama "Dev-<strong>C++</strong>". In C++ si possono scrivere cose che <strong>in C non esistono</strong>: se le scrivi all'esame sono errori. Quindi:</p>
+<table>
+<thead>
+<tr>
+<th>NON usare (è C++)</th>
+<th>Usa invece (C)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>#include &lt;iostream&gt;</code>, <code>cout &lt;&lt; x</code>, <code>cin &gt;&gt; x</code></td>
+<td><code>#include &lt;stdio.h&gt;</code>, <code>printf</code>, <code>scanf</code></td>
+</tr>
+<tr>
+<td><code>string s;</code> (tipo stringa del C++)</td>
+<td><code>char s[N];</code> o <code>char *s</code> con <code>malloc</code></td>
+</tr>
+<tr>
+<td><code>new</code> e <code>delete</code></td>
+<td><code>malloc</code> e <code>free</code> (<code>#include &lt;stdlib.h&gt;</code>)</td>
+</tr>
+<tr>
+<td><code>bool</code>, <code>true</code>, <code>false</code></td>
+<td><code>int</code> con 0 (falso) e 1 (vero)</td>
+</tr>
+<tr>
+<td>parametri riferimento <code>void f(int &amp;x)</code></td>
+<td>puntatori: <code>void f(int *x)</code>, chiamata <code>f(&amp;x)</code></td>
+</tr>
+<tr>
+<td><code>using namespace std;</code></td>
+<td>non serve nulla</td>
+</tr>
+<tr>
+<td>commenti <code>// ...</code> (non sono ANSI C89)</td>
+<td>commenti <code>/* ... */</code></td>
+</tr>
+<tr>
+<td><code>for (int i = 0; ...)</code> (dichiarazione nel for)</td>
+<td><code>int i;</code> all'inizio del blocco, poi <code>for (i = 0; ...)</code></td>
+</tr>
+<tr>
+<td>file salvato come <code>.cpp</code></td>
+<td>file salvato come <strong><code>.c</code></strong></td>
+</tr>
+</tbody>
+</table>
+<p>Tutto il codice di questo fascicolo è C: l'ho compilato con le opzioni più severe del C ANSI (<code>gcc -std=c89 -pedantic</code>). Non confondere i due linguaggi neanche negli esempi che trovi online: molti "esercizi di C" sul web sono in realtà C++.</p></aside>
 <h2 id="laboratorio-2">2. Il ciclo di lavoro: scrivi, compila, esegui, prova</h2>
 <figure class="codice schema"><pre><code>   +----------+     +-----------+  errori   +----------------------+
    |  SCRIVI  | --&gt; |  COMPILA  | --------&gt; | leggi il PRIMO errore|

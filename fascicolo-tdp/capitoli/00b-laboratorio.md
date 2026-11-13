@@ -16,6 +16,24 @@ Alternative: su Mac o Linux il compilatore `gcc` dal terminale (`gcc -std=c89 -p
 In alcune versioni di Dev-C++ la finestra del programma si chiude appena finisce. Esegui dal menu *Esegui* (che di solito aspetta un tasto) oppure aggiungi prima di `return 0;` le righe `printf("premi invio"); getchar(); getchar();`.
 :::
 
+::: errore C, non C++
+Il corso usa il linguaggio **C** (standard ANSI), non il C++, anche se l'ambiente si chiama "Dev-**C++**". In C++ si possono scrivere cose che **in C non esistono**: se le scrivi all'esame sono errori. Quindi:
+
+| NON usare (è C++) | Usa invece (C) |
+|---|---|
+| `#include <iostream>`, `cout << x`, `cin >> x` | `#include <stdio.h>`, `printf`, `scanf` |
+| `string s;` (tipo stringa del C++) | `char s[N];` o `char *s` con `malloc` |
+| `new` e `delete` | `malloc` e `free` (`#include <stdlib.h>`) |
+| `bool`, `true`, `false` | `int` con 0 (falso) e 1 (vero) |
+| parametri riferimento `void f(int &x)` | puntatori: `void f(int *x)`, chiamata `f(&x)` |
+| `using namespace std;` | non serve nulla |
+| commenti `// ...` (non sono ANSI C89) | commenti `/* ... */` |
+| `for (int i = 0; ...)` (dichiarazione nel for) | `int i;` all'inizio del blocco, poi `for (i = 0; ...)` |
+| file salvato come `.cpp` | file salvato come **`.c`** |
+
+Tutto il codice di questo fascicolo è C: l'ho compilato con le opzioni più severe del C ANSI (`gcc -std=c89 -pedantic`). Non confondere i due linguaggi neanche negli esempi che trovi online: molti "esercizi di C" sul web sono in realtà C++.
+:::
+
 ## 2. Il ciclo di lavoro: scrivi, compila, esegui, prova
 
 ```text

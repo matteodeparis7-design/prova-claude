@@ -93,6 +93,10 @@ def sovrapponi(elenco, inizio, totale):
         scrittore.add_page(pagina)
     scrittore.add_metadata({"/Title": "Fascicolo di Tecniche della Programmazione",
                             "/Subject": "Preparazione all'esame - prof. M. Temperini, A.A. 2026/27"})
+    # file piu` leggero: unisce gli oggetti duplicati (font, immagini) e comprime
+    for pagina in scrittore.pages:
+        pagina.compress_content_streams()
+    scrittore.compress_identical_objects(remove_duplicates=True, remove_unreferenced=True)
     # segnalibri (indice cliccabile nel lettore PDF)
     for p, c in ordinati:
         scrittore.add_outline_item("%s - %s" % (c[1], c[2]), p - 1)

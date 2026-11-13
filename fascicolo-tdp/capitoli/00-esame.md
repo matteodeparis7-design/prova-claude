@@ -40,6 +40,38 @@ Totale: 30 punti. Attenzione al **-1** dell'esercizio 3: una risposta sbagliata 
 In tutti gli elementi da memorizzare c'è **una stringa "di lunghezza non nota a priori"** (descrizione, cognome e nome...). È un segnale preciso: va rappresentata come `char *` e allocata **esattamente** con `malloc(strlen(...)+1)` (capitolo 9). Ci sono poi **stringhe di lunghezza fissa** ("codice di 9 caratteri", "grado di 8 caratteri"): quelle diventano `char campo[9+1]`. Gli altri campi sono `int`, `char` o `double`.
 :::
 
+## Il programma ufficiale, voce per voce
+
+Ogni voce del programma 2026/27 pubblicato dal professore, con il capitolo del fascicolo che la tratta. Spunta le voci man mano che le studi.
+
+| Voce del programma ufficiale | Fonti indicate dal professore | Capitolo |
+|---|---|---|
+| Architettura: macchina di Von Neumann, CPU, memoria centrale, periferiche | slide, testo1 cap. 1 | 1 |
+| Rappresentazione dell'informazione: sistemi numerici, interi, floating point | slide, complementi, testo1 app. D | 2 |
+| Linguaggio macchina, assembler, esecuzione di un programma in linguaggio macchina | slide, complementi, testo1 cap. 4.1-4.4 | 1 |
+| Software di base: sistema operativo, file system; compilazione ed esecuzione | slide, testo1 cap. 2 | 1 |
+| Concetto di algoritmo; variabile; tipi semplici | slide, testo1 cap. 3 e 6 | 3 |
+| Operatori, espressioni e loro valutazione | slide, complementi, testo1 cap. 5, 8, app. C | 3 |
+| Librerie di funzioni per l'input/output | slide, complementi, testo1 cap. 5, 6, app. B | 3, 7 |
+| Programmazione strutturata, istruzioni e blocchi, selezione e iterazione | slide, complementi, testo1 cap. 4, 5, 7, 9 | 3, 4 |
+| Array | slide, testo1 cap. 10 | 6 |
+| Funzioni, visibilità e ciclo di vita delle variabili | slide, complementi, testo1 cap. 11 | 5 |
+| File testuali | slide, video, complementi, testo1 cap. 17 | 7 |
+| Puntatori | slide, testo1 cap. 14 | 8 |
+| Stringhe di caratteri | slide, testo1 cap. 13 | 9 |
+| Allocazione dinamica: malloc, free, realloc; array statici e dinamici | slide, complementi, testo1 cap. 14, app. B | 9 |
+| Stringhe con allocazione "esatta" | slide, complementi | 9 |
+| Strutture (struct) | slide, testo1 cap. 20 | 10 |
+| Ricorsione | slide, complementi, testo1 cap. 15 | 11 |
+| File binari | slide, video, complementi, testo1 cap. 17 | 7 |
+| Progettazione e implementazione di programmi C; ricerca e ordinamento | slide, EG, testo1 cap. 11-12, testo2 cap. 1-2 | 12, Laboratorio, Palestra |
+| Metodologie di sviluppo e tecniche di test dei programmi | slide, video, testo2 cap. 1-2 | 13 |
+| Strutture di dati astratte (ADT); tabelle (array di strutture) | slide, EG | 10 |
+| Strutture dinamiche: liste concatenate | slide, EG, testo2 cap. 6 | 14 |
+| Strutture dinamiche: alberi (cenni, quanto visto a lezione) | slide, EG, testo2 cap. 8 | 15 |
+
+I capitoli 16-21 non aggiungono argomenti nuovi: servono a **prepararti alla prova** (metodo, tracce risolte e da svolgere, orale, formulario, palestra).
+
 ## Testi di riferimento
 
 - **testo1**: A. Bellini, A. Guidi, *Linguaggio C*, McGraw-Hill. È il testo principale, nuovo da quest'anno: il professore preferisce che lo adottiate.
