@@ -2,6 +2,12 @@
 
 *(slide lezioni 3-5; complementi lezioni 4 e 5; testo1 cap. 3, 5, 6, 8, app. B e C)*
 
+::: obiettivi Cosa imparerai
+- scrivere un algoritmo in pseudocodice e come diagramma di flusso
+- la struttura di un programma C, le variabili e i tipi
+- come vengono valutate le espressioni (divisione intera, logica, precedenze)
+:::
+
 ## Algoritmo e programma
 
 Un **algoritmo** è una sequenza **finita** di passi **precisi** (non ambigui) che risolve un problema in un tempo finito. Un **programma** è un algoritmo scritto in un linguaggio di programmazione. Prima si pensa l'algoritmo (anche con un diagramma a blocchi o in italiano), poi lo si traduce in C.
@@ -202,4 +208,10 @@ printf("%d %.1f %d\n", c, d, a > b && b > 3 || !0);
 
 ::: soluzione
 `a / b` = 3 (divisione intera), `a % b` = 1, quindi c = **4**. `d = a / b` calcola prima 3 (intero) e poi lo converte: d = **3.0**. L'ultima espressione: `a > b` è 1, `b > 3` è 0, quindi `1 && 0` = 0; poi `0 || !0` = `0 || 1` = **1** (`&&` ha precedenza su `||`). Stampa: `4 3.0 1`.
+:::
+
+::: ricorda Da ricordare
+- Prima l'**algoritmo** (passi numerati con INPUT/OUTPUT), poi il codice.
+- `7 / 2` vale **3**: per i reali serve un operando reale o il cast.
+- In C 0 è falso, tutto il resto è vero; `==` confronta, `=` assegna.
 :::

@@ -156,6 +156,14 @@ figure.schema pre { line-height: 1.35; }
 .box-esercizio .box-titolo { color: var(--esercizio); }
 .box .tab, .box figure.codice { background: var(--surface); }
 .box figure.codice { background: var(--code-bg); }
+.box-obiettivi { background: var(--surface); border: 1px solid var(--rule); border-left: 4px solid var(--accent); }
+.box-obiettivi .box-titolo { color: var(--accent); }
+.box-ricorda { background: var(--accent-soft); border-color: transparent; border-left: 4px solid var(--accent); }
+.box-ricorda .box-titolo { color: var(--accent); }
+dl.glossario { display: grid; grid-template-columns: minmax(9em, max-content) minmax(0, 1fr); gap: 6px 18px; margin: 12px 0; }
+dl.glossario dt { font-weight: 700; }
+dl.glossario dd { margin: 0; }
+@media (max-width: 600px) { dl.glossario { grid-template-columns: minmax(0, 1fr); } dl.glossario dd { margin-bottom: 8px; } }
 li.check { list-style: none; position: relative; }
 .casella { display: inline-block; width: 14px; height: 14px; border: 2px solid currentColor; border-radius: 3px; margin-right: 8px; vertical-align: -2px; opacity: .7; }
 
@@ -196,7 +204,7 @@ details[open] > summary { border-bottom: 1px solid var(--rule); }
     <details id="pannello-indice" open>
       <summary>Indice <span class="progresso" id="progresso">0 di 23 studiati</span></summary>
       <div class="barra" aria-hidden="true"><i id="barra"></i></div>
-      <ol class="toc"><li class="toc-parte"><p>Per cominciare</p><ol><li><a href="#esame"><span class="toc-t">Prima di cominciare: com'è fatto l'esame</span></a><input type="checkbox" class="fatto" id="fatto-esame" data-cap="esame" aria-label="Segna come studiato: Prima di cominciare: com&#x27;è fatto l&#x27;esame"></li><li><a href="#laboratorio"><span class="toc-t">Laboratorio: come si impara a programmare in C</span></a><input type="checkbox" class="fatto" id="fatto-laboratorio" data-cap="laboratorio" aria-label="Segna come studiato: Laboratorio: come si impara a programmare in C"></li></ol></li><li class="toc-parte"><p>Il calcolatore</p><ol><li><a href="#architettura"><span class="toc-n">1</span><span class="toc-t">Il sistema di elaborazione</span></a><input type="checkbox" class="fatto" id="fatto-architettura" data-cap="architettura" aria-label="Segna come studiato: Il sistema di elaborazione"></li><li><a href="#rappresentazione"><span class="toc-n">2</span><span class="toc-t">Rappresentazione dell'informazione</span></a><input type="checkbox" class="fatto" id="fatto-rappresentazione" data-cap="rappresentazione" aria-label="Segna come studiato: Rappresentazione dell&#x27;informazione"></li></ol></li><li class="toc-parte"><p>Programmare in C</p><ol><li><a href="#cbasi"><span class="toc-n">3</span><span class="toc-t">Primi passi in C: algoritmi, variabili, tipi, espressioni</span></a><input type="checkbox" class="fatto" id="fatto-cbasi" data-cap="cbasi" aria-label="Segna come studiato: Primi passi in C: algoritmi, variabili, tipi, espressioni"></li><li><a href="#controllo"><span class="toc-n">4</span><span class="toc-t">Istruzioni di controllo</span></a><input type="checkbox" class="fatto" id="fatto-controllo" data-cap="controllo" aria-label="Segna come studiato: Istruzioni di controllo"></li><li><a href="#funzioni"><span class="toc-n">5</span><span class="toc-t">Funzioni e record di attivazione</span></a><input type="checkbox" class="fatto" id="fatto-funzioni" data-cap="funzioni" aria-label="Segna come studiato: Funzioni e record di attivazione"></li><li><a href="#array"><span class="toc-n">6</span><span class="toc-t">Array</span></a><input type="checkbox" class="fatto" id="fatto-array" data-cap="array" aria-label="Segna come studiato: Array"></li><li><a href="#file"><span class="toc-n">7</span><span class="toc-t">File testuali e binari</span></a><input type="checkbox" class="fatto" id="fatto-file" data-cap="file" aria-label="Segna come studiato: File testuali e binari"></li></ol></li><li class="toc-parte"><p>Memoria e dati strutturati</p><ol><li><a href="#puntatori"><span class="toc-n">8</span><span class="toc-t">Puntatori</span></a><input type="checkbox" class="fatto" id="fatto-puntatori" data-cap="puntatori" aria-label="Segna come studiato: Puntatori"></li><li><a href="#stringhe"><span class="toc-n">9</span><span class="toc-t">Stringhe e allocazione dinamica della memoria</span></a><input type="checkbox" class="fatto" id="fatto-stringhe" data-cap="stringhe" aria-label="Segna come studiato: Stringhe e allocazione dinamica della memoria"></li><li><a href="#struct"><span class="toc-n">10</span><span class="toc-t">Struct, typedef e tabelle</span></a><input type="checkbox" class="fatto" id="fatto-struct" data-cap="struct" aria-label="Segna come studiato: Struct, typedef e tabelle"></li></ol></li><li class="toc-parte"><p>Metodo</p><ol><li><a href="#ricorsione"><span class="toc-n">11</span><span class="toc-t">Ricorsione</span></a><input type="checkbox" class="fatto" id="fatto-ricorsione" data-cap="ricorsione" aria-label="Segna come studiato: Ricorsione"></li><li><a href="#ordinamento"><span class="toc-n">12</span><span class="toc-t">Ricerca e ordinamento</span></a><input type="checkbox" class="fatto" id="fatto-ordinamento" data-cap="ordinamento" aria-label="Segna come studiato: Ricerca e ordinamento"></li><li><a href="#test"><span class="toc-n">13</span><span class="toc-t">Qualità dei programmi e test di correttezza</span></a><input type="checkbox" class="fatto" id="fatto-test" data-cap="test" aria-label="Segna come studiato: Qualità dei programmi e test di correttezza"></li></ol></li><li class="toc-parte"><p>Strutture dati dinamiche</p><ol><li><a href="#liste"><span class="toc-n">14</span><span class="toc-t">Liste collegate</span></a><input type="checkbox" class="fatto" id="fatto-liste" data-cap="liste" aria-label="Segna come studiato: Liste collegate"></li><li><a href="#alberi"><span class="toc-n">15</span><span class="toc-t">Alberi binari (cenni)</span></a><input type="checkbox" class="fatto" id="fatto-alberi" data-cap="alberi" aria-label="Segna come studiato: Alberi binari (cenni)"></li></ol></li><li class="toc-parte"><p>Verso l'esame</p><ol><li><a href="#metodo"><span class="toc-n">16</span><span class="toc-t">Il metodo per lo scritto</span></a><input type="checkbox" class="fatto" id="fatto-metodo" data-cap="metodo" aria-label="Segna come studiato: Il metodo per lo scritto"></li><li><a href="#tracce"><span class="toc-n">17</span><span class="toc-t">Le tracce del professore, risolte</span></a><input type="checkbox" class="fatto" id="fatto-tracce" data-cap="tracce" aria-label="Segna come studiato: Le tracce del professore, risolte"></li><li><a href="#esercitazione"><span class="toc-n">18</span><span class="toc-t">Tracce di esercitazione (nuove, stile esame)</span></a><input type="checkbox" class="fatto" id="fatto-esercitazione" data-cap="esercitazione" aria-label="Segna come studiato: Tracce di esercitazione (nuove, stile esame)"></li><li><a href="#orale"><span class="toc-n">19</span><span class="toc-t">Preparazione all'orale</span></a><input type="checkbox" class="fatto" id="fatto-orale" data-cap="orale" aria-label="Segna come studiato: Preparazione all&#x27;orale"></li><li><a href="#formulario"><span class="toc-n">20</span><span class="toc-t">Formulario da ripassare il giorno prima</span></a><input type="checkbox" class="fatto" id="fatto-formulario" data-cap="formulario" aria-label="Segna come studiato: Formulario da ripassare il giorno prima"></li></ol></li><li class="toc-parte"><p>Allenamento</p><ol><li><a href="#palestra"><span class="toc-n">21</span><span class="toc-t">Palestra di programmazione</span></a><input type="checkbox" class="fatto" id="fatto-palestra" data-cap="palestra" aria-label="Segna come studiato: Palestra di programmazione"></li></ol></li></ol>
+      <ol class="toc"><li class="toc-parte"><p>Per cominciare</p><ol><li><a href="#esame"><span class="toc-t">Prima di cominciare: com'è fatto l'esame</span></a><input type="checkbox" class="fatto" id="fatto-esame" data-cap="esame" aria-label="Segna come studiato: Prima di cominciare: com&#x27;è fatto l&#x27;esame"></li><li><a href="#laboratorio"><span class="toc-t">Laboratorio: come si impara a programmare in C</span></a><input type="checkbox" class="fatto" id="fatto-laboratorio" data-cap="laboratorio" aria-label="Segna come studiato: Laboratorio: come si impara a programmare in C"></li></ol></li><li class="toc-parte"><p>Il calcolatore</p><ol><li><a href="#architettura"><span class="toc-n">1</span><span class="toc-t">Il sistema di elaborazione</span></a><input type="checkbox" class="fatto" id="fatto-architettura" data-cap="architettura" aria-label="Segna come studiato: Il sistema di elaborazione"></li><li><a href="#rappresentazione"><span class="toc-n">2</span><span class="toc-t">Rappresentazione dell'informazione</span></a><input type="checkbox" class="fatto" id="fatto-rappresentazione" data-cap="rappresentazione" aria-label="Segna come studiato: Rappresentazione dell&#x27;informazione"></li></ol></li><li class="toc-parte"><p>Programmare in C</p><ol><li><a href="#cbasi"><span class="toc-n">3</span><span class="toc-t">Primi passi in C: algoritmi, variabili, tipi, espressioni</span></a><input type="checkbox" class="fatto" id="fatto-cbasi" data-cap="cbasi" aria-label="Segna come studiato: Primi passi in C: algoritmi, variabili, tipi, espressioni"></li><li><a href="#controllo"><span class="toc-n">4</span><span class="toc-t">Istruzioni di controllo</span></a><input type="checkbox" class="fatto" id="fatto-controllo" data-cap="controllo" aria-label="Segna come studiato: Istruzioni di controllo"></li><li><a href="#funzioni"><span class="toc-n">5</span><span class="toc-t">Funzioni e record di attivazione</span></a><input type="checkbox" class="fatto" id="fatto-funzioni" data-cap="funzioni" aria-label="Segna come studiato: Funzioni e record di attivazione"></li><li><a href="#array"><span class="toc-n">6</span><span class="toc-t">Array</span></a><input type="checkbox" class="fatto" id="fatto-array" data-cap="array" aria-label="Segna come studiato: Array"></li><li><a href="#file"><span class="toc-n">7</span><span class="toc-t">File testuali e binari</span></a><input type="checkbox" class="fatto" id="fatto-file" data-cap="file" aria-label="Segna come studiato: File testuali e binari"></li></ol></li><li class="toc-parte"><p>Memoria e dati strutturati</p><ol><li><a href="#puntatori"><span class="toc-n">8</span><span class="toc-t">Puntatori</span></a><input type="checkbox" class="fatto" id="fatto-puntatori" data-cap="puntatori" aria-label="Segna come studiato: Puntatori"></li><li><a href="#stringhe"><span class="toc-n">9</span><span class="toc-t">Stringhe e allocazione dinamica della memoria</span></a><input type="checkbox" class="fatto" id="fatto-stringhe" data-cap="stringhe" aria-label="Segna come studiato: Stringhe e allocazione dinamica della memoria"></li><li><a href="#struct"><span class="toc-n">10</span><span class="toc-t">Struct, typedef e tabelle</span></a><input type="checkbox" class="fatto" id="fatto-struct" data-cap="struct" aria-label="Segna come studiato: Struct, typedef e tabelle"></li></ol></li><li class="toc-parte"><p>Metodo</p><ol><li><a href="#ricorsione"><span class="toc-n">11</span><span class="toc-t">Ricorsione</span></a><input type="checkbox" class="fatto" id="fatto-ricorsione" data-cap="ricorsione" aria-label="Segna come studiato: Ricorsione"></li><li><a href="#ordinamento"><span class="toc-n">12</span><span class="toc-t">Ricerca e ordinamento</span></a><input type="checkbox" class="fatto" id="fatto-ordinamento" data-cap="ordinamento" aria-label="Segna come studiato: Ricerca e ordinamento"></li><li><a href="#test"><span class="toc-n">13</span><span class="toc-t">Qualità dei programmi e test di correttezza</span></a><input type="checkbox" class="fatto" id="fatto-test" data-cap="test" aria-label="Segna come studiato: Qualità dei programmi e test di correttezza"></li></ol></li><li class="toc-parte"><p>Strutture dati dinamiche</p><ol><li><a href="#liste"><span class="toc-n">14</span><span class="toc-t">Liste collegate</span></a><input type="checkbox" class="fatto" id="fatto-liste" data-cap="liste" aria-label="Segna come studiato: Liste collegate"></li><li><a href="#alberi"><span class="toc-n">15</span><span class="toc-t">Alberi binari (cenni)</span></a><input type="checkbox" class="fatto" id="fatto-alberi" data-cap="alberi" aria-label="Segna come studiato: Alberi binari (cenni)"></li></ol></li><li class="toc-parte"><p>Verso l'esame</p><ol><li><a href="#metodo"><span class="toc-n">16</span><span class="toc-t">Il metodo per lo scritto</span></a><input type="checkbox" class="fatto" id="fatto-metodo" data-cap="metodo" aria-label="Segna come studiato: Il metodo per lo scritto"></li><li><a href="#tracce"><span class="toc-n">17</span><span class="toc-t">Le tracce del professore, risolte</span></a><input type="checkbox" class="fatto" id="fatto-tracce" data-cap="tracce" aria-label="Segna come studiato: Le tracce del professore, risolte"></li><li><a href="#esercitazione"><span class="toc-n">18</span><span class="toc-t">Tracce di esercitazione (nuove, stile esame)</span></a><input type="checkbox" class="fatto" id="fatto-esercitazione" data-cap="esercitazione" aria-label="Segna come studiato: Tracce di esercitazione (nuove, stile esame)"></li><li><a href="#orale"><span class="toc-n">19</span><span class="toc-t">Preparazione all'orale</span></a><input type="checkbox" class="fatto" id="fatto-orale" data-cap="orale" aria-label="Segna come studiato: Preparazione all&#x27;orale"></li><li><a href="#formulario"><span class="toc-n">20</span><span class="toc-t">Formulario, glossario e autoverifica</span></a><input type="checkbox" class="fatto" id="fatto-formulario" data-cap="formulario" aria-label="Segna come studiato: Formulario, glossario e autoverifica"></li></ol></li><li class="toc-parte"><p>Allenamento</p><ol><li><a href="#palestra"><span class="toc-n">21</span><span class="toc-t">Palestra di programmazione</span></a><input type="checkbox" class="fatto" id="fatto-palestra" data-cap="palestra" aria-label="Segna come studiato: Palestra di programmazione"></li></ol></li></ol>
       <div class="strumenti">
         <button type="button" id="apri-soluzioni">Mostra tutte le soluzioni</button>
       </div>
@@ -204,7 +212,12 @@ details[open] > summary { border-bottom: 1px solid var(--rule); }
   </nav>
 
   <main>
-<section class="capitolo" id="esame" aria-labelledby="t-esame"><header class="cap-testa"><p class="cap-num">Introduzione</p><h1 id="t-esame">Prima di cominciare: com'è fatto l'esame</h1></header><p>Questo fascicolo segue il <strong>programma 2026/27</strong> di <em>Tecniche della Programmazione</em> del prof. Marco Temperini (Ingegneria dell'Informazione, sede di Latina). L'ho costruito leggendo il sito del corso: programma, calendario delle lezioni, slide, complementi didattici, esercitazioni guidate (EG) e i testi d'esame d'esempio. Tutti i programmi C che trovi qui sono stati compilati e provati in ANSI C (<code>gcc -std=c89 -pedantic -Wall</code>), lo standard richiesto dal professore.</p>
+<section class="capitolo" id="esame" aria-labelledby="t-esame"><header class="cap-testa"><p class="cap-num">Introduzione</p><h1 id="t-esame">Prima di cominciare: com'è fatto l'esame</h1></header><aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>come è fatto lo scritto e quanto vale ogni esercizio</li>
+<li>cosa serve per poter sostenere l'esame (homework, Infostud)</li>
+<li>come è organizzato il fascicolo e come studiarlo in 8 settimane</li>
+</ul></aside>
+<p>Questo fascicolo segue il <strong>programma 2026/27</strong> di <em>Tecniche della Programmazione</em> del prof. Marco Temperini (Ingegneria dell'Informazione, sede di Latina). L'ho costruito leggendo il sito del corso: programma, calendario delle lezioni, slide, complementi didattici, esercitazioni guidate (EG) e i testi d'esame d'esempio. Tutti i programmi C che trovi qui sono stati compilati e provati in ANSI C (<code>gcc -std=c89 -pedantic -Wall</code>), lo standard richiesto dal professore.</p>
 <h2 id="esame-1">Le regole, in breve</h2>
 <aside class="box box-esame"><p class="box-titolo">Cosa serve per sostenere l&#x27;esame</p><ul>
 <li><strong>Homework</strong>: chi si è immatricolato dal 2025/26 in poi (quindi anche tu) deve aver <strong>consegnato e visto accettati i compiti (homework)</strong> su Classroom. Senza homework accettati non puoi presentarti.</li>
@@ -495,8 +508,18 @@ details[open] > summary { border-bottom: 1px solid var(--rule); }
 </tr>
 </tbody>
 </table>
-<aside class="box box-nota"><p class="box-titolo">Il segreto per passare</p><p>Lo scritto premia chi ha <strong>scritto a mano tante funzioni sulle liste</strong>. Leggere le soluzioni non basta: prendi una traccia, chiudi il fascicolo, scrivi su carta in 2h30, poi correggi confrontando con le soluzioni e provando il codice al computer (Dev-C++, come al corso).</p></aside></section>
-<section class="capitolo" id="laboratorio" aria-labelledby="t-laboratorio"><header class="cap-testa"><p class="cap-num">Laboratorio</p><h1 id="t-laboratorio">Laboratorio: come si impara a programmare in C</h1></header><p>Programmare si impara <strong>programmando</strong>, come si impara a nuotare in acqua. Leggere il fascicolo serve a capire; ma all'esame dovrai <strong>scrivere</strong> codice C corretto, su carta, da solo. Questo capitolo ti dice come allenarti, e alla fine del fascicolo trovi la <a href="#palestra">Palestra di programmazione</a> con 25 esercizi graduati e risolti.</p>
+<aside class="box box-nota"><p class="box-titolo">Il segreto per passare</p><p>Lo scritto premia chi ha <strong>scritto a mano tante funzioni sulle liste</strong>. Leggere le soluzioni non basta: prendi una traccia, chiudi il fascicolo, scrivi su carta in 2h30, poi correggi confrontando con le soluzioni e provando il codice al computer (Dev-C++, come al corso).</p></aside>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li>Scritto di 2h30: esercizio 1 (13 punti) e 2 (10 punti) sempre sulle <strong>liste</strong>, esercizio 3 (7 punti) su test, floating point o ricorsione.</li>
+<li>Senza <strong>homework accettati</strong> non puoi presentarti.</li>
+<li>Si studia <strong>scrivendo codice</strong>, non solo leggendo.</li>
+</ul></aside></section>
+<section class="capitolo" id="laboratorio" aria-labelledby="t-laboratorio"><header class="cap-testa"><p class="cap-num">Laboratorio</p><h1 id="t-laboratorio">Laboratorio: come si impara a programmare in C</h1></header><aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>come preparare Dev-C++ e scrivere programmi in C (non in C++)</li>
+<li>come leggere gli errori del compilatore e trovare gli errori nel programma</li>
+<li>un metodo in 6 passi per risolvere qualsiasi esercizio</li>
+</ul></aside>
+<p>Programmare si impara <strong>programmando</strong>, come si impara a nuotare in acqua. Leggere il fascicolo serve a capire; ma all'esame dovrai <strong>scrivere</strong> codice C corretto, su carta, da solo. Questo capitolo ti dice come allenarti, e alla fine del fascicolo trovi la <a href="#palestra">Palestra di programmazione</a> con 25 esercizi graduati e risolti.</p>
 <h2 id="laboratorio-1">1. Prepara l'ambiente</h2>
 <p>Al corso si usa <strong>Dev-C++</strong> (Windows), un ambiente gratuito con editor, compilatore e debugger.</p>
 <ol>
@@ -642,8 +665,18 @@ details[open] > summary { border-bottom: 1px solid var(--rule); }
 <li>Rifai le <strong>EG</strong> del corso (cartella "esercitazioni guidate" sul sito): sono esercizi pensati dal professore, con i suggerimenti passo passo.</li>
 <li>Dalle liste in poi, allenati <strong>su carta</strong>: all'esame non c'è il compilatore. Scrivi a mano, poi ricopia al computer e guarda se compila e funziona. Gli errori che il compilatore ti trova sono quelli che all'esame ti costerebbero punti.</li>
 </ul>
-<aside class="box box-esame"><p class="box-titolo">Perché tutto questo conta all&#x27;esame</p><p>Lo scritto chiede di <strong>scrivere codice</strong> corretto in 2h30, senza compilatore. Chi ha scritto e fatto girare decine di programmi scrive giusto "di mano"; chi ha solo letto le soluzioni si blocca davanti al foglio bianco. Gli homework, obbligatori, servono proprio a questo: falli tu, fino in fondo.</p></aside></section>
+<aside class="box box-esame"><p class="box-titolo">Perché tutto questo conta all&#x27;esame</p><p>Lo scritto chiede di <strong>scrivere codice</strong> corretto in 2h30, senza compilatore. Chi ha scritto e fatto girare decine di programmi scrive giusto "di mano"; chi ha solo letto le soluzioni si blocca davanti al foglio bianco. Gli homework, obbligatori, servono proprio a questo: falli tu, fino in fondo.</p></aside>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li>File con estensione <strong><code>.c</code></strong>, standard ANSI C, niente costrutti del C++.</li>
+<li>Compila spesso e correggi sempre <strong>il primo</strong> errore.</li>
+<li>Metodo: capisci, algoritmo, dati, funzioni, codice, prove.</li>
+</ul></aside></section>
 <section class="capitolo" id="architettura" aria-labelledby="t-architettura"><header class="cap-testa"><p class="cap-num">Capitolo 1</p><h1 id="t-architettura">Il sistema di elaborazione</h1></header><p><em>(slide lezioni 1-3 e "Cenni sul linguaggio macchina"; testo1 cap. 1, 2, 4.1-4.4)</em></p>
+<aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>com'è fatto un calcolatore (macchina di Von Neumann)</li>
+<li>come la CPU esegue le istruzioni (fetch, decode, execute)</li>
+<li>che cosa succede quando compili un programma C</li>
+</ul></aside>
 <p>Prima di programmare bisogna sapere <strong>che cosa</strong> esegue i programmi. Questo capitolo è teoria che può uscire all'orale.</p>
 <h2 id="architettura-1">La macchina di Von Neumann</h2>
 <p>Quasi tutti i calcolatori seguono lo schema di <strong>Von Neumann</strong>: <strong>i dati e il programma stanno nella stessa memoria</strong>, e una CPU esegue le istruzioni una dopo l'altra.</p>
@@ -814,8 +847,18 @@ details[open] > summary { border-bottom: 1px solid var(--rule); }
 00000001 0000 &lt;ind. 108&gt;    STORE RAM[108] &lt;- R0
 00010001 0001 &lt;ind. 108&gt;    WRITE output &lt;- RAM[108]
 10000001                    STOP</code></pre></figure></p>
-<p>Gli indirizzi in binario su 20 bit sono: 100 = <code>00000000000001100100</code>, 104 = <code>00000000000001101000</code>, 108 = <code>00000000000001101100</code>.</p></div></details></section>
+<p>Gli indirizzi in binario su 20 bit sono: 100 = <code>00000000000001100100</code>, 104 = <code>00000000000001101000</code>, 108 = <code>00000000000001101100</code>.</p></div></details>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li>Dati e programma stanno nella <strong>stessa memoria</strong>; la CPU esegue un'istruzione alla volta.</li>
+<li><strong>PC</strong> = indirizzo della prossima istruzione, <strong>IR</strong> = istruzione corrente.</li>
+<li>Sorgente → preprocessore → compilatore → linker → eseguibile.</li>
+</ul></aside></section>
 <section class="capitolo" id="rappresentazione" aria-labelledby="t-rappresentazione"><header class="cap-testa"><p class="cap-num">Capitolo 2</p><h1 id="t-rappresentazione">Rappresentazione dell'informazione</h1></header><p><em>(slide lezione 7, complementi "Sistemi di numerazione" e "Rappresentazione di numeri"; testo1 app. D)</em></p>
+<aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>convertire numeri tra base 2, 8, 10 e 16</li>
+<li>rappresentare interi in complemento a due</li>
+<li>rappresentare un reale in floating point a 32 bit (esercizio d'esame)</li>
+</ul></aside>
 <p>Nella memoria ci sono solo <strong>bit</strong> (0 e 1). Questo capitolo spiega come con i bit si rappresentano numeri interi, negativi e reali. Il <strong>floating point</strong> è uscito come <strong>esercizio 3</strong> in un testo d'esame: va saputo fare a mano, senza errori.</p>
 <h2 id="rappresentazione-1">Numeri e numerali</h2>
 <p>Un <strong>numero</strong> è un concetto; un <strong>numerale</strong> è la scrittura che lo rappresenta. Il numero dodici si scrive <code>12</code> in decimale, <code>XII</code> in cifre romane, <code>1100</code> in binario, <code>C</code> in esadecimale.</p>
@@ -1007,8 +1050,18 @@ letti dal basso:  1216 = 10011000000   (11 cifre; verifica: 1024+128+64 = 1216)<
 </tbody>
 </table>
 <p>Conseguenze utili: <code>'7' - '0'</code> vale 7 (da carattere cifra a numero); <code>'a' - 'A'</code> vale 32 (da maiuscola a minuscola basta sommare 32); le lettere sono consecutive, quindi <code>c &gt;= 'a' &amp;&amp; c &lt;= 'z'</code> controlla se <code>c</code> è minuscola.</p>
-<aside class="box box-esame"><p class="box-titolo">All&#x27;orale</p><p>Sappi spiegare <strong>perché</strong> si usa il complemento a due (un solo zero, la sottrazione diventa una somma), <strong>perché</strong> i float sono approssimati (numero finito di bit, frazioni periodiche) e perché l'esponente è in eccesso 127 (per avere esponenti negativi senza un bit di segno in più).</p></aside></section>
+<aside class="box box-esame"><p class="box-titolo">All&#x27;orale</p><p>Sappi spiegare <strong>perché</strong> si usa il complemento a due (un solo zero, la sottrazione diventa una somma), <strong>perché</strong> i float sono approssimati (numero finito di bit, frazioni periodiche) e perché l'esponente è in eccesso 127 (per avere esponenti negativi senza un bit di segno in più).</p></aside>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li>Base 10 → 2: <strong>divisioni</strong> per la parte intera, <strong>moltiplicazioni</strong> per la frazione.</li>
+<li>Negativo in complemento a due: <strong>inverti i bit e somma 1</strong>; intervallo [-2<sup>n-1</sup>, 2<sup>n-1</sup>-1].</li>
+<li>Float: segno, esponente <strong>+127</strong> su 8 bit, 23 bit di mantissa dopo "1.".</li>
+</ul></aside></section>
 <section class="capitolo" id="cbasi" aria-labelledby="t-cbasi"><header class="cap-testa"><p class="cap-num">Capitolo 3</p><h1 id="t-cbasi">Primi passi in C: algoritmi, variabili, tipi, espressioni</h1></header><p><em>(slide lezioni 3-5; complementi lezioni 4 e 5; testo1 cap. 3, 5, 6, 8, app. B e C)</em></p>
+<aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>scrivere un algoritmo in pseudocodice e come diagramma di flusso</li>
+<li>la struttura di un programma C, le variabili e i tipi</li>
+<li>come vengono valutate le espressioni (divisione intera, logica, precedenze)</li>
+</ul></aside>
 <h2 id="cbasi-1">Algoritmo e programma</h2>
 <p>Un <strong>algoritmo</strong> è una sequenza <strong>finita</strong> di passi <strong>precisi</strong> (non ambigui) che risolve un problema in un tempo finito. Un <strong>programma</strong> è un algoritmo scritto in un linguaggio di programmazione. Prima si pensa l'algoritmo (anche con un diagramma a blocchi o in italiano), poi lo si traduce in C.</p>
 <p>La <strong>programmazione strutturata</strong> (teorema di Böhm-Jacopini) dice che ogni algoritmo si può scrivere usando solo tre strutture: <strong>sequenza</strong>, <strong>selezione</strong> (<code>if</code>) e <strong>iterazione</strong> (<code>while</code>). Niente salti <code>goto</code>.</p>
@@ -1243,8 +1296,18 @@ letti dal basso:  1216 = 10011000000   (11 cifre; verifica: 1024+128+64 = 1216)<
 <span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
 <span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
 <span class="n">printf</span><span class="p">(</span><span class="s">"%d %.1f %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="mi">0</span><span class="p">);</span></code></pre></figure></p></aside>
-<details class="sol"><summary>Soluzione</summary><div class="sol-corpo"><p><code>a / b</code> = 3 (divisione intera), <code>a % b</code> = 1, quindi c = <strong>4</strong>. <code>d = a / b</code> calcola prima 3 (intero) e poi lo converte: d = <strong>3.0</strong>. L'ultima espressione: <code>a &gt; b</code> è 1, <code>b &gt; 3</code> è 0, quindi <code>1 &amp;&amp; 0</code> = 0; poi <code>0 || !0</code> = <code>0 || 1</code> = <strong>1</strong> (<code>&amp;&amp;</code> ha precedenza su <code>||</code>). Stampa: <code>4 3.0 1</code>.</p></div></details></section>
+<details class="sol"><summary>Soluzione</summary><div class="sol-corpo"><p><code>a / b</code> = 3 (divisione intera), <code>a % b</code> = 1, quindi c = <strong>4</strong>. <code>d = a / b</code> calcola prima 3 (intero) e poi lo converte: d = <strong>3.0</strong>. L'ultima espressione: <code>a &gt; b</code> è 1, <code>b &gt; 3</code> è 0, quindi <code>1 &amp;&amp; 0</code> = 0; poi <code>0 || !0</code> = <code>0 || 1</code> = <strong>1</strong> (<code>&amp;&amp;</code> ha precedenza su <code>||</code>). Stampa: <code>4 3.0 1</code>.</p></div></details>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li>Prima l'<strong>algoritmo</strong> (passi numerati con INPUT/OUTPUT), poi il codice.</li>
+<li><code>7 / 2</code> vale <strong>3</strong>: per i reali serve un operando reale o il cast.</li>
+<li>In C 0 è falso, tutto il resto è vero; <code>==</code> confronta, <code>=</code> assegna.</li>
+</ul></aside></section>
 <section class="capitolo" id="controllo" aria-labelledby="t-controllo"><header class="cap-testa"><p class="cap-num">Capitolo 4</p><h1 id="t-controllo">Istruzioni di controllo</h1></header><p><em>(slide lezioni 4-6, EG1-EG3; testo1 cap. 4, 5, 7, 9)</em></p>
+<aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>usare if, switch, while, do-while e for</li>
+<li>progettare un ciclo (INIT, CHECK, USE, ADVANCE) che termina</li>
+<li>gli schemi fondamentali: contatore, accumulatore, massimo, sentinella, flag</li>
+</ul></aside>
 <h2 id="controllo-1">Selezione: if / else</h2>
 <figure class="codice"><pre><code><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">voto</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">18</span><span class="p">)</span>
 <span class="w">  </span><span class="n">printf</span><span class="p">(</span><span class="s">"promosso</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
@@ -1470,8 +1533,18 @@ letti dal basso:  1216 = 10011000000   (11 cifre; verifica: 1024+128+64 = 1216)<
 <span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">primo</span><span class="p">)</span>
 <span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"%d "</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">);</span>
 <span class="p">}</span></code></pre></figure></p>
-<p>Basta provare i divisori fino a √n (<code>d * d &lt;= n</code>) e fermarsi al primo divisore trovato.</p></div></details></section>
+<p>Basta provare i divisori fino a √n (<code>d * d &lt;= n</code>) e fermarsi al primo divisore trovato.</p></div></details>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li>L'<code>else</code> si lega all'<strong><code>if</code> più vicino</strong>.</li>
+<li>Ogni ciclo deve avvicinarsi alla fine: chiediti <strong>perché termina</strong>.</li>
+<li>Il massimo parte dal <strong>primo elemento</strong>, non da 0.</li>
+</ul></aside></section>
 <section class="capitolo" id="funzioni" aria-labelledby="t-funzioni"><header class="cap-testa"><p class="cap-num">Capitolo 5</p><h1 id="t-funzioni">Funzioni e record di attivazione</h1></header><p><em>(slide lezioni 8 e 10, complemento "Record di attivazione"; testo1 cap. 11)</em></p>
+<aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>dichiarare, definire e chiamare una funzione</li>
+<li>cosa succede in memoria a ogni chiamata (record di attivazione)</li>
+<li>visibilità e durata delle variabili</li>
+</ul></aside>
 <h2 id="funzioni-1">Perché le funzioni</h2>
 <p>Una funzione è un <strong>sottoprogramma</strong> con un nome, che risolve un sottoproblema. Serve a non ripetere codice, a dividere un problema grande in pezzi (<strong>modularizzazione</strong>, progettazione <em>top-down</em>) e a provare ogni pezzo separatamente.</p>
 <h2 id="funzioni-2">Dichiarazione, definizione, chiamata</h2>
@@ -1586,8 +1659,18 @@ dopo il return: l&#x27;RDA di mcd sparisce, in main  m = 5</code></pre></figure>
    +----------------------------------------+
    | RDA main:  x = ?                       |
    +----------------------------------------+
-al return l&#x27;RDA di potenza sparisce e in main x = 8</code></pre></figure></p></div></details></section>
+al return l&#x27;RDA di potenza sparisce e in main x = 8</code></pre></figure></p></div></details>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li>I parametri passano <strong>per valore</strong>: la funzione riceve copie.</li>
+<li>Ogni chiamata crea un <strong>RDA</strong> (parametri, variabili locali, ritorno) che sparisce al termine.</li>
+<li>Mai restituire l'indirizzo di una variabile locale.</li>
+</ul></aside></section>
 <section class="capitolo" id="array" aria-labelledby="t-array"><header class="cap-testa"><p class="cap-num">Capitolo 6</p><h1 id="t-array">Array</h1></header><p><em>(slide lezioni 10 e 11, complementi lezioni 10 e 11, EG4; testo1 cap. 10)</em></p>
+<aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>dichiarare e scorrere un array</li>
+<li>passare array alle funzioni</li>
+<li>array parzialmente riempiti e matrici</li>
+</ul></aside>
 <h2 id="array-1">Che cos'è un array</h2>
 <p>Un <strong>array</strong> è una sequenza di <strong>N elementi dello stesso tipo</strong>, in locazioni <strong>consecutive</strong> di memoria, a cui si accede con un <strong>indice</strong> da <strong>0 a N-1</strong>.</p>
 <figure class="codice"><pre><code><span class="cp">#define N 5</span>
@@ -1703,8 +1786,18 @@ al return l&#x27;RDA di potenza sparisce e in main x = 8</code></pre></figure></
 <span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">m</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">                     </span><span class="cm">/* trovato un controesempio          */</span>
 <span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
-<span class="p">}</span></code></pre></figure></p></div></details></section>
+<span class="p">}</span></code></pre></figure></p></div></details>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li>Indici da <strong>0 a N-1</strong>; il C non controlla i limiti.</li>
+<li>Alla funzione arriva l'<strong>indirizzo</strong>: passa anche la dimensione.</li>
+<li>Array parzialmente riempito = array + intero <strong>quanti</strong>.</li>
+</ul></aside></section>
 <section class="capitolo" id="file" aria-labelledby="t-file"><header class="cap-testa"><p class="cap-num">Capitolo 7</p><h1 id="t-file">File testuali e binari</h1></header><p><em>(lezione 9 con video, EG7; testo1 cap. 17)</em></p>
+<aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>aprire, leggere, scrivere e chiudere file di testo</li>
+<li>leggere fino alla fine del file in modo sicuro</li>
+<li>usare file binari e l'accesso diretto con fseek</li>
+</ul></aside>
 <p>Le variabili vivono in RAM e spariscono a fine programma. Per conservare i dati servono i <strong>file</strong>, che stanno nella memoria di massa.</p>
 <h2 id="file-1">Aprire e chiudere un file</h2>
 <figure class="codice"><pre><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
@@ -1847,8 +1940,18 @@ al return l&#x27;RDA di potenza sparisce e in main x = 8</code></pre></figure></
 <span class="w">  </span><span class="n">fclose</span><span class="p">(</span><span class="n">fin</span><span class="p">);</span>
 <span class="w">  </span><span class="n">fclose</span><span class="p">(</span><span class="n">fout</span><span class="p">);</span>
 <span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">copiati</span><span class="p">;</span>
-<span class="p">}</span></code></pre></figure></p></div></details></section>
+<span class="p">}</span></code></pre></figure></p></div></details>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li>Controlla sempre che <code>fopen</code> non restituisca <strong>NULL</strong>; chiudi con <code>fclose</code>.</li>
+<li>Leggi finché <code>fscanf(...) == numero di dati attesi</code>.</li>
+<li>Binari: <code>fwrite</code>/<code>fread</code> copiano i byte della memoria.</li>
+</ul></aside></section>
 <section class="capitolo" id="puntatori" aria-labelledby="t-puntatori"><header class="cap-testa"><p class="cap-num">Capitolo 8</p><h1 id="t-puntatori">Puntatori</h1></header><p><em>(slide lezioni 13 e 14, complementi lezione 13; testo1 cap. 14)</em></p>
+<aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>cosa sono indirizzi e puntatori (<code>&amp;</code> e <code>*</code>)</li>
+<li>come una funzione restituisce più risultati (parametri di output)</li>
+<li>il legame tra puntatori e array</li>
+</ul></aside>
 <p>I puntatori sono <strong>l'argomento chiave</strong> del corso: senza di loro non si fanno né i parametri di output né le liste. Vale la pena studiarli con calma e con tanti disegni.</p>
 <h2 id="puntatori-1">Indirizzi e puntatori</h2>
 <p>Ogni variabile occupa una locazione di memoria che ha un <strong>indirizzo</strong>. Un <strong>puntatore</strong> è una variabile che <strong>contiene un indirizzo</strong>.</p>
@@ -1989,8 +2092,18 @@ al return l&#x27;RDA di potenza sparisce e in main x = 8</code></pre></figure></
 <span class="w">  </span><span class="k">else</span>
 <span class="w">    </span><span class="o">*</span><span class="n">media</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span>
-<span class="cm">/* chiamata:  statistiche(v, N, &amp;s, &amp;np, &amp;m); */</span></code></pre></figure></p></div></details></section>
+<span class="cm">/* chiamata:  statistiche(v, N, &amp;s, &amp;np, &amp;m); */</span></code></pre></figure></p></div></details>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li><code>&amp;x</code> = indirizzo di x; <code>*p</code> = variabile puntata da p.</li>
+<li>Per modificare una variabile del chiamante passa il suo <strong>indirizzo</strong>; dentro, <code>(*p)++</code>.</li>
+<li><code>v[i]</code> equivale a <code>*(v+i)</code>; la lista che cambia testa si passa come <strong><code>TipoLista *</code></strong>.</li>
+</ul></aside></section>
 <section class="capitolo" id="stringhe" aria-labelledby="t-stringhe"><header class="cap-testa"><p class="cap-num">Capitolo 9</p><h1 id="t-stringhe">Stringhe e allocazione dinamica della memoria</h1></header><p><em>(slide lezioni 15 e 16, EG5, video "ArrayDouble"; testo1 cap. 13, 14, app. B)</em></p>
+<aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>come sono fatte le stringhe in C e le funzioni di string.h</li>
+<li>allocare e liberare memoria con malloc e free</li>
+<li>le stringhe "esatte", richieste in ogni traccia d'esame</li>
+</ul></aside>
 <h2 id="stringhe-1">Le stringhe in C</h2>
 <p>Una <strong>stringa</strong> è un <strong>array di <code>char</code> terminato dal carattere <code>'\0'</code></strong> (codice 0). Il <code>'\0'</code> segna la fine: per questo una stringa di k caratteri occupa <strong>k+1</strong> caratteri.</p>
 <figure class="codice"><pre><code><span class="kt">char</span><span class="w"> </span><span class="n">s</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"POCO"</span><span class="p">;</span><span class="w">        </span><span class="cm">/* 10 posti, ne usa 5: P O C O \0 */</span></code></pre></figure>
@@ -2185,8 +2298,18 @@ strcpy:   nuova -&gt; | P | O | C | O | \0 |   5 caratteri, nessuno sprecato</co
 <span class="w">      </span><span class="n">n</span><span class="o">++</span><span class="p">;</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
-<span class="p">}</span></code></pre></figure></p></div></details></section>
+<span class="p">}</span></code></pre></figure></p></div></details>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li>Stringa = array di char che finisce con <strong>'\0'</strong>.</li>
+<li>Confronta con <strong><code>strcmp</code></strong>, copia con <strong><code>strcpy</code></strong> (mai <code>==</code> e <code>=</code>).</li>
+<li>Stringa esatta: <code>malloc(strlen(s) + 1)</code>, controllo NULL, <code>strcpy</code>; poi <code>free</code>.</li>
+</ul></aside></section>
 <section class="capitolo" id="struct" aria-labelledby="t-struct"><header class="cap-testa"><p class="cap-num">Capitolo 10</p><h1 id="t-struct">Struct, typedef e tabelle</h1></header><p><em>(slide lezioni 18 e 19, EG6 e EG9; testo1 cap. 20; testo2 cap. 1-2)</em></p>
+<aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>raggruppare dati diversi in una struct e usare typedef</li>
+<li>accedere ai campi con <code>.</code> e con <code>-&gt;</code></li>
+<li>realizzare una tabella con chiave di ricerca e le sue operazioni</li>
+</ul></aside>
 <h2 id="struct-1">Struct: il record</h2>
 <p>Un <strong>array</strong> raccoglie dati <strong>dello stesso tipo</strong>. Una <strong>struct</strong> (record) raccoglie dati di <strong>tipi diversi</strong> che descrivono <strong>una cosa sola</strong>. Ogni componente si chiama <strong>campo</strong>.</p>
 <figure class="codice"><pre><code><span class="k">struct</span><span class="w"> </span><span class="nc">ora</span><span class="w"> </span><span class="p">{</span>
@@ -2296,8 +2419,18 @@ strcpy:   nuova -&gt; | P | O | C | O | \0 |   5 caratteri, nessuno sprecato</co
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">  </span><span class="n">t</span><span class="o">-&gt;</span><span class="n">arrayVoli</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">postiLiberi</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="n">k</span><span class="p">;</span>
 <span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
-<span class="p">}</span></code></pre></figure></p></div></details></section>
+<span class="p">}</span></code></pre></figure></p></div></details>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li><code>p-&gt;campo</code> equivale a <code>(*p).campo</code>.</li>
+<li>Una struct si passa <strong>per indirizzo</strong> se va modificata.</li>
+<li>Tabella: aggiungi, elimina, modifica, cerca per <strong>chiave</strong>; con l'array ha limiti che la lista supera.</li>
+</ul></aside></section>
 <section class="capitolo" id="ricorsione" aria-labelledby="t-ricorsione"><header class="cap-testa"><p class="cap-num">Capitolo 11</p><h1 id="t-ricorsione">Ricorsione</h1></header><p><em>(slide lezione 17, EG8, complementi lezione 8 sui record di attivazione; testo1 cap. 15)</em></p>
+<aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>scrivere funzioni ricorsive (caso base e caso ricorsivo)</li>
+<li>disegnare la pila dei record di attivazione (richiesto all'esame)</li>
+<li>quando conviene la ricorsione</li>
+</ul></aside>
 <h2 id="ricorsione-1">L'idea</h2>
 <p>Una funzione è <strong>ricorsiva</strong> quando <strong>chiama se stessa</strong>. Funziona se:</p>
 <ol>
@@ -2423,8 +2556,18 @@ RDA main                                  -&gt; riceve 3</code></pre></figure></
 <span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m</span><span class="p">)</span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">v</span><span class="p">[</span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span>
 <span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">m</span><span class="p">;</span>
-<span class="p">}</span></code></pre></figure></p></div></details></section>
+<span class="p">}</span></code></pre></figure></p></div></details>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li>Serve un <strong>caso base</strong> e un caso ricorsivo che <strong>si avvicina</strong> al caso base.</li>
+<li>Ogni chiamata ha il <strong>suo</strong> RDA: andata fino al caso base, poi ritorno dei valori.</li>
+<li>Su liste: caso base <code>l == NULL</code>, poi lavoro su <code>l-&gt;next</code>.</li>
+</ul></aside></section>
 <section class="capitolo" id="ordinamento" aria-labelledby="t-ordinamento"><header class="cap-testa"><p class="cap-num">Capitolo 12</p><h1 id="t-ordinamento">Ricerca e ordinamento</h1></header><p><em>(slide lezione 20 e filmati sugli algoritmi di ordinamento; testo1 cap. 11, 12, caso di studio I; testo2 cap. 1-2)</em></p>
+<aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>ricerca lineare e ricerca binaria</li>
+<li>selection, bubble e insertion sort (e cenni al merge sort)</li>
+<li>confrontare l'efficienza degli algoritmi</li>
+</ul></aside>
 <h2 id="ordinamento-1">Ricerca lineare (sequenziale)</h2>
 <p>Si scorre l'array dall'inizio finché si trova l'elemento o si arriva in fondo. Funziona <strong>sempre</strong>, anche se l'array non è ordinato. Nel caso peggiore fa <strong>n</strong> confronti.</p>
 <figure class="codice"><figcaption>codice/basi.c</figcaption><pre><code><span class="cm">/* un array passato a una funzione e` l'indirizzo del suo primo elemento:</span>
@@ -2617,8 +2760,18 @@ passata 4:  nessuno scambio: fine</code></pre></figure>
 <span class="w">    </span><span class="n">t</span><span class="o">-&gt;</span><span class="n">arrayVoli</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">t</span><span class="o">-&gt;</span><span class="n">arrayVoli</span><span class="p">[</span><span class="n">iMin</span><span class="p">];</span>
 <span class="w">    </span><span class="n">t</span><span class="o">-&gt;</span><span class="n">arrayVoli</span><span class="p">[</span><span class="n">iMin</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmp</span><span class="p">;</span>
 <span class="w">  </span><span class="p">}</span>
-<span class="p">}</span></code></pre></figure></p></div></details></section>
+<span class="p">}</span></code></pre></figure></p></div></details>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li>La ricerca binaria funziona <strong>solo su dati ordinati</strong> (circa log<sub>2</sub> n passi).</li>
+<li>Selection: minimo e scambio; bubble: vicini; insertion: inserisci al posto giusto.</li>
+<li>I tre ordinamenti semplici costano circa <strong>n²</strong>.</li>
+</ul></aside></section>
 <section class="capitolo" id="test" aria-labelledby="t-test"><header class="cap-testa"><p class="cap-num">Capitolo 13</p><h1 id="t-test">Qualità dei programmi e test di correttezza</h1></header><p><em>(lezione 12, solo online, con video; slide "Qualità e Testing"; testo2 cap. 1-2)</em></p>
+<aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>le qualità di un programma e i tipi di errore</li>
+<li>progettare test a scatola nera e a scatola trasparente</li>
+<li>rispondere all'esercizio 3 sui test</li>
+</ul></aside>
 <p>Questo argomento esce spesso come <strong>esercizio 3</strong> ("descrivere il metodo a scatola nera / trasparente e applicarlo a <code>eser1</code>"). Vale fino a 7 punti e si prepara bene in anticipo.</p>
 <h2 id="test-1">Le qualità di un programma</h2>
 <ul>
@@ -2786,8 +2939,18 @@ passata 4:  nessuno scambio: fine</code></pre></figure>
 </tr>
 </tbody>
 </table>
-<p>Il test 5 scopre l'errore classico <code>max = 0</code> come valore iniziale; i test 2 e 3 scoprono errori sugli estremi del ciclo.</p></div></details></section>
+<p>Il test 5 scopre l'errore classico <code>max = 0</code> come valore iniziale; i test 2 e 3 scoprono errori sugli estremi del ciclo.</p></div></details>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li>Test = dati di prova + <strong>output atteso</strong>, confrontato con l'effettivo.</li>
+<li>Nera: dalla <strong>specifica</strong> (classi di equivalenza); trasparente: dal <strong>codice</strong> (istruzioni, decisioni, condizioni, valori limite).</li>
+<li>Nessun metodo garantisce l'assenza di errori.</li>
+</ul></aside></section>
 <section class="capitolo" id="liste" aria-labelledby="t-liste"><header class="cap-testa"><p class="cap-num">Capitolo 14</p><h1 id="t-liste">Liste collegate</h1></header><p><em>(slide lezioni 21-25, EG10 e EG11; testo2 cap. 6)</em></p>
+<aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>definire i tipi di una lista collegata</li>
+<li>scorrere, cercare, inserire (testa, coda, ordinato), eliminare, deallocare</li>
+<li>le tecniche dei due puntatori e del record generatore</li>
+</ul></aside>
 <aside class="box box-esame"><p class="box-titolo">Il capitolo più importante</p><p>Gli esercizi 1 e 2 dello scritto (23 punti su 30) sono <strong>sempre</strong> sulle liste. Studia questo capitolo finché sai scrivere <strong>a memoria e senza errori</strong> tutte le funzioni qui sotto, disegnando i puntatori.</p></aside>
 <h2 id="liste-1">L'idea</h2>
 <p>Una <strong>lista collegata</strong> (o concatenata) è una sequenza di <strong>nodi</strong>. Ogni nodo è una struct allocata dinamicamente con:</p>
@@ -3172,8 +3335,18 @@ dopo dealloca: NULL</code></pre></figure>
 <span class="w">    </span><span class="n">corr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">succ</span><span class="p">;</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="w">  </span><span class="o">*</span><span class="n">pl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">prec</span><span class="p">;</span><span class="w">              </span><span class="cm">/* l'ultimo nodo e` la nuova testa */</span>
-<span class="p">}</span></code></pre></figure></p></div></details></section>
+<span class="p">}</span></code></pre></figure></p></div></details>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li>Lista = puntatore al primo nodo; vuota = <strong>NULL</strong>.</li>
+<li>Per inserire o eliminare in mezzo serve il <strong>predecessore</strong> (<code>prec</code>/<code>corr</code> o record generatore).</li>
+<li>Prova sempre: lista vuota, primo, ultimo, in mezzo, assente.</li>
+</ul></aside></section>
 <section class="capitolo" id="alberi" aria-labelledby="t-alberi"><header class="cap-testa"><p class="cap-num">Capitolo 15</p><h1 id="t-alberi">Alberi binari (cenni)</h1></header><p><em>(slide e EG di fine corso; testo2 cap. 8, "limitatamente a quanto visto a lezione")</em></p>
+<aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>definire un albero binario in C</li>
+<li>le tre visite (preordine, inordine, postordine)</li>
+<li>funzioni ricorsive sugli alberi e alberi binari di ricerca</li>
+</ul></aside>
 <p>Il programma prevede gli alberi come <strong>cenni</strong>. Nei testi d'esame per gli immatricolati dal 2025/26 non compaiono, ma in quelli degli anni precedenti sì (esercizi 2 e 3 della traccia "Giovani Marmotte"). Sappi almeno: definizione, tipi in C, visite ricorsive, funzioni ricorsive semplici.</p>
 <h2 id="alberi-1">Definizione</h2>
 <p>Un <strong>albero binario</strong> è <strong>vuoto</strong>, oppure è formato da un nodo <strong>radice</strong> con due sottoalberi binari: il <strong>sinistro</strong> e il <strong>destro</strong>. È una definizione <strong>ricorsiva</strong>, come quella della lista.</p>
@@ -3324,8 +3497,18 @@ stampato: 20 30 35 40</code></pre></figure>
 <span class="w">    </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="o">-&gt;</span><span class="n">destro</span><span class="p">;</span>
 <span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="o">-&gt;</span><span class="n">info</span><span class="p">;</span>
 <span class="p">}</span></code></pre></figure></p>
-<p><code>(a-&gt;info &gt; x)</code> vale 1 o 0: un modo compatto per contare.</p></div></details></section>
-<section class="capitolo" id="metodo" aria-labelledby="t-metodo"><header class="cap-testa"><p class="cap-num">Capitolo 16</p><h1 id="t-metodo">Il metodo per lo scritto</h1></header><p>Qui metto insieme tutto in una procedura da seguire in aula. Leggila prima di ogni traccia di esercitazione, finché non diventa automatica.</p>
+<p><code>(a-&gt;info &gt; x)</code> vale 1 o 0: un modo compatto per contare.</p></div></details>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li>Albero = vuoto, oppure radice con due sottoalberi: struttura <strong>ricorsiva</strong>.</li>
+<li>Preordine RSD, inordine SRD, postordine SDR.</li>
+<li>In un ABR la visita <strong>inordine</strong> dà i valori ordinati.</li>
+</ul></aside></section>
+<section class="capitolo" id="metodo" aria-labelledby="t-metodo"><header class="cap-testa"><p class="cap-num">Capitolo 16</p><h1 id="t-metodo">Il metodo per lo scritto</h1></header><aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>come gestire le 2h30 dello scritto</li>
+<li>come impostare tipi, eser1, eser2 ed esercizio 3</li>
+<li>la checklist degli errori da controllare prima di consegnare</li>
+</ul></aside>
+<p>Qui metto insieme tutto in una procedura da seguire in aula. Leggila prima di ogni traccia di esercitazione, finché non diventa automatica.</p>
 <h2 id="metodo-1">Gestione del tempo (2 ore e 30)</h2>
 <table>
 <thead>
@@ -3456,8 +3639,18 @@ stampato: 20 30 35 40</code></pre></figure>
 <li>[ ] Lista vuota non gestita.</li>
 <li>[ ] Variabili non inizializzate (contatori, <code>TipoLista l = NULL</code>).</li>
 </ul></aside>
-<aside class="box box-nota"><p class="box-titolo">Scrivere bene conta</p><p>Il codice su carta viene letto da una persona: indenta, usa nomi chiari (<code>prec</code>, <code>corr</code>, <code>nuovo</code>), scrivi due righe di commento con l'algoritmo prima del codice. Se non ricordi il nome di una funzione di libreria, scrivi un commento che dica cosa fa: è meglio di un'invenzione.</p></aside></section>
-<section class="capitolo" id="tracce" aria-labelledby="t-tracce"><header class="cap-testa"><p class="cap-num">Capitolo 17</p><h1 id="t-tracce">Le tracce del professore, risolte</h1></header><p>Queste sono <strong>le tracce d'esempio pubblicate sul sito del corso</strong> (cartella "Testi d'esame d'esempio"), con soluzioni complete. Il codice è stato compilato e provato. Prima di leggere ogni soluzione, prova a scriverla tu su carta.</p>
+<aside class="box box-nota"><p class="box-titolo">Scrivere bene conta</p><p>Il codice su carta viene letto da una persona: indenta, usa nomi chiari (<code>prec</code>, <code>corr</code>, <code>nuovo</code>), scrivi due righe di commento con l'algoritmo prima del codice. Se non ricordi il nome di una funzione di libreria, scrivi un commento che dica cosa fa: è meglio di un'invenzione.</p></aside>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li>Prima i <strong>tipi</strong>, poi eser1, eser2, esercizio 3, infine la <strong>rilettura</strong>.</li>
+<li>Più risultati: uno col <code>return</code>, gli altri con <strong>parametri puntatore</strong>.</li>
+<li>Rileggi con la checklist: <code>strcmp</code>, <code>+1</code>, <code>*</code>, <code>NULL</code>, <code>free</code>.</li>
+</ul></aside></section>
+<section class="capitolo" id="tracce" aria-labelledby="t-tracce"><header class="cap-testa"><p class="cap-num">Capitolo 17</p><h1 id="t-tracce">Le tracce del professore, risolte</h1></header><aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>come si risolvono le tracce d'esempio pubblicate dal professore</li>
+<li>come si scrive una risposta completa all'esercizio 3</li>
+<li>come presentare un'esecuzione simulata con i record di attivazione</li>
+</ul></aside>
+<p>Queste sono <strong>le tracce d'esempio pubblicate sul sito del corso</strong> (cartella "Testi d'esame d'esempio"), con soluzioni complete. Il codice è stato compilato e provato. Prima di leggere ogni soluzione, prova a scriverla tu su carta.</p>
 <h2 id="tracce-1">Traccia 1: "Segnala un guasto!"</h2>
 <aside class="box box-esercizio"><p class="box-titolo">Testo (esempio 1, immatricolati 2025-26 e successivi; tempo: 2h30)</p><p><strong>Esercizio 1</strong> (0-13 punti). Una società di distribuzione del gas organizza tutte le segnalazioni di guasto in una tabella di guasti. Ogni guasto è caratterizzato da: <strong>descrizione</strong> (stringa di lunghezza non nota a priori); <strong>tipologia</strong> (intero: 1 = perdita lieve, 2 = interruzione, 3 = perdita ragguardevole); <strong>servizio</strong> (carattere: R per "riscaldamento + acqua calda", A per "solo acqua calda"); <strong>codice utente</strong> (stringa di 9 caratteri alfanumerici); <strong>numero d'ordine</strong> della chiamata (intero).
 Quando una squadra è disponibile le si assegna il guasto più importante, eliminandolo dalla tabella. <strong>importanza = tipologia*11 - numero d'ordine</strong>.
@@ -3958,8 +4151,17 @@ main:  n = 3</code></pre></figure>
 <span class="w">  </span><span class="n">a</span><span class="o">-&gt;</span><span class="n">info</span><span class="p">.</span><span class="n">reprimende</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 <span class="p">}</span></code></pre></figure>
-<p>L'esercizio 3 è svolto nel capitolo 15 (tre visite, albero di 9 nodi, sequenze prodotte e pila delle RDA).</p></section>
-<section class="capitolo" id="esercitazione" aria-labelledby="t-esercitazione"><header class="cap-testa"><p class="cap-num">Capitolo 18</p><h1 id="t-esercitazione">Tracce di esercitazione (nuove, stile esame)</h1></header><p>Le ho scritte sul modello delle tracce del professore. <strong>Usale come simulazione d'esame</strong>: carta e penna, 2 ore e 30, niente fascicolo aperto. Poi correggi con le soluzioni e prova il codice al computer.</p>
+<p>L'esercizio 3 è svolto nel capitolo 15 (tre visite, albero di 9 nodi, sequenze prodotte e pila delle RDA).</p>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li>Le tracce si somigliano tutte: lista di struct, scansione con più risultati, modifica della lista.</li>
+<li>Per l'esercizio 3 servono <strong>metodo + tabella motivata + esecuzione simulata</strong>.</li>
+<li>Prova a rifare ogni traccia da solo, a tempo.</li>
+</ul></aside></section>
+<section class="capitolo" id="esercitazione" aria-labelledby="t-esercitazione"><header class="cap-testa"><p class="cap-num">Capitolo 18</p><h1 id="t-esercitazione">Tracce di esercitazione (nuove, stile esame)</h1></header><aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>mettere alla prova la preparazione con tracce nuove</li>
+<li>eliminare più nodi, inserire in coda con controllo dei doppioni, fondere liste</li>
+</ul></aside>
+<p>Le ho scritte sul modello delle tracce del professore. <strong>Usale come simulazione d'esame</strong>: carta e penna, 2 ore e 30, niente fascicolo aperto. Poi correggi con le soluzioni e prova il codice al computer.</p>
 <h2 id="esercitazione-1">Traccia A: "Biblioteca di quartiere"</h2>
 <aside class="box box-esercizio"><p class="box-titolo">Testo</p><p><strong>Esercizio 1</strong> (0-13 punti). Una biblioteca di quartiere tiene il catalogo dei libri. Ogni libro ha: <strong>titolo</strong> (stringa di lunghezza non nota a priori); <strong>ISBN</strong> (stringa di 13 caratteri); <strong>anno</strong> di pubblicazione (intero); <strong>copie</strong> disponibili (intero); <strong>genere</strong> (carattere: R romanzo, S saggio, F fumetto).
 Definire i tipi per rappresentare il catalogo come lista (record e puntatori). Scrivere <code>eser1</code> che, ricevendo (almeno) il catalogo e un anno, restituisca il <strong>puntatore al libro più vecchio</strong>, il <strong>numero di libri pubblicati prima di quell'anno</strong> e il <strong>totale delle copie disponibili</strong>.</p>
@@ -4195,8 +4397,17 @@ RDA main: t = 370</code></pre></figure></p>
 <span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">strcmp</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">info</span><span class="p">.</span><span class="n">nome</span><span class="p">,</span><span class="w"> </span><span class="n">nome</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">l</span><span class="p">;</span><span class="w">                                  </span><span class="cm">/* trovato       */</span>
 <span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">cercaNome</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">,</span><span class="w"> </span><span class="n">nome</span><span class="p">);</span><span class="w">             </span><span class="cm">/* cerca nel resto */</span>
-<span class="p">}</span></code></pre></figure></p></div></details></section>
-<section class="capitolo" id="orale" aria-labelledby="t-orale"><header class="cap-testa"><p class="cap-num">Capitolo 19</p><h1 id="t-orale">Preparazione all'orale</h1></header><p>All'orale si <strong>discute lo scritto</strong> (sappi spiegare ogni riga che hai scritto e correggere da solo gli errori) e si fanno <strong>domande sul programma</strong>. Qui sotto le domande più probabili con una risposta breve: allenati a ripeterle <strong>a voce</strong>, con un disegno o un esempio.</p>
+<span class="p">}</span></code></pre></figure></p></div></details>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li>Svolgi le tracce <strong>su carta e a tempo</strong>, poi correggi.</li>
+<li>Eliminando più nodi, quando elimini <strong>non avanzare</strong> il predecessore.</li>
+<li>Controlla i doppioni <strong>prima</strong> di allocare.</li>
+</ul></aside></section>
+<section class="capitolo" id="orale" aria-labelledby="t-orale"><header class="cap-testa"><p class="cap-num">Capitolo 19</p><h1 id="t-orale">Preparazione all'orale</h1></header><aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>le domande più probabili all'orale, con risposte brevi</li>
+<li>come discutere il tuo scritto</li>
+</ul></aside>
+<p>All'orale si <strong>discute lo scritto</strong> (sappi spiegare ogni riga che hai scritto e correggere da solo gli errori) e si fanno <strong>domande sul programma</strong>. Qui sotto le domande più probabili con una risposta breve: allenati a ripeterle <strong>a voce</strong>, con un disegno o un esempio.</p>
 <h2 id="orale-1">Architettura e rappresentazione</h2>
 <details class="domanda"><summary>Cos&#x27;è l&#x27;architettura di Von Neumann?</summary><div class="sol-corpo"><p>Uno schema di calcolatore in cui programma e dati stanno nella <strong>stessa memoria</strong> centrale; una <strong>CPU</strong> (unità di controllo, ALU, registri) preleva ed esegue le istruzioni una alla volta; memoria e periferiche sono collegate da un <strong>bus</strong>.</p></div></details>
 <details class="domanda"><summary>Cosa fanno PC e IR? Cos&#x27;è il ciclo fetch-decode-execute?</summary><div class="sol-corpo"><p>Il <strong>PC</strong> contiene l'indirizzo della prossima istruzione, l'<strong>IR</strong> l'istruzione in esecuzione. <strong>Fetch</strong>: si copia in IR l'istruzione all'indirizzo del PC e si incrementa il PC; <strong>decode</strong>: la CU riconosce il codice operativo; <strong>execute</strong>: si esegue. Un salto scrive un nuovo indirizzo nel PC.</p></div></details>
@@ -4226,8 +4437,16 @@ RDA main: t = 370</code></pre></figure></p>
 <details class="domanda"><summary>Cos&#x27;è il record generatore?</summary><div class="sol-corpo"><p>Un nodo fittizio messo davanti al primo nodo vero: così ogni nodo ha un predecessore e gli inserimenti/eliminazioni non hanno il caso speciale della testa. Alla fine la testa è <code>rg.next</code>.</p></div></details>
 <details class="domanda"><summary>Cosa sono le visite di un albero?</summary><div class="sol-corpo"><p>Algoritmi ricorsivi che esaminano tutti i nodi: preordine (radice, sinistro, destro), inordine (sinistro, radice, destro), postordine (sinistro, destro, radice). In un albero binario di ricerca l'inordine dà i valori ordinati.</p></div></details>
 <h2 id="orale-4">Discutere il tuo scritto</h2>
-<p>Porta all'orale una copia (o la memoria) di cosa hai scritto. Prima dell'orale <strong>riscrivi a casa la tua soluzione corretta</strong> e provala al computer: se all'orale sai dire "qui avevo sbagliato, la versione giusta è questa, e il motivo è questo", fai una buona impressione e recuperi punti.</p></section>
-<section class="capitolo" id="formulario" aria-labelledby="t-formulario"><header class="cap-testa"><p class="cap-num">Capitolo 20</p><h1 id="t-formulario">Formulario da ripassare il giorno prima</h1></header><h2 id="formulario-1">Rappresentazione</h2>
+<p>Porta all'orale una copia (o la memoria) di cosa hai scritto. Prima dell'orale <strong>riscrivi a casa la tua soluzione corretta</strong> e provala al computer: se all'orale sai dire "qui avevo sbagliato, la versione giusta è questa, e il motivo è questo", fai una buona impressione e recuperi punti.</p>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li>Rispondi con una definizione, un <strong>disegno</strong> e un esempio.</li>
+<li>Prima dell'orale riscrivi a casa la versione corretta del tuo scritto.</li>
+</ul></aside></section>
+<section class="capitolo" id="formulario" aria-labelledby="t-formulario"><header class="cap-testa"><p class="cap-num">Capitolo 20</p><h1 id="t-formulario">Formulario, glossario e autoverifica</h1></header><aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>tutte le formule e gli schemi da ripassare il giorno prima</li>
+<li>come verificare da solo se sei pronto</li>
+</ul></aside>
+<h2 id="formulario-1">Rappresentazione</h2>
 <table>
 <thead>
 <tr>
@@ -4321,7 +4540,51 @@ RDA main: t = 370</code></pre></figure></p>
 <li>Leggi tutto il testo, poi i tipi, poi <code>eser1</code>, <code>eser2</code>, esercizio 3, rilettura con la checklist del capitolo 16.</li>
 <li>Scrivi in modo ordinato e commenta l'algoritmo.</li>
 </ul>
-<h2 id="formulario-8">Autoverifica: sei pronto se...</h2>
+<h2 id="formulario-8">Glossario</h2>
+<p>I termini del corso in una riga. Se un termine non ti è chiaro, torna al capitolo indicato.</p>
+<dl class="glossario">
+<dt>Algoritmo</dt><dd>Sequenza finita di passi precisi che risolve un problema (cap. 3).</dd>
+<dt>ALU</dt><dd>Parte della CPU che esegue calcoli e confronti (cap. 1).</dd>
+<dt>Array</dt><dd>Sequenza di elementi dello stesso tipo in locazioni consecutive, indici da 0 a N-1 (cap. 6).</dd>
+<dt>Caso base</dt><dd>Il caso che una funzione ricorsiva risolve senza richiamarsi (cap. 11).</dd>
+<dt>Cast</dt><dd>Conversione esplicita di tipo, es. <code>(double) somma</code> (cap. 3).</dd>
+<dt>Chiave</dt><dd>Campo che identifica in modo univoco un elemento di una tabella (cap. 10).</dd>
+<dt>Compilatore</dt><dd>Programma che traduce il sorgente C in linguaggio macchina (cap. 1).</dd>
+<dt>Complemento a due</dt><dd>Rappresentazione degli interi con segno usata dai calcolatori (cap. 2).</dd>
+<dt>Debugging</dt><dd>Ricerca e correzione degli errori di un programma (Laboratorio, cap. 13).</dd>
+<dt>Deallocazione</dt><dd>Restituzione della memoria allocata dinamicamente, con <code>free</code> (cap. 9).</dd>
+<dt>Eccesso 127</dt><dd>Modo di scrivere l'esponente dei float: esponente vero + 127 (cap. 2).</dd>
+<dt>Esecuzione simulata</dt><dd>Esecuzione "a mano" di un programma, annotando i valori delle variabili (cap. 4).</dd>
+<dt>Flag</dt><dd>Variabile che vale 0 finché accade un evento, poi 1; usata per fermare i cicli (cap. 4).</dd>
+<dt>Floating point</dt><dd>Rappresentazione dei reali con segno, esponente e mantissa (cap. 2).</dd>
+<dt>Heap</dt><dd>Zona di memoria da cui <code>malloc</code> prende i blocchi (cap. 9).</dd>
+<dt>Lista collegata</dt><dd>Sequenza di nodi allocati dinamicamente, ognuno col puntatore al successivo (cap. 14).</dd>
+<dt>Linker</dt><dd>Programma che unisce il codice compilato con le librerie e crea l'eseguibile (cap. 1).</dd>
+<dt>Memory leak</dt><dd>Memoria allocata e mai liberata, di cui si è perso l'indirizzo (cap. 9).</dd>
+<dt>NULL</dt><dd>Valore di un puntatore che non punta a nulla; la lista vuota (cap. 8, 14).</dd>
+<dt>Parametro attuale</dt><dd>Espressione scritta nella chiamata; il suo valore viene copiato (cap. 5).</dd>
+<dt>Parametro formale</dt><dd>Variabile dichiarata nell'intestazione della funzione (cap. 5).</dd>
+<dt>Parametro di output</dt><dd>Parametro puntatore usato per restituire un risultato al chiamante (cap. 8).</dd>
+<dt>PC (Program Counter)</dt><dd>Registro con l'indirizzo della prossima istruzione (cap. 1).</dd>
+<dt>Processo</dt><dd>Un programma in esecuzione (cap. 1).</dd>
+<dt>Prototipo</dt><dd>Dichiarazione di una funzione: tipo, nome, tipi dei parametri (cap. 5).</dd>
+<dt>Pseudocodice</dt><dd>Algoritmo scritto in italiano a passi numerati, prima del codice (cap. 3).</dd>
+<dt>Puntatore</dt><dd>Variabile che contiene un indirizzo di memoria (cap. 8).</dd>
+<dt>Record di attivazione (RDA)</dt><dd>Zona di memoria creata a ogni chiamata, con parametri e variabili locali (cap. 5, 11).</dd>
+<dt>Record generatore</dt><dd>Nodo fittizio messo in testa a una lista per eliminare il caso speciale del primo nodo (cap. 14).</dd>
+<dt>Ricorsione</dt><dd>Funzione che chiama se stessa su un problema più piccolo (cap. 11).</dd>
+<dt>Scatola nera / trasparente</dt><dd>Metodi di test basati sulla specifica / sul codice (cap. 13).</dd>
+<dt>Sentinella</dt><dd>Valore speciale che segna la fine dei dati in input, es. 0 (cap. 4).</dd>
+<dt>Stringa esatta</dt><dd>Stringa allocata con <code>malloc(strlen+1)</code>, senza spreco (cap. 9).</dd>
+<dt>Struct</dt><dd>Record che raggruppa campi di tipi diversi (cap. 10).</dd>
+<dt>Stub</dt><dd>Versione finta di una funzione usata nel test top-down (cap. 13).</dd>
+<dt>Tabella</dt><dd>Struttura dati che rappresenta un archivio: aggiungi, elimina, modifica, cerca (cap. 10).</dd>
+<dt>Tipo di dato astratto (ADT)</dt><dd>Tipo definito dalle operazioni, indipendente da come è memorizzato (cap. 10).</dd>
+<dt>typedef</dt><dd>Istruzione che dà un nuovo nome a un tipo esistente (cap. 10).</dd>
+<dt>Visita di un albero</dt><dd>Esame di tutti i nodi: preordine, inordine, postordine (cap. 15).</dd>
+</dl>
+
+<h2 id="formulario-9">Autoverifica: sei pronto se...</h2>
 <p>Prima di iscriverti all'appello, controlla di saper fare <strong>ognuna</strong> di queste cose <strong>senza guardare il fascicolo</strong>. Se una ti manca, torna al capitolo indicato.</p>
 <aside class="box box-esame"><p class="box-titolo">Esercizi 1 e 2 (23 punti)</p><ul>
 <li>[ ] Dal testo di una traccia, scrivo i tipi corretti (stringa esatta, stringa fissa, lista) in meno di 15 minuti. <em>(cap. 16, 17)</em></li>
@@ -4344,7 +4607,10 @@ RDA main: t = 370</code></pre></figure></p>
 <li>[ ] So scrivere un algoritmo in pseudocodice, disegnarne il diagramma di flusso e farne l'esecuzione simulata. <em>(cap. 3, 4)</em></li>
 </ul></aside>
 <p>Se hai spuntato tutto, sei pronto per l'esame.</p>
-<h2 id="formulario-9">Fonti</h2>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li>Se sai fare tutto l'elenco dell'autoverifica <strong>senza guardare</strong>, sei pronto.</li>
+</ul></aside>
+<h2 id="formulario-10">Fonti</h2>
 <p>Materiale consultato sul sito del corso (prof. Marco Temperini), A.A. 2026/27:</p>
 <ul>
 <li><a href="https://www.diag.uniroma1.it/marte/homepage/didattica/tdp-latina.html">Pagina del corso</a> e <a href="https://www.diag.uniroma1.it/marte/homepage/teachingmt.html">pagina didattica del docente</a></li>
@@ -4357,7 +4623,10 @@ RDA main: t = 370</code></pre></figure></p>
 </ul>
 <p>Al momento della consultazione (novembre 2026) le slide sulle liste (lezioni 21-25) e le EG10-EG11 dell'anno in corso non erano ancora pubblicate: il capitolo sulle liste segue gli argomenti elencati nel calendario delle lezioni e il testo2 (Calvanese et al.), che il corso adotta per quella parte. Quando escono le slide, confrontale con il capitolo 14 e adotta i nomi usati dal professore.</p>
 <p>Questo fascicolo è un aiuto allo studio: non sostituisce le lezioni, i libri di testo e le comunicazioni ufficiali su Classroom.</p></section>
-<section class="capitolo" id="palestra" aria-labelledby="t-palestra"><header class="cap-testa"><p class="cap-num">Capitolo 21</p><h1 id="t-palestra">Palestra di programmazione</h1></header><p>25 esercizi <strong>graduati</strong>, dal primo programma alle liste. Tutte le soluzioni sono programmi completi, compilati ed eseguiti. Come usarli:</p>
+<section class="capitolo" id="palestra" aria-labelledby="t-palestra"><header class="cap-testa"><p class="cap-num">Capitolo 21</p><h1 id="t-palestra">Palestra di programmazione</h1></header><aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
+<li>programmare in C esercitandoti dal livello base fino alle liste</li>
+</ul></aside>
+<p>25 esercizi <strong>graduati</strong>, dal primo programma alle liste. Tutte le soluzioni sono programmi completi, compilati ed eseguiti. Come usarli:</p>
 <ol>
 <li>leggi il testo e <strong>scrivi la tua soluzione al computer</strong> (o su carta, dai livelli 6-7);</li>
 <li>compila e prova con l'esempio indicato e con altri dati scelti da te;</li>
@@ -5061,7 +5330,11 @@ RDA main: t = 370</code></pre></figure></p>
 <span class="p">}</span></code></pre></figure></p>
 <p>È un piccolo "homework": tipi, inserimento ordinato con <code>strcmp</code>, eliminazione, stampa, deallocazione e un menu con <code>switch</code>. Se lo sai scrivere da solo, sei pronto per gli esercizi 1 e 2 dello scritto.</p></div></details>
 <h2 id="palestra-8">E adesso?</h2>
-<p>Hai finito la palestra? Passa alle <a href="#esercitazione">tracce di esercitazione</a> e alle <a href="#tracce">tracce del professore</a>, <strong>su carta e a tempo</strong>. Poi rifai i tre esercizi più difficili per te senza guardare nulla.</p></section>
+<p>Hai finito la palestra? Passa alle <a href="#esercitazione">tracce di esercitazione</a> e alle <a href="#tracce">tracce del professore</a>, <strong>su carta e a tempo</strong>. Poi rifai i tre esercizi più difficili per te senza guardare nulla.</p>
+<aside class="box box-ricorda"><p class="box-titolo">Da ricordare</p><ul>
+<li>Scrivi la tua soluzione <strong>prima</strong> di aprire quella del fascicolo.</li>
+<li>Rifai dopo qualche giorno gli esercizi in cui ti sei bloccato.</li>
+</ul></aside></section>
   </main>
 
   <p class="piede">Tutti i programmi del fascicolo sono stati compilati con <code>gcc -std=c89 -pedantic -Wall</code> ed eseguiti. Buono studio!</p>

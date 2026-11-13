@@ -156,6 +156,14 @@ figure.schema pre { line-height: 1.35; }
 .box-esercizio .box-titolo { color: var(--esercizio); }
 .box .tab, .box figure.codice { background: var(--surface); }
 .box figure.codice { background: var(--code-bg); }
+.box-obiettivi { background: var(--surface); border: 1px solid var(--rule); border-left: 4px solid var(--accent); }
+.box-obiettivi .box-titolo { color: var(--accent); }
+.box-ricorda { background: var(--accent-soft); border-color: transparent; border-left: 4px solid var(--accent); }
+.box-ricorda .box-titolo { color: var(--accent); }
+dl.glossario { display: grid; grid-template-columns: minmax(9em, max-content) minmax(0, 1fr); gap: 6px 18px; margin: 12px 0; }
+dl.glossario dt { font-weight: 700; }
+dl.glossario dd { margin: 0; }
+@media (max-width: 600px) { dl.glossario { grid-template-columns: minmax(0, 1fr); } dl.glossario dd { margin-bottom: 8px; } }
 li.check { list-style: none; position: relative; }
 .casella { display: inline-block; width: 14px; height: 14px; border: 2px solid currentColor; border-radius: 3px; margin-right: 8px; vertical-align: -2px; opacity: .7; }
 

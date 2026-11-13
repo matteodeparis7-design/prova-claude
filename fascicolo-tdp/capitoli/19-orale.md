@@ -1,5 +1,10 @@
 # Preparazione all'orale {#orale}
 
+::: obiettivi Cosa imparerai
+- le domande più probabili all'orale, con risposte brevi
+- come discutere il tuo scritto
+:::
+
 All'orale si **discute lo scritto** (sappi spiegare ogni riga che hai scritto e correggere da solo gli errori) e si fanno **domande sul programma**. Qui sotto le domande più probabili con una risposta breve: allenati a ripeterle **a voce**, con un disegno o un esempio.
 
 ## Architettura e rappresentazione
@@ -111,3 +116,8 @@ Algoritmi ricorsivi che esaminano tutti i nodi: preordine (radice, sinistro, des
 ## Discutere il tuo scritto
 
 Porta all'orale una copia (o la memoria) di cosa hai scritto. Prima dell'orale **riscrivi a casa la tua soluzione corretta** e provala al computer: se all'orale sai dire "qui avevo sbagliato, la versione giusta è questa, e il motivo è questo", fai una buona impressione e recuperi punti.
+
+::: ricorda Da ricordare
+- Rispondi con una definizione, un **disegno** e un esempio.
+- Prima dell'orale riscrivi a casa la versione corretta del tuo scritto.
+:::

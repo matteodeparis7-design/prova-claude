@@ -1,5 +1,11 @@
 # Laboratorio: come si impara a programmare in C {#laboratorio}
 
+::: obiettivi Cosa imparerai
+- come preparare Dev-C++ e scrivere programmi in C (non in C++)
+- come leggere gli errori del compilatore e trovare gli errori nel programma
+- un metodo in 6 passi per risolvere qualsiasi esercizio
+:::
+
 Programmare si impara **programmando**, come si impara a nuotare in acqua. Leggere il fascicolo serve a capire; ma all'esame dovrai **scrivere** codice C corretto, su carta, da solo. Questo capitolo ti dice come allenarti, e alla fine del fascicolo trovi la [Palestra di programmazione](#palestra) con 25 esercizi graduati e risolti.
 
 ## 1. Prepara l'ambiente
@@ -102,4 +108,10 @@ Gli errori a **tempo di esecuzione** più comuni:
 
 ::: esame Perché tutto questo conta all'esame
 Lo scritto chiede di **scrivere codice** corretto in 2h30, senza compilatore. Chi ha scritto e fatto girare decine di programmi scrive giusto "di mano"; chi ha solo letto le soluzioni si blocca davanti al foglio bianco. Gli homework, obbligatori, servono proprio a questo: falli tu, fino in fondo.
+:::
+
+::: ricorda Da ricordare
+- File con estensione **`.c`**, standard ANSI C, niente costrutti del C++.
+- Compila spesso e correggi sempre **il primo** errore.
+- Metodo: capisci, algoritmo, dati, funzioni, codice, prove.
 :::

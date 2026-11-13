@@ -1,5 +1,11 @@
 # Il metodo per lo scritto {#metodo}
 
+::: obiettivi Cosa imparerai
+- come gestire le 2h30 dello scritto
+- come impostare tipi, eser1, eser2 ed esercizio 3
+- la checklist degli errori da controllare prima di consegnare
+:::
+
 Qui metto insieme tutto in una procedura da seguire in aula. Leggila prima di ogni traccia di esercitazione, finché non diventa automatica.
 
 ## Gestione del tempo (2 ore e 30)
@@ -94,4 +100,10 @@ Aggiungi un commento per ogni campo con il significato: mostra che hai capito il
 
 ::: nota Scrivere bene conta
 Il codice su carta viene letto da una persona: indenta, usa nomi chiari (`prec`, `corr`, `nuovo`), scrivi due righe di commento con l'algoritmo prima del codice. Se non ricordi il nome di una funzione di libreria, scrivi un commento che dica cosa fa: è meglio di un'invenzione.
+:::
+
+::: ricorda Da ricordare
+- Prima i **tipi**, poi eser1, eser2, esercizio 3, infine la **rilettura**.
+- Più risultati: uno col `return`, gli altri con **parametri puntatore**.
+- Rileggi con la checklist: `strcmp`, `+1`, `*`, `NULL`, `free`.
 :::

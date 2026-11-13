@@ -2,6 +2,12 @@
 
 *(slide e EG di fine corso; testo2 cap. 8, "limitatamente a quanto visto a lezione")*
 
+::: obiettivi Cosa imparerai
+- definire un albero binario in C
+- le tre visite (preordine, inordine, postordine)
+- funzioni ricorsive sugli alberi e alberi binari di ricerca
+:::
+
 Il programma prevede gli alberi come **cenni**. Nei testi d'esame per gli immatricolati dal 2025/26 non compaiono, ma in quelli degli anni precedenti sì (esercizi 2 e 3 della traccia "Giovani Marmotte"). Sappi almeno: definizione, tipi in C, visite ricorsive, funzioni ricorsive semplici.
 
 ## Definizione
@@ -101,4 +107,10 @@ int massimoABR(TipoAlbero a) {   /* in un ABR il massimo e` il nodo piu` a destr
 }
 ```
 `(a->info > x)` vale 1 o 0: un modo compatto per contare.
+:::
+
+::: ricorda Da ricordare
+- Albero = vuoto, oppure radice con due sottoalberi: struttura **ricorsiva**.
+- Preordine RSD, inordine SRD, postordine SDR.
+- In un ABR la visita **inordine** dà i valori ordinati.
 :::

@@ -2,6 +2,12 @@
 
 *(slide lezione 7, complementi "Sistemi di numerazione" e "Rappresentazione di numeri"; testo1 app. D)*
 
+::: obiettivi Cosa imparerai
+- convertire numeri tra base 2, 8, 10 e 16
+- rappresentare interi in complemento a due
+- rappresentare un reale in floating point a 32 bit (esercizio d'esame)
+:::
+
 Nella memoria ci sono solo **bit** (0 e 1). Questo capitolo spiega come con i bit si rappresentano numeri interi, negativi e reali. Il **floating point** è uscito come **esercizio 3** in un testo d'esame: va saputo fare a mano, senza errori.
 
 ## Numeri e numerali
@@ -247,4 +253,10 @@ Conseguenze utili: `'7' - '0'` vale 7 (da carattere cifra a numero); `'a' - 'A'`
 
 ::: esame All'orale
 Sappi spiegare **perché** si usa il complemento a due (un solo zero, la sottrazione diventa una somma), **perché** i float sono approssimati (numero finito di bit, frazioni periodiche) e perché l'esponente è in eccesso 127 (per avere esponenti negativi senza un bit di segno in più).
+:::
+
+::: ricorda Da ricordare
+- Base 10 → 2: **divisioni** per la parte intera, **moltiplicazioni** per la frazione.
+- Negativo in complemento a due: **inverti i bit e somma 1**; intervallo [-2<sup>n-1</sup>, 2<sup>n-1</sup>-1].
+- Float: segno, esponente **+127** su 8 bit, 23 bit di mantissa dopo "1.".
 :::

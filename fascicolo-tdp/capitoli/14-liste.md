@@ -2,6 +2,12 @@
 
 *(slide lezioni 21-25, EG10 e EG11; testo2 cap. 6)*
 
+::: obiettivi Cosa imparerai
+- definire i tipi di una lista collegata
+- scorrere, cercare, inserire (testa, coda, ordinato), eliminare, deallocare
+- le tecniche dei due puntatori e del record generatore
+:::
+
 ::: esame Il capitolo più importante
 Gli esercizi 1 e 2 dello scritto (23 punti su 30) sono **sempre** sulle liste. Studia questo capitolo finché sai scrivere **a memoria e senza errori** tutte le funzioni qui sotto, disegnando i puntatori.
 :::
@@ -308,4 +314,10 @@ void invertiLista(TipoLista *pl) {
   *pl = prec;              /* l'ultimo nodo e` la nuova testa */
 }
 ```
+:::
+
+::: ricorda Da ricordare
+- Lista = puntatore al primo nodo; vuota = **NULL**.
+- Per inserire o eliminare in mezzo serve il **predecessore** (`prec`/`corr` o record generatore).
+- Prova sempre: lista vuota, primo, ultimo, in mezzo, assente.
 :::

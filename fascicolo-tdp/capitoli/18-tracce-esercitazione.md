@@ -1,5 +1,10 @@
 # Tracce di esercitazione (nuove, stile esame) {#esercitazione}
 
+::: obiettivi Cosa imparerai
+- mettere alla prova la preparazione con tracce nuove
+- eliminare più nodi, inserire in coda con controllo dei doppioni, fondere liste
+:::
+
 Le ho scritte sul modello delle tracce del professore. **Usale come simulazione d'esame**: carta e penna, 2 ore e 30, niente fascicolo aperto. Poi correggi con le soluzioni e prova il codice al computer.
 
 ## Traccia A: "Biblioteca di quartiere"
@@ -189,4 +194,10 @@ TipoNodoElem *cercaNome(TipoListaElem l, char *nome) {
   return cercaNome(l->next, nome);             /* cerca nel resto */
 }
 ```
+:::
+
+::: ricorda Da ricordare
+- Svolgi le tracce **su carta e a tempo**, poi correggi.
+- Eliminando più nodi, quando elimini **non avanzare** il predecessore.
+- Controlla i doppioni **prima** di allocare.
 :::

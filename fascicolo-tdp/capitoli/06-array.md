@@ -2,6 +2,12 @@
 
 *(slide lezioni 10 e 11, complementi lezioni 10 e 11, EG4; testo1 cap. 10)*
 
+::: obiettivi Cosa imparerai
+- dichiarare e scorrere un array
+- passare array alle funzioni
+- array parzialmente riempiti e matrici
+:::
+
 ## Che cos'è un array
 
 Un **array** è una sequenza di **N elementi dello stesso tipo**, in locazioni **consecutive** di memoria, a cui si accede con un **indice** da **0 a N-1**.
@@ -126,4 +132,10 @@ int simmetrica(int m[][N]) {
   return 1;
 }
 ```
+:::
+
+::: ricorda Da ricordare
+- Indici da **0 a N-1**; il C non controlla i limiti.
+- Alla funzione arriva l'**indirizzo**: passa anche la dimensione.
+- Array parzialmente riempito = array + intero **quanti**.
 :::

@@ -29,6 +29,8 @@ TITOLI_BOX = {
     "errore": "Errore tipico",
     "nota": "Da sapere",
     "esercizio": "Esercizio",
+    "obiettivi": "Cosa imparerai",
+    "ricorda": "Da ricordare",
 }
 
 

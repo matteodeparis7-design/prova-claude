@@ -1,5 +1,9 @@
 # Palestra di programmazione {#palestra}
 
+::: obiettivi Cosa imparerai
+- programmare in C esercitandoti dal livello base fino alle liste
+:::
+
 25 esercizi **graduati**, dal primo programma alle liste. Tutte le soluzioni sono programmi completi, compilati ed eseguiti. Come usarli:
 
 1. leggi il testo e **scrivi la tua soluzione al computer** (o su carta, dai livelli 6-7);
@@ -274,3 +278,8 @@ Programma con menu: aggiungi una parola (in ordine alfabetico, senza doppioni, c
 ## E adesso?
 
 Hai finito la palestra? Passa alle [tracce di esercitazione](#esercitazione) e alle [tracce del professore](#tracce), **su carta e a tempo**. Poi rifai i tre esercizi più difficili per te senza guardare nulla.
+
+::: ricorda Da ricordare
+- Scrivi la tua soluzione **prima** di aprire quella del fascicolo.
+- Rifai dopo qualche giorno gli esercizi in cui ti sei bloccato.
+:::

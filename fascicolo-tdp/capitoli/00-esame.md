@@ -1,5 +1,11 @@
 # Prima di cominciare: com'è fatto l'esame {#esame}
 
+::: obiettivi Cosa imparerai
+- come è fatto lo scritto e quanto vale ogni esercizio
+- cosa serve per poter sostenere l'esame (homework, Infostud)
+- come è organizzato il fascicolo e come studiarlo in 8 settimane
+:::
+
 Questo fascicolo segue il **programma 2026/27** di *Tecniche della Programmazione* del prof. Marco Temperini (Ingegneria dell'Informazione, sede di Latina). L'ho costruito leggendo il sito del corso: programma, calendario delle lezioni, slide, complementi didattici, esercitazioni guidate (EG) e i testi d'esame d'esempio. Tutti i programmi C che trovi qui sono stati compilati e provati in ANSI C (`gcc -std=c89 -pedantic -Wall`), lo standard richiesto dal professore.
 
 ## Le regole, in breve
@@ -125,4 +131,10 @@ Approfondimenti e collegamenti tra argomenti.
 
 ::: nota Il segreto per passare
 Lo scritto premia chi ha **scritto a mano tante funzioni sulle liste**. Leggere le soluzioni non basta: prendi una traccia, chiudi il fascicolo, scrivi su carta in 2h30, poi correggi confrontando con le soluzioni e provando il codice al computer (Dev-C++, come al corso).
+:::
+
+::: ricorda Da ricordare
+- Scritto di 2h30: esercizio 1 (13 punti) e 2 (10 punti) sempre sulle **liste**, esercizio 3 (7 punti) su test, floating point o ricorsione.
+- Senza **homework accettati** non puoi presentarti.
+- Si studia **scrivendo codice**, non solo leggendo.
 :::

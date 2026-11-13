@@ -2,6 +2,12 @@
 
 *(slide lezioni 1-3 e "Cenni sul linguaggio macchina"; testo1 cap. 1, 2, 4.1-4.4)*
 
+::: obiettivi Cosa imparerai
+- com'è fatto un calcolatore (macchina di Von Neumann)
+- come la CPU esegue le istruzioni (fetch, decode, execute)
+- che cosa succede quando compili un programma C
+:::
+
 Prima di programmare bisogna sapere **che cosa** esegue i programmi. Questo capitolo è teoria che può uscire all'orale.
 
 ## La macchina di Von Neumann
@@ -129,4 +135,10 @@ Scrivi in linguaggio macchina (con i codici della tabella) un programma che legg
 10000001                    STOP
 ```
 Gli indirizzi in binario su 20 bit sono: 100 = `00000000000001100100`, 104 = `00000000000001101000`, 108 = `00000000000001101100`.
+:::
+
+::: ricorda Da ricordare
+- Dati e programma stanno nella **stessa memoria**; la CPU esegue un'istruzione alla volta.
+- **PC** = indirizzo della prossima istruzione, **IR** = istruzione corrente.
+- Sorgente → preprocessore → compilatore → linker → eseguibile.
 :::

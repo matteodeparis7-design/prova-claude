@@ -2,6 +2,12 @@
 
 *(slide lezione 17, EG8, complementi lezione 8 sui record di attivazione; testo1 cap. 15)*
 
+::: obiettivi Cosa imparerai
+- scrivere funzioni ricorsive (caso base e caso ricorsivo)
+- disegnare la pila dei record di attivazione (richiesto all'esame)
+- quando conviene la ricorsione
+:::
+
 ## L'idea
 
 Una funzione è **ricorsiva** quando **chiama se stessa**. Funziona se:
@@ -151,4 +157,10 @@ int maxArray(int v[], int n) {
   return m;
 }
 ```
+:::
+
+::: ricorda Da ricordare
+- Serve un **caso base** e un caso ricorsivo che **si avvicina** al caso base.
+- Ogni chiamata ha il **suo** RDA: andata fino al caso base, poi ritorno dei valori.
+- Su liste: caso base `l == NULL`, poi lavoro su `l->next`.
 :::

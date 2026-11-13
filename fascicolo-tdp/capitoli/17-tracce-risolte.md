@@ -1,5 +1,11 @@
 # Le tracce del professore, risolte {#tracce}
 
+::: obiettivi Cosa imparerai
+- come si risolvono le tracce d'esempio pubblicate dal professore
+- come si scrive una risposta completa all'esercizio 3
+- come presentare un'esecuzione simulata con i record di attivazione
+:::
+
 Queste sono **le tracce d'esempio pubblicate sul sito del corso** (cartella "Testi d'esame d'esempio"), con soluzioni complete. Il codice è stato compilato e provato. Prima di leggere ogni soluzione, prova a scriverla tu su carta.
 
 ## Traccia 1: "Segnala un guasto!"
@@ -200,3 +206,9 @@ Scelgo un **albero binario di ricerca** ordinato per cognome e nome: la ricerca 
 {{inc marmotte_albero.c eser2}}
 
 L'esercizio 3 è svolto nel capitolo 15 (tre visite, albero di 9 nodi, sequenze prodotte e pila delle RDA).
+
+::: ricorda Da ricordare
+- Le tracce si somigliano tutte: lista di struct, scansione con più risultati, modifica della lista.
+- Per l'esercizio 3 servono **metodo + tabella motivata + esecuzione simulata**.
+- Prova a rifare ogni traccia da solo, a tempo.
+:::

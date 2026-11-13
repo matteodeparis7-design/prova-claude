@@ -2,6 +2,12 @@
 
 *(slide lezione 20 e filmati sugli algoritmi di ordinamento; testo1 cap. 11, 12, caso di studio I; testo2 cap. 1-2)*
 
+::: obiettivi Cosa imparerai
+- ricerca lineare e ricerca binaria
+- selection, bubble e insertion sort (e cenni al merge sort)
+- confrontare l'efficienza degli algoritmi
+:::
+
 ## Ricerca lineare (sequenziale)
 
 Si scorre l'array dall'inizio finché si trova l'elemento o si arriva in fondo. Funziona **sempre**, anche se l'array non è ordinato. Nel caso peggiore fa **n** confronti.
@@ -120,4 +126,10 @@ void ordinaPerCodice(TipoTabella *t) {
   }
 }
 ```
+:::
+
+::: ricorda Da ricordare
+- La ricerca binaria funziona **solo su dati ordinati** (circa log<sub>2</sub> n passi).
+- Selection: minimo e scambio; bubble: vicini; insertion: inserisci al posto giusto.
+- I tre ordinamenti semplici costano circa **n²**.
 :::

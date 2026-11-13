@@ -2,6 +2,12 @@
 
 *(lezione 12, solo online, con video; slide "Qualità e Testing"; testo2 cap. 1-2)*
 
+::: obiettivi Cosa imparerai
+- le qualità di un programma e i tipi di errore
+- progettare test a scatola nera e a scatola trasparente
+- rispondere all'esercizio 3 sui test
+:::
+
 Questo argomento esce spesso come **esercizio 3** ("descrivere il metodo a scatola nera / trasparente e applicarlo a `eser1`"). Vale fino a 7 punti e si prepara bene in anticipo.
 
 ## Le qualità di un programma
@@ -104,4 +110,10 @@ Classi di equivalenza (partizione dell'input) e un rappresentante per ciascuna:
 | 7 | tutti uguali | `{3, 3, 3}` | 3 |
 
 Il test 5 scopre l'errore classico `max = 0` come valore iniziale; i test 2 e 3 scoprono errori sugli estremi del ciclo.
+:::
+
+::: ricorda Da ricordare
+- Test = dati di prova + **output atteso**, confrontato con l'effettivo.
+- Nera: dalla **specifica** (classi di equivalenza); trasparente: dal **codice** (istruzioni, decisioni, condizioni, valori limite).
+- Nessun metodo garantisce l'assenza di errori.
 :::

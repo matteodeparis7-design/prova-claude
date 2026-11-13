@@ -2,6 +2,12 @@
 
 *(slide lezioni 4-6, EG1-EG3; testo1 cap. 4, 5, 7, 9)*
 
+::: obiettivi Cosa imparerai
+- usare if, switch, while, do-while e for
+- progettare un ciclo (INIT, CHECK, USE, ADVANCE) che termina
+- gli schemi fondamentali: contatore, accumulatore, massimo, sentinella, flag
+:::
+
 ## Selezione: if / else
 
 ```c
@@ -247,4 +253,10 @@ for (n = 2; n < 100; n++) {
 }
 ```
 Basta provare i divisori fino a √n (`d * d <= n`) e fermarsi al primo divisore trovato.
+:::
+
+::: ricorda Da ricordare
+- L'`else` si lega all'**`if` più vicino**.
+- Ogni ciclo deve avvicinarsi alla fine: chiediti **perché termina**.
+- Il massimo parte dal **primo elemento**, non da 0.
 :::

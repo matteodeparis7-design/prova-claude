@@ -2,6 +2,12 @@
 
 *(slide lezioni 8 e 10, complemento "Record di attivazione"; testo1 cap. 11)*
 
+::: obiettivi Cosa imparerai
+- dichiarare, definire e chiamare una funzione
+- cosa succede in memoria a ogni chiamata (record di attivazione)
+- visibilità e durata delle variabili
+:::
+
 ## Perché le funzioni
 
 Una funzione è un **sottoprogramma** con un nome, che risolve un sottoproblema. Serve a non ripetere codice, a dividere un problema grande in pezzi (**modularizzazione**, progettazione *top-down*) e a provare ogni pezzo separatamente.
@@ -136,4 +142,10 @@ int potenza(int base, int esp) {
    +----------------------------------------+
 al return l'RDA di potenza sparisce e in main x = 8
 ```
+:::
+
+::: ricorda Da ricordare
+- I parametri passano **per valore**: la funzione riceve copie.
+- Ogni chiamata crea un **RDA** (parametri, variabili locali, ritorno) che sparisce al termine.
+- Mai restituire l'indirizzo di una variabile locale.
 :::

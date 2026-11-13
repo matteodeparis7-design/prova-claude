@@ -2,6 +2,12 @@
 
 *(slide lezioni 18 e 19, EG6 e EG9; testo1 cap. 20; testo2 cap. 1-2)*
 
+::: obiettivi Cosa imparerai
+- raggruppare dati diversi in una struct e usare typedef
+- accedere ai campi con `.` e con `->`
+- realizzare una tabella con chiave di ricerca e le sue operazioni
+:::
+
 ## Struct: il record
 
 Un **array** raccoglie dati **dello stesso tipo**. Una **struct** (record) raccoglie dati di **tipi diversi** che descrivono **una cosa sola**. Ogni componente si chiama **campo**.
@@ -153,4 +159,10 @@ int prenota(TipoTabella *t, char cod[], int k) {
   return 1;
 }
 ```
+:::
+
+::: ricorda Da ricordare
+- `p->campo` equivale a `(*p).campo`.
+- Una struct si passa **per indirizzo** se va modificata.
+- Tabella: aggiungi, elimina, modifica, cerca per **chiave**; con l'array ha limiti che la lista supera.
 :::

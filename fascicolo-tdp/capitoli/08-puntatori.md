@@ -2,6 +2,12 @@
 
 *(slide lezioni 13 e 14, complementi lezione 13; testo1 cap. 14)*
 
+::: obiettivi Cosa imparerai
+- cosa sono indirizzi e puntatori (`&` e `*`)
+- come una funzione restituisce più risultati (parametri di output)
+- il legame tra puntatori e array
+:::
+
 I puntatori sono **l'argomento chiave** del corso: senza di loro non si fanno né i parametri di output né le liste. Vale la pena studiarli con calma e con tanti disegni.
 
 ## Indirizzi e puntatori
@@ -180,4 +186,10 @@ void statistiche(int v[], int dim, int *somma, int *pari, double *media) {
 }
 /* chiamata:  statistiche(v, N, &s, &np, &m); */
 ```
+:::
+
+::: ricorda Da ricordare
+- `&x` = indirizzo di x; `*p` = variabile puntata da p.
+- Per modificare una variabile del chiamante passa il suo **indirizzo**; dentro, `(*p)++`.
+- `v[i]` equivale a `*(v+i)`; la lista che cambia testa si passa come **`TipoLista *`**.
 :::

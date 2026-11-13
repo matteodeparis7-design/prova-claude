@@ -2,6 +2,12 @@
 
 *(slide lezioni 15 e 16, EG5, video "ArrayDouble"; testo1 cap. 13, 14, app. B)*
 
+::: obiettivi Cosa imparerai
+- come sono fatte le stringhe in C e le funzioni di string.h
+- allocare e liberare memoria con malloc e free
+- le stringhe "esatte", richieste in ogni traccia d'esame
+:::
+
 ## Le stringhe in C
 
 Una **stringa** è un **array di `char` terminato dal carattere `'\0'`** (codice 0). Il `'\0'` segna la fine: per questo una stringa di k caratteri occupa **k+1** caratteri.
@@ -208,4 +214,10 @@ int contaVocali(char *s) {
   return n;
 }
 ```
+:::
+
+::: ricorda Da ricordare
+- Stringa = array di char che finisce con **'\0'**.
+- Confronta con **`strcmp`**, copia con **`strcpy`** (mai `==` e `=`).
+- Stringa esatta: `malloc(strlen(s) + 1)`, controllo NULL, `strcpy`; poi `free`.
 :::

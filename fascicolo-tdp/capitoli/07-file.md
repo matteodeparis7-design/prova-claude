@@ -2,6 +2,12 @@
 
 *(lezione 9 con video, EG7; testo1 cap. 17)*
 
+::: obiettivi Cosa imparerai
+- aprire, leggere, scrivere e chiudere file di testo
+- leggere fino alla fine del file in modo sicuro
+- usare file binari e l'accesso diretto con fseek
+:::
+
 Le variabili vivono in RAM e spariscono a fine programma. Per conservare i dati servono i **file**, che stanno nella memoria di massa.
 
 ## Aprire e chiudere un file
@@ -92,4 +98,10 @@ int copiaPositivi(char *origine, char *destinazione) {
   return copiati;
 }
 ```
+:::
+
+::: ricorda Da ricordare
+- Controlla sempre che `fopen` non restituisca **NULL**; chiudi con `fclose`.
+- Leggi finché `fscanf(...) == numero di dati attesi`.
+- Binari: `fwrite`/`fread` copiano i byte della memoria.
 :::

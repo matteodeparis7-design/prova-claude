@@ -1,4 +1,9 @@
-# Formulario da ripassare il giorno prima {#formulario}
+# Formulario, glossario e autoverifica {#formulario}
+
+::: obiettivi Cosa imparerai
+- tutte le formule e gli schemi da ripassare il giorno prima
+- come verificare da solo se sei pronto
+:::
 
 ## Rappresentazione
 
@@ -84,6 +89,52 @@ Caso base + caso ricorsivo che si avvicina al caso base. RDA: una per chiamata, 
 - Leggi tutto il testo, poi i tipi, poi `eser1`, `eser2`, esercizio 3, rilettura con la checklist del capitolo 16.
 - Scrivi in modo ordinato e commenta l'algoritmo.
 
+## Glossario
+
+I termini del corso in una riga. Se un termine non ti è chiaro, torna al capitolo indicato.
+
+<dl class="glossario">
+<dt>Algoritmo</dt><dd>Sequenza finita di passi precisi che risolve un problema (cap. 3).</dd>
+<dt>ALU</dt><dd>Parte della CPU che esegue calcoli e confronti (cap. 1).</dd>
+<dt>Array</dt><dd>Sequenza di elementi dello stesso tipo in locazioni consecutive, indici da 0 a N-1 (cap. 6).</dd>
+<dt>Caso base</dt><dd>Il caso che una funzione ricorsiva risolve senza richiamarsi (cap. 11).</dd>
+<dt>Cast</dt><dd>Conversione esplicita di tipo, es. <code>(double) somma</code> (cap. 3).</dd>
+<dt>Chiave</dt><dd>Campo che identifica in modo univoco un elemento di una tabella (cap. 10).</dd>
+<dt>Compilatore</dt><dd>Programma che traduce il sorgente C in linguaggio macchina (cap. 1).</dd>
+<dt>Complemento a due</dt><dd>Rappresentazione degli interi con segno usata dai calcolatori (cap. 2).</dd>
+<dt>Debugging</dt><dd>Ricerca e correzione degli errori di un programma (Laboratorio, cap. 13).</dd>
+<dt>Deallocazione</dt><dd>Restituzione della memoria allocata dinamicamente, con <code>free</code> (cap. 9).</dd>
+<dt>Eccesso 127</dt><dd>Modo di scrivere l'esponente dei float: esponente vero + 127 (cap. 2).</dd>
+<dt>Esecuzione simulata</dt><dd>Esecuzione "a mano" di un programma, annotando i valori delle variabili (cap. 4).</dd>
+<dt>Flag</dt><dd>Variabile che vale 0 finché accade un evento, poi 1; usata per fermare i cicli (cap. 4).</dd>
+<dt>Floating point</dt><dd>Rappresentazione dei reali con segno, esponente e mantissa (cap. 2).</dd>
+<dt>Heap</dt><dd>Zona di memoria da cui <code>malloc</code> prende i blocchi (cap. 9).</dd>
+<dt>Lista collegata</dt><dd>Sequenza di nodi allocati dinamicamente, ognuno col puntatore al successivo (cap. 14).</dd>
+<dt>Linker</dt><dd>Programma che unisce il codice compilato con le librerie e crea l'eseguibile (cap. 1).</dd>
+<dt>Memory leak</dt><dd>Memoria allocata e mai liberata, di cui si è perso l'indirizzo (cap. 9).</dd>
+<dt>NULL</dt><dd>Valore di un puntatore che non punta a nulla; la lista vuota (cap. 8, 14).</dd>
+<dt>Parametro attuale</dt><dd>Espressione scritta nella chiamata; il suo valore viene copiato (cap. 5).</dd>
+<dt>Parametro formale</dt><dd>Variabile dichiarata nell'intestazione della funzione (cap. 5).</dd>
+<dt>Parametro di output</dt><dd>Parametro puntatore usato per restituire un risultato al chiamante (cap. 8).</dd>
+<dt>PC (Program Counter)</dt><dd>Registro con l'indirizzo della prossima istruzione (cap. 1).</dd>
+<dt>Processo</dt><dd>Un programma in esecuzione (cap. 1).</dd>
+<dt>Prototipo</dt><dd>Dichiarazione di una funzione: tipo, nome, tipi dei parametri (cap. 5).</dd>
+<dt>Pseudocodice</dt><dd>Algoritmo scritto in italiano a passi numerati, prima del codice (cap. 3).</dd>
+<dt>Puntatore</dt><dd>Variabile che contiene un indirizzo di memoria (cap. 8).</dd>
+<dt>Record di attivazione (RDA)</dt><dd>Zona di memoria creata a ogni chiamata, con parametri e variabili locali (cap. 5, 11).</dd>
+<dt>Record generatore</dt><dd>Nodo fittizio messo in testa a una lista per eliminare il caso speciale del primo nodo (cap. 14).</dd>
+<dt>Ricorsione</dt><dd>Funzione che chiama se stessa su un problema più piccolo (cap. 11).</dd>
+<dt>Scatola nera / trasparente</dt><dd>Metodi di test basati sulla specifica / sul codice (cap. 13).</dd>
+<dt>Sentinella</dt><dd>Valore speciale che segna la fine dei dati in input, es. 0 (cap. 4).</dd>
+<dt>Stringa esatta</dt><dd>Stringa allocata con <code>malloc(strlen+1)</code>, senza spreco (cap. 9).</dd>
+<dt>Struct</dt><dd>Record che raggruppa campi di tipi diversi (cap. 10).</dd>
+<dt>Stub</dt><dd>Versione finta di una funzione usata nel test top-down (cap. 13).</dd>
+<dt>Tabella</dt><dd>Struttura dati che rappresenta un archivio: aggiungi, elimina, modifica, cerca (cap. 10).</dd>
+<dt>Tipo di dato astratto (ADT)</dt><dd>Tipo definito dalle operazioni, indipendente da come è memorizzato (cap. 10).</dd>
+<dt>typedef</dt><dd>Istruzione che dà un nuovo nome a un tipo esistente (cap. 10).</dd>
+<dt>Visita di un albero</dt><dd>Esame di tutti i nodi: preordine, inordine, postordine (cap. 15).</dd>
+</dl>
+
 ## Autoverifica: sei pronto se...
 
 Prima di iscriverti all'appello, controlla di saper fare **ognuna** di queste cose **senza guardare il fascicolo**. Se una ti manca, torna al capitolo indicato.
@@ -112,6 +163,11 @@ Prima di iscriverti all'appello, controlla di saper fare **ognuna** di queste co
 :::
 
 Se hai spuntato tutto, sei pronto per l'esame.
+
+
+::: ricorda Da ricordare
+- Se sai fare tutto l'elenco dell'autoverifica **senza guardare**, sei pronto.
+:::
 
 ## Fonti
 
