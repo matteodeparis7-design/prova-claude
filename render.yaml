@@ -1,0 +1,16 @@
+# Versione di prova di Promovo su Render (piano gratuito).
+# Nota: sul piano gratuito i dati si azzerano a ogni riavvio e il sito "si addormenta"
+# dopo 15 minuti senza visite (la prima apertura successiva richiede circa un minuto).
+services:
+  - type: web
+    name: promovo-prova
+    runtime: docker
+    rootDir: promovo
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: PROMOVO_DEMO
+        value: "1"
+      - key: PROMOVO_AI
+        value: "off"
