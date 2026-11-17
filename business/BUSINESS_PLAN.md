@@ -1,4 +1,4 @@
-# Galó – Business plan
+# Promovo – Business plan
 *La piattaforma IA che trasforma il volantino dei supermercati in media digitale*
 
 Versione 1 · novembre 2026 · documento di lavoro
@@ -6,7 +6,7 @@ Versione 1 · novembre 2026 · documento di lavoro
 ---
 
 ## 1. In una frase
-Il supermercato carica il PDF del volantino; in poche ore gli agenti IA di Galó consegnano i video per gli
+Il supermercato carica il PDF del volantino; in poche ore gli agenti IA di Promovo consegnano i video per gli
 schermi in negozio, i contenuti social già programmati, i messaggi per i clienti e un report sui risultati.
 Tutto in abbonamento, ogni settimana, senza agenzia.
 
@@ -33,7 +33,7 @@ Tutto in abbonamento, ogni settimana, senza agenzia.
 | **Pubblicatore** | Programma i post sui social del negozio nei giorni e negli orari migliori |
 | **Analista** | Report settimanale: visualizzazioni, interazioni, offerte che hanno funzionato di più |
 
-Il negoziante approva con un clic; un supervisore umano di Galó controlla la qualità finché il sistema è giovane.
+Il negoziante approva con un clic; un supervisore umano di Promovo controlla la qualità finché il sistema è giovane.
 
 **Prova di fattibilità:** il video del volantino Superfreddo (13–22 ottobre 2026) per un punto vendita
 Decò di Colleferro è già stato prodotto con questo approccio: 4 minuti e 20 secondi in 4K, con animazioni,
