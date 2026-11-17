@@ -149,6 +149,7 @@ class Offer(Base):
     bbox: Mapped[list] = mapped_column(JSON, default=list)
     crop_path: Mapped[str] = mapped_column(String(500), default="")
     price_verified: Mapped[bool] = mapped_column(Boolean, default=False)
+    verified_by: Mapped[str] = mapped_column(String(40), default="")   # testo PDF | OCR | doppia lettura IA | persona
     is_featured: Mapped[bool] = mapped_column(Boolean, default=False)
     cost_cents: Mapped[int | None] = mapped_column(Integer, nullable=True)  # costo d'acquisto, se noto
 

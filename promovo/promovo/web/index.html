@@ -259,7 +259,7 @@ async function openFlyer(id) {
     <td>${esc(o.category)}</td>
     <td><input value="${esc(o.price.replace("€ ", ""))}" style="width:90px" data-price></td>
     <td>${esc(o.old_price)} ${o.discount_percent ? `<span class="pill warn">-${o.discount_percent}%</span>` : ""}</td>
-    <td>${o.price_verified ? `<span class="pill ok">verificato</span>` : `<span class="pill warn">da controllare</span>`}</td>
+    <td>${o.price_verified ? `<span class="pill ok" title="${esc(o.verified_by)}">verificato</span><div class="muted">${esc(o.verified_by)}</div>` : `<span class="pill warn">da controllare</span>`}</td>
     <td><button class="sec" data-save>Salva</button></td></tr>`).join("");
   document.querySelectorAll("#fdOffers img[data-img]").forEach(img => img.dataset.img && loadImage(img, img.dataset.img));
   document.querySelectorAll("#fdOffers [data-save]").forEach(b => b.onclick = () => busy(b, async () => {
@@ -345,8 +345,11 @@ $("stCreate").onclick = () => busy($("stCreate"), async () => {
 $("pdfUpload").onclick = () => busy($("pdfUpload"), async () => {
   const f = $("pdfFile").files[0]; if (!f) throw new Error("Scegli un file PDF.");
   const fd = new FormData(); fd.append("file", f); fd.append("title", $("pdfTitle").value);
-  flash("Lettura del volantino in corso… può richiedere qualche minuto.");
-  const fl = await api(`/api/stores/${storeId}/flyers`, {body: fd});
+  flash("Lettura del volantino in corso… per i volantini lunghi può richiedere alcuni minuti.");
+  let fl = await api(`/api/stores/${storeId}/flyers`, {body: fd});
+  await loadFlyers();
+  while (fl.status === "processing") { await new Promise(r => setTimeout(r, 3000)); fl = await api(`/api/flyers/${fl.id}`); }
+  if (fl.status === "failed") throw new Error("Lettura non riuscita: " + fl.error);
   flash(`Volantino letto: ${fl.offers.length} offerte trovate.`); await loadFlyers(); await openFlyer(fl.id);
 });
 $("fdContent").onclick = () => busy($("fdContent"), async () => {

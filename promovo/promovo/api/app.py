@@ -19,7 +19,7 @@ from ..config import Settings, get_settings
 from ..db import Database
 from ..llm import AIRefused, AIUnavailable, LLM, get_llm
 from ..models import (
-    ContentPiece, Conversation, Customer, Flyer, Job, JobStatus, Offer, Order, OrderStatus, Organization, Role,
+    ContentPiece, Conversation, Customer, Flyer, FlyerStatus, Job, JobStatus, Offer, Order, OrderStatus, Organization, Role,
     SaleRecord, Store, User,
 )
 from ..money import discount_percent, format_eur, parse_price
@@ -30,7 +30,7 @@ from ..modules.assistant.agent import OrderError, chat, normalize_phone
 from ..modules.catalog import active_offers
 from ..modules.content.service import generate_content, save_content
 from ..modules.flyer.pdf import InvalidPDF
-from ..modules.flyer.service import delete_flyer_files, ingest_flyer
+from ..modules.flyer.service import create_flyer, delete_flyer_files, process_flyer
 from ..modules.loyalty.service import build_campaign, handle_inbound, set_consent
 from ..modules.recipes.service import suggest_recipes
 from ..modules.video.render import FORMATS
@@ -175,7 +175,7 @@ def offer_out(o: Offer) -> dict:
             "price": format_eur(o.price_cents), "old_price_cents": o.old_price_cents,
             "old_price": format_eur(o.old_price_cents), "discount_percent": o.discount_percent,
             "unit_price_text": o.unit_price_text, "conditions": o.conditions, "bbox": o.bbox,
-            "price_verified": o.price_verified, "is_featured": o.is_featured, "cost_cents": o.cost_cents,
+            "price_verified": o.price_verified, "verified_by": o.verified_by, "is_featured": o.is_featured, "cost_cents": o.cost_cents,
             "image_url": f"/api/offers/{o.id}/image" if o.crop_path else None}
 
 
@@ -240,6 +240,24 @@ class RateLimiter:
 
 
 # ------------------------------------------------------------------ lavori in background
+
+def run_flyer_job(app_state: AppState, flyer_id: int) -> None:
+    s = app_state.db.new_session()
+    try:
+        flyer = s.get(Flyer, flyer_id)
+        if flyer is not None:
+            process_flyer(s, flyer, app_state.settings, app_state.llm)
+            s.commit()
+    except Exception:  # process_flyer gestisce già gli errori di lettura; questo è l'ultimo riparo
+        s.rollback()
+        log.exception("Lettura del volantino %s fallita", flyer_id)
+        flyer = s.get(Flyer, flyer_id)
+        if flyer is not None:
+            flyer.status, flyer.error = FlyerStatus.failed, "Errore interno durante la lettura."
+            s.commit()
+    finally:
+        s.close()
+
 
 def run_video_job(app_state: AppState, job_id: int) -> None:
     s = app_state.db.new_session()
@@ -393,10 +411,11 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
 
     # -------------------------------------------------- volantini e offerte
 
-    @app.post("/api/stores/{store_id}/flyers", status_code=201)
-    async def upload_flyer(store_id: int, request: Request, file: UploadFile = File(...),
-                           title: str = Form(default=""), user: User = Depends(current_user),
-                           session: Session = Depends(get_session)):
+    @app.post("/api/stores/{store_id}/flyers", status_code=202)
+    async def upload_flyer(store_id: int, request: Request, background: BackgroundTasks,
+                           file: UploadFile = File(...), title: str = Form(default=""),
+                           user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Salva il PDF e avvia la lettura in background: interrogare GET /api/flyers/{id} fino a "ready"."""
         store = store_for(session, user, store_id)
         st = state(request)
         limit = st.settings.max_upload_mb * 1024 * 1024
@@ -404,10 +423,26 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         if len(data) > limit:
             raise HTTPException(413, f"Il file supera {st.settings.max_upload_mb} MB.")
         try:
-            flyer = ingest_flyer(session, store, data, st.settings, st.llm, title=title.strip()[:300])
+            flyer = create_flyer(session, store, data, st.settings, title=title.strip()[:300])
         except InvalidPDF as exc:
             raise HTTPException(400, str(exc)) from exc
-        return flyer_out(flyer, with_offers=True)
+        session.commit()
+        background.add_task(run_flyer_job, st, flyer.id)
+        return flyer_out(flyer)
+
+    @app.post("/api/flyers/{flyer_id}/reprocess", status_code=202)
+    def reprocess_flyer(flyer_id: int, request: Request, background: BackgroundTasks,
+                        user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Rilegge un volantino (es. dopo un errore o con l'IA appena attivata). Le correzioni manuali si perdono."""
+        f = flyer_for(session, user, flyer_id)
+        if f.status == FlyerStatus.processing:
+            raise HTTPException(409, "Il volantino è già in lettura.")
+        for o in list(f.offers):
+            session.delete(o)
+        f.status, f.error, f.warnings = FlyerStatus.processing, "", []
+        session.commit()
+        background.add_task(run_flyer_job, state(request), f.id)
+        return flyer_out(f)
 
     @app.get("/api/stores/{store_id}/flyers")
     def list_flyers(store_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
@@ -438,6 +473,7 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
                 raise HTTPException(422, "Prezzo non valido.")
             o.price_cents = cents
             o.price_verified = True  # corretto a mano da una persona
+            o.verified_by = "persona"
         if "old_price" in data:
             raw = data.pop("old_price")
             cents = parse_price(raw) if raw else None
@@ -507,8 +543,8 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         if not 0.25 <= scale <= 1.0:
             raise HTTPException(422, "scale deve essere tra 0.25 e 1.")
         f = flyer_for(session, user, flyer_id)
-        if not f.offers:
-            raise HTTPException(409, "Il volantino non ha offerte.")
+        if f.status != FlyerStatus.ready or not f.offers:
+            raise HTTPException(409, "Il volantino non è pronto o non ha offerte.")
         job = Job(store_id=f.store_id, kind="video", params={"flyer_id": f.id, "format": format, "scale": scale})
         session.add(job)
         session.commit()

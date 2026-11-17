@@ -21,6 +21,7 @@ from pydantic import BaseModel, Field
 from ...llm import AIRefused, AIUnavailable, LLM, image_block
 from ...money import discount_percent, find_prices, parse_price
 from ...text_utils import CATEGORIES, coerce_category, normalize, parse_iso_date, parse_validity
+from .crosscheck import crosscheck
 from .pdf import PageInfo, Span, page_info, render_page_png
 
 log = logging.getLogger("promovo.flyer")
@@ -42,6 +43,7 @@ class RawOffer:
     unit_price_text: str = ""
     conditions: str = ""
     price_verified: bool = False
+    verified_by: str = ""
 
 
 @dataclass
@@ -302,7 +304,7 @@ def extract_heuristic(doc: pymupdf.Document, today: date | None = None) -> Extra
 
 # ------------------------------------------------------------------ verifica e pulizia
 
-def verify_and_clean(result: ExtractionResult, doc: pymupdf.Document) -> ExtractionResult:
+def verify_and_clean(result: ExtractionResult, doc: pymupdf.Document, llm: LLM | None = None) -> ExtractionResult:
     """Agente Controllo: verifica ogni prezzo contro il testo del PDF e rimuove i doppioni."""
     page_prices: dict[int, set[int]] = {}
     page_percents: dict[int, set[int]] = {}
@@ -323,6 +325,7 @@ def verify_and_clean(result: ExtractionResult, doc: pymupdf.Document) -> Extract
         seen.add(key)
         if has_text.get(o.page):
             o.price_verified = o.price_cents in page_prices.get(o.page, set())
+            o.verified_by = "testo PDF" if o.price_verified else ""
             if o.old_price_cents and o.old_price_cents not in page_prices.get(o.page, set()):
                 o.old_price_cents = None
             # Lo sconto resta solo se ricavabile dal prezzo barrato o se è stampato nella pagina.
@@ -340,6 +343,8 @@ def verify_and_clean(result: ExtractionResult, doc: pymupdf.Document) -> Extract
     warnings = list(result.warnings)
     if unverified:
         warnings.append(f"{unverified} prezzi non trovati nel testo del PDF: da controllare a mano.")
+    no_text = {p for p, t in has_text.items() if not t}
+    warnings.extend(crosscheck(cleaned, doc, llm, no_text))
     if not cleaned:
         warnings.append("Nessuna offerta trovata nel volantino.")
     return ExtractionResult(offers=cleaned, method=result.method, title=result.title,
@@ -357,7 +362,7 @@ def extract_offers(doc: pymupdf.Document, llm: LLM | None, today: date | None = 
     """Prova con l'IA; se non è disponibile usa il metodo euristico."""
     if llm is not None:
         try:
-            return verify_and_clean(extract_with_ai(doc, llm, today), doc)
+            return verify_and_clean(extract_with_ai(doc, llm, today), doc, llm)
         except (AIUnavailable, AIRefused) as exc:
             log.warning("Estrazione con IA non disponibile (%s): uso il metodo euristico.", exc)
             res = verify_and_clean(extract_heuristic(doc, today), doc)

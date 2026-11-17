@@ -44,8 +44,12 @@ def live_pdf():
 def upload(client, h, store_id, pdf):
     r = client.post(f"/api/stores/{store_id}/flyers", headers=h,
                     files={"file": ("volantino.pdf", pdf, "application/pdf")}, data={"title": ""})
-    assert r.status_code == 201, r.text
-    return r.json()
+    assert r.status_code == 202, r.text
+    assert r.json()["status"] == "processing"
+    # La lettura avviene in background; il client di test la completa prima di rispondere.
+    flyer = client.get(f"/api/flyers/{r.json()['id']}", headers=h).json()
+    assert flyer["status"] == "ready", flyer
+    return flyer
 
 
 def test_health_and_dashboard(app_ctx):
@@ -149,6 +153,13 @@ def test_flyer_offers_content_video(app_ctx, live_pdf):
 
     ov = client.get(f"/api/stores/{store['id']}/overview", headers=h).json()
     assert ov["flyers"] == 1 and ov["content_to_approve"] == 4  # 3 testi + 1 video
+
+    # Rilettura: le offerte vengono ricreate da capo.
+    r = client.post(f"/api/flyers/{flyer['id']}/reprocess", headers=h)
+    assert r.status_code == 202
+    again = client.get(f"/api/flyers/{flyer['id']}", headers=h).json()
+    assert again["status"] == "ready" and len(again["offers"]) == 12
+    assert again["offers"][0]["price_cents"] != 69  # la correzione manuale non sopravvive alla rilettura
 
     assert client.delete(f"/api/flyers/{flyer['id']}", headers=h).status_code == 204
     assert client.get(f"/api/flyers/{flyer['id']}", headers=h).status_code == 404

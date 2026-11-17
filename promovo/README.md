@@ -44,7 +44,25 @@ Variabili d'ambiente:
 | `PROMOVO_AI` | `claude` | `off` per spegnere l'IA |
 | `PROMOVO_MAX_UPLOAD_MB` | `40` | Dimensione massima dei PDF |
 
-Serve `ffmpeg` installato per i video.
+Serve `ffmpeg` installato per i video. Per controllare i prezzi dei volantini fatti solo di
+immagini serve anche l'OCR Tesseract (facoltativo ma consigliato):
+
+```bash
+sudo apt-get install -y ffmpeg tesseract-ocr tesseract-ocr-ita
+```
+
+## Come vengono controllati i prezzi
+
+Ogni prezzo letto viene confermato in uno di questi modi, e il cruscotto mostra quale:
+
+1. **testo PDF**: il prezzo compare nel testo del PDF (volantini "digitali");
+2. **OCR**: per i volantini fatti di immagini, Tesseract trova lo stesso prezzo, scritto in grande,
+   dentro il riquadro del prodotto (i prezzi al kg in piccolo non contano);
+3. **doppia lettura IA**: Claude rilegge il prezzo su un ritaglio ingrandito del prodotto;
+4. **persona**: corretto o confermato a mano nel cruscotto.
+
+Un controllo non cambia mai un prezzo da solo: conferma oppure segnala "da controllare".
+I volantini si leggono in background: per uno di 24 pagine servono alcuni minuti.
 
 ## Test
 
