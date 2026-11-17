@@ -6,7 +6,7 @@ interrogano il database. Gli ordini vengono validati dal codice, non dall'IA.
 from __future__ import annotations
 
 import re
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, tzinfo
 from zoneinfo import ZoneInfo
 
 from sqlalchemy import select
@@ -19,7 +19,42 @@ from ...text_utils import CATEGORIES
 from ..catalog import active_offers, search_offers
 from ..content.service import validity_text
 
-TZ = ZoneInfo("Europe/Rome")
+def _rome_tz():
+    """Ora italiana. Se il sistema non ha i fusi orari (alcuni Windows), si usa un orario fisso
+    con l'ora legale calcolata a mano, invece di bloccare il programma."""
+    try:
+        return ZoneInfo("Europe/Rome")
+    except Exception:
+        return _RomeFallback()
+
+
+class _RomeFallback(tzinfo):
+    """Europe/Rome senza database: UTC+1, UTC+2 dall'ultima domenica di marzo all'ultima di ottobre (01:00 UTC)."""
+
+    @staticmethod
+    def _last_sunday(year: int, month: int) -> datetime:
+        d = datetime(year, month + 1, 1) - timedelta(days=1) if month < 12 else datetime(year, 12, 31)
+        return d - timedelta(days=(d.weekday() + 1) % 7)
+
+    def _dst(self, dt: datetime) -> bool:
+        if dt is None:
+            return False
+        naive = dt.replace(tzinfo=None)
+        start = self._last_sunday(naive.year, 3).replace(hour=2)
+        end = self._last_sunday(naive.year, 10).replace(hour=3)
+        return start <= naive < end
+
+    def utcoffset(self, dt):
+        return timedelta(hours=2 if self._dst(dt) else 1)
+
+    def dst(self, dt):
+        return timedelta(hours=1 if self._dst(dt) else 0)
+
+    def tzname(self, dt):
+        return "CEST" if self._dst(dt) else "CET"
+
+
+TZ = _rome_tz()
 MAX_ITEMS = 30
 MAX_QTY = 50
 MAX_HISTORY_MESSAGES = 60

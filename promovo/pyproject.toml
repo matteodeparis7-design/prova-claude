@@ -14,6 +14,7 @@ dependencies = [
     "pillow>=10.0",
     "numpy>=1.26",
     "imageio-ffmpeg>=0.5",
+    "tzdata>=2024.1",   # fusi orari su Windows, dove il sistema non li fornisce
 ]
 
 [project.optional-dependencies]

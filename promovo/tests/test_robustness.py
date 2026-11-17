@@ -191,3 +191,15 @@ def test_video_without_system_ffmpeg(store, big_flyer, tmp_path, monkeypatch):
     spec.intro_seconds = spec.outro_seconds = spec.offer_seconds = 1.0
     out = render_video(spec, tmp_path / "v.mp4", preset="ultrafast")
     assert abs(probe_duration(out) - 3.0) < 0.2
+
+
+def test_rome_time_without_timezone_database():
+    """Su Windows senza fusi orari si usa l'ora italiana calcolata, identica a quella vera."""
+    from datetime import datetime, timedelta
+    from zoneinfo import ZoneInfo
+    from promovo.modules.assistant.agent import _RomeFallback
+    fb, real = _RomeFallback(), ZoneInfo("Europe/Rome")
+    t = datetime(2026, 1, 1)
+    while t.year == 2026:
+        assert t.replace(tzinfo=fb).utcoffset() == t.replace(tzinfo=real).utcoffset(), t
+        t += timedelta(hours=7)
