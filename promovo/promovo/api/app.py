@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import logging
+import re
+import secrets
 import threading
 import time
 from collections import defaultdict, deque
@@ -22,6 +24,7 @@ from ..models import (
     ContentPiece, Conversation, Customer, Flyer, FlyerStatus, Job, JobStatus, Offer, Order, OrderStatus, Organization, Role,
     SaleRecord, Store, User,
 )
+from ..imaging import ImageError, load_logo, open_image, save_product_photo
 from ..money import discount_percent, format_eur, parse_price
 from ..security import hash_password, issue_token, revoke_token, verify_password
 from ..text_utils import CATEGORIES
@@ -66,6 +69,16 @@ class UserIn(BaseModel):
 
 
 _HEX = r"^#[0-9A-Fa-f]{6}$"
+_TONES = r"^(familiare|elegante|giovane|essenziale)$"
+
+
+def _clean_hashtags(tags: list[str]) -> list[str]:
+    out = []
+    for t in tags:
+        t = re.sub(r"[^\w]", "", t.strip().lstrip("#"), flags=re.UNICODE)[:40]
+        if t and t.lower() not in [x.lower() for x in out]:
+            out.append(t)
+    return out
 
 
 class StoreIn(BaseModel):
@@ -79,6 +92,13 @@ class StoreIn(BaseModel):
     accent_color: str = Field(default="#FFD23F", pattern=_HEX)
     services: list[str] = Field(default_factory=list, max_length=20)
     pickup_enabled: bool = True
+    tone: str = Field(default="familiare", pattern=_TONES)
+    hashtags: list[str] = Field(default_factory=list, max_length=15)
+    whatsapp: str = Field(default="", max_length=40)
+    website: str = Field(default="", max_length=200)
+    video_music: bool = True
+
+    _clean_tags = field_validator("hashtags")(lambda cls, v: _clean_hashtags(v))
 
 
 class StorePatch(BaseModel):
@@ -92,6 +112,13 @@ class StorePatch(BaseModel):
     accent_color: str | None = Field(default=None, pattern=_HEX)
     services: list[str] | None = Field(default=None, max_length=20)
     pickup_enabled: bool | None = None
+    tone: str | None = Field(default=None, pattern=_TONES)
+    hashtags: list[str] | None = Field(default=None, max_length=15)
+    whatsapp: str | None = Field(default=None, max_length=40)
+    website: str | None = Field(default=None, max_length=200)
+    video_music: bool | None = None
+
+    _clean_tags = field_validator("hashtags")(lambda cls, v: None if v is None else _clean_hashtags(v))
 
 
 class OfferPatch(BaseModel):
@@ -104,6 +131,7 @@ class OfferPatch(BaseModel):
     conditions: str | None = Field(default=None, max_length=300)
     is_featured: bool | None = None
     cost: str | None = None
+    confirm: bool | None = None      # conferma il prezzo così com'è (controllato da una persona)
 
     @field_validator("category")
     @classmethod
@@ -111,6 +139,29 @@ class OfferPatch(BaseModel):
         if v is not None and v not in CATEGORIES:
             raise ValueError("Categoria non valida.")
         return v
+
+
+class OfferIn(BaseModel):
+    """Offerta aggiunta a mano (quando la lettura automatica ne ha saltata una)."""
+    name: str = Field(min_length=1, max_length=300)
+    brand: str = Field(default="", max_length=120)
+    description: str = Field(default="", max_length=500)
+    category: str = "altro"
+    price: str
+    old_price: str = ""
+    conditions: str = Field(default="", max_length=300)
+    is_featured: bool = False
+
+    @field_validator("category")
+    @classmethod
+    def _cat(cls, v: str) -> str:
+        if v not in CATEGORIES:
+            raise ValueError("Categoria non valida.")
+        return v
+
+
+class ConfirmIn(BaseModel):
+    offer_ids: list[int] = Field(max_length=2000)
 
 
 class ContentPatch(BaseModel):
@@ -159,7 +210,10 @@ class InboundIn(BaseModel):
 def store_out(s: Store) -> dict:
     return {"id": s.id, "name": s.name, "banner": s.banner, "address": s.address, "city": s.city,
             "phone": s.phone, "opening_hours": s.opening_hours, "brand_color": s.brand_color,
-            "accent_color": s.accent_color, "services": s.services, "pickup_enabled": s.pickup_enabled}
+            "accent_color": s.accent_color, "services": s.services, "pickup_enabled": s.pickup_enabled,
+            "tone": s.tone, "hashtags": s.hashtags or [], "whatsapp": s.whatsapp, "website": s.website,
+            "video_music": s.video_music,
+            "logo_url": f"/api/stores/{s.id}/logo" if s.logo_path and Path(s.logo_path).exists() else None}
 
 
 def offer_out(o: Offer) -> dict:
@@ -169,7 +223,8 @@ def offer_out(o: Offer) -> dict:
             "old_price": format_eur(o.old_price_cents), "discount_percent": o.discount_percent,
             "unit_price_text": o.unit_price_text, "conditions": o.conditions, "bbox": o.bbox,
             "price_verified": o.price_verified, "verified_by": o.verified_by, "is_featured": o.is_featured, "cost_cents": o.cost_cents,
-            "image_url": f"/api/offers/{o.id}/image" if o.crop_path else None}
+            "image_url": f"/api/offers/{o.id}/image" if o.crop_path else None,
+            "photo_url": f"/api/offers/{o.id}/photo" if o.photo_path else None, "manual": o.manual}
 
 
 def flyer_out(f: Flyer, with_offers: bool = False) -> dict:
@@ -177,7 +232,8 @@ def flyer_out(f: Flyer, with_offers: bool = False) -> dict:
            "valid_from": f.valid_from.isoformat() if f.valid_from else None,
            "valid_to": f.valid_to.isoformat() if f.valid_to else None, "status": f.status.value,
            "extraction_method": f.extraction_method, "error": f.error, "warnings": f.warnings,
-           "offer_count": len(f.offers), "created_at": f.created_at.isoformat()}
+           "offer_count": len(f.offers), "unverified_count": sum(1 for o in f.offers if not o.price_verified),
+           "created_at": f.created_at.isoformat()}
     if with_offers:
         out["offers"] = [offer_out(o) for o in f.offers]
     return out
@@ -394,12 +450,64 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         session.flush()
         return store_out(s)
 
+    @app.post("/api/stores/{store_id}/logo")
+    async def upload_logo(store_id: int, request: Request, file: UploadFile = File(...),
+                          user: User = Depends(require_owner), session: Session = Depends(get_session)):
+        """Logo del negozio: compare nei video e nelle grafiche (JPG su bianco viene scontornato)."""
+        s_ = store_for(session, user, store_id)
+        data = await file.read(8 * 1024 * 1024 + 1)
+        out = state(request).settings.data_dir / "logos" / f"{s_.id}_{secrets.token_hex(4)}.png"
+        try:
+            load_logo(data, out)
+        except ImageError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        if s_.logo_path:
+            Path(s_.logo_path).unlink(missing_ok=True)
+        s_.logo_path = str(out)
+        session.flush()
+        return store_out(s_)
+
+    @app.get("/api/stores/{store_id}/logo")
+    def get_logo(store_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        s_ = store_for(session, user, store_id)
+        if not s_.logo_path or not Path(s_.logo_path).exists():
+            raise HTTPException(404, "Logo non presente.")
+        return FileResponse(s_.logo_path, media_type="image/png")
+
+    @app.delete("/api/stores/{store_id}/logo", status_code=204)
+    def delete_logo(store_id: int, user: User = Depends(require_owner), session: Session = Depends(get_session)):
+        s_ = store_for(session, user, store_id)
+        if s_.logo_path:
+            Path(s_.logo_path).unlink(missing_ok=True)
+        s_.logo_path = ""
+
+    @app.get("/api/agency/overview")
+    def agency_overview(user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Tutti i negozi dell'organizzazione con lo stato dell'ultimo volantino: la vista dell'agenzia."""
+        out = []
+        for st in session.scalars(select(Store).where(Store.organization_id == user.organization_id)
+                                  .order_by(Store.name)).all():
+            last = session.scalars(select(Flyer).where(Flyer.store_id == st.id)
+                                   .order_by(Flyer.created_at.desc(), Flyer.id.desc()).limit(1)).first()
+            pieces = session.scalars(select(ContentPiece).where(ContentPiece.flyer_id == last.id)).all() if last else []
+            out.append({
+                "store": store_out(st),
+                "last_flyer": flyer_out(last) if last else None,
+                "content_total": len(pieces),
+                "content_approved": sum(1 for p in pieces if p.approved),
+                "open_orders": session.scalar(select(func.count()).select_from(Order).where(
+                    Order.store_id == st.id, Order.status.in_([OrderStatus.new, OrderStatus.confirmed, OrderStatus.ready]))),
+            })
+        return out
+
     @app.delete("/api/stores/{store_id}", status_code=204)
     def delete_store(store_id: int, request: Request, user: User = Depends(require_owner),
                      session: Session = Depends(get_session)):
         s = store_for(session, user, store_id)
         for f in list(s.flyers):
             delete_flyer_files(f, state(request).settings)
+        if s.logo_path:
+            Path(s.logo_path).unlink(missing_ok=True)
         session.delete(s)
 
     # -------------------------------------------------- volantini e offerte
@@ -460,6 +568,10 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
                     session: Session = Depends(get_session)):
         o = offer_for(session, user, offer_id)
         data = body.model_dump(exclude_unset=True)
+        prices_changed = "price" in data or "old_price" in data
+        if data.pop("confirm", None):
+            o.price_verified = True
+            o.verified_by = "persona"
         if "price" in data:
             cents = parse_price(data.pop("price"))
             if cents is None or cents <= 0:
@@ -481,7 +593,9 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
             o.cost_cents = cents
         if o.old_price_cents is not None and o.old_price_cents <= o.price_cents:
             raise HTTPException(422, "Il prezzo precedente deve essere più alto del prezzo in offerta.")
-        o.discount_percent = discount_percent(o.price_cents, o.old_price_cents)
+        if prices_changed:
+            # Lo sconto si ricalcola solo se cambiano i prezzi: uno sconto stampato resta.
+            o.discount_percent = discount_percent(o.price_cents, o.old_price_cents)
         for k, v in data.items():
             if v is not None:
                 setattr(o, k, v)
@@ -494,6 +608,74 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         if not o.crop_path or not Path(o.crop_path).exists():
             raise HTTPException(404, "Immagine non disponibile.")
         return FileResponse(o.crop_path, media_type="image/png")
+
+    @app.get("/api/offers/{offer_id}/photo")
+    def offer_photo(offer_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        o = offer_for(session, user, offer_id)
+        if not o.photo_path or not Path(o.photo_path).exists():
+            raise HTTPException(404, "Foto non disponibile.")
+        return FileResponse(o.photo_path, media_type="image/png")
+
+    @app.post("/api/offers/{offer_id}/photo")
+    async def upload_offer_photo(offer_id: int, request: Request, file: UploadFile = File(...),
+                                 user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Sostituisce la foto del prodotto (es. una foto migliore della confezione)."""
+        o = offer_for(session, user, offer_id)
+        data = await file.read(10 * 1024 * 1024 + 1)
+        if len(data) > 10 * 1024 * 1024:
+            raise HTTPException(413, "La foto supera 10 MB.")
+        try:
+            img = open_image(data)
+        except ImageError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        out = state(request).settings.data_dir / "crops" / str(o.flyer_id) / f"manuale_{o.id}_{secrets.token_hex(4)}.png"
+        if o.photo_path and "manuale_" in o.photo_path:
+            Path(o.photo_path).unlink(missing_ok=True)
+        o.photo_path = str(save_product_photo(img, out))
+        session.flush()
+        return offer_out(o)
+
+    @app.delete("/api/offers/{offer_id}", status_code=204)
+    def delete_offer(offer_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Toglie un'offerta letta per errore (es. un riquadro che non è un prodotto)."""
+        o = offer_for(session, user, offer_id)
+        session.delete(o)
+
+    @app.post("/api/flyers/{flyer_id}/offers", status_code=201)
+    def add_offer(flyer_id: int, body: OfferIn, user: User = Depends(current_user),
+                  session: Session = Depends(get_session)):
+        """Aggiunge a mano un'offerta che la lettura automatica non ha trovato."""
+        f = flyer_for(session, user, flyer_id)
+        price = parse_price(body.price)
+        if price is None or price <= 0:
+            raise HTTPException(422, "Prezzo non valido.")
+        old = parse_price(body.old_price) if body.old_price.strip() else None
+        if body.old_price.strip() and old is None:
+            raise HTTPException(422, "Prezzo precedente non valido.")
+        if old is not None and old <= price:
+            raise HTTPException(422, "Il prezzo precedente deve essere più alto del prezzo in offerta.")
+        o = Offer(flyer_id=f.id, position=max((x.position for x in f.offers), default=-1) + 1, page=0,
+                  name=body.name.strip(), brand=body.brand.strip(), description=body.description.strip(),
+                  category=body.category, price_cents=price, old_price_cents=old,
+                  discount_percent=discount_percent(price, old), conditions=body.conditions.strip(),
+                  is_featured=body.is_featured, price_verified=True, verified_by="persona", manual=True)
+        session.add(o)
+        session.flush()
+        return offer_out(o)
+
+    @app.post("/api/flyers/{flyer_id}/confirm")
+    def confirm_offers(flyer_id: int, body: ConfirmIn, user: User = Depends(current_user),
+                       session: Session = Depends(get_session)):
+        """Conferma in blocco i prezzi controllati da una persona."""
+        f = flyer_for(session, user, flyer_id)
+        wanted = set(body.offer_ids)
+        n = 0
+        for o in f.offers:
+            if o.id in wanted and not o.price_verified:
+                o.price_verified, o.verified_by = True, "persona"
+                n += 1
+        session.flush()
+        return {"confirmed": n, "unverified_left": sum(1 for o in f.offers if not o.price_verified)}
 
     # -------------------------------------------------- contenuti e video
 

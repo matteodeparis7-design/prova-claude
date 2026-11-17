@@ -29,7 +29,7 @@ class Settings:
     max_upload_mb: int = field(default_factory=lambda: int(_env("PROMOVO_MAX_UPLOAD_MB", "40")))
 
     def ensure_dirs(self) -> None:
-        for sub in ("flyers", "renders", "crops"):
+        for sub in ("flyers", "renders", "crops", "logos"):
             (self.data_dir / sub).mkdir(parents=True, exist_ok=True)
 
 

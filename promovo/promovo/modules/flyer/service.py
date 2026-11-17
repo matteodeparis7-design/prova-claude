@@ -97,4 +97,10 @@ def delete_flyer_files(flyer: Flyer, settings: Settings) -> None:
         for f in crops_dir.iterdir():
             f.unlink(missing_ok=True)
         crops_dir.rmdir()
-    Path(flyer.pdf_path).unlink(missing_ok=True)
+    # Video e grafiche generati per questo volantino.
+    renders = settings.data_dir / "renders"
+    if renders.exists():
+        for f in renders.glob(f"flyer{flyer.id}_*"):
+            f.unlink(missing_ok=True)
+    if flyer.pdf_path:
+        Path(flyer.pdf_path).unlink(missing_ok=True)

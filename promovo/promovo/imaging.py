@@ -54,10 +54,31 @@ def remove_background(img: Image.Image, threshold: int = 34) -> Image.Image | No
     return out.crop(box)
 
 
+def open_image(data: bytes, max_pixels: int = 40_000_000) -> Image.Image:
+    """Apre un'immagine caricata da un utente, con controlli su formato e dimensioni."""
+    if not data:
+        raise ImageError("Il file è vuoto.")
+    try:
+        with Image.open(io.BytesIO(data)) as im:
+            im.load()
+            if im.width * im.height > max_pixels:
+                raise ImageError("L'immagine è troppo grande.")
+            return im.convert("RGBA") if im.mode in ("RGBA", "LA", "P") else im.convert("RGB")
+    except ImageError:
+        raise
+    except (OSError, ValueError, Image.DecompressionBombError) as exc:
+        raise ImageError("Il file non è un'immagine valida (usa JPG, PNG o WEBP).") from exc
+
+
 def save_product_photo(img: Image.Image, out_path: Path, max_side: int = 1400) -> Path:
     """Salva la foto del prodotto, scontornata quando possibile (PNG con trasparenza)."""
-    cut = remove_background(img)
-    final = cut if cut is not None else img.convert("RGBA")
+    if img.mode == "RGBA" and img.getchannel("A").getextrema()[0] < 255:
+        # Già scontornata (PNG con trasparenza): si taglia solo il margine vuoto.
+        box = img.getchannel("A").point(lambda v: 255 if v > 10 else 0).getbbox()
+        final = img.crop(box) if box else img
+    else:
+        cut = remove_background(img)
+        final = cut if cut is not None else img.convert("RGBA")
     final.thumbnail((max_side, max_side), Image.LANCZOS)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     final.save(out_path, format="PNG", optimize=True)
