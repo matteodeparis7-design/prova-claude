@@ -23,10 +23,9 @@ echo "  Controllo dei componenti..."
 .venv/bin/python -m pip install --quiet --upgrade . || { read -r -p "  Errore: fai una foto e mandala in chat. Invio per chiudere."; exit 1; }
 [ -z "$ANTHROPIC_API_KEY" ] && export PROMOVO_AI=off
 echo
-echo "  Promovo si sta avviando: tra pochi secondi si apre il browser."
+echo "  Promovo si sta avviando: il browser si aprira' appena e' pronto."
 echo "  Accesso di prova:  demo@promovo.it  /  promovo2026"
 echo
 echo "  NON chiudere questa finestra mentre usi Promovo. Per spegnerlo, chiudila."
 echo
-( sleep 8; open "http://127.0.0.1:8000" 2>/dev/null || xdg-open "http://127.0.0.1:8000" 2>/dev/null ) &
-.venv/bin/python -m promovo --demo
+.venv/bin/python -m promovo --demo --open

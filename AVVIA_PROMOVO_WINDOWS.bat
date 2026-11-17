@@ -28,14 +28,13 @@ echo  Controllo dei componenti...
 if not defined ANTHROPIC_API_KEY set "PROMOVO_AI=off"
 
 echo.
-echo  Promovo si sta avviando: tra pochi secondi si apre il browser.
+echo  Promovo si sta avviando: il browser si aprira' appena e' pronto.
 echo  Accesso di prova:  demo@promovo.it  /  promovo2026
 echo.
 echo  NON chiudere questa finestra mentre usi Promovo.
 echo  Per spegnerlo, chiudi questa finestra.
 echo.
-start "" cmd /c "timeout /t 8 /nobreak >nul & start http://127.0.0.1:8000"
-".venv\Scripts\python.exe" -m promovo --demo
+".venv\Scripts\python.exe" -m promovo --demo --open
 pause
 exit /b
 
