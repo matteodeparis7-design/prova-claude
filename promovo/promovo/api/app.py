@@ -12,6 +12,7 @@ from pathlib import Path
 
 from fastapi import BackgroundTasks, Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from starlette.background import BackgroundTask as StarletteTask
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
@@ -31,6 +32,7 @@ from ..text_utils import CATEGORIES
 from ..modules.analytics.service import SalesImportError, flyer_performance, import_sales_csv
 from ..modules.assistant.agent import OrderError, chat, normalize_phone
 from ..modules.catalog import active_offers
+from ..modules.kit import DEFAULT_ITEMS, ITEMS, build_zip, run_kit
 from ..modules.content.service import generate_content, save_content
 from ..modules.flyer.pdf import InvalidPDF
 from ..modules.flyer.service import create_flyer, delete_flyer_files, process_flyer
@@ -158,6 +160,18 @@ class OfferIn(BaseModel):
         if v not in CATEGORIES:
             raise ValueError("Categoria non valida.")
         return v
+
+
+class KitIn(BaseModel):
+    items: list[str] = Field(default_factory=lambda: list(DEFAULT_ITEMS), min_length=1, max_length=10)
+
+    @field_validator("items")
+    @classmethod
+    def _items(cls, v: list[str]) -> list[str]:
+        bad = [i for i in v if i not in ITEMS]
+        if bad:
+            raise ValueError(f"Materiali sconosciuti: {', '.join(bad)}")
+        return list(dict.fromkeys(v))
 
 
 class ConfirmIn(BaseModel):
@@ -304,6 +318,38 @@ def run_flyer_job(app_state: AppState, flyer_id: int) -> None:
         if flyer is not None:
             flyer.status, flyer.error = FlyerStatus.failed, "Errore interno durante la lettura."
             s.commit()
+    finally:
+        s.close()
+
+
+def run_kit_job(app_state: AppState, job_id: int) -> None:
+    s = app_state.db.new_session()
+    try:
+        job = s.get(Job, job_id)
+        if job is None:
+            return
+        job.status = JobStatus.running
+        s.commit()
+        flyer = s.get(Flyer, job.params["flyer_id"])
+        store = s.get(Store, job.store_id)
+
+        def progress(item: str, done: int, total: int) -> None:
+            j = s.get(Job, job_id)
+            j.result = {**(j.result or {}), "current": ITEMS.get(item, ""), "done": done, "total": total}
+            s.commit()
+        try:
+            res = run_kit(s, store, flyer, app_state.settings, app_state.llm, job.params["items"], progress)
+            job = s.get(Job, job_id)
+            job.result = {**job.result, **res, "current": ""}
+            job.status = JobStatus.done if not res["errors"] or res["done"] else JobStatus.failed
+            job.error = "; ".join(res["errors"])[:2000]
+        except Exception as exc:
+            s.rollback()
+            job = s.get(Job, job_id)
+            job.status, job.error = JobStatus.failed, str(exc)[:2000]
+            log.exception("Pacchetto del lavoro %s fallito", job_id)
+        job.finished_at = datetime.now(timezone.utc)
+        s.commit()
     finally:
         s.close()
 
@@ -708,7 +754,44 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         c = content_for(session, user, content_id)
         if not c.file_path or not Path(c.file_path).exists():
             raise HTTPException(404, "File non disponibile.")
-        return FileResponse(c.file_path, media_type="video/mp4", filename=Path(c.file_path).name)
+        media = {".mp4": "video/mp4", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png"}
+        return FileResponse(c.file_path, media_type=media.get(Path(c.file_path).suffix.lower(), "application/octet-stream"),
+                            filename=Path(c.file_path).name)
+
+    @app.get("/api/flyers/{flyer_id}/content")
+    def flyer_content(flyer_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        f = flyer_for(session, user, flyer_id)
+        rows = session.scalars(select(ContentPiece).where(ContentPiece.flyer_id == f.id).order_by(ContentPiece.id)).all()
+        return [content_out(c) for c in rows]
+
+    @app.post("/api/flyers/{flyer_id}/kit", status_code=202)
+    def make_kit(flyer_id: int, body: KitIn, request: Request, background: BackgroundTasks,
+                 user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Crea in background tutti i materiali scelti; seguire l'avanzamento con GET /api/jobs/{id}."""
+        f = flyer_for(session, user, flyer_id)
+        if f.status != FlyerStatus.ready or not f.offers:
+            raise HTTPException(409, "Il volantino non è pronto o non ha offerte.")
+        running = session.scalars(select(Job).where(Job.store_id == f.store_id, Job.kind == "kit",
+                                                    Job.status.in_([JobStatus.queued, JobStatus.running]))).all()
+        if any(j.params.get("flyer_id") == f.id for j in running):
+            raise HTTPException(409, "I materiali di questo volantino sono già in preparazione.")
+        job = Job(store_id=f.store_id, kind="kit", params={"flyer_id": f.id, "items": body.items},
+                  result={"total": len(body.items), "done": 0, "current": "", "errors": []})
+        session.add(job)
+        session.commit()
+        background.add_task(run_kit_job, state(request), job.id)
+        return job_out(job)
+
+    @app.get("/api/flyers/{flyer_id}/kit.zip")
+    def download_kit(flyer_id: int, request: Request, approved_only: bool = False,
+                     user: User = Depends(current_user), session: Session = Depends(get_session)):
+        f = flyer_for(session, user, flyer_id)
+        tmp_dir = state(request).settings.data_dir / "renders"
+        tmp = tmp_dir / f"pacchetto_{f.id}_{secrets.token_hex(4)}.zip"
+        build_zip(session, f.store, f, tmp, approved_only)
+        name = f"Promovo_{re.sub(r'[^A-Za-z0-9]+', '_', f.store.name)}_{f.valid_from or f.id}.zip"
+        return FileResponse(tmp, media_type="application/zip", filename=name,
+                            background=StarletteTask(lambda: tmp.unlink(missing_ok=True)))
 
     @app.post("/api/flyers/{flyer_id}/video", status_code=202)
     def make_video(flyer_id: int, request: Request, background: BackgroundTasks, format: str = "landscape",

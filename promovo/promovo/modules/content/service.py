@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 from datetime import date
 
 from pydantic import BaseModel, Field
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ...llm import AIRefused, AIUnavailable, LLM
@@ -163,6 +164,11 @@ def generate_content(store: Store, flyer: Flyer, llm: LLM | None) -> ContentPack
 
 
 def save_content(session: Session, store: Store, flyer: Flyer, pack: ContentPack) -> list[ContentPiece]:
+    """Salva i testi; quelli già presenti per questo volantino vengono sostituiti (niente doppioni)."""
+    for old in session.scalars(select(ContentPiece).where(ContentPiece.flyer_id == flyer.id,
+                                                          ContentPiece.kind.in_(KINDS))).all():
+        session.delete(old)
+    session.flush()
     pieces = []
     for kind in KINDS:
         t = pack.texts[kind]

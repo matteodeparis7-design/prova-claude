@@ -68,6 +68,10 @@ def build_campaign(session: Session, store: Store, flyer: Flyer) -> list[Content
     """Prepara (senza inviare) un messaggio personale per ogni cliente con consenso."""
     customers = session.scalars(select(Customer).where(Customer.store_id == store.id,
                                                        Customer.marketing_consent.is_(True))).all()
+    for old in session.scalars(select(ContentPiece).where(ContentPiece.flyer_id == flyer.id,
+                                                          ContentPiece.kind == "whatsapp_personal")).all():
+        session.delete(old)
+    session.flush()
     pieces = []
     for c in customers:
         offers = pick_for_customer(session, c, flyer)
