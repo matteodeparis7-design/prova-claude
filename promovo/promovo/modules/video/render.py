@@ -1,20 +1,23 @@
-"""Agente "Montatore": video promozionale generico per qualsiasi volantino.
+"""Agente "Montatore": video promozionali da qualsiasi volantino.
 
-Formati: orizzontale 16:9 (schermi in negozio) e verticale 9:16 (Reel, Storie, TikTok).
-Scene: apertura con il negozio, una scena per ogni offerta, chiusura con indirizzo e validità.
-I fotogrammi sono disegnati con Pillow e codificati in H.264 da ffmpeg.
+Formati: 16:9 (schermi in negozio), 9:16 (Reel, Storie, TikTok), 1:1 (post).
+Scene: apertura con logo e periodo, una scena per offerta, chiusura con contatti e QR code.
+Il disegno grafico (sfondi, cartellini, prodotti scontornati) è condiviso con le grafiche statiche.
+I fotogrammi si disegnano con Pillow e si codificano in H.264 con ffmpeg; la musica è originale.
 """
 from __future__ import annotations
 
+import io
 import math
 import re
 import shutil
 import subprocess
+import tempfile
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 from ...money import price_parts
 
@@ -25,6 +28,10 @@ FORMATS = {
     "portrait": (1080, 1920),
     "square": (1080, 1080),
 }
+
+INK = (20, 27, 45)
+PAPER = (250, 247, 240)
+WHITE = (255, 255, 255)
 
 
 class RenderError(RuntimeError):
@@ -40,6 +47,8 @@ class VideoOffer:
     discount_percent: int | None
     conditions: str
     image_path: str | None
+    brand: str = ""
+    unit_price_text: str = ""
 
 
 @dataclass
@@ -53,11 +62,16 @@ class VideoSpec:
     accent_color: str = "#FFD23F"
     format: str = "landscape"
     fps: int = 25
-    intro_seconds: float = 3.0
-    offer_seconds: float = 3.5
+    intro_seconds: float = 2.8
+    offer_seconds: float = 3.4
     outro_seconds: float = 4.0
     scale: float = 1.0                  # <1 per anteprime veloci
     footer_note: str = "Offerte valide fino a esaurimento scorte. Le foto sono indicative."
+    logo_path: str | None = None
+    contact_lines: list[str] = field(default_factory=list)    # es. orari, WhatsApp
+    qr_data: str = ""                    # link del QR code nella scena finale
+    qr_label: str = ""
+    music: bool = False
     warnings: list[str] = field(default_factory=list)
 
 
@@ -80,10 +94,24 @@ def luminance(rgb: tuple[int, int, int]) -> float:
 
 def text_on(bg: tuple[int, int, int]) -> tuple[int, int, int]:
     """Testo chiaro o scuro, quello con più contrasto sullo sfondo."""
-    return (20, 24, 33) if luminance(bg) > 0.4 else (255, 255, 255)
+    return INK if luminance(bg) > 0.4 else WHITE
 
 
-@lru_cache(maxsize=64)
+def mix(a: tuple[int, int, int], b: tuple[int, int, int], t: float) -> tuple[int, int, int]:
+    return tuple(int(round(a[i] + (b[i] - a[i]) * t)) for i in range(3))  # type: ignore[return-value]
+
+
+def readable_on_paper(color: tuple[int, int, int]) -> tuple[int, int, int]:
+    """Il colore del negozio, scurito se è troppo chiaro per essere letto su fondo chiaro."""
+    c = color
+    for _ in range(10):
+        if luminance(c) < 0.35:
+            return c
+        c = mix(c, INK, 0.25)
+    return c
+
+
+@lru_cache(maxsize=96)
 def font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
     name = "DejaVuSans-Bold.ttf" if bold else "DejaVuSans.ttf"
     return ImageFont.truetype(str(FONT_DIR / name), max(8, int(size)))
@@ -97,17 +125,14 @@ def wrap(text: str, fnt: ImageFont.FreeTypeFont, max_width: int, max_lines: int)
         trial = f"{cur} {w}".strip()
         if fnt.getlength(trial) <= max_width:
             cur = trial
-        else:
-            if cur:
-                lines.append(cur)
-            cur = w
-            while fnt.getlength(cur) > max_width and len(cur) > 1:  # parola troppo lunga
-                cut = len(cur)
-                while cut > 1 and fnt.getlength(cur[:cut] + "…") > max_width:
-                    cut -= 1
-                lines.append(cur[:cut] + "…")
-                cur = ""
-                break
+            continue
+        if cur:
+            lines.append(cur)
+        cur = w
+        if fnt.getlength(cur) > max_width:     # parola più larga della riga: si tronca
+            while len(cur) > 1 and fnt.getlength(cur + "…") > max_width:
+                cur = cur[:-1]
+            cur += "…"
     if cur:
         lines.append(cur)
     if len(lines) > max_lines:
@@ -125,8 +150,10 @@ def fit_text(text: str, max_width: int, max_height: int, start: int, bold: bool,
     while size >= min_size:
         f = font(size, bold)
         lines = wrap(text, f, max_width, max_lines)
-        total = len(lines) * int(size * 1.18)
-        if total <= max_height and all(f.getlength(line) <= max_width for line in lines):
+        total = len(lines) * int(size * 1.16)
+        if total <= max_height and not any(line.endswith("…") for line in lines[:-1]) and \
+                all(f.getlength(line) <= max_width for line in lines) and \
+                (len(lines) < max_lines or not lines[-1].endswith("…")):
             return f, lines
         size = int(size * 0.92)
     f = font(min_size, bold)
@@ -134,10 +161,11 @@ def fit_text(text: str, max_width: int, max_height: int, start: int, bold: bool,
 
 
 def text_layer(lines: list[str], fnt: ImageFont.FreeTypeFont, color: tuple[int, int, int],
-               align: str = "left", line_gap: float = 1.18) -> Image.Image:
+               align: str = "left", line_gap: float = 1.16) -> Image.Image:
     lh = int(fnt.size * line_gap)
-    width = max((int(fnt.getlength(line)) for line in lines), default=1) + 4
-    img = Image.new("RGBA", (max(width, 1), max(lh * len(lines), 1)), (0, 0, 0, 0))
+    width = max((int(math.ceil(fnt.getlength(line))) for line in lines), default=1) + 6
+    height = max(lh * (len(lines) - 1) + int(fnt.size * 1.25), 1)
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
     for i, line in enumerate(lines):
         w = fnt.getlength(line)
@@ -151,7 +179,12 @@ def ease_out(x: float) -> float:
     return 1 - (1 - x) ** 3
 
 
-def ease_back(x: float, s: float = 1.6) -> float:
+def ease_in(x: float) -> float:
+    x = min(max(x, 0.0), 1.0)
+    return x ** 3
+
+
+def ease_back(x: float, s: float = 1.7) -> float:
     x = min(max(x, 0.0), 1.0) - 1
     return 1 + (s + 1) * x ** 3 + s * x ** 2
 
@@ -160,8 +193,7 @@ def with_alpha(img: Image.Image, alpha: float) -> Image.Image:
     if alpha >= 0.999:
         return img
     out = img.copy()
-    a = out.getchannel("A").point(lambda v: int(v * max(0.0, alpha)))
-    out.putalpha(a)
+    out.putalpha(out.getchannel("A").point(lambda v: int(v * max(0.0, alpha))))
     return out
 
 
@@ -171,87 +203,234 @@ def paste(canvas: Image.Image, layer: Image.Image, x: float, y: float, alpha: fl
     canvas.alpha_composite(with_alpha(layer, alpha), (int(round(x)), int(round(y))))
 
 
-# ---------------------------------------------------------------- elementi
+def scaled(img: Image.Image, s: float) -> Image.Image:
+    if abs(s - 1) < 0.004:
+        return img
+    return img.resize((max(1, int(img.width * s)), max(1, int(img.height * s))), Image.BILINEAR)
 
-def price_badge(cents: int, size: int, color: tuple[int, int, int]) -> Image.Image:
+
+def paste_center(canvas: Image.Image, layer: Image.Image, cx: float, cy: float, scale: float = 1.0,
+                 alpha: float = 1.0) -> None:
+    lay = scaled(layer, scale)
+    paste(canvas, lay, cx - lay.width / 2, cy - lay.height / 2, alpha)
+
+
+def shadow_of(img: Image.Image, blur: float, opacity: float) -> Image.Image:
+    pad = int(blur * 3)
+    a = img.getchannel("A").point(lambda v: int(v * opacity))
+    sh = Image.new("RGBA", (img.width + 2 * pad, img.height + 2 * pad), (0, 0, 0, 0))
+    black = Image.new("RGBA", img.size, INK + (255,))
+    black.putalpha(a)
+    sh.alpha_composite(black, (pad, pad))
+    return sh.filter(ImageFilter.GaussianBlur(blur))
+
+
+# ---------------------------------------------------------------- elementi grafici condivisi
+
+def soft_background(w: int, h: int, brand: tuple[int, int, int], u: float) -> Image.Image:
+    """Sfondo chiaro con sfumatura del colore del negozio e due grandi aloni morbidi."""
+    top, bottom = mix(brand, WHITE, 0.91), PAPER
+    grad = Image.linear_gradient("L").resize((w, h))
+    bg = Image.composite(Image.new("RGB", (w, h), bottom), Image.new("RGB", (w, h), top), grad)
+    # Gli aloni si disegnano in RGB e si sfocano insieme allo sfondo: nessun bordo grigio.
+    deco = bg.copy()
+    d = ImageDraw.Draw(deco)
+    r1, r2 = 560 * u, 420 * u
+    d.ellipse((w - r1 * 1.1, -r1 * 0.6, w + r1 * 0.9, r1 * 1.4), fill=mix(brand, WHITE, 0.82))
+    d.ellipse((-r2 * 0.9, h - r2 * 1.1, r2 * 1.1, h + r2 * 0.9), fill=mix(brand, WHITE, 0.86))
+    deco = deco.filter(ImageFilter.GaussianBlur(70 * u))
+    return Image.blend(bg, deco, 0.85).convert("RGBA")
+
+
+def brand_background(w: int, h: int, brand: tuple[int, int, int], accent: tuple[int, int, int],
+                     u: float) -> Image.Image:
+    """Sfondo pieno del colore del negozio, con un alone di luce e raggi leggeri."""
+    dark = mix(brand, INK, 0.38)
+    grad = Image.linear_gradient("L").resize((w, h))
+    bg = Image.composite(Image.new("RGB", (w, h), dark), Image.new("RGB", (w, h), brand), grad)
+    cx, cy = w * 0.5, h * 0.42
+    light = bg.copy()
+    d = ImageDraw.Draw(light)
+    big = max(w, h) * 1.3
+    ray = mix(brand, WHITE, 0.12)
+    for i in range(12):
+        a0 = i * 30
+        pts = [(cx, cy)] + [(cx + big * math.cos(math.radians(a)), cy + big * math.sin(math.radians(a)))
+                             for a in (a0, a0 + 12)]
+        d.polygon(pts, fill=ray)
+    light = light.filter(ImageFilter.GaussianBlur(4 * u))
+    bg = Image.blend(bg, light, 0.55)
+    glow = bg.copy()
+    ImageDraw.Draw(glow).ellipse((cx - 460 * u, cy - 460 * u, cx + 460 * u, cy + 460 * u), fill=mix(brand, WHITE, 0.3))
+    glow = glow.filter(ImageFilter.GaussianBlur(150 * u))
+    return Image.blend(bg, glow, 0.6).convert("RGBA")
+
+
+def price_block(cents: int, height: int, color: tuple[int, int, int]) -> Image.Image:
     """Cartellino del prezzo: euro grandi, centesimi in alto e simbolo € sotto i centesimi."""
     euros, dec = price_parts(cents)
-    big = font(int(size * 0.46), True)
-    small = font(int(size * 0.2), True)
+    big = font(int(height * 0.62), True)
+    small = font(int(height * 0.27), True)
     probe = ImageDraw.Draw(Image.new("RGBA", (1, 1)))
-    eb = probe.textbbox((0, 0), euros, font=big, anchor="ls")      # top negativo rispetto alla linea base
+    eb = probe.textbbox((0, 0), euros, font=big, anchor="ls")
     db = probe.textbbox((0, 0), f",{dec}", font=small, anchor="lt")
     sb = probe.textbbox((0, 0), "€", font=small, anchor="ls")
-    w_euros = eb[2] - eb[0]
-    w_right = max(db[2] - db[0], sb[2] - sb[0])
-    gap = size * 0.03
-    content_w = w_euros + gap + w_right
-    width = int(max(size, content_w + size * 0.36))
-    img = Image.new("RGBA", (width, size), (0, 0, 0, 0))
+    w_e, w_r = eb[2] - eb[0], max(db[2] - db[0], sb[2] - sb[0])
+    gap = height * 0.04
+    pad_x = height * 0.26
+    width = int(w_e + gap + w_r + 2 * pad_x)
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    d.rounded_rectangle((0, 0, width - 1, size - 1), radius=int(size * 0.18), fill=color + (255,))
+    d.rounded_rectangle((0, 0, width - 1, height - 1), radius=int(height * 0.2), fill=color + (255,))
     fg = text_on(color)
-    cap = -eb[1]                                    # altezza delle cifre grandi
-    baseline = (size + cap) / 2
-    x = (width - content_w) / 2 - eb[0]
-    d.text((x, baseline), euros, font=big, fill=fg, anchor="ls")
+    cap = -eb[1]
+    base = (height + cap) / 2
+    x = pad_x - eb[0]
+    d.text((x, base), euros, font=big, fill=fg, anchor="ls")
     x2 = x + eb[2] + gap
-    d.text((x2, baseline - cap), f",{dec}", font=small, fill=fg, anchor="lt")
-    d.text((x2, baseline), "€", font=small, fill=fg, anchor="ls")
+    d.text((x2, base - cap), f",{dec}", font=small, fill=fg, anchor="lt")
+    d.text((x2, base), "€", font=small, fill=fg, anchor="ls")
     return img
 
 
-def old_price_layer(cents: int, size: int, color: tuple[int, int, int]) -> Image.Image:
+def discount_burst(pct: int, size: int, color: tuple[int, int, int]) -> Image.Image:
+    """Stella dello sconto, ruotata come un bollino adesivo."""
+    img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    c, r_out, r_in, n = size / 2, size * 0.49, size * 0.42, 18
+    pts = []
+    for i in range(n * 2):
+        r = r_out if i % 2 == 0 else r_in
+        a = math.pi * i / n
+        pts.append((c + r * math.cos(a), c + r * math.sin(a)))
+    d.polygon(pts, fill=color + (255,))
+    fg = text_on(color)
+    label = f"-{pct}%"
+    f = font(int(size * 0.27), True)
+    while f.getlength(label) > size * 0.66 and f.size > 8:
+        f = font(f.size - 2, True)
+    d.text((c, c), label, font=f, fill=fg, anchor="mm")
+    return img.rotate(-10, resample=Image.BICUBIC)
+
+
+def old_price_line(cents: int, size: int, color: tuple[int, int, int]) -> Image.Image:
     euros, dec = price_parts(cents)
     f = font(size)
-    txt = f"invece di € {euros},{dec}"
-    w = int(f.getlength(txt)) + 4
-    img = Image.new("RGBA", (w, int(size * 1.3)), (0, 0, 0, 0))
+    lead, txt = "invece di ", f"€ {euros},{dec}"
+    w = int(f.getlength(lead + txt)) + 6
+    img = Image.new("RGBA", (w, int(size * 1.35)), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    d.text((0, 0), txt, font=f, fill=color + (255,))
-    start = f.getlength("invece di ")
-    yline = int(size * 0.62)
-    d.line((start, yline, w - 2, yline), fill=color + (255,), width=max(2, size // 12))
+    d.text((0, 0), lead + txt, font=f, fill=color + (255,))
+    x0 = f.getlength(lead)
+    y = int(size * 0.62)
+    d.line((x0 - 2, y, w - 2, y), fill=color + (255,), width=max(2, size // 11))
     return img
 
 
-def tag_layer(text: str, size: int, bg: tuple[int, int, int]) -> Image.Image:
+def pill(text: str, size: int, bg: tuple[int, int, int], fg: tuple[int, int, int] | None = None,
+         outline: bool = False) -> Image.Image:
     f = font(size, True)
-    w = int(f.getlength(text) + size * 1.0)
-    h = int(size * 1.6)
+    w, h = int(f.getlength(text) + size * 1.1), int(size * 1.7)
     img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    d.rounded_rectangle((0, 0, w - 1, h - 1), radius=h // 2, fill=bg + (255,))
-    d.text((size * 0.5, size * 0.22), text, font=f, fill=text_on(bg))
+    if outline:
+        d.rounded_rectangle((1, 1, w - 2, h - 2), radius=h // 2, outline=bg + (255,), width=max(2, size // 9))
+        d.text((w / 2, h / 2), text, font=f, fill=(fg or bg) + (255,), anchor="mm")
+    else:
+        d.rounded_rectangle((0, 0, w - 1, h - 1), radius=h // 2, fill=bg + (255,))
+        d.text((w / 2, h / 2), text, font=f, fill=(fg or text_on(bg)) + (255,), anchor="mm")
     return img
 
 
-def product_image(path: str | None, max_w: int, max_h: int) -> Image.Image:
-    box = Image.new("RGBA", (max_w, max_h), (0, 0, 0, 0))
-    if path and Path(path).exists():
-        try:
-            with Image.open(path) as src:
-                im = src.convert("RGBA")
-        except OSError:
-            im = None
-        if im is not None:
-            im.thumbnail((max_w - 24, max_h - 24), Image.LANCZOS)
-            card = Image.new("RGBA", (im.width + 24, im.height + 24), (255, 255, 255, 255))
-            mask = Image.new("L", card.size, 0)
-            ImageDraw.Draw(mask).rounded_rectangle((0, 0, card.width - 1, card.height - 1), radius=22, fill=255)
-            card.paste(im, (12, 12))
-            card.putalpha(mask)
-            shadow = Image.new("RGBA", (card.width + 30, card.height + 30), (0, 0, 0, 0))
-            ImageDraw.Draw(shadow).rounded_rectangle((15, 22, card.width + 15, card.height + 22),
-                                                     radius=26, fill=(0, 0, 0, 60))
-            shadow.alpha_composite(card, (15, 15))
-            shadow.thumbnail((max_w, max_h), Image.LANCZOS)
-            box.alpha_composite(shadow, ((max_w - shadow.width) // 2, (max_h - shadow.height) // 2))
-            return box
-    d = ImageDraw.Draw(box)
-    d.rounded_rectangle((max_w * 0.1, max_h * 0.1, max_w * 0.9, max_h * 0.9), radius=40,
-                        fill=(235, 235, 235, 255))
-    return box
+def load_rgba(path: str | None) -> Image.Image | None:
+    if not path or not Path(path).exists():
+        return None
+    try:
+        with Image.open(path) as im:
+            return im.convert("RGBA")
+    except OSError:
+        return None
+
+
+def is_cutout(img: Image.Image) -> bool:
+    lo = img.getchannel("A").getextrema()[0]
+    return lo < 128
+
+
+def product_visual(path: str | None, max_w: int, max_h: int, brand: tuple[int, int, int], u: float,
+                   fallback_text: str = "") -> Image.Image:
+    """Il prodotto pronto da mettere in scena: scontornato con ombra, oppure in una cornice."""
+    img = load_rgba(path)
+    canvas = Image.new("RGBA", (max_w, max_h), (0, 0, 0, 0))
+    if img is None:
+        # Nessuna foto: un riquadro elegante con il nome, invece di un buco.
+        d = ImageDraw.Draw(canvas)
+        side = int(min(max_w, max_h) * 0.78)
+        x0, y0 = (max_w - side) / 2, (max_h - side) / 2
+        d.rounded_rectangle((x0, y0, x0 + side, y0 + side), radius=int(side * 0.12),
+                            fill=mix(brand, WHITE, 0.82) + (255,))
+        if fallback_text:
+            f, lines = fit_text(fallback_text, int(side * 0.8), int(side * 0.7), int(side * 0.16), True, 4)
+            lay = text_layer(lines, f, readable_on_paper(brand), "center")
+            canvas.alpha_composite(lay, (int((max_w - lay.width) / 2), int((max_h - lay.height) / 2)))
+        return canvas
+    if is_cutout(img):
+        img.thumbnail((int(max_w * 0.92), int(max_h * 0.86)), Image.LANCZOS)
+        if img.width < max_w * 0.5 and img.height < max_h * 0.5:      # piccola: si ingrandisce
+            s = min(max_w * 0.8 / img.width, max_h * 0.75 / img.height)
+            img = img.resize((int(img.width * s), int(img.height * s)), Image.LANCZOS)
+        # Podio: ellisse di luce sotto il prodotto.
+        d = ImageDraw.Draw(canvas)
+        pw = img.width * 1.05
+        cx, base = max_w / 2, (max_h + img.height) / 2
+        d.ellipse((cx - pw / 2, base - 22 * u, cx + pw / 2, base + 30 * u), fill=INK + (40,))
+        canvas = canvas.filter(ImageFilter.GaussianBlur(14 * u))
+        sh = shadow_of(img, 18 * u, 0.28)
+        canvas.alpha_composite(sh, (int((max_w - sh.width) / 2 + 10 * u), int((max_h - sh.height) / 2 + 22 * u)))
+        canvas.alpha_composite(img, (int((max_w - img.width) / 2), int((max_h - img.height) / 2)))
+        return canvas
+    # Foto intera: cornice bianca arrotondata con ombra.
+    border = int(16 * u)
+    img.thumbnail((max_w - 2 * border - int(40 * u), max_h - 2 * border - int(40 * u)), Image.LANCZOS)
+    card = Image.new("RGBA", (img.width + 2 * border, img.height + 2 * border), WHITE + (255,))
+    card.alpha_composite(img, (border, border))
+    mask = Image.new("L", card.size, 0)
+    ImageDraw.Draw(mask).rounded_rectangle((0, 0, card.width - 1, card.height - 1), radius=int(28 * u), fill=255)
+    card.putalpha(mask)
+    sh = shadow_of(card, 22 * u, 0.25)
+    canvas.alpha_composite(sh, (int((max_w - sh.width) / 2), int((max_h - sh.height) / 2 + 16 * u)))
+    canvas.alpha_composite(card, (int((max_w - card.width) / 2), int((max_h - card.height) / 2)))
+    return canvas
+
+
+def logo_image(path: str | None, max_w: int, max_h: int, on: tuple[int, int, int]) -> Image.Image | None:
+    """Logo del negozio, su un fondino bianco se il fondo dietro è scuro o colorato."""
+    img = load_rgba(path)
+    if img is None:
+        return None
+    img.thumbnail((max_w, max_h), Image.LANCZOS)
+    if luminance(on) > 0.75:
+        return img
+    pad = int(max(8, min(img.width, img.height) * 0.12))
+    plate = Image.new("RGBA", (img.width + 2 * pad, img.height + 2 * pad), (0, 0, 0, 0))
+    ImageDraw.Draw(plate).rounded_rectangle((0, 0, plate.width - 1, plate.height - 1),
+                                            radius=int(pad * 1.4), fill=WHITE + (245,))
+    plate.alpha_composite(img, (pad, pad))
+    return plate
+
+
+def qr_image(data: str, size: int) -> Image.Image | None:
+    if not data:
+        return None
+    try:
+        import segno
+    except ImportError:
+        return None
+    buf = io.BytesIO()
+    segno.make(data, error="m").save(buf, kind="png", scale=10, border=2, dark="#141b2d", light="#ffffff")
+    buf.seek(0)
+    with Image.open(buf) as im:
+        return im.convert("RGBA").resize((size, size), Image.NEAREST)
 
 
 # ---------------------------------------------------------------- scene
@@ -263,206 +442,308 @@ class Renderer:
         self.spec = spec
         w, h = FORMATS[spec.format]
         self.W, self.H = int(w * spec.scale) // 2 * 2, int(h * spec.scale) // 2 * 2
-        self.u = min(self.W, self.H) / 1080          # unità di misura proporzionale
+        self.u = min(self.W, self.H) / 1080
         self.brand = hex_rgb(spec.brand_color)
         self.accent = hex_rgb(spec.accent_color)
-        self.paper = (250, 247, 240)
-        self.ink = (28, 31, 40)
-        self.portrait = self.H > self.W
-        self.header_h = int(self.u * 120)
+        self.brand_text = readable_on_paper(self.brand)
+        self.portrait = self.H > self.W * 1.2
+        self.square = not self.portrait and self.W < self.H * 1.3
+        self.stacked = self.portrait or self.square      # nome e periodo su due righe
+        self.header_h = int(self.u * (150 if self.portrait else 140 if self.square else 112))
+        self._soft = None
         self.scenes = self._build_scenes()
-        self.total_frames = sum(n for _, n in self.scenes)
-
-    # -- costruzione
+        self.total_frames = sum(n for _, n, _ in self.scenes)
 
     def _n(self, seconds: float) -> int:
-        return max(1, int(round(seconds * self.spec.fps)))
+        return max(2, int(round(seconds * self.spec.fps)))
 
     def _build_scenes(self):
-        scenes = [(self._intro(), self._n(self.spec.intro_seconds))]
+        scenes = [(self._intro(), self._n(self.spec.intro_seconds), "intro")]
         for i, offer in enumerate(self.spec.offers):
-            scenes.append((self._offer_scene(offer, i), self._n(self.spec.offer_seconds)))
-        scenes.append((self._outro(), self._n(self.spec.outro_seconds)))
+            scenes.append((self._offer_scene(offer, i), self._n(self.spec.offer_seconds), "offer"))
+        scenes.append((self._outro(), self._n(self.spec.outro_seconds), "outro"))
         return scenes
 
-    def _background(self, color: tuple[int, int, int], band: bool) -> Image.Image:
-        bg = Image.new("RGBA", (self.W, self.H), color + (255,))
-        d = ImageDraw.Draw(bg)
-        if band:
-            fg = text_on(self.brand)
-            margin = self.u * 50
-            fv = font(int(self.u * 30))
-            val_w = fv.getlength(self.spec.validity) if self.spec.validity else 0
-            f, name_lines = fit_text(self.spec.store_name, int(self.W - 2 * margin), int(self.u * 60),
-                                     int(self.u * 46), True, 1)
-            name_w = f.getlength(name_lines[0]) if name_lines else 0
-            one_row = name_w + val_w + self.u * 40 <= self.W - 2 * margin
-            bh = self.header_h = int(self.u * (120 if one_row or not self.spec.validity else 160))
-            d.rectangle((0, 0, self.W, bh), fill=self.brand + (255,))
-            d.text((margin, self.u * 34), name_lines[0] if name_lines else "", font=f, fill=fg)
+    # -- elementi ricorrenti
+
+    def soft(self) -> Image.Image:
+        if self._soft is None:
+            self._soft = soft_background(self.W, self.H, self.brand, self.u)
+        return self._soft
+
+    def _header(self, bg: Image.Image) -> None:
+        u, d = self.u, ImageDraw.Draw(bg)
+        d.rectangle((0, 0, self.W, self.header_h), fill=self.brand + (255,))
+        fg = text_on(self.brand)
+        margin = 46 * u
+        x = margin
+        logo = logo_image(self.spec.logo_path, int(260 * u), int(self.header_h * 0.62), self.brand)
+        if logo is not None:
+            bg.alpha_composite(logo, (int(x), int((self.header_h - logo.height) / 2)))
+            x += logo.width + 22 * u
+        name_w = int(self.W - x - margin)
+        if self.stacked:
+            f, lines = fit_text(self.spec.store_name, name_w, int(56 * u), int(46 * u), True, 1)
+            top = self.header_h / 2 - (32 * u if self.spec.validity else 0)
+            d.text((x, top), lines[0] if lines else "", font=f, fill=fg, anchor="lm")
             if self.spec.validity:
-                if one_row:
-                    d.text((self.W - val_w - margin, self.u * 46), self.spec.validity, font=fv, fill=fg)
-                else:
-                    d.text((margin, self.u * 100), self.spec.validity, font=fv, fill=fg)
-            fh = int(self.u * 56)
-            d.rectangle((0, self.H - fh, self.W, self.H), fill=(235, 230, 220, 255))
-            fn = font(int(self.u * 22))
-            note = self.spec.footer_note
-            d.text(((self.W - fn.getlength(note)) / 2, self.H - fh + self.u * 16), note, font=fn, fill=(90, 90, 90))
-        return bg
+                fv, lv = fit_text(self.spec.validity, name_w, int(40 * u), int(30 * u), False, 1)
+                d.text((x, self.header_h / 2 + 30 * u), lv[0] if lv else "", font=fv, fill=fg, anchor="lm")
+        else:
+            fv = font(int(28 * u))
+            val_w = fv.getlength(self.spec.validity) if self.spec.validity else 0
+            f, lines = fit_text(self.spec.store_name, int(name_w - val_w - 40 * u), int(56 * u), int(44 * u), True, 1)
+            d.text((x, self.header_h / 2), lines[0] if lines else "", font=f, fill=fg, anchor="lm")
+            if self.spec.validity:
+                d.text((self.W - margin, self.header_h / 2), self.spec.validity, font=fv, fill=fg, anchor="rm")
+
+    def _footer(self, bg: Image.Image) -> None:
+        if not self.spec.footer_note:
+            return
+        u = self.u
+        f = font(int(20 * u))
+        d = ImageDraw.Draw(bg)
+        d.text((self.W / 2, self.H - 26 * u), self.spec.footer_note, font=f, fill=(110, 112, 120), anchor="mm")
+
+    def _dots(self, canvas: Image.Image, index: int) -> None:
+        n = len(self.spec.offers)
+        if n < 2 or n > 24:
+            return
+        u = self.u
+        r, gap = 6 * u, 22 * u
+        total = (n - 1) * gap
+        x0, y = self.W / 2 - total / 2, self.H - 62 * u
+        d = ImageDraw.Draw(canvas)
+        for i in range(n):
+            x = x0 + i * gap
+            if i == index:
+                d.rounded_rectangle((x - r * 2.2, y - r, x + r * 2.2, y + r), radius=r, fill=self.brand + (255,))
+            else:
+                d.ellipse((x - r * 0.8, y - r * 0.8, x + r * 0.8, y + r * 0.8), fill=(190, 186, 176, 255))
+
+    # -- apertura
 
     def _intro(self):
-        bg = self._background(self.brand, band=False)
+        u, W, H = self.u, self.W, self.H
+        bg = brand_background(W, H, self.brand, self.accent, u)
         fg = text_on(self.brand)
-        maxw = int(self.W * 0.84)
-        fs, ls = fit_text(self.spec.store_name, maxw, int(self.H * 0.3), int(self.u * 130), True, 2)
+        logo = logo_image(self.spec.logo_path, int(W * 0.5), int(H * (0.18 if self.portrait else 0.24)), self.brand)
+        maxw = int(W * 0.84)
+        fs, ls = fit_text(self.spec.store_name, maxw, int(H * 0.22), int(118 * u), True, 2)
         name = text_layer(ls, fs, fg, "center")
-        fh, lh = fit_text(self.spec.headline, maxw, int(self.H * 0.2), int(self.u * 64), False, 2)
+        fh, lh = fit_text(self.spec.headline, maxw, int(H * 0.16), int(58 * u), False, 2)
         head = text_layer(lh, fh, fg, "center")
-        val = tag_layer(self.spec.validity, int(self.u * 40), self.accent) if self.spec.validity else None
+        val = pill(self.spec.validity, int(38 * u), self.accent) if self.spec.validity else None
+        blocks = [b for b in (logo, name, head) if b is not None]
+        gap = 34 * u
+        total = sum(b.height for b in blocks) + gap * (len(blocks) - 1) + ((val.height + 60 * u) if val else 0)
+        y0 = (H - total) / 2
 
         def draw(t: float) -> Image.Image:
             c = bg.copy()
-            cy = self.H * 0.36
-            p1 = ease_out(t / 0.35)
-            paste(c, name, (self.W - name.width) / 2, cy - name.height / 2 + (1 - p1) * self.u * 80, p1)
-            p2 = ease_out((t - 0.2) / 0.35)
-            paste(c, head, (self.W - head.width) / 2, cy + name.height / 2 + self.u * 40 + (1 - p2) * self.u * 60, p2)
+            y = y0
+            k = 0
+            for blk in blocks:
+                p = ease_back((t - 0.06 - k * 0.12) / 0.32, 1.3) if blk is logo else ease_out((t - 0.06 - k * 0.12) / 0.3)
+                if p > 0:
+                    s = 0.6 + 0.4 * min(p, 1.1) if blk is logo else 1.0
+                    paste_center(c, blk, W / 2, y + blk.height / 2 + (1 - min(p, 1)) * 50 * u, s, min(1.0, p * 1.4))
+                y += blk.height + gap
+                k += 1
             if val is not None:
-                p3 = ease_back((t - 0.4) / 0.3)
-                if p3 > 0:
-                    sc = max(0.05, p3)
-                    v = val.resize((max(1, int(val.width * sc)), max(1, int(val.height * sc))), Image.BILINEAR)
-                    paste(c, v, (self.W - v.width) / 2, self.H * 0.72 - v.height / 2)
+                p = ease_back((t - 0.42) / 0.25)
+                if p > 0:
+                    paste_center(c, val, W / 2, y + 26 * u + val.height / 2, max(0.05, p))
+            if t > 0.9:
+                c.alpha_composite(Image.new("RGBA", (W, H), self.brand + (int(255 * ease_in((t - 0.9) / 0.1) * 0.55),)))
             return c
         return draw
+
+    # -- offerta
+
+    def _layout(self):
+        u, W, H = self.u, self.W, self.H
+        top, bottom = self.header_h + 30 * u, H - 90 * u
+        if self.portrait:
+            img_box = (int(W * 0.9), int((bottom - top) * 0.5))
+            img_xy = ((W - img_box[0]) / 2, top)
+            text_x, text_w = W * 0.08, int(W * 0.84)
+            text_top, text_bottom = top + img_box[1] + 20 * u, bottom - 30 * u
+        else:
+            split = 0.5 if self.square else 0.52
+            img_box = (int(W * split - 60 * u), int(bottom - top))
+            img_xy = (40 * u, top)
+            text_x, text_w = W * split + 10 * u, int(W * (1 - split) - 70 * u)
+            text_top, text_bottom = top, bottom - 30 * u
+        return img_box, img_xy, text_x, text_w, text_top, text_bottom
 
     def _offer_scene(self, o: VideoOffer, index: int):
-        bg = self._background(self.paper, band=True)
-        top, bottom = self.header_h + self.u * 30, self.H - self.u * 80
-        text_w = int(self.W * 0.84) if self.portrait else int(self.W * 0.42)
+        u = self.u
+        bg = self.soft().copy()
+        self._header(bg)
+        self._footer(bg)
+        img_box, img_xy, text_x, text_w, text_top, text_bottom = self._layout()
+        sq = 0.82 if self.square else 1.0
+        prod = product_visual(o.image_path, img_box[0], img_box[1], self.brand, u, o.name)
 
-        fn, ln = fit_text(o.name, text_w, int(self.u * 230), int(self.u * 76), True, 3)
-        name = text_layer(ln, fn, self.ink)
+        brand_l = None
+        if o.brand and o.brand.lower() not in o.name.lower():
+            brand_l = text_layer([o.brand.upper()], font(int(30 * u * sq), True), self.brand_text)
+        fn, ln = fit_text(o.name, text_w, int(220 * u * sq), int(74 * u * sq), True, 3, min_size=int(26 * u))
+        name = text_layer(ln, fn, INK)
         desc = None
         if o.description:
-            fd, ld = fit_text(o.description, text_w, int(self.u * 90), int(self.u * 40), False, 2)
-            desc = text_layer(ld, fd, (85, 88, 98))
-        badge = price_badge(o.price_cents, int(self.u * 230), self.brand)
-        old = old_price_layer(o.old_price_cents, int(self.u * 40), (95, 95, 95)) if o.old_price_cents else None
-        disc = tag_layer(f"-{o.discount_percent}%", int(self.u * 52), self.accent) if o.discount_percent else None
-        cond = None
-        if o.conditions:
-            fc, lc = fit_text(o.conditions, text_w, int(self.u * 80), int(self.u * 32), True, 2)
-            cond = text_layer(lc, fc, self.brand)
+            fd, ld = fit_text(o.description, text_w, int(90 * u), int(38 * u * sq), False, 2)
+            desc = text_layer(ld, fd, (88, 92, 104))
+        price = price_block(o.price_cents, int(200 * u * sq), self.brand)
+        if price.width > text_w:
+            price = scaled(price, text_w / price.width)
+        old = old_price_line(o.old_price_cents, int(36 * u * sq), (96, 98, 108)) if o.old_price_cents else None
+        unit = text_layer([o.unit_price_text], font(int(26 * u * sq)), (110, 112, 120)) if o.unit_price_text else None
+        cond = pill(o.conditions[:60], int(26 * u * sq), self.brand_text, outline=True) if o.conditions else None
+        if cond is not None and cond.width > text_w:
+            cond = scaled(cond, text_w / cond.width)
+        burst = discount_burst(o.discount_percent, int(190 * u * sq), self.accent) if o.discount_percent else None
 
-        # Altezza del blocco di testo, poi tutto viene centrato nello spazio disponibile.
-        gap_s, gap_m = self.u * 10, self.u * 24
-        block = name.height + gap_s
-        if desc:
-            block += desc.height + gap_m
-        block += badge.height
-        if old:
-            block += gap_s + old.height
-        if cond:
-            block += gap_s + cond.height
-
-        if self.portrait:
-            img_h = int(max(self.u * 300, (bottom - top) - block - self.u * 60))
-            img_box = (int(self.W * 0.86), img_h)
-            content_h = img_h + self.u * 40 + block
-            y0 = top + max(0.0, ((bottom - top) - content_h) / 2)
-            img_pos = ((self.W - img_box[0]) / 2, y0)
-            text_x, text_y = self.W * 0.08, y0 + img_h + self.u * 40
-        else:
-            img_box = (int(self.W * 0.46), int(bottom - top - self.u * 20))
-            img_pos = (self.W * 0.04, top)
-            text_x = self.W * 0.54
-            text_y = top + max(0.0, ((bottom - top) - block) / 2)
-
-        prod = product_image(o.image_path, *img_box)
-        y = text_y
-        pos_name = y
-        y += name.height + gap_s
-        pos_desc = y
-        if desc:
-            y += desc.height + gap_m
-        pos_badge = y
-        y += badge.height
-        pos_old = y + gap_s
-        if old:
-            y += gap_s + old.height
-        pos_cond = y + gap_s
+        items = [x for x in (brand_l, name, desc) if x is not None]
+        gap_s, gap_m = 8 * u, 26 * u
+        block_h = sum(x.height for x in items) + gap_s * (len(items) - 1) + gap_m + price.height
+        extras = [x for x in (old, unit, cond) if x is not None]
+        block_h += sum(x.height + gap_s * 1.5 for x in extras)
+        y = text_top + max(0.0, (text_bottom - text_top - block_h) / 2)
+        pos = []
+        for x in items:
+            pos.append((x, y))
+            y += x.height + gap_s
+        y += gap_m - gap_s
+        price_y = y
+        y += price.height + gap_s * 1.5
+        extra_pos = []
+        for x in extras:
+            extra_pos.append((x, y))
+            y += x.height + gap_s * 1.5
+        prod_cx, prod_cy = img_xy[0] + img_box[0] / 2, img_xy[1] + img_box[1] / 2
+        burst_xy = (img_xy[0] + img_box[0] * 0.80, img_xy[1] + img_box[1] * 0.16)
 
         def draw(t: float) -> Image.Image:
             c = bg.copy()
+            out = ease_in((t - 0.9) / 0.1)            # uscita
+            dx = -out * 160 * u
+            alpha_out = 1 - out
+            # Prodotto: entra dal basso e poi zoom lento.
             p = ease_out(t / 0.22)
-            paste(c, prod, img_pos[0] - (1 - p) * self.u * 120, img_pos[1], p)
-            p = ease_out((t - 0.08) / 0.22)
-            paste(c, name, text_x + (1 - p) * self.u * 80, pos_name, p)
-            if desc:
-                paste(c, desc, text_x + (1 - p) * self.u * 80, pos_desc, p)
-            pb = ease_back((t - 0.18) / 0.2)
-            if pb > 0:
-                sc = max(0.05, pb)
-                b = badge if abs(sc - 1) < 0.01 else badge.resize(
-                    (max(1, int(badge.width * sc)), max(1, int(badge.height * sc))), Image.BILINEAR)
-                paste(c, b, text_x + (badge.width - b.width) / 2, pos_badge + (badge.height - b.height) / 2)
-            pt = ease_out((t - 0.3) / 0.2)
-            if old:
-                paste(c, old, text_x, pos_old, pt)
-            if disc:
-                paste(c, disc, text_x + badge.width + self.u * 24, pos_badge + (badge.height - disc.height) / 2, pt)
-            if cond:
-                paste(c, cond, text_x, pos_cond, pt)
-            # Uscita morbida negli ultimi istanti della scena.
-            if t > 0.92:
-                fade = Image.new("RGBA", c.size, self.paper + (int(255 * (t - 0.92) / 0.08 * 0.6),))
-                c.alpha_composite(fade)
+            zoom = 0.92 + 0.08 * p + 0.035 * max(0.0, t - 0.22)
+            paste_center(c, prod, prod_cx + dx, prod_cy + (1 - p) * 120 * u, zoom, min(p * 1.3, 1) * alpha_out)
+            # Testi.
+            for k, (lay, ly) in enumerate(pos):
+                q = ease_out((t - 0.08 - k * 0.04) / 0.2)
+                paste(c, lay, text_x + (1 - q) * 90 * u + dx, ly, q * alpha_out)
+            # Prezzo: "pop" con rimbalzo.
+            q = ease_back((t - 0.2) / 0.18)
+            if q > 0:
+                s = max(0.05, q)
+                lay = scaled(price, s)
+                paste(c, lay, text_x + (price.width - lay.width) / 2 + dx, price_y + (price.height - lay.height) / 2,
+                      alpha_out)
+            for k, (lay, ly) in enumerate(extra_pos):
+                q = ease_out((t - 0.32 - k * 0.04) / 0.18)
+                paste(c, lay, text_x + dx, ly + (1 - q) * 20 * u, q * alpha_out)
+            if burst is not None:
+                q = ease_back((t - 0.3) / 0.2, 2.2)
+                if q > 0:
+                    wob = 1 + 0.03 * math.sin(max(0.0, t - 0.5) * 18) * max(0.0, 1 - (t - 0.5) * 3)
+                    paste_center(c, burst, burst_xy[0] + dx, burst_xy[1], max(0.05, q) * wob, alpha_out)
+            self._dots(c, index)
             return c
         return draw
 
+    # -- chiusura
+
     def _outro(self):
-        bg = self._background(self.brand, band=False)
+        u, W, H = self.u, self.W, self.H
+        bg = brand_background(W, H, self.brand, self.accent, u)
         fg = text_on(self.brand)
-        maxw = int(self.W * 0.84)
-        f1, l1 = fit_text("Ti aspettiamo!", maxw, int(self.H * 0.2), int(self.u * 110), True, 1)
+        maxw = int(W * 0.84)
+        logo = logo_image(self.spec.logo_path, int(W * 0.34), int(H * 0.12), self.brand)
+        f1, l1 = fit_text("Ti aspettiamo!", maxw, int(H * 0.16), int(104 * u), True, 1)
         title = text_layer(l1, f1, fg, "center")
-        lines = [self.spec.store_name]
-        if self.spec.address:
-            lines.append(self.spec.address)
-        f2, l2 = fit_text(" · ".join(lines), maxw, int(self.H * 0.2), int(self.u * 50), False, 3)
+        lines = [self.spec.store_name] + ([self.spec.address] if self.spec.address else [])
+        f2, l2 = fit_text(" · ".join(lines), maxw, int(H * 0.14), int(44 * u), False, 2)
         addr = text_layer(l2, f2, fg, "center")
-        val = tag_layer(f"Offerte valide {self.spec.validity}", int(self.u * 38), self.accent) \
-            if self.spec.validity else None
+        contacts = None
+        if self.spec.contact_lines:
+            f3, l3 = fit_text("  ·  ".join(self.spec.contact_lines), maxw, int(H * 0.12), int(32 * u), False, 2)
+            contacts = text_layer(l3, f3, fg, "center")
+        qr = None
+        if self.spec.qr_data:
+            q = qr_image(self.spec.qr_data, int(min(W, H) * (0.24 if self.portrait else 0.2)))
+            if q is not None:
+                label = self.spec.qr_label or "Inquadra il codice"
+                fl = font(int(24 * u), True)
+                pad = int(18 * u)
+                lw = int(fl.getlength(label))
+                card = Image.new("RGBA", (max(q.width, lw) + 2 * pad, q.height + 2 * pad + int(42 * u)), (0, 0, 0, 0))
+                ImageDraw.Draw(card).rounded_rectangle((0, 0, card.width - 1, card.height - 1), radius=int(26 * u),
+                                                       fill=WHITE + (255,))
+                card.alpha_composite(q, ((card.width - q.width) // 2, pad))
+                ImageDraw.Draw(card).text((card.width / 2, q.height + pad + 22 * u), label, font=fl, fill=INK, anchor="mm")
+                qr = card
+        val = pill(f"Offerte valide {self.spec.validity}", int(32 * u), self.accent) if self.spec.validity else None
+        blocks = [b for b in (logo, title, addr, contacts, qr, val) if b is not None]
+        gap = 30 * u
+        total = sum(b.height for b in blocks) + gap * (len(blocks) - 1)
+        if total > H * 0.9:          # troppo alto (es. quadrato con QR): QR più piccolo
+            if qr is not None:
+                blocks.remove(qr)
+                qr = scaled(qr, 0.7)
+                blocks.insert(blocks.index(val) if val in blocks else len(blocks), qr)
+            total = sum(b.height for b in blocks) + gap * (len(blocks) - 1)
+        y0 = (H - total) / 2
 
         def draw(t: float) -> Image.Image:
             c = bg.copy()
-            p = ease_out(t / 0.3)
-            paste(c, title, (self.W - title.width) / 2, self.H * 0.3 + (1 - p) * self.u * 60, p)
-            p = ease_out((t - 0.15) / 0.3)
-            paste(c, addr, (self.W - addr.width) / 2, self.H * 0.3 + title.height + self.u * 50, p)
-            if val is not None:
-                p = ease_out((t - 0.3) / 0.3)
-                paste(c, val, (self.W - val.width) / 2, self.H * 0.72, p)
+            if t < 0.12:
+                c.alpha_composite(Image.new("RGBA", (W, H), self.brand + (int(255 * (1 - t / 0.12) * 0.55),)))
+            y = y0
+            for k, blk in enumerate(blocks):
+                p = ease_out((t - 0.05 - k * 0.07) / 0.25)
+                if blk is qr or blk is val:
+                    p = ease_back((t - 0.05 - k * 0.07) / 0.25)
+                if p > 0:
+                    paste_center(c, blk, W / 2, y + blk.height / 2 + (1 - min(p, 1)) * 40 * u,
+                                 max(0.05, min(p, 1.15)) if blk is qr else 1.0, min(1.0, p * 1.4))
+                y += blk.height + gap
             return c
         return draw
 
     # -- uscita
 
+    def scene_starts(self) -> list[float]:
+        out, t = [], 0.0
+        for _, n, _ in self.scenes:
+            out.append(t)
+            t += n / self.spec.fps
+        return out
+
+    def pop_times(self) -> list[float]:
+        out = []
+        for (_, n, kind), start in zip(self.scenes, self.scene_starts()):
+            if kind == "offer":
+                out.append(start + 0.2 * n / self.spec.fps + 0.05)
+        return out
+
     def frames(self):
-        for draw, n in self.scenes:
+        for draw, n, _ in self.scenes:
             for i in range(n):
                 yield draw(i / max(1, n - 1)).convert("RGB")
 
     def frame_at(self, seconds: float) -> Image.Image:
         idx = int(seconds * self.spec.fps)
-        for draw, n in self.scenes:
+        for draw, n, _ in self.scenes:
             if idx < n:
                 return draw(idx / max(1, n - 1)).convert("RGB")
             idx -= n
-        draw, n = self.scenes[-1]
+        draw, n, _ = self.scenes[-1]
         return draw(1.0).convert("RGB")
 
     @property
@@ -477,28 +758,36 @@ def render_video(spec: VideoSpec, out_path: Path, crf: int = 20, preset: str = "
     r = Renderer(spec)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     tmp = out_path.with_suffix(".part.mp4")
-    cmd = [ffmpeg, "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
-           "-s", f"{r.W}x{r.H}", "-r", str(spec.fps), "-i", "-",
-           "-c:v", "libx264", "-preset", preset, "-crf", str(crf), "-pix_fmt", "yuv420p",
-           "-movflags", "+faststart", str(tmp)]
-    proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
-    try:
-        assert proc.stdin is not None
-        for frame in r.frames():
-            proc.stdin.write(frame.tobytes())
-        proc.stdin.close()
-        err = proc.stderr.read().decode(errors="replace") if proc.stderr else ""
-        code = proc.wait()
-    except BrokenPipeError:
-        err = proc.stderr.read().decode(errors="replace") if proc.stderr else ""
-        proc.wait()
-        tmp.unlink(missing_ok=True)
-        raise RenderError(f"ffmpeg si è interrotto: {err.strip()[:500]}")
-    except BaseException:
-        proc.kill()
-        proc.wait()
-        tmp.unlink(missing_ok=True)
-        raise
+    with tempfile.TemporaryDirectory() as td:
+        audio_args: list[str] = []
+        if spec.music:
+            from .music import compose, write_wav
+            wav = write_wav(compose(r.duration, r.scene_starts()[1:], r.pop_times()), Path(td) / "musica.wav")
+            audio_args = ["-i", str(wav)]
+        cmd = [ffmpeg, "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
+               "-s", f"{r.W}x{r.H}", "-r", str(spec.fps), "-i", "-", *audio_args,
+               "-c:v", "libx264", "-preset", preset, "-crf", str(crf), "-pix_fmt", "yuv420p"]
+        if audio_args:
+            cmd += ["-map", "0:v", "-map", "1:a", "-c:a", "aac", "-b:a", "160k", "-shortest"]
+        cmd += ["-movflags", "+faststart", str(tmp)]
+        proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+        try:
+            assert proc.stdin is not None
+            for frame in r.frames():
+                proc.stdin.write(frame.tobytes())
+            proc.stdin.close()
+            err = proc.stderr.read().decode(errors="replace") if proc.stderr else ""
+            code = proc.wait()
+        except BrokenPipeError:
+            err = proc.stderr.read().decode(errors="replace") if proc.stderr else ""
+            proc.wait()
+            tmp.unlink(missing_ok=True)
+            raise RenderError(f"ffmpeg si è interrotto: {err.strip()[:500]}")
+        except BaseException:
+            proc.kill()
+            proc.wait()
+            tmp.unlink(missing_ok=True)
+            raise
     if code != 0:
         tmp.unlink(missing_ok=True)
         raise RenderError(f"ffmpeg ha restituito un errore: {err.strip()[:500]}")
