@@ -64,7 +64,8 @@ class FlyerStyle:
 
 def build_sample_flyer(products: list[SampleProduct] | None = None, per_page: int | None = None,
                        validity: str = "Offerte valide dal 13 al 22 novembre 2026",
-                       banner: str = "SUPERSTORE", style: FlyerStyle | None = None) -> bytes:
+                       banner: str = "SUPERSTORE", style: FlyerStyle | None = None,
+                       illustrated: bool = False) -> bytes:
     products = products if products is not None else DEFAULT_PRODUCTS
     st = style or FlyerStyle()
     per_page = per_page or st.cols * st.rows
@@ -87,7 +88,11 @@ def build_sample_flyer(products: list[SampleProduct] | None = None, per_page: in
             box = pymupdf.Rect(x0 + 5, y0 + 5, x0 + cell_w - 5, y0 + cell_h - 5)
             page.draw_rect(box, color=(0.8, 0.8, 0.8), fill=(1, 1, 1), width=1)
             photo = pymupdf.Rect(box.x0 + 10 * k, box.y0 + 10 * k, box.x0 + 150 * k, box.y0 + 115 * k)
-            page.insert_image(photo, stream=_photo(p.color))
+            art = None
+            if illustrated:
+                from .demo_art import product_png
+                art = product_png(p.name)
+            page.insert_image(photo, stream=art or _photo(p.color))
             page.insert_text((box.x0 + 10 * k, box.y0 + 140 * k), p.name, fontsize=13 * k, fontname="hebo")
             page.insert_text((box.x0 + 10 * k, box.y0 + 158 * k), p.size, fontsize=10 * k, fontname="helv")
             euros, cents = price_parts(p.price_cents)

@@ -1,19 +1,38 @@
 """Dati dimostrativi: un account, un negozio e un volantino di prova valido da oggi."""
 from __future__ import annotations
 
+import io
 from datetime import date, timedelta
+
+from PIL import Image, ImageDraw
 
 from sqlalchemy import select
 
 from .config import Settings
 from .db import Database
+from .imaging import load_logo
 from .models import Customer, Organization, Role, Store, User
 from .modules.flyer.service import ingest_flyer
+from .modules.video.render import font
 from .sample_flyer import build_sample_flyer
 from .security import hash_password
 
 DEMO_EMAIL = "demo@promovo.it"
 DEMO_PASSWORD = "promovo2026"
+
+
+def demo_logo() -> bytes:
+    """Logo del negozio dimostrativo: un marchio semplice, inventato."""
+    img = Image.new("RGB", (720, 260), (255, 255, 255))
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle((10, 30, 210, 230), radius=50, fill=(215, 38, 46))
+    d.polygon([(60, 95), (160, 95), (145, 175), (75, 175)], fill=(255, 255, 255))
+    d.arc((80, 55, 140, 115), 180, 360, fill=(255, 255, 255), width=12)
+    d.text((240, 92), "Supermercato", font=font(56, True), fill=(20, 27, 45), anchor="lm")
+    d.text((240, 165), "DEMO", font=font(64, True), fill=(215, 38, 46), anchor="lm")
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    return buf.getvalue()
 
 
 def seed_demo(db: Database, settings: Settings) -> bool:
@@ -28,12 +47,15 @@ def seed_demo(db: Database, settings: Settings) -> bool:
                    password_hash=hash_password(DEMO_PASSWORD)))
         store = Store(organization_id=org.id, name="Supermercato Demo", banner="Demo", address="Via Roma 1",
                       city="Colleferro", phone="06 0000000", opening_hours={"lun-sab": "8:00-20:00", "dom": "9:00-13:00"},
-                      services=["ritiro in negozio"])
+                      services=["ritiro in negozio"], tone="familiare", whatsapp="333 0000000",
+                      hashtags=["supermercatodemo", "spesacolleferro"])
         s.add(store)
         s.flush()
+        settings.ensure_dirs()
+        store.logo_path = str(load_logo(demo_logo(), settings.data_dir / "logos" / f"{store.id}_demo.png"))
         start, end = date.today() - timedelta(days=1), date.today() + timedelta(days=10)
         pdf = build_sample_flyer(validity=f"Offerte valide dal {start:%d/%m/%Y} al {end:%d/%m/%Y}",
-                                 banner="SUPERMERCATO DEMO")
+                                 banner="SUPERMERCATO DEMO", illustrated=True)
         ingest_flyer(s, store, pdf, settings, None, title="Volantino di prova")
         s.add_all([
             Customer(store_id=store.id, name="Anna Verdi", phone="+393330000001", marketing_consent=True,

@@ -584,7 +584,6 @@ class Renderer:
         self._footer(bg)
         img_box, img_xy, text_x, text_w, text_top, text_bottom = self._layout()
         sq = 0.82 if self.square else 1.0
-        prod = product_visual(o.image_path, img_box[0], img_box[1], self.brand, u, o.name)
 
         brand_l = None
         if o.brand and o.brand.lower() not in o.name.lower():
@@ -610,7 +609,18 @@ class Renderer:
         block_h = sum(x.height for x in items) + gap_s * (len(items) - 1) + gap_m + price.height
         extras = [x for x in (old, unit, cond) if x is not None]
         block_h += sum(x.height + gap_s * 1.5 for x in extras)
-        y = text_top + max(0.0, (text_bottom - text_top - block_h) / 2)
+        if self.portrait:
+            # In verticale il prodotto occupa tutto lo spazio che il testo lascia libero.
+            avail = text_bottom - img_xy[1]
+            img_h = int(min(avail - block_h - 40 * u, avail * 0.66))
+            img_box = (img_box[0], max(int(avail * 0.35), img_h))
+            spare = max(0.0, avail - (img_box[1] + 30 * u + block_h))
+            img_xy = (img_xy[0], img_xy[1] + spare * 0.45)          # gruppo centrato in verticale
+            text_top = img_xy[1] + img_box[1] + 30 * u
+            y = text_top
+        else:
+            y = text_top + max(0.0, (text_bottom - text_top - block_h) / 2)
+        prod = product_visual(o.image_path, img_box[0], img_box[1], self.brand, u, o.name)
         pos = []
         for x in items:
             pos.append((x, y))

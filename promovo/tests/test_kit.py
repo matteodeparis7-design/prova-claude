@@ -114,3 +114,31 @@ def test_kit_and_zip(client, live_pdf):
     # Il file temporaneo dello ZIP viene cancellato dopo l'invio.
     renders = client.app.state.promovo.settings.data_dir / "renders"
     assert not list(renders.glob("pacchetto_*.zip"))
+
+
+def test_video_poster_endpoint(client, live_pdf):
+    h = register(client)
+    s = make_store(client, h)
+    f = upload(client, h, s["id"], live_pdf)
+    client.post(f"/api/flyers/{f['id']}/kit", headers=h, json={"items": ["video_square"]})
+    v = next(c for c in client.get(f"/api/flyers/{f['id']}/content", headers=h).json() if c["kind"] == "video")
+    assert v["poster_url"]
+    p = client.get(v["poster_url"], headers=h)
+    assert p.status_code == 200 and p.headers["content-type"] == "image/jpeg"
+    # Rifare lo stesso video lo sostituisce: un solo video per formato.
+    client.post(f"/api/flyers/{f['id']}/kit", headers=h, json={"items": ["video_square"]})
+    vids = [c for c in client.get(f"/api/flyers/{f['id']}/content", headers=h).json() if c["kind"] == "video"]
+    assert len(vids) == 1
+
+
+def test_demo_seed(tmp_settings):
+    from promovo.demo import seed_demo
+    from promovo.models import Store
+    db = Database("sqlite://")
+    db.create_all()
+    assert seed_demo(db, tmp_settings) is True
+    assert seed_demo(db, tmp_settings) is False          # una sola volta
+    with db.session() as ses:
+        st = ses.get(Store, 1)
+        assert st.logo_path and len(st.flyers[0].offers) == 12
+        assert all(o.photo_path and o.price_verified for o in st.flyers[0].offers)
