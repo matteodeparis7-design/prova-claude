@@ -1,0 +1,33 @@
+[project]
+name = "promovo"
+version = "0.1.0"
+description = "Promovo: la piattaforma di agenti IA per il marketing e i clienti dei supermercati"
+requires-python = ">=3.11"
+dependencies = [
+    "anthropic>=2.10",
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+    "sqlalchemy>=2.0",
+    "pydantic[email]>=2.6",
+    "python-multipart>=0.0.9",
+    "pymupdf>=1.24",
+    "pillow>=10.0",
+    "numpy>=1.26",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8.0", "httpx>=0.27"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["promovo*"]
+
+[tool.setuptools.package-data]
+promovo = ["assets/fonts/*.ttf", "web/*.html"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

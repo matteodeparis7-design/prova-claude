@@ -1,3 +1,10 @@
 video/SuperFreddo_Volantino_13-22ott_4K_25fps.mp4
 video_B/SuperFreddo_VersioneB_4K_25fps.mp4
 video_DEFINITIVO/SuperFreddo_DEFINITIVO_4K_25fps.mp4
+
+# Promovo
+promovo.db
+promovo_data/
+__pycache__/
+*.egg-info/
+.pytest_cache/
