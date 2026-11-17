@@ -178,3 +178,16 @@ def test_video_high_prices_and_symbols(store, big_flyer):
     tv.name = "Televisore 55\" 4K – offerta «speciale» 100% ✓"
     r = Renderer(spec)
     assert r.frame_at(4.0).size == (r.W, r.H)
+
+
+def test_video_without_system_ffmpeg(store, big_flyer, tmp_path, monkeypatch):
+    """Su Windows e Mac spesso ffmpeg non c'è: si usa quello incluso nel pacchetto."""
+    import shutil as _shutil
+    from promovo.modules.video.render import probe_duration, render_video
+    real_which = _shutil.which
+    monkeypatch.setattr("promovo.modules.video.render.shutil.which",
+                        lambda name: None if name in ("ffmpeg", "ffprobe") else real_which(name))
+    spec = build_spec(store, big_flyer, "square", scale=0.25, max_offers=1)
+    spec.intro_seconds = spec.outro_seconds = spec.offer_seconds = 1.0
+    out = render_video(spec, tmp_path / "v.mp4", preset="ultrafast")
+    assert abs(probe_duration(out) - 3.0) < 0.2

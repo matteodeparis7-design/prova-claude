@@ -7,6 +7,7 @@ I fotogrammi sono disegnati con Pillow e codificati in H.264 da ffmpeg.
 from __future__ import annotations
 
 import math
+import re
 import shutil
 import subprocess
 from dataclasses import dataclass, field
@@ -472,9 +473,7 @@ class Renderer:
 def render_video(spec: VideoSpec, out_path: Path, crf: int = 20, preset: str = "medium") -> Path:
     if not spec.offers:
         raise RenderError("Nessuna offerta da mostrare nel video.")
-    ffmpeg = shutil.which("ffmpeg")
-    if ffmpeg is None:
-        raise RenderError("ffmpeg non è installato.")
+    ffmpeg = ffmpeg_path()
     r = Renderer(spec)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     tmp = out_path.with_suffix(".part.mp4")
@@ -507,15 +506,33 @@ def render_video(spec: VideoSpec, out_path: Path, crf: int = 20, preset: str = "
     return out_path
 
 
+def ffmpeg_path() -> str:
+    """ffmpeg del sistema; altrimenti quello incluso nel pacchetto imageio-ffmpeg (Windows e Mac)."""
+    found = shutil.which("ffmpeg")
+    if found:
+        return found
+    try:
+        import imageio_ffmpeg
+        return imageio_ffmpeg.get_ffmpeg_exe()
+    except Exception as exc:  # pacchetto assente o binario non disponibile
+        raise RenderError("ffmpeg non è installato.") from exc
+
+
 def probe_duration(path: Path) -> float:
-    """Durata reale del file video (secondi), letta con ffprobe."""
+    """Durata reale del file video (secondi): con ffprobe se c'è, altrimenti leggendola da ffmpeg."""
     ffprobe = shutil.which("ffprobe")
-    if ffprobe is None:
-        raise RenderError("ffprobe non è installato.")
-    out = subprocess.run([ffprobe, "-v", "error", "-show_entries", "format=duration", "-of",
-                          "default=noprint_wrappers=1:nokey=1", str(path)], capture_output=True, text=True,
-                         check=True)
-    value = float(out.stdout.strip())
-    if math.isnan(value):
-        raise RenderError("Durata non leggibile.")
-    return value
+    if ffprobe is not None:
+        out = subprocess.run([ffprobe, "-v", "error", "-show_entries", "format=duration", "-of",
+                              "default=noprint_wrappers=1:nokey=1", str(path)], capture_output=True, text=True)
+        try:
+            value = float(out.stdout.strip())
+            if not math.isnan(value):
+                return value
+        except ValueError:
+            pass
+    info = subprocess.run([ffmpeg_path(), "-hide_banner", "-i", str(path)], capture_output=True, text=True)
+    m = re.search(r"Duration:\s*(\d+):(\d+):(\d+(?:\.\d+)?)", info.stderr)
+    if not m:
+        raise RenderError("Durata del video non leggibile.")
+    h, mnt, sec = m.groups()
+    return int(h) * 3600 + int(mnt) * 60 + float(sec)
