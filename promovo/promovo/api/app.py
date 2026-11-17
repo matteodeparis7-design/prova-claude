@@ -32,7 +32,6 @@ from ..modules.content.service import generate_content, save_content
 from ..modules.flyer.pdf import InvalidPDF
 from ..modules.flyer.service import create_flyer, delete_flyer_files, process_flyer
 from ..modules.loyalty.service import build_campaign, handle_inbound, set_consent
-from ..modules.recipes.service import suggest_recipes
 from ..modules.video.render import FORMATS
 from ..modules.video.service import render_flyer_video
 from .deps import (
@@ -148,12 +147,6 @@ class ConsentIn(BaseModel):
 
 class OrderPatch(BaseModel):
     status: OrderStatus
-
-
-class RecipesIn(BaseModel):
-    request: str = Field(default="", max_length=500)
-    count: int = Field(default=3, ge=1, le=5)
-    servings: int = Field(default=4, ge=1, le=12)
 
 
 class InboundIn(BaseModel):
@@ -654,17 +647,6 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         f = flyer_for(session, user, flyer_id)
         pieces = build_campaign(session, f.store, f)
         return {"messages": [content_out(p) for p in pieces]}
-
-    # -------------------------------------------------- ricette
-
-    @app.post("/api/stores/{store_id}/recipes")
-    def recipes(store_id: int, body: RecipesIn, request: Request, user: User = Depends(current_user),
-                session: Session = Depends(get_session)):
-        store = store_for(session, user, store_id)
-        offers = active_offers(session, store.id)
-        if not offers:
-            raise HTTPException(409, "Nessuna offerta attiva per questo negozio.")
-        return {"recipes": suggest_recipes(need_llm(request), offers, body.request, body.count, body.servings)}
 
     # -------------------------------------------------- vendite e risultati
 

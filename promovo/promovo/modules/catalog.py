@@ -1,4 +1,4 @@
-"""Offerte attive di un negozio, usate da assistente, ricette e fedeltà."""
+"""Offerte attive di un negozio, usate dall'assistente clienti e dalla fedeltà."""
 from __future__ import annotations
 
 from datetime import date

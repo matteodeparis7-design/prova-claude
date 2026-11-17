@@ -44,6 +44,7 @@ class RawOffer:
     conditions: str = ""
     price_verified: bool = False
     verified_by: str = ""
+    photo_bbox: list[float] | None = None     # solo la foto del prodotto, se individuata
 
 
 @dataclass
@@ -72,6 +73,10 @@ class AIOffer(BaseModel):
     y0: int = Field(description="Bordo superiore, 0-1000")
     x1: int = Field(description="Bordo destro, 0-1000")
     y1: int = Field(description="Bordo inferiore, 0-1000")
+    photo_x0: int = Field(description="Riquadro della SOLA foto del prodotto, senza prezzi né scritte: bordo sinistro 0-1000")
+    photo_y0: int = Field(description="Foto del prodotto: bordo superiore 0-1000")
+    photo_x1: int = Field(description="Foto del prodotto: bordo destro 0-1000")
+    photo_y1: int = Field(description="Foto del prodotto: bordo inferiore 0-1000")
 
 
 class AIPage(BaseModel):
@@ -94,6 +99,8 @@ _PAGE_SYSTEM = (
     "- old_price solo se un prezzo barrato o 'invece di' è stampato; altrimenti null.\n"
     "- Il riquadro (x0, y0, x1, y1) è in millesimi della pagina, da 0 a 1000, e deve contenere foto, "
     "nome e prezzo del prodotto.\n"
+    "- Il riquadro photo_* contiene SOLO la foto della confezione o del prodotto, il più stretto possibile, "
+    "senza prezzi, bollini e scritte; serve per i video e le grafiche.\n"
     "- Ignora loghi, testate, numeri di pagina e scritte decorative.\n"
     "- Se la pagina non contiene offerte, restituisci un elenco vuoto."
 )
@@ -123,6 +130,14 @@ def _ai_offer_to_raw(page_no: int, o: AIOffer) -> RawOffer | None:
     bbox = _clamp_bbox(o.x0 / 1000, o.y0 / 1000, o.x1 / 1000, o.y1 / 1000)
     if bbox is None:
         return None
+    photo = _clamp_bbox(o.photo_x0 / 1000, o.photo_y0 / 1000, o.photo_x1 / 1000, o.photo_y1 / 1000)
+    # La foto deve stare (quasi) dentro il riquadro dell'offerta e non coincidere con tutto il riquadro.
+    if photo is not None:
+        inside = (photo[0] >= bbox[0] - 0.02 and photo[1] >= bbox[1] - 0.02 and
+                  photo[2] <= bbox[2] + 0.02 and photo[3] <= bbox[3] + 0.02)
+        area = (photo[2] - photo[0]) * (photo[3] - photo[1])
+        if not inside or area < 0.0004:
+            photo = None
     old = parse_price(o.old_price) if o.old_price else None
     if old is not None and old <= price:
         old = None
@@ -132,6 +147,7 @@ def _ai_offer_to_raw(page_no: int, o: AIOffer) -> RawOffer | None:
         category=coerce_category(o.category, name, o.description), price_cents=price,
         old_price_cents=old, discount_percent=disc or discount_percent(price, old),
         unit_price_text=o.unit_price_text.strip()[:80], conditions=o.conditions.strip()[:300], bbox=bbox,
+        photo_bbox=photo,
     )
 
 
@@ -239,6 +255,7 @@ def _heuristic_page(info: PageInfo) -> list[RawOffer]:
             groups.append((sp.bbox, sp, cents))
 
     offers = []
+    image_set = set(anchors)
     for anchor, psp, cents in groups:
         region = _union(anchor, psp.bbox)
         rx0, ry0, rx1, ry1 = region
@@ -280,6 +297,8 @@ def _heuristic_page(info: PageInfo) -> list[RawOffer]:
             page=info.number, name=name[:300], description=description[:500],
             category=coerce_category(None, name, description), price_cents=cents,
             old_price_cents=old, discount_percent=discount_percent(cents, old), bbox=bbox,
+            photo_bbox=_clamp_bbox(anchor[0] / info.width, anchor[1] / info.height,
+                                   anchor[2] / info.width, anchor[3] / info.height) if anchor in image_set else None,
         ))
     return offers
 

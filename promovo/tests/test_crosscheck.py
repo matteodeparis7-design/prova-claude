@@ -113,7 +113,8 @@ def test_full_ai_reading_of_image_flyer(image_pdf, truth, fake_llm):
             dict(name=o.name, brand="", description=o.description, category=o.category,
                  price=f"{o.price_cents // 100},{o.price_cents % 100:02d}", old_price=None, discount_percent=None,
                  unit_price_text="", conditions="", x0=int(o.bbox[0] * 1000), y0=int(o.bbox[1] * 1000),
-                 x1=int(o.bbox[2] * 1000), y1=int(o.bbox[3] * 1000))
+                 x1=int(o.bbox[2] * 1000), y1=int(o.bbox[3] * 1000),
+                 photo_x0=0, photo_y0=0, photo_x1=0, photo_y1=0)
             for o in truth if o.page == page]})
     fake_llm.on_parse("AIPage", page_reading)
     fake_llm.on_parse("AIMeta", lambda c: AIMeta(title="", store_or_banner="", valid_from=None, valid_to=None))

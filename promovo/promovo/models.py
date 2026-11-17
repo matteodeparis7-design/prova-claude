@@ -102,6 +102,13 @@ class Store(Base):
     accent_color: Mapped[str] = mapped_column(String(7), default="#FFD23F")
     services: Mapped[list] = mapped_column(JSON, default=list)       # es. ["ritiro in negozio", "consegna"]
     pickup_enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+    # Identità e comunicazione
+    tone: Mapped[str] = mapped_column(String(30), default="familiare")   # familiare | elegante | giovane | essenziale
+    hashtags: Mapped[list] = mapped_column(JSON, default=list)           # hashtag sempre presenti nei post
+    whatsapp: Mapped[str] = mapped_column(String(40), default="")
+    website: Mapped[str] = mapped_column(String(200), default="")
+    logo_path: Mapped[str] = mapped_column(String(500), default="")
+    video_music: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     organization: Mapped[Organization] = relationship(back_populates="stores")
@@ -148,6 +155,10 @@ class Offer(Base):
     # Riquadro del prodotto sulla pagina, normalizzato 0..1 (x0, y0, x1, y1).
     bbox: Mapped[list] = mapped_column(JSON, default=list)
     crop_path: Mapped[str] = mapped_column(String(500), default="")
+    # Solo la foto del prodotto (senza prezzi e scritte), per video e grafiche.
+    photo_bbox: Mapped[list] = mapped_column(JSON, default=list)
+    photo_path: Mapped[str] = mapped_column(String(500), default="")
+    manual: Mapped[bool] = mapped_column(Boolean, default=False)       # aggiunta a mano
     price_verified: Mapped[bool] = mapped_column(Boolean, default=False)
     verified_by: Mapped[str] = mapped_column(String(40), default="")   # testo PDF | OCR | doppia lettura IA | persona
     is_featured: Mapped[bool] = mapped_column(Boolean, default=False)

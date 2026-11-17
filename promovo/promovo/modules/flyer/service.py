@@ -12,7 +12,7 @@ from ...config import Settings
 from ...llm import LLM
 from ...models import Flyer, FlyerStatus, Offer, Store
 from .extract import extract_offers, pick_featured
-from .pdf import InvalidPDF, normalize_upload, open_pdf, render_crop
+from .pdf import InvalidPDF, extract_photo, normalize_upload, open_pdf, render_crop
 
 log = logging.getLogger("promovo.flyer")
 
@@ -54,12 +54,16 @@ def process_flyer(session: Session, flyer: Flyer, settings: Settings, llm: LLM |
         offers = []
         for idx, raw in enumerate(result.offers):
             crop = render_crop(doc[raw.page - 1], raw.bbox, crops_dir / f"{idx:03d}.png")
+            photo = ""
+            if raw.photo_bbox:
+                photo = str(extract_photo(doc[raw.page - 1], raw.photo_bbox, crops_dir / f"{idx:03d}_foto.png"))
             offers.append(Offer(
                 flyer_id=flyer.id, position=idx, page=raw.page, name=raw.name, brand=raw.brand,
                 description=raw.description, category=raw.category, price_cents=raw.price_cents,
                 old_price_cents=raw.old_price_cents, discount_percent=raw.discount_percent,
                 unit_price_text=raw.unit_price_text, conditions=raw.conditions, bbox=raw.bbox,
                 crop_path=str(crop), price_verified=raw.price_verified, verified_by=raw.verified_by,
+                photo_bbox=raw.photo_bbox or [], photo_path=photo,
                 is_featured=idx in featured,
             ))
         # Le offerte si salvano tutte insieme, solo se la lettura è andata a buon fine.

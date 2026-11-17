@@ -9,7 +9,6 @@ from promovo.modules.catalog import active_offers, search_offers
 from promovo.modules.content.service import AIContent, generate_content, prices_ok, save_content
 from promovo.modules.flyer.service import ingest_flyer
 from promovo.modules.loyalty.service import build_campaign, handle_inbound, set_consent
-from promovo.modules.recipes.service import AIRecipes, shopping_list, suggest_recipes
 from promovo.modules.video.render import Renderer, RenderError, render_video, probe_duration
 from promovo.modules.video.service import build_spec
 
@@ -210,30 +209,6 @@ def test_chat_flow_with_tools(session, store, flyer, fake_llm):
 def test_chat_rejects_empty(session, store, fake_llm):
     with pytest.raises(ValueError):
         chat(session, store, fake_llm, "   ")
-
-
-# ------------------------------------------------------------------ ricette
-
-def test_recipes_drop_unknown_offers(session, store, flyer, fake_llm):
-    pasta = offer_named(flyer, "Spaghetti")
-    passata = offer_named(flyer, "Passata")
-    fake_llm.on_parse("AIRecipes", lambda c: AIRecipes.model_validate({"recipes": [{
-        "title": "Spaghetti al pomodoro", "servings": 4, "minutes": 20,
-        "ingredients": [{"name": "spaghetti", "quantity": "320 g", "offer_id": pasta.id},
-                        {"name": "passata", "quantity": "400 g", "offer_id": passata.id},
-                        {"name": "basilico", "quantity": "q.b.", "offer_id": 987654},
-                        {"name": "sale", "quantity": "q.b.", "offer_id": None}],
-        "steps": ["Cuoci la pasta.", " ", "Condisci."]}]}))
-    recs = suggest_recipes(fake_llm, list(flyer.offers), "cena veloce")
-    ing = recs[0]["ingredients"]
-    assert ing[0]["offer"]["price"] == "€ 0,79"
-    assert ing[2]["offer_id"] is None and ing[2]["offer"] is None
-    assert recs[0]["steps"] == ["Cuoci la pasta.", "Condisci."]
-    assert suggest_recipes(fake_llm, [], "x") == []
-    lines, total = shopping_list(list(flyer.offers), {pasta.id: 2, passata.id: 1, 999999: 3})
-    assert total == 2 * 79 + 99
-    assert len(lines) == 2
-    assert shopping_list(list(flyer.offers), {pasta.id: 0}) == ([], 0)
 
 
 # ------------------------------------------------------------------ vendite

@@ -144,3 +144,15 @@ def render_crop(page: pymupdf.Page, bbox_norm: list[float], out_path: Path, dpi:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     pix.save(str(out_path))
     return out_path
+
+
+def extract_photo(page: pymupdf.Page, bbox_norm: list[float], out_path: Path, dpi: int = 260) -> Path:
+    """Foto del solo prodotto, ad alta risoluzione e scontornata quando lo sfondo è uniforme."""
+    from ...imaging import save_product_photo
+    w, h = page.rect.width, page.rect.height
+    x0, y0, x1, y1 = bbox_norm
+    rect = pymupdf.Rect(x0 * w, y0 * h, x1 * w, y1 * h)
+    zoom = dpi / 72
+    pix = page.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom), clip=rect, alpha=False)
+    img = Image.open(io.BytesIO(pix.tobytes("png")))
+    return save_product_photo(img, out_path)
