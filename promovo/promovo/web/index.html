@@ -39,36 +39,42 @@ svg.i { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-widt
 
 /* ---------- struttura ---------- */
 .shell { display: grid; grid-template-columns: 248px 1fr; min-height: 100%; }
-.side { background: var(--ink); color: #c9d0e0; padding: 22px 14px; display: flex; flex-direction: column; gap: 6px; position: sticky; top: 0; height: 100vh; }
+.side { background: var(--ink); color: #c9d0e0; padding: 22px 14px; display: flex; flex-direction: column; gap: 4px; position: sticky; top: 0; height: 100vh; }
 .side .logo { color: #fff; padding: 0 10px 18px; }
 .nav-btn { display: flex; align-items: center; gap: 12px; width: 100%; border: 0; background: transparent; color: inherit; padding: 11px 12px; border-radius: 12px; cursor: pointer; text-align: left; font-weight: 600; }
 .nav-btn:hover { background: rgba(255,255,255,.06); color: #fff; }
 .nav-btn.on { background: rgba(229,72,47,.16); color: #fff; }
 .nav-btn.on svg { color: var(--brand); }
+.nav-btn .count { margin-left: auto; background: var(--brand); color: #fff; font-size: 11.5px; padding: 1px 8px; border-radius: 20px; }
 .side-foot { margin-top: auto; padding: 12px; border-top: 1px solid rgba(255,255,255,.08); font-size: 13px; }
 .side-foot b { color: #fff; display: block; }
+.ai-state { display: flex; align-items: center; gap: 8px; font-size: 12.5px; margin: 8px 0 4px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: #8b93a7; flex: none; } .dot.on { background: #34d399; }
 .main { min-width: 0; display: flex; flex-direction: column; }
-.top { display: flex; align-items: center; gap: 14px; padding: 18px 32px; border-bottom: 1px solid var(--line); background: rgba(246,244,239,.92); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 5; }
-.top h1 { font-size: 22px; margin: 0; letter-spacing: -.3px; }
+.top { display: flex; align-items: center; gap: 14px; padding: 16px 32px; border-bottom: 1px solid var(--line); background: rgba(246,244,239,.92); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 5; }
+.top h1 { font-size: 21px; margin: 0; letter-spacing: -.3px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .top .sp { flex: 1; }
 .store-pick { display: flex; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 4px 4px 4px 12px; min-width: 0; }
 .store-pick select { border: 0; background: transparent; padding: 6px 4px; font-weight: 600; max-width: 220px; min-width: 0; }
-.content { padding: 28px 32px 100px; max-width: 1240px; width: 100%; }
+.content { padding: 26px 32px 110px; max-width: 1240px; width: 100%; }
 .mobile-nav { display: none; }
+#stepBody { margin-top: 18px; }
 
 /* ---------- componenti ---------- */
 .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); min-width: 0; }
 .card + .card, .stack > * + * { margin-top: 18px; }
-.grid > .card, .grid > * { margin-top: 0; }
 .stack.tight > * + * { margin-top: 10px; }
+.grid > .card, .grid > * { margin-top: 0; }
 .card h2 { font-size: 17px; margin: 0 0 4px; letter-spacing: -.2px; }
-.card .sub { color: var(--muted); font-size: 14px; margin: 0 0 16px; }
+.card h3 { font-size: 15px; margin: 0 0 4px; }
+.sub { color: var(--muted); font-size: 14px; margin: 0 0 16px; }
 .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
-.row > .f { flex: 1; min-width: 180px; }
+.row > .f { flex: 1; min-width: 170px; }
 label.l { display: block; font-size: 13px; font-weight: 600; color: var(--ink-2); margin: 0 0 6px; }
+.hint { font-size: 12.5px; color: var(--muted); margin-top: 5px; }
 .in { width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 11px; background: #fff; outline: none; transition: border-color .15s, box-shadow .15s; }
 .in:focus { border-color: var(--brand); box-shadow: 0 0 0 4px var(--brand-soft); }
-textarea.in { min-height: 150px; resize: vertical; line-height: 1.5; }
+textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid transparent; border-radius: 11px; padding: 10px 16px; font-weight: 700; cursor: pointer; background: var(--brand); color: #fff; transition: background .15s, transform .05s; white-space: nowrap; text-decoration: none; }
 .btn:hover { background: var(--brand-dark); }
 .btn:active { transform: translateY(1px); }
@@ -76,10 +82,11 @@ textarea.in { min-height: 150px; resize: vertical; line-height: 1.5; }
 .btn.sec:hover { background: var(--line-2); }
 .btn.ghost { background: transparent; color: var(--ink-2); padding: 8px 10px; }
 .btn.ghost:hover { background: var(--line-2); }
-.btn.dark { background: var(--ink); }
-.btn.dark:hover { background: var(--ink-2); }
+.btn.dark { background: var(--ink); } .btn.dark:hover { background: var(--ink-2); }
+.btn.okb { background: var(--ok); } .btn.okb:hover { background: #10603a; }
 .btn.sm { padding: 7px 11px; font-size: 13px; border-radius: 9px; }
-.btn[disabled] { opacity: .65; cursor: progress; }
+.btn.lg { padding: 14px 22px; font-size: 16px; border-radius: 13px; }
+.btn[disabled] { opacity: .6; cursor: not-allowed; }
 .btn .spin { width: 16px; height: 16px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
@@ -89,73 +96,128 @@ textarea.in { min-height: 150px; resize: vertical; line-height: 1.5; }
 .chip.gold { background: var(--gold-soft); color: #8a5a00; } .chip.grey { background: var(--line-2); color: var(--muted); }
 .muted { color: var(--muted); font-size: 14px; }
 .grid { display: grid; gap: 16px; }
-.g4 { grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); }
-.g3 { grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); }
-.g2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); margin-top: 18px; }
-.kpi { display: flex; gap: 14px; align-items: center; }
-.kpi .ic { width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); flex: none; }
-.kpi { padding: 18px; }
-.kpi .v { font-size: 28px; font-weight: 800; letter-spacing: -.5px; line-height: 1.1; }
+.g4 { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+.g3 { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+.g2 { grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); }
+.kpi { display: flex; gap: 14px; align-items: center; padding: 18px; }
+.kpi .ic { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); flex: none; }
+.kpi .v { font-size: 26px; font-weight: 800; letter-spacing: -.5px; line-height: 1.1; }
 .kpi .k { color: var(--muted); font-size: 13px; font-weight: 600; }
-.empty { text-align: center; padding: 36px 16px; color: var(--muted); }
+.empty { text-align: center; padding: 34px 16px; color: var(--muted); }
 .empty .ic { width: 64px; height: 64px; border-radius: 20px; background: var(--line-2); display: grid; place-items: center; margin: 0 auto 14px; color: var(--ink-2); }
 .empty b { display: block; color: var(--text); font-size: 16px; margin-bottom: 4px; }
 .notice { display: flex; gap: 10px; padding: 12px 14px; border-radius: 12px; font-size: 14px; margin-top: 10px; align-items: flex-start; }
-.notice.info { background: var(--info-soft); color: var(--info); } .notice.warn { background: var(--warn-soft); color: var(--warn); } .notice.err { background: var(--err-soft); color: var(--err); }
-
-.steps { display: grid; gap: 10px; }
-.step { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; }
-.step .n { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; background: var(--line-2); color: var(--ink-2); flex: none; }
-.step.done .n { background: var(--ok); color: #fff; }
-.step .t { flex: 1; min-width: 0; } .step .t b { display: block; } .step.done .t b { text-decoration: line-through; color: var(--muted); }
-
-.drop { border: 2px dashed #d9d2c3; border-radius: var(--radius); padding: 34px 20px; text-align: center; background: #fffdf8; cursor: pointer; transition: border-color .15s, background .15s; }
-.drop:hover, .drop.over, .drop:focus { border-color: var(--brand); background: var(--brand-soft); outline: none; }
-.drop .ic { width: 56px; height: 56px; border-radius: 16px; background: var(--brand); color: #fff; display: grid; place-items: center; margin: 0 auto 12px; }
-.drop b { font-size: 16px; }
+.notice.info { background: var(--info-soft); color: var(--info); } .notice.warn { background: var(--warn-soft); color: var(--warn); }
+.notice.err { background: var(--err-soft); color: var(--err); } .notice.ok { background: var(--ok-soft); color: var(--ok); }
 .progress { height: 8px; background: var(--line-2); border-radius: 8px; overflow: hidden; margin-top: 12px; }
 .progress div { height: 100%; width: 40%; background: linear-gradient(90deg, var(--brand), var(--gold)); border-radius: 8px; animation: indet 1.4s ease-in-out infinite; }
+.progress.det div { animation: none; transition: width .4s; background: var(--ok); }
 @keyframes indet { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
-
-.flyer-item { display: flex; align-items: center; gap: 14px; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: #fff; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
-.flyer-item:hover { border-color: #d6cfbf; box-shadow: var(--shadow); }
-.flyer-item .ic { width: 46px; height: 46px; border-radius: 12px; background: var(--gold-soft); color: #8a5a00; display: grid; place-items: center; flex: none; }
-.flyer-item .t { flex: 1; min-width: 0; } .flyer-item .t b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 .seg { display: inline-flex; background: var(--line-2); border-radius: 11px; padding: 3px; flex-wrap: wrap; }
 .seg button { border: 0; background: transparent; padding: 7px 12px; border-radius: 9px; font-weight: 600; cursor: pointer; color: var(--muted); }
 .seg button.on { background: #fff; color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
-.offers { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; margin-top: 16px; }
-.offer { border: 1px solid var(--line); border-radius: 14px; background: #fff; overflow: hidden; display: flex; flex-direction: column; cursor: pointer; transition: box-shadow .15s, transform .15s; position: relative; }
-.offer:hover, .offer:focus { box-shadow: var(--shadow); transform: translateY(-2px); outline: none; }
-.offer .img { aspect-ratio: 4/3; background: #faf8f3; display: grid; place-items: center; overflow: hidden; color: var(--muted); }
-.offer .img img { width: 100%; height: 100%; object-fit: contain; }
-.offer .body { padding: 12px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
-.offer .name { font-weight: 700; font-size: 14px; line-height: 1.3; }
-.offer .desc { color: var(--muted); font-size: 12.5px; }
-.offer .prices { display: flex; align-items: baseline; gap: 8px; margin-top: auto; padding-top: 8px; flex-wrap: wrap; }
-.offer .price { font-size: 22px; font-weight: 800; color: var(--brand-dark); letter-spacing: -.3px; }
-.offer .old { color: var(--muted); text-decoration: line-through; font-size: 13px; }
-.offer .tags { position: absolute; top: 8px; left: 8px; right: 8px; display: flex; justify-content: space-between; gap: 6px; pointer-events: none; }
-.offer.unverified { border-color: #f0c36d; box-shadow: 0 0 0 2px var(--warn-soft); }
+.switch { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; font-size: 14px; }
+.switch input { width: 18px; height: 18px; accent-color: var(--brand); }
 
+/* passi */
+.steps { display: grid; gap: 10px; }
+.step { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; }
+.step .n { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; background: var(--line-2); color: var(--ink-2); flex: none; }
+.step.done .n { background: var(--ok); color: #fff; }
+.step .t { flex: 1; min-width: 0; } .step .t b { display: block; } .step.done .t b { color: var(--muted); }
+
+/* caricamento */
+.drop { border: 2px dashed #d9d2c3; border-radius: var(--radius); padding: 30px 20px; text-align: center; background: #fffdf8; cursor: pointer; transition: border-color .15s, background .15s; }
+.drop:hover, .drop.over, .drop:focus { border-color: var(--brand); background: var(--brand-soft); outline: none; }
+.drop .ic { width: 54px; height: 54px; border-radius: 16px; background: var(--brand); color: #fff; display: grid; place-items: center; margin: 0 auto 12px; }
+.drop b { font-size: 16px; }
+
+/* negozi (agenzia) */
+.store-card { display: flex; flex-direction: column; gap: 12px; }
+.store-head { display: flex; gap: 12px; align-items: center; }
+.store-logo { width: 52px; height: 52px; border-radius: 14px; background: var(--line-2); display: grid; place-items: center; overflow: hidden; flex: none; font-weight: 800; color: #fff; font-size: 20px; }
+.store-logo img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
+.store-head .t { flex: 1; min-width: 0; } .store-head .t b { display: block; font-size: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.week { background: var(--line-2); border-radius: 12px; padding: 12px; font-size: 14px; }
+.week b { display: block; margin-bottom: 4px; }
+
+/* volantini */
+.flyer-item { display: flex; align-items: center; gap: 14px; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: #fff; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+.flyer-item:hover, .flyer-item:focus { border-color: #d6cfbf; box-shadow: var(--shadow); outline: none; }
+.flyer-item .ic { width: 46px; height: 46px; border-radius: 12px; background: var(--gold-soft); color: #8a5a00; display: grid; place-items: center; flex: none; }
+.flyer-item .t { flex: 1; min-width: 0; } .flyer-item .t b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.flyer-item .chips { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+
+/* percorso del volantino */
+.wizard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 18px; }
+.wstep { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: #fff; cursor: pointer; text-align: left; min-width: 0; }
+.wstep .n { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 13px; background: var(--line-2); color: var(--ink-2); flex: none; }
+.wstep .t { min-width: 0; } .wstep .t b { display: block; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .wstep .t span { font-size: 12px; color: var(--muted); }
+.wstep.on { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+.wstep.on .n { background: var(--brand); color: #fff; }
+.wstep.done .n { background: var(--ok); color: #fff; }
+.explain { display: flex; gap: 14px; padding: 16px; border-radius: 14px; background: var(--info-soft); color: #1b3a66; font-size: 14px; }
+.explain .legend { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.meter { display: flex; align-items: center; gap: 12px; }
+.meter .bar { flex: 1; height: 10px; background: var(--line-2); border-radius: 10px; overflow: hidden; }
+.meter .bar div { height: 100%; background: var(--ok); border-radius: 10px; transition: width .4s; }
+.meter b { white-space: nowrap; }
+
+.olist { display: grid; gap: 10px; margin-top: 14px; }
+.orow { display: grid; grid-template-columns: 150px 1fr auto; gap: 16px; align-items: center; padding: 12px; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+.orow.unverified { border-color: #f0c36d; background: #fffcf4; }
+.orow .crop { width: 150px; height: 112px; border-radius: 10px; background: #faf8f3; border: 1px solid var(--line-2); display: grid; place-items: center; overflow: hidden; cursor: zoom-in; position: relative; }
+.orow .crop img { width: 100%; height: 100%; object-fit: contain; }
+.orow .crop .tag { position: absolute; left: 6px; bottom: 6px; background: rgba(20,27,45,.75); color: #fff; font-size: 11px; padding: 2px 7px; border-radius: 8px; }
+.orow .info { min-width: 0; }
+.orow .info b { display: block; font-size: 15px; }
+.orow .prices { display: flex; align-items: baseline; gap: 10px; margin: 6px 0; flex-wrap: wrap; }
+.orow .price { font-size: 22px; font-weight: 800; color: var(--brand-dark); }
+.orow .old { color: var(--muted); text-decoration: line-through; }
+.orow .acts { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
+.star { background: none; border: 0; cursor: pointer; color: #c9c2b3; padding: 4px; } .star.on { color: var(--gold); }
+.star.on svg { fill: var(--gold); }
+
+.make { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; margin-top: 14px; }
+.mk { display: flex; gap: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: #fff; cursor: pointer; align-items: flex-start; }
+.mk.on { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+.mk input { width: 20px; height: 20px; accent-color: var(--brand); margin-top: 2px; flex: none; }
+.mk b { display: block; } .mk span { font-size: 13px; color: var(--muted); }
+.joblist { display: grid; gap: 8px; margin-top: 14px; }
+.jl { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.jl .s { width: 22px; height: 22px; display: grid; place-items: center; }
+.jl.wait { color: var(--muted); }
+
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+.gal { position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: #faf8f3; cursor: zoom-in; }
+.gal img { width: 100%; display: block; aspect-ratio: 1; object-fit: contain; }
+.gal .lab { position: absolute; left: 6px; bottom: 6px; right: 6px; display: flex; justify-content: space-between; gap: 6px; }
+.vids { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.vid { border: 1px solid var(--line); border-radius: 14px; padding: 12px; background: #fff; display: flex; flex-direction: column; gap: 10px; }
+.vid .ph { background: var(--ink); border-radius: 10px; aspect-ratio: 16/10; display: grid; place-items: center; color: #fff; cursor: pointer; position: relative; overflow: hidden; }
+.vid .ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #0d1220; }
+.vid .ph .play { position: relative; width: 58px; height: 58px; border-radius: 50%; background: rgba(229,72,47,.92); display: grid; place-items: center; box-shadow: 0 6px 20px rgba(0,0,0,.35); }
+.vid .ph .play svg { fill: #fff; stroke: none; width: 24px; height: 24px; margin-left: 3px; }
+video { width: 100%; max-height: 460px; border-radius: 10px; background: #000; display: block; }
 .post { display: flex; flex-direction: column; gap: 10px; }
 .post-head { display: flex; align-items: center; gap: 10px; }
 .post-head .ic { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; color: #fff; flex: none; }
 .post-head .t { flex: 1; min-width: 0; } .post-head .t b { display: block; font-size: 14px; }
 .ic-instagram { background: linear-gradient(45deg, #f09433, #dc2743 50%, #bc1888); } .ic-facebook { background: #1877f2; }
-.ic-whatsapp, .ic-whatsapp_personal { background: #25a244; } .ic-newsletter { background: var(--ink-2); } .ic-video { background: var(--brand); }
-video { width: 100%; max-height: 520px; border-radius: 12px; background: #000; display: block; }
-.tags-line { color: var(--info); font-size: 13px; }
+.ic-whatsapp, .ic-whatsapp_personal { background: #25a244; } .ic-newsletter { background: var(--ink-2); }
+.tags-line { color: var(--info); font-size: 13px; word-break: break-word; }
+.sticky-bar { position: sticky; bottom: 12px; z-index: 4; margin-top: 18px; display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; background: var(--ink); color: #fff; padding: 12px 14px; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
+.sticky-bar .muted { color: #c9d0e0; }
 
-.chat { height: 420px; overflow: auto; padding: 16px; background: #faf8f3; border-radius: 14px; border: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
+.chat { height: 400px; overflow: auto; padding: 16px; background: #faf8f3; border-radius: 14px; border: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
 .bubble { max-width: 80%; padding: 10px 14px; border-radius: 16px; white-space: pre-wrap; font-size: 14.5px; }
 .bubble.me { align-self: flex-end; background: var(--ink); color: #fff; border-bottom-right-radius: 5px; }
 .bubble.bot { align-self: flex-start; background: #fff; border: 1px solid var(--line); border-bottom-left-radius: 5px; }
 .bubble.sys { align-self: center; background: var(--warn-soft); color: var(--warn); font-size: 13px; }
-.chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-.chips button { border: 1px solid var(--line); background: #fff; border-radius: 20px; padding: 6px 12px; cursor: pointer; font-size: 13px; }
-.chips button:hover { border-color: var(--brand); color: var(--brand-dark); }
+.qchips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.qchips button { border: 1px solid var(--line); background: #fff; border-radius: 20px; padding: 6px 12px; cursor: pointer; font-size: 13px; }
+.qchips button:hover { border-color: var(--brand); color: var(--brand-dark); }
 
 .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 560px; }
@@ -163,32 +225,53 @@ th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacin
 td { padding: 12px 10px; border-bottom: 1px solid var(--line-2); vertical-align: top; }
 tr:last-child td { border-bottom: 0; }
 
-.modal-bg { position: fixed; inset: 0; background: rgba(20,27,45,.45); display: grid; place-items: center; padding: 16px; z-index: 50; animation: fade .15s; }
-.modal { background: #fff; border-radius: 20px; width: 100%; max-width: 580px; max-height: 92vh; overflow: auto; padding: 24px; box-shadow: 0 30px 80px rgba(0,0,0,.25); }
+.settings-sec { display: grid; grid-template-columns: 240px 1fr; gap: 24px; padding: 22px 0; border-top: 1px solid var(--line); }
+.settings-sec:first-of-type { border-top: 0; padding-top: 4px; }
+.settings-sec h3 { margin: 0 0 4px; font-size: 15px; }
+.logo-box { display: flex; gap: 14px; align-items: center; }
+.logo-prev { width: 120px; height: 72px; border-radius: 12px; border: 1px dashed var(--line); display: grid; place-items: center; background: #fff; overflow: hidden; color: var(--muted); font-size: 12px; text-align: center; }
+.logo-prev img { max-width: 100%; max-height: 100%; }
+.tones { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
+.tone { border: 1px solid var(--line); border-radius: 12px; padding: 12px; cursor: pointer; background: #fff; }
+.tone.on { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+.tone b { display: block; } .tone span { font-size: 12.5px; color: var(--muted); }
+
+.modal-bg { position: fixed; inset: 0; background: rgba(20,27,45,.5); display: grid; place-items: center; padding: 16px; z-index: 50; animation: fade .15s; }
+.modal { background: #fff; border-radius: 20px; width: 100%; max-width: 600px; max-height: 92vh; overflow: auto; padding: 24px; box-shadow: 0 30px 80px rgba(0,0,0,.25); }
+.modal.wide { max-width: 980px; padding: 14px; background: #111; }
+.modal.wide img, .modal.wide video { width: 100%; max-height: 82vh; object-fit: contain; display: block; border-radius: 12px; }
 .modal h3 { margin: 0; font-size: 19px; }
-.modal-img { width: 100%; max-height: 230px; object-fit: contain; background: #faf8f3; border-radius: 12px; margin: 12px 0; display: block; }
-.toasts { position: fixed; right: 20px; bottom: 20px; display: grid; gap: 10px; z-index: 60; max-width: min(420px, calc(100vw - 40px)); }
+.modal-img { width: 100%; max-height: 230px; object-fit: contain; background: #faf8f3; border-radius: 12px; display: block; }
+.toasts { position: fixed; right: 20px; top: 84px; display: grid; gap: 10px; z-index: 60; max-width: min(440px, calc(100vw - 40px)); }
 .toast { background: var(--ink); color: #fff; padding: 13px 16px; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.2); display: flex; gap: 10px; align-items: flex-start; font-size: 14px; animation: up .2s ease-out; white-space: pre-wrap; }
 .toast.err { background: var(--err); } .toast.ok svg { color: #6ee7a8; }
 @keyframes up { from { transform: translateY(10px); opacity: 0; } }
 @keyframes fade { from { opacity: 0; } }
-.switch { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; font-size: 14px; }
-.switch input { width: 18px; height: 18px; accent-color: var(--brand); }
 
 @media (max-width: 920px) {
   .auth { grid-template-columns: 1fr; } .auth-hero { padding: 28px 20px; } .auth-hero h1 { font-size: 30px; } .auth-points, .auth-hero > .muted { display: none; }
   .shell { grid-template-columns: 1fr; } .side { display: none; }
-  .top { padding: 12px 16px; gap: 10px; } .top h1 { font-size: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .store-pick select { max-width: 130px; }
-  .content { padding: 16px 16px 110px; }
+  .top { padding: 12px 16px; gap: 10px; } .top h1 { font-size: 18px; }
+  .store-pick select { max-width: 120px; }
+  .content { padding: 16px 14px 110px; }
   .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: var(--ink); padding: 6px 2px calc(6px + env(safe-area-inset-bottom)); z-index: 20; justify-content: space-around; }
-  .mobile-nav button { background: transparent; border: 0; color: #9aa4bb; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 10.5px; font-weight: 600; padding: 6px 2px; min-width: 48px; cursor: pointer; }
+  .mobile-nav button { background: transparent; border: 0; color: #9aa4bb; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 10.5px; font-weight: 600; padding: 6px 2px; min-width: 46px; cursor: pointer; }
   .mobile-nav button.on { color: #fff; } .mobile-nav button.on svg { color: var(--brand); }
-  .offers { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-  .offer .price { font-size: 19px; }
   .card { padding: 16px; }
   .g2 { grid-template-columns: 1fr; }
-  .toasts { left: 16px; right: 16px; bottom: 84px; max-width: none; }
+  .wizard { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .wstep { flex-direction: column; text-align: center; padding: 8px 4px; gap: 4px; }
+  .wstep .t span { display: none; } .wstep .t b { font-size: 11.5px; white-space: normal; }
+  .orow { grid-template-columns: 96px 1fr; gap: 10px; }
+  .orow .crop { width: 96px; height: 84px; }
+  .orow .acts { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; }
+  .orow .acts .btn { flex: 1; }
+  .settings-sec { grid-template-columns: 1fr; gap: 10px; }
+  .sticky-bar { bottom: 74px; padding: 8px; gap: 6px; }
+  .sticky-bar > .muted { display: none; }
+  .sticky-bar .toolbar { width: 100%; }
+  .sticky-bar .btn { flex: 1; padding: 10px 8px; font-size: 14px; }
+  .toasts { left: 16px; right: 16px; top: auto; bottom: 84px; max-width: none; }
 }
 @media (min-width: 921px) { .top .logo-mark { display: none; } }
 </style>
@@ -203,18 +286,24 @@ tr:last-child td { border-bottom: 0; }
   <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M21.5 20a6.5 6.5 0 0 0-4-6"/></symbol>
   <symbol id="i-store" viewBox="0 0 24 24"><path d="M4 9l1.5-5h13L20 9M4 9h16v11H4zM4 9a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0"/><path d="M10 20v-5h4v5"/></symbol>
   <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v12M7 11l5 5 5-5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></symbol>
   <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="5" width="13" height="14" rx="2"/><path d="M16 10l5-3v10l-5-3"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="M21 16l-5-5-9 9"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
   <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4M12 17.5v.01"/></symbol>
   <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
   <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4z"/></symbol>
   <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></symbol>
   <symbol id="i-logout" viewBox="0 0 24 24"><path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 17l5-5-5-5M15 12H3"/></symbol>
-  <symbol id="i-chef" viewBox="0 0 24 24"><path d="M7 14a4 4 0 1 1 1.5-7.7 4 4 0 0 1 7 0A4 4 0 1 1 17 14v6H7z"/><path d="M7 17h10"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
   <symbol id="i-msg" viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4z"/></symbol>
   <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1 6.2L12 17.4 6.5 20.3l1-6.2L3 9.7l6.2-.9z"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-2.7-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.1-2.7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.7-1.1V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1.3z"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
 </svg>
 
 <div id="authView" class="auth hidden">
@@ -222,11 +311,11 @@ tr:last-child td { border-bottom: 0; }
     <div class="logo"><span class="logo-mark">P</span> PROMOVO</div>
     <div>
       <h1>Il tuo volantino diventa comunicazione digitale. Da solo.</h1>
-      <p>Carica il volantino: gli agenti IA leggono le offerte, controllano i prezzi e preparano video, post e messaggi per i clienti.</p>
+      <p>Carica il volantino: gli agenti IA leggono le offerte, controllano i prezzi e preparano video, grafiche e testi pronti da pubblicare.</p>
       <div class="auth-points">
-        <div><svg class="i"><use href="#i-check"/></svg> Prezzi verificati prima di pubblicare</div>
-        <div><svg class="i"><use href="#i-video"/></svg> Video per schermi in negozio e Reel</div>
-        <div><svg class="i"><use href="#i-chat"/></svg> Assistente clienti sempre attivo</div>
+        <div><svg class="i"><use href="#i-check"/></svg> Prezzi controllati uno per uno</div>
+        <div><svg class="i"><use href="#i-video"/></svg> Reel, video per gli schermi e grafiche</div>
+        <div><svg class="i"><use href="#i-download"/></svg> Tutto il materiale della settimana in un clic</div>
       </div>
     </div>
     <div class="muted" style="color:#9aa4bb">© Promovo</div>
@@ -245,7 +334,7 @@ tr:last-child td { border-bottom: 0; }
         <div><label class="l" for="email">Email</label><input class="in" id="email" type="email" autocomplete="username" placeholder="nome@esempio.it"></div>
         <div><label class="l" for="password">Password</label><input class="in" id="password" type="password" autocomplete="current-password" placeholder="almeno 8 caratteri"></div>
       </div>
-      <button class="btn" id="authBtn" style="width:100%;margin-top:20px;padding:13px">Accedi</button>
+      <button class="btn lg" id="authBtn" style="width:100%;margin-top:20px">Accedi</button>
       <p class="muted" style="text-align:center;margin-top:16px"><span id="authSwitchText">Non hai un account?</span> <a href="#" id="authSwitch">Crealo ora</a></p>
     </div>
   </section>
@@ -255,8 +344,11 @@ tr:last-child td { border-bottom: 0; }
   <aside class="side">
     <div class="logo"><span class="logo-mark">P</span> PROMOVO</div>
     <nav id="sideNav"></nav>
-    <div class="side-foot"><b id="whoName"></b><span id="whoOrg"></span>
-      <button class="nav-btn" id="logoutBtn" style="margin-top:8px;padding:8px 0"><svg class="i"><use href="#i-logout"/></svg> Esci</button></div>
+    <div class="side-foot">
+      <b id="whoName"></b><span id="whoOrg"></span>
+      <div class="ai-state"><span class="dot" id="aiDot"></span><span id="aiText">IA</span></div>
+      <button class="nav-btn" id="logoutBtn" style="padding:8px 0"><svg class="i"><use href="#i-logout"/></svg> Esci</button>
+    </div>
   </aside>
   <div class="main">
     <header class="top">
@@ -276,27 +368,37 @@ tr:last-child td { border-bottom: 0; }
 <script>
 "use strict";
 const NAV = [
-  ["home", "Panoramica", "i-home"], ["flyers", "Volantini", "i-flyer"], ["content", "Contenuti", "i-spark"],
-  ["assistant", "Assistente", "i-chat"], ["orders", "Ordini", "i-bag"], ["customers", "Clienti", "i-users"],
-  ["store", "Negozio", "i-store"],
+  ["home", "Panoramica", "i-home"], ["flyers", "Volantini", "i-flyer"], ["customers", "Clienti", "i-users"],
+  ["orders", "Ordini", "i-bag"], ["assistant", "Assistente", "i-chat"], ["store", "Negozio", "i-settings"],
 ];
-const MOBILE = ["home", "flyers", "content", "assistant", "orders", "customers"];
 const STATUS = {uploaded: "caricato", processing: "in lettura", ready: "pronto", failed: "errore", new: "nuovo",
   confirmed: "confermato", collected: "ritirato", cancelled: "annullato"};
 const KIND = {instagram: "Instagram", facebook: "Facebook", whatsapp: "WhatsApp", newsletter: "Newsletter",
-  video: "Video", whatsapp_personal: "Messaggio personale"};
+  video: "Video", image: "Immagine", whatsapp_personal: "Messaggio personale"};
 const CATEGORIES = ["frutta e verdura","carne","pesce","salumi e formaggi","latte e latticini","uova","pane e forno","pasta e riso","dispensa","surgelati","dolci e snack","colazione","bevande","vino e alcolici","igiene casa","cura persona","infanzia","animali","altro"];
-const S = { token: null, storeId: null, view: "home", opts: {}, me: null, stores: [], offerFilter: "all",
-  contentKind: "all", conv: null, chat: [], blobs: new Map() };
+const VERIFIED = {"testo PDF": "letto dal testo del PDF", "OCR": "confermato dalla lettura ottica", "doppia lettura IA": "confermato da una seconda lettura", "persona": "confermato da te"};
+const MAKE = [
+  ["video_portrait", "i-video", "Reel 9:16", "Per Instagram, TikTok e storie. Le 6 offerte migliori, con musica.", true],
+  ["video_landscape", "i-video", "Video schermo 16:9", "Per i televisori in negozio. Tutte le offerte, in loop.", true],
+  ["video_square", "i-video", "Video post 1:1", "Per il feed di Facebook e Instagram.", false],
+  ["images", "i-image", "Immagini", "Copertina, storia e un'immagine per ogni offerta in evidenza.", true],
+  ["texts", "i-msg", "Testi", "Instagram, Facebook, WhatsApp e newsletter, con il tono del negozio.", true],
+  ["messages", "i-users", "Messaggi personali", "Un WhatsApp su misura per ogni cliente con consenso.", false],
+];
+const TONES = [["familiare", "Familiare", "Caldo e vicino, emoji misurate"], ["elegante", "Elegante", "Sobrio, senza emoji"],
+  ["giovane", "Giovane", "Energico, tante emoji"], ["essenziale", "Essenziale", "Breve e diretto"]];
+const S = { token: null, storeId: null, view: "home", opts: {}, me: null, stores: [], ai: false,
+  offerFilter: "all", conv: null, chat: [], blobs: new Map(), makeSel: null };
 try { S.token = localStorage.getItem("promovo_token") || null; S.storeId = Number(localStorage.getItem("promovo_store")) || null; } catch (e) {}
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
 const icon = id => `<svg class="i"><use href="#${id}"/></svg>`;
-const itDate = iso => iso ? new Date(iso.length === 10 ? iso + "T12:00:00" : iso).toLocaleDateString("it-IT", {day: "numeric", month: "short", year: "numeric"}) : "—";
+const itDate = iso => iso ? new Date(iso.length === 10 ? iso + "T12:00:00" : iso).toLocaleDateString("it-IT", {day: "numeric", month: "short"}) : "—";
 const itDateTime = iso => iso ? new Date(iso).toLocaleString("it-IT", {weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"}) : "—";
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+const euros = c => c == null ? "" : (c / 100).toFixed(2).replace(".", ",");
 function save() { try { localStorage.setItem("promovo_token", S.token || ""); localStorage.setItem("promovo_store", S.storeId || ""); } catch (e) {} }
 
 function toast(text, kind = "ok") {
@@ -304,7 +406,7 @@ function toast(text, kind = "ok") {
   el.className = "toast " + kind;
   el.innerHTML = icon(kind === "err" ? "i-alert" : "i-check") + `<span>${esc(text)}</span>`;
   $("#toasts").appendChild(el);
-  setTimeout(() => el.remove(), kind === "err" ? 7000 : 4000);
+  setTimeout(() => el.remove(), kind === "err" ? 7000 : 3800);
 }
 
 async function api(path, opts = {}) {
@@ -314,14 +416,14 @@ async function api(path, opts = {}) {
   if (opts.json !== undefined) { headers["Content-Type"] = "application/json"; body = JSON.stringify(opts.json); }
   let res;
   try { res = await fetch(path, {method: opts.method || (body ? "POST" : "GET"), headers, body}); }
-  catch (e) { throw new Error("Connessione assente: controlla internet e riprova."); }
+  catch (e) { throw new Error("Connessione assente: controlla che Promovo sia acceso e riprova."); }
   if (res.status === 401 && S.token) { logout(); throw new Error("Sessione scaduta: accedi di nuovo."); }
   if (res.status === 204) return null;
   const ct = res.headers.get("content-type") || "";
   const data = ct.includes("application/json") ? await res.json() : await res.blob();
   if (!res.ok) {
     let d = data && data.detail;
-    if (Array.isArray(d)) d = d.map(x => x.msg.replace(/^Value error, /, "")).join("\n");
+    if (Array.isArray(d)) d = d.map(x => String(x.msg).replace(/^Value error, /, "")).join("\n");
     throw new Error(d || ("Errore " + res.status));
   }
   return data;
@@ -342,17 +444,25 @@ async function blobUrl(path) {
   S.blobs.set(path, u);
   return u;
 }
+function forget(prefix) { for (const k of [...S.blobs.keys()]) if (k.startsWith(prefix)) { URL.revokeObjectURL(S.blobs.get(k)); S.blobs.delete(k); } }
 function loadImages(root = document) {
   $$("img[data-src]", root).forEach(async img => {
     const src = img.dataset.src;
     img.removeAttribute("data-src");
-    try { img.src = await blobUrl(src); } catch (e) { img.alt = "immagine non disponibile"; }
+    try { img.src = await blobUrl(src); } catch (e) { img.alt = "immagine non disponibile"; img.style.opacity = .3; }
   });
 }
+async function download(path, filename) {
+  const b = await api(path);
+  const u = URL.createObjectURL(b);
+  const a = document.createElement("a");
+  a.href = u; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(u), 30000);
+}
 
-function modal(html, onMount) {
+function modal(html, onMount, wide = false) {
   const root = $("#modalRoot");
-  root.innerHTML = `<div class="modal-bg"><div class="modal" role="dialog" aria-modal="true">${html}</div></div>`;
+  root.innerHTML = `<div class="modal-bg"><div class="modal ${wide ? "wide" : ""}" role="dialog" aria-modal="true">${html}</div></div>`;
   const bg = $(".modal-bg", root);
   const onKey = e => { if (e.key === "Escape") close(); };
   const close = () => { root.innerHTML = ""; document.removeEventListener("keydown", onKey); };
@@ -360,14 +470,30 @@ function modal(html, onMount) {
   bg.addEventListener("click", e => { if (e.target === bg) close(); });
   $$("[data-close]", root).forEach(b => b.onclick = close);
   if (onMount) onMount($(".modal", root), close);
-  const first = $("input,select,textarea", root); if (first) first.focus();
+  if (!wide) { const first = $("input,select,textarea", root); if (first) first.focus(); }
+  return close;
+}
+async function lightbox(path, kind = "img") {
+  const url = await blobUrl(path);
+  modal(kind === "video" ? `<video controls autoplay playsinline src="${url}"></video>` : `<img src="${url}" alt="">`, null, true);
+}
+function confirmBox(title, text, okLabel = "Conferma", danger = false) {
+  return new Promise(resolve => {
+    let done = false;
+    const close = modal(`<h3>${esc(title)}</h3><p class="muted">${esc(text)}</p>
+      <div class="toolbar" style="justify-content:flex-end;margin-top:18px"><button class="btn sec" data-no>Annulla</button><button class="btn ${danger ? "" : "dark"}" data-yes>${esc(okLabel)}</button></div>`,
+      (m, c) => { $("[data-no]", m).onclick = () => { done = true; c(); resolve(false); }; $("[data-yes]", m).onclick = () => { done = true; c(); resolve(true); }; });
+    const obs = new MutationObserver(() => { if (!$("#modalRoot").children.length) { obs.disconnect(); if (!done) resolve(false); } });
+    obs.observe($("#modalRoot"), {childList: true});
+    void close;
+  });
 }
 
 const empty = (ic, title, text, action = "") =>
   `<div class="empty"><div class="ic">${icon(ic)}</div><b>${esc(title)}</b>${esc(text)}${action ? `<div style="margin-top:16px">${action}</div>` : ""}</div>`;
 const notice = (kind, text, ic = "i-alert") => `<div class="notice ${kind}">${icon(ic)}<span>${esc(text)}</span></div>`;
 
-// ---------------- accesso
+// ======================= accesso =======================
 let registering = false;
 function setAuthMode(reg) {
   registering = reg;
@@ -397,10 +523,10 @@ function logout() {
   $("#appView").classList.add("hidden"); $("#authView").classList.remove("hidden");
 }
 
-// ---------------- navigazione
+// ======================= navigazione =======================
 function renderNav() {
   $("#sideNav").innerHTML = NAV.map(([k, label, ic]) => `<button class="nav-btn ${S.view === k ? "on" : ""}" data-nav="${k}">${icon(ic)}<span>${label}</span></button>`).join("");
-  $("#mobileNav").innerHTML = NAV.filter(n => MOBILE.includes(n[0])).map(([k, label, ic]) => `<button class="${S.view === k ? "on" : ""}" data-nav="${k}" aria-label="${label}">${icon(ic)}${label}</button>`).join("");
+  $("#mobileNav").innerHTML = NAV.map(([k, label, ic]) => `<button class="${S.view === k ? "on" : ""}" data-nav="${k}" aria-label="${label}">${icon(ic)}${label}</button>`).join("");
   $$("[data-nav]").forEach(b => b.onclick = () => go(b.dataset.nav));
 }
 async function go(view, opts = {}) {
@@ -411,12 +537,12 @@ async function go(view, opts = {}) {
   document.title = title + " · Promovo";
   window.scrollTo(0, 0);
   const el = $("#view");
-  if (!S.storeId && view !== "store") { el.innerHTML = noStore(); bindNoStore(); return; }
+  if (!S.storeId && view !== "store" && view !== "home") { el.innerHTML = noStore(); bindNoStore(); return; }
   el.innerHTML = `<div class="card"><div class="muted">Caricamento…</div><div class="progress"><div></div></div></div>`;
   try { await VIEWS[view](el, opts); loadImages(el); }
   catch (e) { el.innerHTML = `<div class="card">${empty("i-alert", "Qualcosa non ha funzionato", e.message, `<button class="btn sec" id="retry">Riprova</button>`)}</div>`; $("#retry").onclick = () => go(view, opts); }
 }
-const noStore = () => `<div class="card">${empty("i-store", "Nessun negozio ancora", "Crea il primo negozio per iniziare.", `<button class="btn" id="goStore">${icon("i-plus")} Crea negozio</button>`)}</div>`;
+const noStore = () => `<div class="card">${empty("i-store", "Nessun negozio ancora", "Crea il primo negozio per iniziare: servono solo nome e indirizzo.", `<button class="btn" id="goStore">${icon("i-plus")} Crea negozio</button>`)}</div>`;
 function bindNoStore() { const b = $("#goStore"); if (b) b.onclick = () => go("store", {create: true}); }
 
 async function loadStores() {
@@ -429,60 +555,85 @@ async function loadStores() {
 $("#storeSel").onchange = () => {
   const v = $("#storeSel").value;
   if (v === "new") { $("#storeSel").value = S.storeId ? String(S.storeId) : "new"; go("store", {create: true}); return; }
-  S.storeId = Number(v); S.conv = null; S.chat = []; save(); go("home");
+  S.storeId = Number(v); S.conv = null; S.chat = []; save(); go(S.view === "home" || S.view === "store" ? S.view : "flyers");
 };
 const currentStore = () => S.stores.find(s => s.id === S.storeId);
+function selectStore(id) { S.storeId = id; $("#storeSel").value = String(id); save(); }
 
-// ---------------- viste
+// ======================= viste =======================
 const VIEWS = {};
 
+// ---------- panoramica
 VIEWS.home = async el => {
-  const [o, flyers, content] = await Promise.all([api(`/api/stores/${S.storeId}/overview`), api(`/api/stores/${S.storeId}/flyers`), api(`/api/stores/${S.storeId}/content`)]);
-  const kpis = [["i-flyer", "Volantini", o.flyers], ["i-star", "Offerte attive", o.active_offers], ["i-spark", "Da approvare", o.content_to_approve],
-    ["i-bag", "Ordini aperti", o.open_orders], ["i-users", "Clienti", o.customers], ["i-msg", "Con consenso", o.customers_with_consent]];
-  const steps = [
-    ["Crea il negozio", "Nome, indirizzo e colori del negozio.", true, "store"],
-    ["Carica un volantino", "PDF o immagine: gli agenti leggono le offerte.", o.flyers > 0, "flyers"],
-    ["Genera i contenuti", "Post, messaggi e video pronti da approvare.", content.length > 0, "flyers"],
-    ["Approva i contenuti", "Controlla i testi e approvali.", content.some(c => c.approved), "content"],
-  ];
+  if (!S.stores.length) { el.innerHTML = noStore(); bindNoStore(); return; }
+  const ov = await api("/api/agency/overview");
+  const many = ov.length > 1 || (S.me && S.me.organization.kind === "agency");
+  const todo = ov.reduce((n, x) => n + (x.last_flyer ? x.last_flyer.unverified_count : 0), 0);
+  const toApprove = ov.reduce((n, x) => n + (x.content_total - x.content_approved), 0);
+  const orders = ov.reduce((n, x) => n + x.open_orders, 0);
   el.innerHTML = `
-    <div class="grid g4">${kpis.map(([ic, k, v]) => `<div class="card kpi"><div class="ic">${icon(ic)}</div><div><div class="v">${v}</div><div class="k">${k}</div></div></div>`).join("")}</div>
-    <div class="grid g2">
-      <div class="card"><h2>Per iniziare</h2><p class="sub">I passi per mettere al lavoro gli agenti su ${esc(o.store.name)}.</p>
-        <div class="steps">${steps.map(([t, d, done, v], i) => `<div class="step ${done ? "done" : ""}"><span class="n">${done ? icon("i-check") : i + 1}</span><div class="t"><b>${t}</b><span class="muted">${d}</span></div>${done ? "" : `<button class="btn sm sec" data-go="${v}">Vai</button>`}</div>`).join("")}</div></div>
-      <div class="card"><h2>Ultimi volantini</h2><p class="sub">Apri un volantino per vedere offerte e contenuti.</p>
-        <div class="stack tight">${flyers.slice(0, 4).map(flyerItem).join("") || empty("i-flyer", "Nessun volantino", "Carica il primo per vedere gli agenti al lavoro.", `<button class="btn" data-go="flyers">${icon("i-upload")} Carica volantino</button>`)}</div></div>
-    </div>`;
-  $$("[data-go]", el).forEach(b => b.onclick = () => go(b.dataset.go));
-  bindFlyerItems(el);
+    <div class="card" style="background:linear-gradient(135deg,#1b2440,#141b2d);color:#fff;border:0">
+      <div class="row" style="align-items:center">
+        <div class="f" style="min-width:240px"><h2 style="font-size:22px;color:#fff">Ciao${S.me && S.me.name ? " " + esc(S.me.name.split(" ")[0]) : ""}! 👋</h2>
+          <p style="margin:6px 0 0;color:#c9d0e0">${todo || toApprove ? `Hai <b style="color:#fff">${todo}</b> prezzi da controllare e <b style="color:#fff">${toApprove}</b> materiali da approvare.` : "È tutto in ordine. Carica il prossimo volantino quando è pronto."}</p></div>
+        <button class="btn lg" id="newFlyer">${icon("i-upload")} Carica un volantino</button>
+      </div>
+    </div>
+    <div class="grid g4" style="margin-top:18px">
+      ${[["i-store", "Negozi", ov.length], ["i-alert", "Prezzi da controllare", todo], ["i-spark", "Da approvare", toApprove], ["i-bag", "Ordini aperti", orders]].map(([ic, k, v]) => `<div class="card kpi"><div class="ic">${icon(ic)}</div><div><div class="v">${v}</div><div class="k">${k}</div></div></div>`).join("")}
+    </div>
+    <div class="card"><div class="toolbar"><div style="flex:1"><h2>${many ? "I tuoi negozi" : "Questa settimana"}</h2><p class="sub" style="margin:0">Lo stato dell'ultimo volantino di ogni negozio.</p></div>
+      ${many ? `<button class="btn sec" id="addStore">${icon("i-plus")} Aggiungi negozio</button>` : ""}</div>
+      <div class="grid g3" style="margin-top:16px">${ov.map(storeCard).join("")}</div></div>
+    <div class="card"><h2>Come funziona, ogni settimana</h2><p class="sub">Quattro passaggi, pochi minuti per negozio.</p>
+      <div class="grid g4">${[["i-upload", "1. Carica", "Il PDF o la foto del volantino."], ["i-check", "2. Controlla", "I prezzi in giallo, con un clic ciascuno."], ["i-spark", "3. Crea", "Video, immagini e testi in automatico."], ["i-download", "4. Pubblica", "Approva e scarica tutto in un file ZIP."]].map(([ic, t, d]) => `<div class="step" style="flex-direction:column;align-items:flex-start"><span class="n" style="background:var(--brand-soft);color:var(--brand)">${icon(ic)}</span><div class="t"><b>${t}</b><span class="muted">${d}</span></div></div>`).join("")}</div></div>`;
+  $("#newFlyer").onclick = () => go("flyers");
+  const add = $("#addStore"); if (add) add.onclick = () => go("store", {create: true});
+  $$("[data-open-store]", el).forEach(b => b.onclick = () => { selectStore(Number(b.dataset.openStore)); const f = b.dataset.flyer; go("flyers", f ? {flyer: Number(f)} : {}); });
 };
+function storeCard(x) {
+  const s = x.store, f = x.last_flyer;
+  const initials = s.name.split(/\s+/).map(w => w[0]).join("").slice(0, 2).toUpperCase();
+  let status;
+  if (!f) status = "";
+  else if (f.status === "processing") status = `<span class="chip info">in lettura</span>`;
+  else if (f.status === "failed") status = `<span class="chip err">errore di lettura</span>`;
+  else if (f.unverified_count) status = `<span class="chip warn">${f.unverified_count} prezzi da controllare</span>`;
+  else if (!x.content_total) status = `<span class="chip info">pronto per creare i materiali</span>`;
+  else if (x.content_approved < x.content_total) status = `<span class="chip gold">${x.content_total - x.content_approved} da approvare</span>`;
+  else status = `<span class="chip ok">${icon("i-check")} tutto approvato</span>`;
+  return `<div class="card store-card" style="box-shadow:none">
+    <div class="store-head"><div class="store-logo" style="background:${esc(s.brand_color)}">${s.logo_url ? `<img data-src="${s.logo_url}" alt="">` : esc(initials)}</div>
+      <div class="t"><b>${esc(s.name)}</b><span class="muted">${esc([s.address, s.city].filter(Boolean).join(", ") || "Indirizzo non indicato")}</span></div></div>
+    <div class="week"><b>${f ? esc(f.title || "Volantino") : "Nessun volantino caricato"}</b>${f ? `<span class="muted">${f.valid_from ? `dal ${itDate(f.valid_from)} al ${itDate(f.valid_to)} · ` : ""}${f.offer_count} offerte</span>` : ""}${status ? `<div style="margin-top:8px">${status}</div>` : `<span class="muted">Carica il primo volantino per creare video e grafiche.</span>`}</div>
+    <button class="btn ${f ? "sec" : ""}" data-open-store="${s.id}" data-flyer="${f ? f.id : ""}">${f ? "Apri il volantino" : "Carica il volantino"} ${icon("i-arrow")}</button></div>`;
+}
 
+// ---------- volantini
 const flyerItem = f => `<div class="flyer-item" data-flyer="${f.id}" tabindex="0" role="button">
   <div class="ic">${icon("i-flyer")}</div>
-  <div class="t"><b>${esc(f.title || "Volantino " + f.id)}</b><span class="muted">${f.valid_from ? `${itDate(f.valid_from)} → ${itDate(f.valid_to)}` : "Date non indicate"} · ${f.offer_count} offerte</span></div>
-  <span class="chip ${f.status === "ready" ? "ok" : f.status === "failed" ? "err" : "info"}">${esc(STATUS[f.status] || f.status)}</span></div>`;
+  <div class="t"><b>${esc(f.title || "Volantino " + f.id)}</b><span class="muted">${f.valid_from ? `dal ${itDate(f.valid_from)} al ${itDate(f.valid_to)}` : "Date non indicate"} · ${f.offer_count} offerte · caricato il ${itDate(f.created_at)}</span></div>
+  <div class="chips">${f.status !== "ready" ? `<span class="chip ${f.status === "failed" ? "err" : "info"}">${esc(STATUS[f.status] || f.status)}</span>` : f.unverified_count ? `<span class="chip warn">${f.unverified_count} da controllare</span>` : `<span class="chip ok">${icon("i-check")} prezzi ok</span>`}</div></div>`;
 function bindFlyerItems(root) {
-  $$("[data-flyer]", root).forEach(d => {
-    d.onclick = () => go("flyers", {flyer: Number(d.dataset.flyer)});
-    d.onkeydown = e => { if (e.key === "Enter") d.click(); };
-  });
+  $$("[data-flyer]", root).forEach(d => { d.onclick = () => go("flyers", {flyer: Number(d.dataset.flyer)}); d.onkeydown = e => { if (e.key === "Enter") d.click(); }; });
 }
 
 VIEWS.flyers = async (el, opts) => {
-  if (opts.flyer) return flyerDetail(el, opts.flyer);
+  if (opts.flyer) return flyerView(el, opts.flyer, opts.step);
   const flyers = await api(`/api/stores/${S.storeId}/flyers`);
   el.innerHTML = `
     <div class="card">
+      <h2>Nuovo volantino per ${esc(currentStore().name)}</h2><p class="sub">Gli agenti leggono ogni offerta: nome, formato, prezzo, sconto e foto del prodotto.</p>
       <div class="drop" id="drop" tabindex="0" role="button" aria-label="Carica un volantino">
         <div class="ic">${icon("i-upload")}</div>
         <b>Trascina qui il volantino</b><div class="muted">oppure tocca per sceglierlo · PDF, JPG, PNG o WEBP fino a 40 MB</div>
         <input type="file" id="file" accept="application/pdf,image/jpeg,image/png,image/webp" class="hidden">
       </div>
+      ${S.ai ? "" : notice("info", "L'intelligenza artificiale è spenta: si leggono i volantini con il testo dentro il PDF. Quelli fatti solo di immagini (molto comuni) richiedono l'IA accesa.", "i-spark")}
       <div id="uploadState"></div>
     </div>
-    <div class="card"><h2>I tuoi volantini</h2><p class="sub">Gli agenti leggono ogni volantino e controllano i prezzi uno per uno.</p>
-      <div class="stack tight">${flyers.map(flyerItem).join("") || empty("i-flyer", "Ancora nessun volantino", "Caricane uno qui sopra.")}</div></div>`;
+    <div class="card"><h2>Volantini di ${esc(currentStore().name)}</h2>
+      <div class="stack tight" style="margin-top:14px">${flyers.map(flyerItem).join("") || empty("i-flyer", "Ancora nessun volantino", "Caricane uno qui sopra.")}</div></div>`;
   const drop = $("#drop"), file = $("#file");
   drop.onclick = () => file.click();
   drop.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); file.click(); } };
@@ -504,177 +655,297 @@ async function uploadFlyer(f) {
     const t0 = Date.now();
     while (fl.status === "processing") {
       const s = Math.round((Date.now() - t0) / 1000);
-      show("Gli agenti stanno leggendo il volantino…", `${fl.page_count} ${fl.page_count === 1 ? "pagina" : "pagine"} · ${s} secondi. Per i volantini lunghi servono alcuni minuti.`);
+      show("Gli agenti stanno leggendo il volantino…", `${fl.page_count} ${fl.page_count === 1 ? "pagina" : "pagine"} · ${s} s. Lettura, controllo dei prezzi e ritaglio delle foto: per i volantini lunghi servono alcuni minuti.`);
       await sleep(2500);
       fl = await api(`/api/flyers/${fl.id}`);
     }
     if (fl.status === "failed") throw new Error("Lettura non riuscita: " + fl.error);
-    toast(fl.offers.length ? `Volantino letto: ${fl.offers.length} offerte trovate.` : "Volantino caricato, ma nessuna offerta trovata: guarda gli avvisi.", fl.offers.length ? "ok" : "err");
-    go("flyers", {flyer: fl.id});
+    toast(fl.offers.length ? `Volantino letto: ${fl.offers.length} offerte trovate.` : "Volantino caricato, ma senza offerte lette: guarda gli avvisi.", fl.offers.length ? "ok" : "err");
+    go("flyers", {flyer: fl.id, step: "check"});
   } catch (e) { state.innerHTML = notice("err", e.message); }
 }
 
-async function flyerDetail(el, id) {
-  const f = await api(`/api/flyers/${id}`);
+// ---------- percorso del volantino
+const STEPS = [["check", "Controlla le offerte", "prezzi e foto"], ["make", "Crea i materiali", "video, immagini, testi"], ["publish", "Approva e scarica", "pronto da pubblicare"], ["results", "Risultati", "vendite della settimana"]];
+
+async function flyerView(el, id, step) {
+  const [f, content] = await Promise.all([api(`/api/flyers/${id}`), api(`/api/flyers/${id}/content`)]);
   if (f.status === "processing") {
     el.innerHTML = `<div class="card">${notice("info", "Gli agenti stanno ancora leggendo questo volantino…", "i-spark")}<div class="progress"><div></div></div></div>`;
-    await sleep(3000); if (S.view === "flyers" && S.opts.flyer === id) return go("flyers", {flyer: id});
+    await sleep(3000); if (S.view === "flyers" && S.opts.flyer === id) return go("flyers", {flyer: id, step});
     return;
   }
   const unverified = f.offers.filter(o => !o.price_verified).length;
-  const filtered = f.offers.filter(o => S.offerFilter === "all" || (S.offerFilter === "check" ? !o.price_verified : o.is_featured));
-  const hasOffers = f.offers.length > 0;
+  const approved = content.filter(c => c.approved).length;
+  step = step || (unverified || !f.offers.length ? "check" : !content.length ? "make" : "publish");
+  const done = {check: f.offers.length > 0 && !unverified, make: content.length > 0, publish: content.length > 0 && approved === content.length, results: false};
+  const sub = {check: unverified ? `${unverified} da controllare` : `${f.offers.length} offerte ok`, make: content.length ? `${content.length} materiali` : "da fare",
+    publish: content.length ? `${approved}/${content.length} approvati` : "—", results: "dopo la settimana"};
   el.innerHTML = `
-    <button class="btn ghost" id="back" style="margin-bottom:10px">← Tutti i volantini</button>
+    <button class="btn ghost" id="back" style="margin-bottom:8px">${icon("i-back")} Volantini</button>
     <div class="card">
       <div class="row" style="align-items:center">
-        <div class="f"><h2 style="font-size:20px">${esc(f.title || "Volantino " + f.id)}</h2>
+        <div class="f" style="min-width:220px"><h2 style="font-size:21px">${esc(f.title || "Volantino " + f.id)}</h2>
           <div class="muted">${f.valid_from ? `Valido dal ${itDate(f.valid_from)} al ${itDate(f.valid_to)}` : "Date di validità non trovate"} · ${f.page_count} pag. · ${f.offers.length} offerte · ${f.extraction_method === "ai" ? "letto dall'IA" : "letto senza IA"}</div></div>
-        ${hasOffers ? `<span class="chip ${unverified ? "warn" : "ok"}">${unverified ? `${unverified} prezzi da controllare` : "Tutti i prezzi verificati"}</span>` : ""}
+        <button class="btn ghost sm" id="reprocess">Rileggi</button><button class="btn ghost sm" id="delFlyer" style="color:var(--err)">${icon("i-trash")} Elimina</button>
       </div>
-      ${(f.warnings || []).map(w => notice("warn", w)).join("")}
-      ${f.error ? notice("err", f.error) : ""}
-      <div class="toolbar" style="margin-top:16px">
-        <button class="btn" id="aContent" ${hasOffers ? "" : "disabled"}>${icon("i-spark")} Testi social</button>
-        <button class="btn dark" id="aVideoP" ${hasOffers ? "" : "disabled"}>${icon("i-video")} Reel 9:16</button>
-        <button class="btn dark" id="aVideoL" ${hasOffers ? "" : "disabled"}>${icon("i-video")} Video schermo 16:9</button>
-        <button class="btn sec" id="aCampaign" ${hasOffers ? "" : "disabled"}>${icon("i-msg")} Messaggi personali</button>
-        <button class="btn sec" id="aPerf">${icon("i-chart")} Risultati</button>
-        <span style="flex:1"></span>
-        <button class="btn ghost sm" id="aReprocess">Rileggi</button>
-        <button class="btn ghost sm" id="aDelete" style="color:var(--err)">Elimina</button>
-      </div>
-      <div id="actionOut"></div>
+      <div class="wizard">${STEPS.map(([k, t, d], i) => `<button class="wstep ${k === step ? "on" : ""} ${done[k] && k !== step ? "done" : ""}" data-step="${k}"><span class="n">${done[k] && k !== step ? icon("i-check") : i + 1}</span><span class="t"><b>${t}</b><span>${esc(sub[k])}</span></span></button>`).join("")}</div>
     </div>
-    <div class="card">
-      <div class="toolbar"><h2 style="margin:0;flex:1">Offerte</h2>
-        <div class="seg">${[["all", "Tutte"], ["check", `Da controllare (${unverified})`], ["feat", "In evidenza"]].map(([k, l]) => `<button data-filter="${k}" class="${S.offerFilter === k ? "on" : ""}">${l}</button>`).join("")}</div></div>
-      <p class="muted" style="margin:8px 0 0">Tocca un'offerta per controllarla o correggerla. Il bordo giallo indica un prezzo da controllare.</p>
-      <div class="offers">${filtered.map(offerCard).join("") || `<div style="grid-column:1/-1">${empty("i-check", "Niente da mostrare", hasOffers ? "Nessuna offerta in questo filtro." : "In questo volantino non sono state trovate offerte.")}</div>`}</div>
-    </div>`;
+    <div id="stepBody"></div>`;
   $("#back").onclick = () => go("flyers");
-  $$("[data-filter]", el).forEach(b => b.onclick = () => { S.offerFilter = b.dataset.filter; go("flyers", {flyer: id}); });
-  $$("[data-offer]", el).forEach(c => {
-    c.onclick = () => editOffer(f.offers.find(o => o.id === Number(c.dataset.offer)), id);
-    c.onkeydown = e => { if (e.key === "Enter") c.click(); };
-  });
-  const out = $("#actionOut");
-  $("#aContent").onclick = e => busy(e.currentTarget, async () => {
-    const r = await api(`/api/flyers/${id}/content`, {method: "POST"});
-    toast(`Creati ${r.content.length} testi ${r.source === "ai" ? "scritti dall'IA" : "dal modello standard"}.`);
-    out.innerHTML = r.warnings.map(w => notice("warn", w)).join("") + `<div class="notice info">${icon("i-spark")}<span>Testi pronti. <a href="#" id="toContent">Apri i contenuti</a> per leggerli e approvarli.</span></div>`;
-    $("#toContent").onclick = ev => { ev.preventDefault(); go("content"); };
-  }, "Scrivo…");
-  for (const [btn, fmt] of [["#aVideoP", "portrait"], ["#aVideoL", "landscape"]]) {
-    $(btn).onclick = e => busy(e.currentTarget, async () => {
-      const job = await api(`/api/flyers/${id}/video?format=${fmt}`, {method: "POST"});
-      out.innerHTML = `<div class="notice info" style="display:block"><b>Il montatore sta creando il video…</b><div>Di solito serve meno di un minuto.</div><div class="progress"><div></div></div></div>`;
-      let j = job;
-      while (["queued", "running"].includes(j.status)) { await sleep(2000); j = await api(`/api/jobs/${job.id}`); }
-      if (j.status === "failed") { out.innerHTML = notice("err", "Video non riuscito: " + j.error); return; }
-      const url = await blobUrl(`/api/content/${j.result.content_id}/file`);
-      out.innerHTML = `<div style="margin-top:14px;${fmt === "portrait" ? "max-width:340px" : ""}"><video controls autoplay muted playsinline src="${url}"></video></div>
-        <div class="toolbar" style="margin-top:10px"><span class="chip ok">${icon("i-check")} ${j.result.duration} secondi · ${j.result.offers} offerte</span>
-        <a class="btn sm sec" href="${url}" download="promovo_${fmt === "portrait" ? "reel" : "schermo"}.mp4">Scarica il video</a></div>`;
-    }, "Monto il video…");
-  }
-  $("#aCampaign").onclick = e => busy(e.currentTarget, async () => {
-    const r = await api(`/api/flyers/${id}/campaign`, {method: "POST"});
-    out.innerHTML = r.messages.length ? `<p class="muted" style="margin-top:14px">Messaggi pronti, uno per ogni cliente con consenso. Li trovi anche in Contenuti.</p><div class="grid g3">${r.messages.map(m => `<div class="card" style="box-shadow:none"><b>${esc(m.title)}</b><p style="white-space:pre-wrap;font-size:14px;margin-bottom:0">${esc(m.body)}</p></div>`).join("")}</div>`
-      : notice("info", "Nessun cliente ha dato il consenso ai messaggi. Aggiungili nella sezione Clienti.", "i-users");
-  }, "Preparo…");
-  $("#aPerf").onclick = e => busy(e.currentTarget, async () => {
-    const r = await api(`/api/flyers/${id}/performance`);
-    const s = r.summary;
-    const pct = s.revenue_change_percent;
-    out.innerHTML = `<div class="grid g4" style="margin-top:14px">
-      <div class="card kpi" style="box-shadow:none"><div class="ic">${icon("i-chart")}</div><div><div class="v">${pct === null ? "n/d" : (pct > 0 ? "+" : "") + pct + "%"}</div><div class="k">Incasso sulle offerte</div></div></div>
-      <div class="card kpi" style="box-shadow:none"><div class="ic">${icon("i-check")}</div><div><div class="v">${s.offers_measured}</div><div class="k">Offerte misurate</div></div></div></div>
-      ${r.suggestions.map(x => notice("info", x, "i-spark")).join("") || notice("info", "Importa le vendite di cassa nella sezione Clienti per vedere i risultati.", "i-chart")}`;
-  }, "Calcolo…");
-  $("#aReprocess").onclick = e => { if (confirm("Rileggere il volantino? Le correzioni fatte a mano andranno perse.")) busy(e.currentTarget, async () => { await api(`/api/flyers/${id}/reprocess`, {method: "POST"}); toast("Rilettura avviata."); go("flyers", {flyer: id}); }, "Rileggo…"); };
-  $("#aDelete").onclick = e => { if (confirm("Eliminare questo volantino e le sue offerte?")) busy(e.currentTarget, async () => { await api(`/api/flyers/${id}`, {method: "DELETE"}); toast("Volantino eliminato."); go("flyers"); }); };
+  $$("[data-step]", el).forEach(b => b.onclick = () => go("flyers", {flyer: id, step: b.dataset.step}));
+  $("#reprocess").onclick = async e => { if (await confirmBox("Rileggere il volantino?", "Le offerte verranno lette da capo: le correzioni fatte a mano andranno perse.", "Rileggi")) busy(e.currentTarget, async () => { await api(`/api/flyers/${id}/reprocess`, {method: "POST"}); forget(`/api/offers`); toast("Rilettura avviata."); go("flyers", {flyer: id}); }); };
+  $("#delFlyer").onclick = async e => { if (await confirmBox("Eliminare il volantino?", "Verranno eliminati offerte, video, immagini e testi di questo volantino.", "Elimina", true)) busy(e.currentTarget, async () => { await api(`/api/flyers/${id}`, {method: "DELETE"}); toast("Volantino eliminato."); go("flyers"); }); };
+  const body = $("#stepBody");
+  if (step === "check") stepCheck(body, f);
+  else if (step === "make") stepMake(body, f, content);
+  else if (step === "publish") stepPublish(body, f, content);
+  else stepResults(body, f);
+  loadImages(el);
 }
 
-const offerCard = o => `<div class="offer ${o.price_verified ? "" : "unverified"}" data-offer="${o.id}" tabindex="0" role="button">
-  <div class="tags">${o.discount_percent ? `<span class="chip gold">-${o.discount_percent}%</span>` : "<span></span>"}${o.is_featured ? `<span class="chip info">${icon("i-star")} evidenza</span>` : ""}</div>
-  <div class="img">${o.image_url ? `<img data-src="${o.image_url}" alt="${esc(o.name)}">` : icon("i-flyer")}</div>
-  <div class="body"><div class="name">${esc([o.brand, o.name].filter(Boolean).join(" "))}</div>
-    <div class="desc">${esc([o.description, o.conditions].filter(Boolean).join(" · ") || o.category)}</div>
-    <div class="prices"><span class="price">${esc(o.price)}</span>${o.old_price ? `<span class="old">${esc(o.old_price)}</span>` : ""}</div>
-    <div>${o.price_verified ? `<span class="chip ok" title="Prezzo verificato con: ${esc(o.verified_by)}">${icon("i-check")} ${esc(o.verified_by || "verificato")}</span>` : `<span class="chip warn">${icon("i-alert")} da controllare</span>`}</div>
-  </div></div>`;
+function stepCheck(el, f) {
+  const total = f.offers.length;
+  const unverified = f.offers.filter(o => !o.price_verified);
+  const okN = total - unverified.length;
+  const shown = f.offers.filter(o => S.offerFilter === "all" || (S.offerFilter === "check" ? !o.price_verified : o.is_featured));
+  el.innerHTML = `
+    <div class="card">
+      <div class="explain">${icon("i-check")}<div><b>Come funziona il controllo dei prezzi</b><br>
+        Promovo legge ogni prezzo e poi lo <b>ricontrolla da solo</b> sul volantino. I prezzi <b>verdi</b> sono già confermati. Quelli <b>gialli</b> non è riuscito a confermarli: guarda il ritaglio del volantino accanto e premi <b>«È giusto»</b>, oppure correggilo.
+        <div class="legend"><span class="chip ok">${icon("i-check")} confermato</span><span class="chip warn">${icon("i-alert")} da controllare</span></div></div></div>
+      ${(f.warnings || []).filter(w => !/da controllare a mano|non trovati nel testo|non confermati/.test(w)).map(w => notice("warn", w)).join("")}
+      ${f.error ? notice("err", f.error) : ""}
+      <div class="meter" style="margin-top:16px"><div class="bar"><div style="width:${total ? Math.round(okN / total * 100) : 0}%"></div></div><b>${okN} di ${total} prezzi confermati</b></div>
+      <div class="toolbar" style="margin-top:16px">
+        <div class="seg">${[["all", `Tutte (${total})`], ["check", `Da controllare (${unverified.length})`], ["feat", "In evidenza"]].map(([k, l]) => `<button data-filter="${k}" class="${S.offerFilter === k ? "on" : ""}">${l}</button>`).join("")}</div>
+        <span style="flex:1"></span>
+        <button class="btn sec sm" id="addOffer">${icon("i-plus")} Aggiungi un'offerta mancante</button>
+      </div>
+      <div class="olist">${shown.map(offerRow).join("") || empty(total ? "i-check" : "i-flyer", total ? "Niente da mostrare" : "Nessuna offerta letta", total ? "Nessuna offerta in questo filtro." : (S.ai ? "Prova a rileggere il volantino, o aggiungi le offerte a mano." : "Questo volantino è fatto di immagini: accendi l'IA, oppure aggiungi le offerte a mano."))}</div>
+    </div>
+    <div class="sticky-bar"><span class="muted">${unverified.length ? `Ancora ${unverified.length} prezzi da controllare` : "Tutti i prezzi sono confermati"}</span>
+      <div class="toolbar">${unverified.length ? `<button class="btn sec sm" id="confirmAll">Li ho controllati tutti</button>` : ""}<button class="btn" id="next" ${total ? "" : "disabled"}>Avanti: crea i materiali ${icon("i-arrow")}</button></div></div>`;
+  $$("[data-filter]", el).forEach(b => b.onclick = () => { S.offerFilter = b.dataset.filter; go("flyers", {flyer: f.id, step: "check"}); });
+  $$("[data-crop]", el).forEach(c => c.onclick = () => lightbox(c.dataset.crop));
+  $$("[data-ok]", el).forEach(b => b.onclick = () => busy(b, async () => { await api(`/api/offers/${b.dataset.ok}`, {method: "PATCH", json: {confirm: true}}); go("flyers", {flyer: f.id, step: "check"}); }));
+  $$("[data-edit]", el).forEach(b => b.onclick = () => editOffer(f.offers.find(o => o.id === Number(b.dataset.edit)), f.id));
+  $$("[data-feat]", el).forEach(b => b.onclick = () => busy(b, async () => { const o = f.offers.find(x => x.id === Number(b.dataset.feat)); await api(`/api/offers/${o.id}`, {method: "PATCH", json: {is_featured: !o.is_featured}}); go("flyers", {flyer: f.id, step: "check"}); }));
+  $("#addOffer").onclick = () => editOffer(null, f.id);
+  const ca = $("#confirmAll");
+  if (ca) ca.onclick = async () => { if (await confirmBox("Confermare tutti i prezzi?", `Confermi di aver controllato i ${unverified.length} prezzi gialli sul volantino?`, "Sì, li ho controllati")) busy(ca, async () => { await api(`/api/flyers/${f.id}/confirm`, {json: {offer_ids: unverified.map(o => o.id)}}); toast("Prezzi confermati."); go("flyers", {flyer: f.id, step: "check"}); }); };
+  $("#next").onclick = async () => { if (unverified.length && !(await confirmBox("Ci sono prezzi da controllare", `${unverified.length} prezzi non sono ancora confermati. Conviene controllarli prima di creare video e grafiche.`, "Vai avanti lo stesso"))) return; go("flyers", {flyer: f.id, step: "make"}); };
+}
+
+const offerRow = o => `<div class="orow ${o.price_verified ? "" : "unverified"}">
+  <div class="crop" ${o.image_url ? `data-crop="${o.image_url}"` : ""} title="Ingrandisci il ritaglio del volantino">${o.image_url ? `<img data-src="${o.image_url}" alt="Ritaglio dal volantino">` : o.photo_url ? `<img data-src="${o.photo_url}" alt="">` : icon("i-flyer")}${o.manual ? `<span class="tag">aggiunta a mano</span>` : o.image_url ? `<span class="tag">dal volantino</span>` : ""}</div>
+  <div class="info"><b>${esc([o.brand, o.name].filter(Boolean).join(" "))}</b><span class="muted">${esc([o.description, o.conditions, o.category].filter(Boolean).join(" · "))}</span>
+    <div class="prices"><span class="price">€ ${euros(o.price_cents)}</span>${o.old_price ? `<span class="old">${esc(o.old_price)}</span>` : ""}${o.discount_percent ? `<span class="chip gold">-${o.discount_percent}%</span>` : ""}</div>
+    ${o.price_verified ? `<span class="chip ok" title="${esc(VERIFIED[o.verified_by] || "")}">${icon("i-check")} ${esc(VERIFIED[o.verified_by] || "confermato")}</span>` : `<span class="chip warn">${icon("i-alert")} da controllare: confronta con il ritaglio</span>`}</div>
+  <div class="acts">${o.price_verified ? "" : `<button class="btn okb sm" data-ok="${o.id}">${icon("i-check")} È giusto</button>`}
+    <button class="btn sec sm" data-edit="${o.id}">${icon("i-edit")} ${o.price_verified ? "Modifica" : "Correggi"}</button>
+    <button class="btn sec sm star ${o.is_featured ? "on" : ""}" data-feat="${o.id}" title="In evidenza nei Reel e nelle grafiche">${icon("i-star")} ${o.is_featured ? "In evidenza" : "Evidenzia"}</button></div></div>`;
 
 function editOffer(o, flyerId) {
-  const euros = c => c == null ? "" : (c / 100).toFixed(2).replace(".", ",");
-  modal(`<div class="row" style="align-items:center"><h3 class="f">Controlla l'offerta</h3><button class="btn ghost" data-close aria-label="Chiudi">${icon("i-x")}</button></div>
-    ${o.image_url ? `<img class="modal-img" data-src="${o.image_url}" alt="Ritaglio dal volantino">` : ""}
-    <p class="muted" style="margin-top:0">Confronta con il ritaglio del volantino. Salvando, il prezzo risulta verificato da una persona.</p>
-    <div class="stack tight">
-      <div class="row"><div class="f"><label class="l" for="oName">Nome</label><input class="in" id="oName" value="${esc(o.name)}"></div><div class="f"><label class="l" for="oBrand">Marca</label><input class="in" id="oBrand" value="${esc(o.brand)}"></div></div>
-      <div class="row"><div class="f"><label class="l" for="oDesc">Formato</label><input class="in" id="oDesc" value="${esc(o.description)}"></div>
+  const isNew = !o;
+  o = o || {name: "", brand: "", description: "", category: "altro", price_cents: null, old_price_cents: null, conditions: "", is_featured: false};
+  modal(`<div class="row" style="align-items:center"><h3 class="f">${isNew ? "Aggiungi un'offerta" : "Controlla l'offerta"}</h3><button class="btn ghost" data-close aria-label="Chiudi">${icon("i-x")}</button></div>
+    ${!isNew && o.image_url ? `<img class="modal-img" style="margin-top:12px" data-src="${o.image_url}" alt="Ritaglio dal volantino"><p class="hint">Ritaglio dal volantino: confronta nome e prezzo.</p>` : ""}
+    <div class="stack tight" style="margin-top:12px">
+      <div class="row"><div class="f"><label class="l" for="oName">Prodotto *</label><input class="in" id="oName" value="${esc(o.name)}" placeholder="es. Spaghetti n.5"></div><div class="f"><label class="l" for="oBrand">Marca</label><input class="in" id="oBrand" value="${esc(o.brand)}"></div></div>
+      <div class="row"><div class="f"><label class="l" for="oDesc">Formato</label><input class="in" id="oDesc" value="${esc(o.description)}" placeholder="es. 500 g"></div>
         <div class="f"><label class="l" for="oCat">Categoria</label><select class="in" id="oCat">${CATEGORIES.map(c => `<option ${c === o.category ? "selected" : ""}>${c}</option>`).join("")}</select></div></div>
-      <div class="row"><div class="f"><label class="l" for="oPrice">Prezzo in offerta (€)</label><input class="in" id="oPrice" inputmode="decimal" value="${euros(o.price_cents)}"></div>
-        <div class="f"><label class="l" for="oOld">Prezzo precedente (€)</label><input class="in" id="oOld" inputmode="decimal" placeholder="vuoto se non c'è" value="${euros(o.old_price_cents)}"></div></div>
+      <div class="row"><div class="f"><label class="l" for="oPrice">Prezzo in offerta (€) *</label><input class="in" id="oPrice" inputmode="decimal" value="${euros(o.price_cents)}" placeholder="es. 1,99"></div>
+        <div class="f"><label class="l" for="oOld">Prezzo prima (€)</label><input class="in" id="oOld" inputmode="decimal" placeholder="vuoto se non c'è" value="${euros(o.old_price_cents)}"></div></div>
       <div><label class="l" for="oCond">Condizioni</label><input class="in" id="oCond" placeholder="es. con carta fedeltà" value="${esc(o.conditions)}"></div>
-      <label class="switch"><input type="checkbox" id="oFeat" ${o.is_featured ? "checked" : ""}> In evidenza (Reel e social)</label>
+      ${isNew ? "" : `<div><label class="l">Foto del prodotto per video e grafiche</label><div class="logo-box"><div class="logo-prev">${o.photo_url ? `<img data-src="${o.photo_url}" alt="">` : "nessuna foto"}</div><div><button class="btn sec sm" id="oPhotoBtn">${icon("i-upload")} Cambia foto</button><input type="file" id="oPhoto" class="hidden" accept="image/jpeg,image/png,image/webp"><div class="hint">Una foto della confezione su sfondo chiaro viene scontornata in automatico.</div></div></div></div>`}
+      <label class="switch"><input type="checkbox" id="oFeat" ${o.is_featured ? "checked" : ""}> In evidenza (nei Reel e nelle grafiche)</label>
     </div>
-    <div class="toolbar" style="margin-top:20px;justify-content:flex-end"><button class="btn sec" data-close>Annulla</button><button class="btn" id="oSave">${icon("i-check")} Salva e verifica</button></div>`,
+    <div class="toolbar" style="margin-top:20px">${isNew ? "" : `<button class="btn ghost" id="oDel" style="color:var(--err)">${icon("i-trash")} Elimina offerta</button>`}<span style="flex:1"></span><button class="btn sec" data-close>Annulla</button><button class="btn" id="oSave">${icon("i-check")} ${isNew ? "Aggiungi" : "Salva e conferma"}</button></div>`,
   (m, close) => {
     loadImages(m);
+    const val = () => ({name: $("#oName", m).value.trim(), brand: $("#oBrand", m).value.trim(), description: $("#oDesc", m).value.trim(),
+      category: $("#oCat", m).value, price: $("#oPrice", m).value.trim(), old_price: $("#oOld", m).value.trim(),
+      conditions: $("#oCond", m).value.trim(), is_featured: $("#oFeat", m).checked});
     $("#oSave", m).onclick = e => busy(e.currentTarget, async () => {
-      await api(`/api/offers/${o.id}`, {method: "PATCH", json: {name: $("#oName", m).value.trim(), brand: $("#oBrand", m).value.trim(),
-        description: $("#oDesc", m).value.trim(), category: $("#oCat", m).value, price: $("#oPrice", m).value.trim(),
-        old_price: $("#oOld", m).value.trim(), conditions: $("#oCond", m).value.trim(), is_featured: $("#oFeat", m).checked}});
-      close(); toast("Offerta salvata e verificata."); go("flyers", {flyer: flyerId});
+      const v = val();
+      if (!v.name) throw new Error("Scrivi il nome del prodotto.");
+      if (!v.price) throw new Error("Scrivi il prezzo in offerta.");
+      if (isNew) await api(`/api/flyers/${flyerId}/offers`, {json: v});
+      else await api(`/api/offers/${o.id}`, {method: "PATCH", json: Object.assign(v, {confirm: true})});
+      close(); toast(isNew ? "Offerta aggiunta." : "Offerta salvata e confermata."); go("flyers", {flyer: flyerId, step: "check"});
     });
+    const del = $("#oDel", m);
+    if (del) del.onclick = () => busy(del, async () => { await api(`/api/offers/${o.id}`, {method: "DELETE"}); close(); toast("Offerta eliminata."); go("flyers", {flyer: flyerId, step: "check"}); });
+    const pb = $("#oPhotoBtn", m), pf = $("#oPhoto", m);
+    if (pb) { pb.onclick = () => pf.click(); pf.onchange = () => busy(pb, async () => { const fd = new FormData(); fd.append("file", pf.files[0]); const r = await api(`/api/offers/${o.id}/photo`, {body: fd}); forget(`/api/offers/${o.id}/photo`); $(".logo-prev", m).innerHTML = `<img src="${await blobUrl(r.photo_url)}" alt="">`; toast("Foto aggiornata."); }); }
   });
 }
 
-VIEWS.content = async el => {
-  const items = await api(`/api/stores/${S.storeId}/content`);
-  const kinds = [...new Set(items.map(c => c.kind))];
-  if (S.contentKind !== "all" && !kinds.includes(S.contentKind)) S.contentKind = "all";
-  const shown = items.filter(c => S.contentKind === "all" || c.kind === S.contentKind);
-  el.innerHTML = `<div class="card"><div class="toolbar"><div style="flex:1;min-width:220px"><h2>Contenuti</h2><p class="sub" style="margin:0">Testi e video preparati dagli agenti. Nulla viene pubblicato senza la tua approvazione.</p></div>
-      ${kinds.length ? `<div class="seg">${[["all", "Tutti"], ...kinds.map(k => [k, KIND[k] || k])].map(([k, l]) => `<button data-kind="${k}" class="${S.contentKind === k ? "on" : ""}">${esc(l)}</button>`).join("")}</div>` : ""}</div></div>
-    <div class="grid g3" style="margin-top:18px">${shown.map(postCard).join("") || `<div class="card" style="grid-column:1/-1">${empty("i-spark", "Nessun contenuto", "Apri un volantino e premi «Testi social» o «Reel».", `<button class="btn" id="toFlyers">Vai ai volantini</button>`)}</div>`}</div>`;
-  $$("[data-kind]", el).forEach(b => b.onclick = () => { S.contentKind = b.dataset.kind; go("content"); });
-  const tf = $("#toFlyers"); if (tf) tf.onclick = () => go("flyers");
-  $$("[data-post]", el).forEach(card => {
-    const id = Number(card.dataset.post), c = items.find(x => x.id === id);
-    const saveBtn = $("[data-save]", card), copy = $("[data-copy]", card), ap = $("[data-approve]", card), play = $("[data-play]", card);
-    if (saveBtn) saveBtn.onclick = e => busy(e.currentTarget, async () => { await api(`/api/content/${id}`, {method: "PATCH", json: {body: $("textarea", card).value}}); toast("Testo salvato."); });
-    if (copy) copy.onclick = async () => {
-      const text = $("textarea", card).value + (c.meta.hashtags && c.meta.hashtags.length ? "\n\n" + c.meta.hashtags.map(h => "#" + h).join(" ") : "");
-      try { await navigator.clipboard.writeText(text); toast("Testo copiato: incollalo dove vuoi."); } catch (e) { $("textarea", card).select(); toast("Copia automatica non disponibile: il testo è selezionato, copialo a mano.", "err"); }
-    };
-    if (play) play.onclick = e => busy(e.currentTarget, async () => { const url = await blobUrl(c.file_url); $("[data-player]", card).innerHTML = `<video controls autoplay muted playsinline src="${url}"></video><a class="btn sm sec" style="margin-top:8px" href="${url}" download="promovo_video.mp4">Scarica</a>`; });
-    ap.onclick = e => busy(e.currentTarget, async () => { await api(`/api/content/${id}`, {method: "PATCH", json: {approved: !c.approved}}); toast(c.approved ? "Approvazione tolta." : "Contenuto approvato."); go("content"); });
+function stepMake(el, f, content) {
+  if (!S.makeSel) S.makeSel = new Set(MAKE.filter(x => x[4]).map(x => x[0]));
+  const has = new Set(content.map(c => c.kind === "video" ? "video_" + c.meta.format : c.kind === "image" ? "images" : c.kind === "whatsapp_personal" ? "messages" : "texts"));
+  const unverified = f.offers.filter(o => !o.price_verified).length;
+  el.innerHTML = `
+    <div class="card">
+      <h2>Cosa vuoi creare?</h2><p class="sub">Scegli i materiali: il montatore, il grafico e il copywriter li preparano uno dopo l'altro. Puoi rifarli quando vuoi.</p>
+      ${unverified ? notice("warn", `Attenzione: ${unverified} prezzi non sono ancora confermati. Conviene controllarli prima.`) : ""}
+      <div class="make">${MAKE.map(([k, ic, t, d]) => `<label class="mk ${S.makeSel.has(k) ? "on" : ""}"><input type="checkbox" data-mk="${k}" ${S.makeSel.has(k) ? "checked" : ""}><div><b>${icon(ic)} ${t}</b><span>${d}</span>${has.has(k) ? `<div style="margin-top:6px"><span class="chip ok">${icon("i-check")} già creato</span></div>` : ""}</div></label>`).join("")}</div>
+      <div id="jobState"></div>
+    </div>
+    <div class="sticky-bar"><span class="muted" id="selInfo"></span><button class="btn lg" id="makeBtn">${icon("i-spark")} Crea i materiali</button></div>`;
+  const upd = () => { $("#selInfo").textContent = S.makeSel.size ? `${S.makeSel.size} materiali selezionati` : "Seleziona almeno un materiale"; $("#makeBtn").disabled = !S.makeSel.size; };
+  $$("[data-mk]", el).forEach(c => c.onchange = () => { c.checked ? S.makeSel.add(c.dataset.mk) : S.makeSel.delete(c.dataset.mk); c.closest(".mk").classList.toggle("on", c.checked); upd(); });
+  upd();
+  $("#makeBtn").onclick = e => busy(e.currentTarget, async () => {
+    const items = MAKE.map(x => x[0]).filter(k => S.makeSel.has(k));
+    const job = await api(`/api/flyers/${f.id}/kit`, {json: {items}});
+    const st = $("#jobState");
+    let j = job;
+    while (["queued", "running"].includes(j.status)) {
+      const r = j.result || {};
+      st.innerHTML = `<div class="notice info" style="display:block"><b>${r.current ? esc(r.current) + "…" : "Preparazione…"}</b>
+        <div class="joblist">${items.map((k, i) => { const lab = MAKE.find(x => x[0] === k)[2]; const s = i < (r.done || 0) ? "done" : i === (r.done || 0) ? "run" : "wait"; return `<div class="jl ${s === "wait" ? "wait" : ""}"><span class="s">${s === "done" ? icon("i-check") : s === "run" ? `<span class="spin" style="width:16px;height:16px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;display:inline-block;animation:spin .7s linear infinite"></span>` : "·"}</span>${esc(lab)}</div>`; }).join("")}</div>
+        <div class="progress det"><div style="width:${Math.round(((r.done || 0) / items.length) * 100)}%"></div></div></div>`;
+      await sleep(1500);
+      j = await api(`/api/jobs/${job.id}`);
+    }
+    forget("/api/content");
+    if (j.status === "failed") throw new Error("Creazione non riuscita: " + j.error);
+    if (j.result.errors && j.result.errors.length) toast("Alcuni materiali non sono riusciti:\n" + j.result.errors.join("\n"), "err");
+    else toast("Materiali pronti!");
+    go("flyers", {flyer: f.id, step: "publish"});
+  }, "Creazione in corso…");
+}
+
+function stepPublish(el, f, content) {
+  if (!content.length) { el.innerHTML = `<div class="card">${empty("i-spark", "Nessun materiale ancora", "Crea video, immagini e testi nel passo 2.", `<button class="btn" id="toMake">Vai a «Crea i materiali»</button>`)}</div>`; $("#toMake").onclick = () => go("flyers", {flyer: f.id, step: "make"}); return; }
+  const vids = content.filter(c => c.kind === "video"), imgs = content.filter(c => c.kind === "image");
+  const texts = content.filter(c => ["instagram", "facebook", "whatsapp", "newsletter"].includes(c.kind));
+  const pers = content.filter(c => c.kind === "whatsapp_personal");
+  const approved = content.filter(c => c.approved).length;
+  const apBtn = c => `<button class="btn sm ${c.approved ? "sec" : "okb"}" data-ap="${c.id}">${c.approved ? "Approvato ✓" : "Approva"}</button>`;
+  el.innerHTML = `
+    ${vids.length ? `<div class="card"><h2>${icon("i-video")} Video</h2><p class="sub">Guardali, poi approvali o scaricali.</p>
+      <div class="vids">${vids.map(c => `<div class="vid"><div class="ph" data-play="${c.file_url}" title="Guarda il video">${c.poster_url ? `<img data-src="${c.poster_url}" alt="">` : ""}<span class="play"><svg class="i" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></span></div>
+        <div class="toolbar"><b style="flex:1">${esc(c.title)}</b><span class="muted">${c.meta.duration} s${c.meta.music ? " · musica" : ""}</span></div>
+        <div class="toolbar"><button class="btn sm sec" data-dl="${c.file_url}" data-name="${esc(c.title)}.mp4">${icon("i-download")} Scarica</button><span style="flex:1"></span>${apBtn(c)}</div></div>`).join("")}</div></div>` : ""}
+    ${imgs.length ? `<div class="card"><div class="toolbar"><div style="flex:1"><h2>${icon("i-image")} Immagini</h2><p class="sub" style="margin:0">Tocca un'immagine per ingrandirla.</p></div><button class="btn sm sec" id="apImgs">Approva tutte le immagini</button></div>
+      <div class="gallery" style="margin-top:14px">${imgs.map(c => `<div class="gal" data-big="${c.file_url}"><img data-src="${c.file_url}" alt="${esc(c.title)}"><div class="lab"><span class="chip grey">${esc(c.title)}</span>${c.approved ? `<span class="chip ok">${icon("i-check")}</span>` : ""}</div></div>`).join("")}</div></div>` : ""}
+    ${texts.length ? `<div class="card"><h2>${icon("i-msg")} Testi</h2><p class="sub">Puoi modificarli; «Copia» li porta negli appunti, pronti da incollare sotto il video o l'immagine.</p>
+      <div class="grid g2" style="margin-top:0">${texts.map(c => `<div class="post" data-post="${c.id}"><div class="post-head"><div class="ic ic-${esc(c.kind)}">${icon(c.kind === "newsletter" ? "i-send" : "i-msg")}</div><div class="t"><b>${esc(KIND[c.kind])}</b><span class="muted">${esc(c.kind === "newsletter" ? "Oggetto: " + c.title : (c.meta.source === "ai" ? "scritto dall'IA" : "modello Promovo"))}</span></div>${c.approved ? `<span class="chip ok">approvato</span>` : ""}</div>
+        <textarea class="in" aria-label="Testo">${esc(c.body)}</textarea>${c.meta.hashtags && c.meta.hashtags.length ? `<div class="tags-line">${c.meta.hashtags.map(h => "#" + esc(h)).join(" ")}</div>` : ""}
+        <div class="toolbar"><button class="btn sm sec" data-copy="${c.id}">${icon("i-copy")} Copia</button><button class="btn sm sec" data-save="${c.id}">Salva</button><span style="flex:1"></span>${apBtn(c)}</div></div>`).join("")}</div></div>` : ""}
+    ${pers.length ? `<div class="card"><h2>${icon("i-users")} Messaggi personali (${pers.length})</h2><p class="sub">Uno per ogni cliente con consenso, con le offerte delle sue categorie preferite.</p>
+      <div class="grid g3">${pers.map(c => `<div class="card" style="box-shadow:none"><b>${esc(c.title)}</b><div class="muted">${esc(c.meta.phone || "")}</div><p style="white-space:pre-wrap;font-size:14px">${esc(c.body)}</p><div class="toolbar"><button class="btn sm sec" data-copyp="${c.id}">${icon("i-copy")} Copia</button><span style="flex:1"></span>${apBtn(c)}</div></div>`).join("")}</div></div>` : ""}
+    <div class="sticky-bar"><span class="muted">${approved} di ${content.length} materiali approvati</span>
+      <div class="toolbar">${approved < content.length ? `<button class="btn sec sm" id="apAll">Approva tutto</button>` : ""}<button class="btn" id="zip">${icon("i-download")} Scarica tutto (ZIP)</button></div></div>`;
+  const reload = () => go("flyers", {flyer: f.id, step: "publish"});
+  const approve = async (ids, val = true) => { for (const id of ids) await api(`/api/content/${id}`, {method: "PATCH", json: {approved: val}}); };
+  $$("[data-ap]", el).forEach(b => b.onclick = () => busy(b, async () => { const c = content.find(x => x.id === Number(b.dataset.ap)); await approve([c.id], !c.approved); reload(); }));
+  $$("[data-play]", el).forEach(p => p.onclick = async () => { p.innerHTML = `<span class="spin" style="width:20px;height:20px;border:2px solid #fff;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite"></span>`; const url = await blobUrl(p.dataset.play); p.outerHTML = `<video controls autoplay playsinline src="${url}"></video>`; });
+  $$("[data-dl]", el).forEach(b => b.onclick = () => busy(b, () => download(b.dataset.dl, b.dataset.name)));
+  $$("[data-big]", el).forEach(g => g.onclick = () => lightbox(g.dataset.big));
+  const ai = $("#apImgs"); if (ai) ai.onclick = () => busy(ai, async () => { await approve(imgs.filter(c => !c.approved).map(c => c.id)); toast("Immagini approvate."); reload(); });
+  $$("[data-copy]", el).forEach(b => b.onclick = async () => {
+    const card = b.closest("[data-post]"), c = content.find(x => x.id === Number(b.dataset.copy));
+    const text = $("textarea", card).value + (c.meta.hashtags && c.meta.hashtags.length ? "\n\n" + c.meta.hashtags.map(h => "#" + h).join(" ") : "");
+    try { await navigator.clipboard.writeText(text); toast("Testo copiato: incollalo dove vuoi."); } catch (e) { $("textarea", card).select(); toast("Copia automatica non disponibile: il testo è selezionato, copialo a mano.", "err"); }
   });
+  $$("[data-copyp]", el).forEach(b => b.onclick = async () => { const c = content.find(x => x.id === Number(b.dataset.copyp)); try { await navigator.clipboard.writeText(c.body); toast("Messaggio copiato."); } catch (e) { toast("Copia non disponibile su questo browser.", "err"); } });
+  $$("[data-save]", el).forEach(b => b.onclick = () => busy(b, async () => { await api(`/api/content/${b.dataset.save}`, {method: "PATCH", json: {body: $("textarea", b.closest("[data-post]")).value}}); toast("Testo salvato."); }));
+  const aa = $("#apAll"); if (aa) aa.onclick = () => busy(aa, async () => { await approve(content.filter(c => !c.approved).map(c => c.id)); toast("Tutto approvato."); reload(); });
+  $("#zip").onclick = e => busy(e.currentTarget, async () => {
+    const onlyApproved = approved > 0 && approved < content.length && await confirmBox("Cosa vuoi scaricare?", `Hai approvato ${approved} materiali su ${content.length}. Vuoi scaricare solo quelli approvati?`, "Solo gli approvati");
+    await download(`/api/flyers/${f.id}/kit.zip${onlyApproved ? "?approved_only=true" : ""}`, `Promovo_${(currentStore().name || "negozio").replace(/\W+/g, "_")}.zip`);
+    toast("Download avviato.");
+  }, "Preparo lo ZIP…");
+}
+
+async function stepResults(el, f) {
+  let perf = null, err = "";
+  try { perf = await api(`/api/flyers/${f.id}/performance`); } catch (e) { err = e.message; }
+  const measured = perf && perf.summary.offers_measured;
+  el.innerHTML = `<div class="card"><h2>${icon("i-chart")} Com'è andata?</h2><p class="sub">Promovo confronta le vendite di cassa durante il volantino con lo stesso numero di giorni prima, offerta per offerta.</p>
+    ${err ? notice("warn", err) : ""}
+    ${perf && measured ? `<div class="grid g4">
+        <div class="card kpi" style="box-shadow:none"><div class="ic">${icon("i-chart")}</div><div><div class="v">${perf.summary.revenue_change_percent === null ? "n/d" : (perf.summary.revenue_change_percent > 0 ? "+" : "") + perf.summary.revenue_change_percent + "%"}</div><div class="k">Incasso sulle offerte</div></div></div>
+        <div class="card kpi" style="box-shadow:none"><div class="ic">${icon("i-check")}</div><div><div class="v">${perf.summary.offers_measured}</div><div class="k">Offerte misurate</div></div></div></div>
+      ${perf.suggestions.map(x => notice("info", x, "i-spark")).join("")}
+      <div class="tw" style="margin-top:14px"><table><thead><tr><th>Offerta</th><th>Pezzi prima</th><th>Pezzi durante</th><th>Variazione</th></tr></thead><tbody>${perf.offers.filter(o => o.matched_products.length).map(o => `<tr><td>${esc(o.name)}</td><td>${o.qty_before}</td><td>${o.qty_during}</td><td>${o.uplift_percent === null ? "n/d" : `<span class="chip ${o.uplift_percent >= 0 ? "ok" : "err"}">${o.uplift_percent > 0 ? "+" : ""}${o.uplift_percent}%</span>`}</td></tr>`).join("")}</tbody></table></div>`
+      : !err ? notice("info", "Nessuna vendita trovata per questo volantino. Importa il file CSV delle vendite di cassa dalla sezione Clienti.", "i-chart") : ""}
+    <div style="margin-top:14px"><button class="btn sec" id="toSales">${icon("i-upload")} Importa vendite di cassa</button></div></div>`;
+  $("#toSales").onclick = () => go("customers");
+}
+
+// ---------- clienti
+VIEWS.customers = async el => {
+  const cs = await api(`/api/stores/${S.storeId}/customers`);
+  el.innerHTML = `<div class="grid g2" style="margin-top:0">
+    <div class="card"><h2>Nuovo cliente</h2><p class="sub">I messaggi promozionali partono solo verso chi ha dato il consenso. Chi risponde STOP viene tolto subito.</p>
+      <div class="stack tight"><div><label class="l" for="cuName">Nome</label><input class="in" id="cuName" autocomplete="off"></div>
+        <div><label class="l" for="cuPhone">Telefono (WhatsApp)</label><input class="in" id="cuPhone" inputmode="tel" placeholder="es. 333 1234567"></div>
+        <div><label class="l">Cosa compra più volentieri (facoltativo)</label><div class="qchips" id="cuCats" style="margin-top:0">${CATEGORIES.filter(c => c !== "altro").map(c => `<button type="button" data-cat="${c}">${c}</button>`).join("")}</div></div>
+        <label class="switch"><input type="checkbox" id="cuConsent"> Ha dato il consenso a ricevere le offerte</label>
+        <button class="btn" id="cuAdd">${icon("i-plus")} Aggiungi cliente</button></div></div>
+    <div class="card"><h2>Vendite di cassa</h2><p class="sub">Importa il file CSV esportato dalla cassa per misurare i risultati di ogni volantino. Colonne: data, prodotto, quantita, incasso.</p>
+      <div class="drop" id="salesDrop" style="padding:24px" tabindex="0" role="button"><b>Scegli il file CSV</b><div class="muted">separatore ; oppure ,</div><input type="file" id="salesFile" accept=".csv,text/csv" class="hidden"></div>
+      <div id="salesOut"></div></div></div>
+    <div class="card" style="margin-top:18px"><h2>Clienti (${cs.length})</h2>
+      ${cs.length ? `<div class="tw"><table><thead><tr><th>Nome</th><th>Telefono</th><th>Preferenze</th><th>Consenso</th><th></th></tr></thead><tbody>${cs.map(c => `
+        <tr><td><b>${esc(c.name || "—")}</b></td><td>${esc(c.phone)}</td><td class="muted">${esc(c.preferred_categories.join(", ") || "—")}</td>
+        <td>${c.marketing_consent ? `<span class="chip ok">sì</span>` : `<span class="chip grey">no</span>`}</td>
+        <td><button class="btn sm sec" data-c="${c.id}" data-v="${!c.marketing_consent}">${c.marketing_consent ? "Revoca" : "Registra consenso"}</button></td></tr>`).join("")}</tbody></table></div>`
+        : empty("i-users", "Nessun cliente", "Aggiungi i clienti che vogliono ricevere le offerte su WhatsApp.")}</div>`;
+  const cats = new Set();
+  $$("[data-cat]", el).forEach(b => b.onclick = () => { const c = b.dataset.cat; cats.has(c) ? cats.delete(c) : cats.add(c); b.style.background = cats.has(c) ? "var(--brand-soft)" : "#fff"; b.style.borderColor = cats.has(c) ? "var(--brand)" : ""; });
+  $("#cuAdd").onclick = e => busy(e.currentTarget, async () => {
+    if (!$("#cuPhone").value.trim()) throw new Error("Scrivi il numero di telefono.");
+    await api(`/api/stores/${S.storeId}/customers`, {json: {name: $("#cuName").value.trim(), phone: $("#cuPhone").value.trim(), marketing_consent: $("#cuConsent").checked, preferred_categories: [...cats]}});
+    toast("Cliente aggiunto."); go("customers");
+  });
+  $$("[data-c]", el).forEach(b => b.onclick = () => busy(b, async () => { await api(`/api/customers/${b.dataset.c}/consent`, {method: "PATCH", json: {marketing_consent: b.dataset.v === "true"}}); go("customers"); }));
+  $("#salesDrop").onclick = () => $("#salesFile").click();
+  $("#salesDrop").onkeydown = e => { if (e.key === "Enter") $("#salesFile").click(); };
+  $("#salesFile").onchange = async () => {
+    const f = $("#salesFile").files[0]; if (!f) return;
+    const fd = new FormData(); fd.append("file", f);
+    $("#salesOut").innerHTML = `<div class="progress"><div></div></div>`;
+    try { const r = await api(`/api/stores/${S.storeId}/sales`, {body: fd});
+      $("#salesOut").innerHTML = notice("ok", `Importate ${r.imported} righe dal ${itDate(r.first_day)} al ${itDate(r.last_day)}${r.skipped ? ` · ${r.skipped} righe scartate` : ""}. Trovi i risultati nel passo 4 di ogni volantino.`, "i-check") + r.errors.slice(0, 5).map(x => notice("warn", x)).join(""); }
+    catch (e) { $("#salesOut").innerHTML = notice("err", e.message); }
+  };
 };
 
-const postCard = c => `<div class="card post" data-post="${c.id}">
-  <div class="post-head"><div class="ic ic-${esc(c.kind)}">${icon(c.kind === "video" ? "i-video" : c.kind === "newsletter" ? "i-send" : "i-msg")}</div>
-    <div class="t"><b>${esc(KIND[c.kind] || c.kind)}</b><span class="muted">${esc(c.kind === "video" ? ({portrait: "Reel 9:16", landscape: "Schermo 16:9", square: "Quadrato"}[c.meta.format] || "") + " · " + c.meta.duration + " s" : c.title)}</span></div>
-    <span class="chip ${c.approved ? "ok" : "warn"}">${c.approved ? "approvato" : "da approvare"}</span></div>
-  ${c.kind === "video" ? `<div data-player><button class="btn sec" data-play style="width:100%">${icon("i-video")} Guarda il video</button></div>` : `<textarea class="in" aria-label="Testo">${esc(c.body)}</textarea>`}
-  ${c.meta && c.meta.hashtags && c.meta.hashtags.length ? `<div class="tags-line">${c.meta.hashtags.map(h => "#" + esc(h)).join(" ")}</div>` : ""}
-  <div class="toolbar">${c.kind !== "video" ? `<button class="btn sm sec" data-copy>${icon("i-copy")} Copia</button><button class="btn sm sec" data-save>Salva</button>` : ""}
-    <span style="flex:1"></span><button class="btn sm ${c.approved ? "sec" : ""}" data-approve>${c.approved ? "Togli approvazione" : "Approva"}</button></div></div>`;
+// ---------- ordini
+VIEWS.orders = async el => {
+  const orders = await api(`/api/stores/${S.storeId}/orders`);
+  const next = {new: ["confirmed", "Conferma"], confirmed: ["ready", "È pronto"], ready: ["collected", "Ritirato"]};
+  const chip = {new: "info", confirmed: "gold", ready: "ok", collected: "grey", cancelled: "err"};
+  el.innerHTML = `<div class="card"><h2>Ordini da ritirare</h2><p class="sub">Gli ordini presi dall'assistente clienti. Aggiorna lo stato man mano che li prepari.</p>
+    ${orders.length ? `<div class="tw"><table><thead><tr><th>#</th><th>Cliente</th><th>Ritiro</th><th>Articoli</th><th>Totale</th><th>Stato</th><th></th></tr></thead><tbody>${orders.map(o => `
+      <tr><td><b>${o.id}</b></td><td>${esc(o.customer_name)}<div class="muted">${esc(o.customer_phone)}</div></td><td>${itDateTime(o.pickup_at)}</td>
+      <td>${o.items.map(i => `${i.quantity} × ${esc(i.name)}`).join("<br>")}${o.notes ? `<div class="muted">${esc(o.notes)}</div>` : ""}</td><td><b>${esc(o.total)}</b></td>
+      <td><span class="chip ${chip[o.status]}">${esc(STATUS[o.status])}</span></td>
+      <td style="white-space:nowrap">${next[o.status] ? `<button class="btn sm" data-o="${o.id}" data-s="${next[o.status][0]}">${next[o.status][1]}</button> <button class="btn sm ghost" data-o="${o.id}" data-s="cancelled">Annulla</button>` : ""}</td></tr>`).join("")}</tbody></table></div>`
+      : empty("i-bag", "Nessun ordine", "Quando un cliente ordina tramite l'assistente, lo trovi qui.")}</div>`;
+  $$("[data-o]", el).forEach(b => b.onclick = async () => { if (b.dataset.s === "cancelled" && !(await confirmBox("Annullare l'ordine?", "Il cliente non potrà più ritirarlo.", "Annulla ordine", true))) return; busy(b, async () => { await api(`/api/orders/${b.dataset.o}`, {method: "PATCH", json: {status: b.dataset.s}}); toast("Ordine aggiornato."); go("orders"); }); });
+};
 
+// ---------- assistente
 VIEWS.assistant = async el => {
-  const health = await api("/api/health");
   el.innerHTML = `<div class="grid g2" style="margin-top:0">
-    <div class="card"><h2>Assistente clienti</h2><p class="sub">Prova l'agente che risponde ai clienti su WhatsApp e sul sito: offerte, orari e ordini da ritirare.</p>
-      ${health.ai ? "" : notice("warn", "L'intelligenza artificiale non è ancora attiva: l'assistente risponderà quando sarà inserita la chiave.")}
+    <div class="card"><h2>Assistente clienti</h2><p class="sub">L'agente che risponde ai clienti del negozio: offerte, orari, servizi e ordini da ritirare. I prezzi li legge sempre dal volantino, non li inventa.</p>
+      ${S.ai ? "" : notice("warn", "L'intelligenza artificiale non è attiva: l'assistente risponderà quando sarà configurata la chiave.")}
       <div class="chat" id="chatBox" style="margin-top:12px"></div>
-      <div class="chips">${["Avete il pollo in offerta?", "A che ora chiudete?", "Vorrei ordinare 2 confezioni di pasta"].map(q => `<button data-q="${esc(q)}">${esc(q)}</button>`).join("")}</div>
+      <div class="qchips">${["Avete il caffè in offerta?", "A che ora chiudete domenica?", "Vorrei ordinare 2 confezioni di pasta per domani"].map(q => `<button data-q="${esc(q)}">${esc(q)}</button>`).join("")}</div>
       <div class="row" style="margin-top:10px"><div class="f"><input class="in" id="chatIn" placeholder="Scrivi come un cliente…" aria-label="Messaggio"></div><button class="btn" id="chatSend" aria-label="Invia">${icon("i-send")}</button></div></div>
-    <div class="card"><h2>Ricette con le offerte</h2><p class="sub">L'agente propone ricette con i prodotti in offerta, indicando il prezzo di ognuno.</p>
-      ${health.ai ? "" : notice("warn", "Disponibile quando l'intelligenza artificiale sarà attiva.")}
-      <div class="row" style="margin-top:10px"><div class="f"><input class="in" id="recIn" placeholder="es. cena veloce per 4 persone" aria-label="Richiesta"></div><button class="btn" id="recBtn">${icon("i-chef")} Proponi</button></div>
-      <div id="recOut" class="stack tight" style="margin-top:14px"></div></div></div>`;
+    <div class="card"><h2>Dove risponde</h2><p class="sub">Per ora puoi provarlo qui. Ecco i canali previsti.</p>
+      <div class="steps">
+        <div class="step"><span class="n">${icon("i-chat")}</span><div class="t"><b>Chat sul sito del negozio</b><span class="muted">Pronta: si collega al sito con un indirizzo dedicato.</span></div><span class="chip ok">pronta</span></div>
+        <div class="step"><span class="n">${icon("i-msg")}</span><div class="t"><b>WhatsApp Business</b><span class="muted">Risponde ai messaggi e gestisce lo STOP.</span></div><span class="chip grey">in arrivo</span></div>
+        <div class="step"><span class="n">${icon("i-bag")}</span><div class="t"><b>Ordini da ritirare</b><span class="muted">Li trovi nella sezione Ordini.</span></div><span class="chip ok">pronta</span></div>
+      </div></div></div>`;
   const box = $("#chatBox");
   const draw = () => { box.innerHTML = S.chat.map(m => `<div class="bubble ${m.who}">${esc(m.text)}</div>`).join("") || `<div class="muted" style="margin:auto;text-align:center">Scrivi un messaggio o tocca un esempio qui sotto.</div>`; box.scrollTop = box.scrollHeight; };
   draw();
@@ -688,107 +959,71 @@ VIEWS.assistant = async el => {
   $("#chatSend").onclick = () => send($("#chatIn").value);
   $("#chatIn").addEventListener("keydown", e => { if (e.key === "Enter") send($("#chatIn").value); });
   $$("[data-q]", el).forEach(b => b.onclick = () => send(b.dataset.q));
-  $("#recBtn").onclick = e => busy(e.currentTarget, async () => {
-    const r = await api(`/api/stores/${S.storeId}/recipes`, {json: {request: $("#recIn").value}});
-    $("#recOut").innerHTML = r.recipes.map(rc => `<div class="card" style="box-shadow:none"><b>${esc(rc.title)}</b> <span class="muted">· ${rc.servings} persone · ${rc.minutes} min</span>
-      <ul style="padding-left:18px">${rc.ingredients.map(i => `<li>${esc(i.quantity)} ${esc(i.name)} ${i.offer ? `<span class="chip ok">in offerta ${esc(i.offer.price)}</span>` : ""}</li>`).join("")}</ul>
-      <ol style="padding-left:18px;margin-bottom:0">${rc.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol></div>`).join("");
-  }, "Penso…");
 };
 
-VIEWS.orders = async el => {
-  const orders = await api(`/api/stores/${S.storeId}/orders`);
-  const next = {new: ["confirmed", "Conferma"], confirmed: ["ready", "È pronto"], ready: ["collected", "Ritirato"]};
-  const chip = {new: "info", confirmed: "gold", ready: "ok", collected: "grey", cancelled: "err"};
-  el.innerHTML = `<div class="card"><h2>Ordini da ritirare</h2><p class="sub">Gli ordini presi dall'assistente clienti. Aggiorna lo stato man mano che li prepari.</p>
-    ${orders.length ? `<div class="tw"><table><thead><tr><th>#</th><th>Cliente</th><th>Ritiro</th><th>Articoli</th><th>Totale</th><th>Stato</th><th></th></tr></thead><tbody>${orders.map(o => `
-      <tr><td><b>${o.id}</b></td><td>${esc(o.customer_name)}<div class="muted">${esc(o.customer_phone)}</div></td><td>${itDateTime(o.pickup_at)}</td>
-      <td>${o.items.map(i => `${i.quantity} × ${esc(i.name)}`).join("<br>")}${o.notes ? `<div class="muted">${esc(o.notes)}</div>` : ""}</td><td><b>${esc(o.total)}</b></td>
-      <td><span class="chip ${chip[o.status]}">${esc(STATUS[o.status])}</span></td>
-      <td style="white-space:nowrap">${next[o.status] ? `<button class="btn sm" data-o="${o.id}" data-s="${next[o.status][0]}">${next[o.status][1]}</button> <button class="btn sm ghost" data-o="${o.id}" data-s="cancelled">Annulla</button>` : ""}</td></tr>`).join("")}</tbody></table></div>`
-      : empty("i-bag", "Nessun ordine", "Quando un cliente ordina tramite l'assistente, lo trovi qui.")}</div>`;
-  $$("[data-o]", el).forEach(b => b.onclick = () => { if (b.dataset.s === "cancelled" && !confirm("Annullare l'ordine?")) return; busy(b, async () => { await api(`/api/orders/${b.dataset.o}`, {method: "PATCH", json: {status: b.dataset.s}}); toast("Ordine aggiornato."); go("orders"); }); });
-};
-
-VIEWS.customers = async el => {
-  const cs = await api(`/api/stores/${S.storeId}/customers`);
-  el.innerHTML = `<div class="grid g2" style="margin-top:0">
-    <div class="card"><h2>Nuovo cliente</h2><p class="sub">I messaggi promozionali partono solo verso chi ha dato il consenso.</p>
-      <div class="stack tight"><div><label class="l" for="cuName">Nome</label><input class="in" id="cuName" autocomplete="off"></div>
-        <div><label class="l" for="cuPhone">Telefono</label><input class="in" id="cuPhone" inputmode="tel" placeholder="es. 333 1234567"></div>
-        <div><label class="l" for="cuCats">Categorie preferite (facoltativo, tieni premuto Ctrl per sceglierne più di una)</label><select class="in" id="cuCats" multiple size="4">${CATEGORIES.map(c => `<option>${c}</option>`).join("")}</select></div>
-        <label class="switch"><input type="checkbox" id="cuConsent"> Ha dato il consenso a ricevere offerte</label>
-        <button class="btn" id="cuAdd">${icon("i-plus")} Aggiungi cliente</button></div></div>
-    <div class="card"><h2>Vendite di cassa</h2><p class="sub">Importa un file CSV per misurare quanto ha venduto ogni offerta. Colonne: data, prodotto, quantita, incasso.</p>
-      <div class="drop" id="salesDrop" style="padding:24px" tabindex="0" role="button"><b>Scegli il file CSV</b><div class="muted">separatore ; oppure ,</div><input type="file" id="salesFile" accept=".csv,text/csv" class="hidden"></div>
-      <div id="salesOut"></div></div></div>
-    <div class="card" style="margin-top:18px"><h2>Clienti (${cs.length})</h2>
-      ${cs.length ? `<div class="tw"><table><thead><tr><th>Nome</th><th>Telefono</th><th>Preferenze</th><th>Consenso</th><th></th></tr></thead><tbody>${cs.map(c => `
-        <tr><td><b>${esc(c.name || "—")}</b></td><td>${esc(c.phone)}</td><td class="muted">${esc(c.preferred_categories.join(", ") || "—")}</td>
-        <td>${c.marketing_consent ? `<span class="chip ok">sì</span>` : `<span class="chip grey">no</span>`}</td>
-        <td><button class="btn sm sec" data-c="${c.id}" data-v="${!c.marketing_consent}">${c.marketing_consent ? "Revoca" : "Registra consenso"}</button></td></tr>`).join("")}</tbody></table></div>`
-        : empty("i-users", "Nessun cliente", "Aggiungi i clienti che vogliono ricevere le offerte.")}</div>`;
-  $("#cuAdd").onclick = e => busy(e.currentTarget, async () => {
-    if (!$("#cuPhone").value.trim()) throw new Error("Scrivi il numero di telefono.");
-    await api(`/api/stores/${S.storeId}/customers`, {json: {name: $("#cuName").value.trim(), phone: $("#cuPhone").value.trim(), marketing_consent: $("#cuConsent").checked, preferred_categories: [...$("#cuCats").selectedOptions].map(o => o.value)}});
-    toast("Cliente aggiunto."); go("customers");
-  });
-  $$("[data-c]", el).forEach(b => b.onclick = () => busy(b, async () => { await api(`/api/customers/${b.dataset.c}/consent`, {method: "PATCH", json: {marketing_consent: b.dataset.v === "true"}}); go("customers"); }));
-  $("#salesDrop").onclick = () => $("#salesFile").click();
-  $("#salesDrop").onkeydown = e => { if (e.key === "Enter") $("#salesFile").click(); };
-  $("#salesFile").onchange = async () => {
-    const f = $("#salesFile").files[0]; if (!f) return;
-    const fd = new FormData(); fd.append("file", f);
-    $("#salesOut").innerHTML = `<div class="progress"><div></div></div>`;
-    try { const r = await api(`/api/stores/${S.storeId}/sales`, {body: fd});
-      $("#salesOut").innerHTML = notice("info", `Importate ${r.imported} righe dal ${itDate(r.first_day)} al ${itDate(r.last_day)}${r.skipped ? ` · ${r.skipped} righe scartate` : ""}.`, "i-check") + r.errors.slice(0, 5).map(x => notice("warn", x)).join(""); }
-    catch (e) { $("#salesOut").innerHTML = notice("err", e.message); }
-  };
-};
-
+// ---------- negozio
 VIEWS.store = async (el, opts) => {
   const creating = !S.storeId || opts.create;
-  const s = creating ? {name: "", banner: "", address: "", city: "", phone: "", brand_color: "#e5482f", accent_color: "#f5b83d", pickup_enabled: true, opening_hours: {}} : currentStore();
+  const s = creating ? {name: "", banner: "", address: "", city: "", phone: "", whatsapp: "", website: "", brand_color: "#e5482f", accent_color: "#f5b83d", pickup_enabled: true, opening_hours: {}, tone: "familiare", hashtags: [], video_music: true, logo_url: null} : currentStore();
   const hours = Object.entries(s.opening_hours || {}).map(([k, v]) => `${k}: ${v}`).join("\n");
-  el.innerHTML = `<div class="card" style="max-width:780px"><h2>${creating ? "Nuovo negozio" : "Dati del negozio"}</h2>
-    <p class="sub">Questi dati compaiono nei video, nei testi e nelle risposte dell'assistente.</p>
-    <div class="stack tight">
+  let tone = s.tone || "familiare";
+  el.innerHTML = `<div class="card" style="max-width:920px">
+    <h2>${creating ? "Nuovo negozio" : "Impostazioni di " + esc(s.name)}</h2><p class="sub">Questi dati compaiono nei video, nelle grafiche, nei testi e nelle risposte dell'assistente.</p>
+    <div class="settings-sec"><div><h3>Identità</h3><p class="muted">Nome, insegna, logo e colori del negozio.</p></div><div class="stack tight">
       <div class="row"><div class="f"><label class="l" for="stName">Nome del negozio *</label><input class="in" id="stName" value="${esc(s.name)}" placeholder="es. Superstore Colleferro"></div>
         <div class="f"><label class="l" for="stBanner">Insegna</label><input class="in" id="stBanner" value="${esc(s.banner)}" placeholder="es. Decò, Conad…"></div></div>
-      <div class="row"><div class="f"><label class="l" for="stAddress">Indirizzo</label><input class="in" id="stAddress" value="${esc(s.address)}"></div>
-        <div class="f"><label class="l" for="stCity">Città</label><input class="in" id="stCity" value="${esc(s.city)}"></div>
-        <div class="f"><label class="l" for="stPhone">Telefono</label><input class="in" id="stPhone" value="${esc(s.phone)}"></div></div>
-      <div><label class="l" for="stHours">Orari (una riga per volta, es. «lun-sab: 8:00-20:00»)</label><textarea class="in" id="stHours" style="min-height:90px">${esc(hours)}</textarea></div>
+      ${creating ? `<p class="hint">Il logo potrai caricarlo subito dopo aver creato il negozio.</p>` : `<div><label class="l">Logo</label><div class="logo-box"><div class="logo-prev" id="logoPrev">${s.logo_url ? `<img data-src="${s.logo_url}" alt="Logo">` : "nessun logo"}</div>
+        <div class="stack tight"><div class="toolbar"><button class="btn sec sm" id="logoBtn">${icon("i-upload")} ${s.logo_url ? "Cambia logo" : "Carica logo"}</button>${s.logo_url ? `<button class="btn ghost sm" id="logoDel">Rimuovi</button>` : ""}</div><input type="file" id="logoFile" class="hidden" accept="image/png,image/jpeg,image/webp"><span class="hint">PNG trasparente o JPG su fondo bianco (viene scontornato).</span></div></div></div>`}
       <div class="row"><div class="f"><label class="l" for="stColor">Colore principale</label><input class="in" type="color" id="stColor" value="${esc(s.brand_color)}" style="height:46px;padding:4px"></div>
-        <div class="f"><label class="l" for="stAccent">Colore secondario</label><input class="in" type="color" id="stAccent" value="${esc(s.accent_color)}" style="height:46px;padding:4px"></div>
-        <div class="f" style="align-self:center"><label class="switch"><input type="checkbox" id="stPickup" ${s.pickup_enabled ? "checked" : ""}> Accetta ordini da ritirare</label></div></div>
-      <div class="toolbar" style="justify-content:flex-end;margin-top:8px">
-        ${creating ? (S.storeId ? `<button class="btn sec" id="stCancel">Annulla</button>` : "") : `<button class="btn ghost" id="stDelete" style="color:var(--err)">Elimina negozio</button><span style="flex:1"></span>`}
-        <button class="btn" id="stSave">${icon("i-check")} ${creating ? "Crea negozio" : "Salva"}</button></div>
-    </div></div>`;
+        <div class="f"><label class="l" for="stAccent">Colore degli sconti</label><input class="in" type="color" id="stAccent" value="${esc(s.accent_color)}" style="height:46px;padding:4px"></div></div></div></div>
+    <div class="settings-sec"><div><h3>Comunicazione</h3><p class="muted">Come parlano i testi del negozio.</p></div><div class="stack tight">
+      <div><label class="l">Tono di voce</label><div class="tones">${TONES.map(([k, t, d]) => `<div class="tone ${k === tone ? "on" : ""}" data-tone="${k}" tabindex="0" role="button"><b>${t}</b><span>${d}</span></div>`).join("")}</div></div>
+      <div><label class="l" for="stTags">Hashtag del negozio</label><input class="in" id="stTags" value="${esc((s.hashtags || []).map(h => "#" + h).join(" "))}" placeholder="es. #superstorecolleferro #spesacolleferro"><div class="hint">Separati da spazi: compaiono in tutti i post.</div></div>
+      <label class="switch"><input type="checkbox" id="stMusic" ${s.video_music ? "checked" : ""}> Musica nei video (originale, senza diritti da pagare)</label></div></div>
+    <div class="settings-sec"><div><h3>Contatti e orari</h3><p class="muted">Usati nei video finali (con QR code) e dall'assistente.</p></div><div class="stack tight">
+      <div class="row"><div class="f"><label class="l" for="stAddress">Indirizzo</label><input class="in" id="stAddress" value="${esc(s.address)}"></div>
+        <div class="f"><label class="l" for="stCity">Città</label><input class="in" id="stCity" value="${esc(s.city)}"></div></div>
+      <div class="row"><div class="f"><label class="l" for="stPhone">Telefono</label><input class="in" id="stPhone" value="${esc(s.phone)}"></div>
+        <div class="f"><label class="l" for="stWa">WhatsApp</label><input class="in" id="stWa" value="${esc(s.whatsapp)}" placeholder="per il QR code nei video"></div>
+        <div class="f"><label class="l" for="stWeb">Sito o pagina social</label><input class="in" id="stWeb" value="${esc(s.website)}" placeholder="es. www.negozio.it"></div></div>
+      <div><label class="l" for="stHours">Orari (una riga per volta)</label><textarea class="in" id="stHours" style="min-height:90px" placeholder="lun-sab: 8:00-20:00&#10;dom: 9:00-13:00">${esc(hours)}</textarea></div>
+      <label class="switch"><input type="checkbox" id="stPickup" ${s.pickup_enabled ? "checked" : ""}> Accetta ordini da ritirare in negozio</label></div></div>
+    <div class="toolbar" style="margin-top:8px">
+      ${creating ? (S.storeId ? `<button class="btn sec" id="stCancel">Annulla</button>` : "") : `<button class="btn ghost" id="stDelete" style="color:var(--err)">${icon("i-trash")} Elimina negozio</button>`}
+      <span style="flex:1"></span><button class="btn lg" id="stSave">${icon("i-check")} ${creating ? "Crea negozio" : "Salva le impostazioni"}</button></div></div>`;
+  $$("[data-tone]", el).forEach(t => { t.onclick = () => { tone = t.dataset.tone; $$("[data-tone]", el).forEach(x => x.classList.toggle("on", x === t)); }; t.onkeydown = e => { if (e.key === "Enter") t.click(); }; });
   const cancel = $("#stCancel"); if (cancel) cancel.onclick = () => go("home");
   $("#stSave").onclick = e => busy(e.currentTarget, async () => {
     const opening_hours = {};
     for (const line of $("#stHours").value.split("\n")) { const i = line.indexOf(":"); if (i > 0) opening_hours[line.slice(0, i).trim()] = line.slice(i + 1).trim(); }
     const body = {name: $("#stName").value.trim(), banner: $("#stBanner").value.trim(), address: $("#stAddress").value.trim(), city: $("#stCity").value.trim(),
-      phone: $("#stPhone").value.trim(), opening_hours, brand_color: $("#stColor").value, accent_color: $("#stAccent").value, pickup_enabled: $("#stPickup").checked};
+      phone: $("#stPhone").value.trim(), whatsapp: $("#stWa").value.trim(), website: $("#stWeb").value.trim(), opening_hours,
+      brand_color: $("#stColor").value, accent_color: $("#stAccent").value, pickup_enabled: $("#stPickup").checked,
+      tone, hashtags: $("#stTags").value.split(/[\s,]+/).filter(Boolean), video_music: $("#stMusic").checked};
     if (body.name.length < 2) throw new Error("Scrivi il nome del negozio.");
     const r = creating ? await api("/api/stores", {json: body}) : await api(`/api/stores/${S.storeId}`, {method: "PATCH", json: body});
-    S.storeId = r.id; await loadStores(); toast(creating ? "Negozio creato." : "Dati salvati."); go(creating ? "home" : "store");
+    S.storeId = r.id; await loadStores(); toast(creating ? "Negozio creato: ora carica il logo e il primo volantino." : "Impostazioni salvate.");
+    go(creating ? "store" : "store");
   });
+  const lb = $("#logoBtn"), lf = $("#logoFile");
+  if (lb) { lb.onclick = () => lf.click(); lf.onchange = () => busy(lb, async () => { const fd = new FormData(); fd.append("file", lf.files[0]); await api(`/api/stores/${S.storeId}/logo`, {body: fd}); forget(`/api/stores/${S.storeId}/logo`); await loadStores(); toast("Logo caricato."); go("store"); }); }
+  const ld = $("#logoDel"); if (ld) ld.onclick = () => busy(ld, async () => { await api(`/api/stores/${S.storeId}/logo`, {method: "DELETE"}); forget(`/api/stores/${S.storeId}/logo`); await loadStores(); go("store"); });
   const del = $("#stDelete");
-  if (del) del.onclick = () => { if (confirm(`Eliminare «${s.name}» con tutti i volantini, clienti e ordini? L'operazione non si può annullare.`)) busy(del, async () => { await api(`/api/stores/${S.storeId}`, {method: "DELETE"}); S.storeId = null; await loadStores(); toast("Negozio eliminato."); go(S.storeId ? "home" : "store", {create: !S.storeId}); }); };
+  if (del) del.onclick = async () => { if (await confirmBox(`Eliminare «${s.name}»?`, "Verranno eliminati volantini, video, clienti e ordini di questo negozio. L'operazione non si può annullare.", "Elimina definitivamente", true)) busy(del, async () => { await api(`/api/stores/${S.storeId}`, {method: "DELETE"}); S.storeId = null; await loadStores(); toast("Negozio eliminato."); go("home"); }); };
 };
 
-// ---------------- avvio
+// ======================= avvio =======================
 async function start() {
   try { S.me = await api("/api/me"); } catch (e) { logout(); return; }
+  try { S.ai = (await api("/api/health")).ai; } catch (e) { S.ai = false; }
+  $("#aiDot").classList.toggle("on", S.ai);
+  $("#aiText").textContent = S.ai ? "Intelligenza artificiale attiva" : "IA spenta (funzioni base)";
   $("#authView").classList.add("hidden");
   $("#appView").classList.remove("hidden");
   $("#whoName").textContent = S.me.name || S.me.email;
   $("#whoOrg").textContent = S.me.organization.name;
   await loadStores();
-  go(S.storeId ? "home" : "store", {create: !S.storeId});
+  go(S.stores.length ? "home" : "store", {create: !S.stores.length});
 }
 setAuthMode(false);
 if (S.token) start(); else $("#authView").classList.remove("hidden");

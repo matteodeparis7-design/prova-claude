@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from ...config import Settings
 from ...models import ContentPiece, Flyer, Offer, Store
 from ..content.service import featured_offers, validity_text
-from .render import FORMATS, RenderError, VideoOffer, VideoSpec, probe_duration, render_video
+from .render import FORMATS, Renderer, RenderError, VideoOffer, VideoSpec, probe_duration, render_video
 
 MAX_OFFERS = {"landscape": 40, "portrait": 6, "square": 6}
 FORMAT_LABEL = {"landscape": "Video schermo 16:9", "portrait": "Reel 9:16", "square": "Video post 1:1"}
@@ -93,6 +93,13 @@ def render_flyer_video(session: Session, store: Store, flyer: Flyer, settings: S
     out = settings.data_dir / "renders" / f"flyer{flyer.id}_{fmt}.mp4"
     render_video(spec, Path(out))
     duration = probe_duration(out)
+    # Immagine di anteprima: la prima offerta a schermo, già tutta visibile.
+    poster = out.with_suffix(".jpg")
+    try:
+        r = Renderer(spec)
+        r.frame_at(r.scene_starts()[1] + spec.offer_seconds * 0.7).save(poster, quality=85)
+    except Exception:  # l'anteprima è un di più: il video resta valido
+        poster = None
     # Un solo video per formato e volantino: rigenerarlo sostituisce il precedente.
     for old in session.scalars(select(ContentPiece).where(ContentPiece.flyer_id == flyer.id,
                                                           ContentPiece.kind == "video")).all():
@@ -101,7 +108,7 @@ def render_flyer_video(session: Session, store: Store, flyer: Flyer, settings: S
     piece = ContentPiece(store_id=store.id, flyer_id=flyer.id, kind="video", title=FORMAT_LABEL[fmt],
                          file_path=str(out),
                          meta={"format": fmt, "duration": round(duration, 2), "offers": len(spec.offers),
-                               "music": spec.music})
+                               "music": spec.music, "poster": str(poster) if poster else ""})
     session.add(piece)
     session.flush()
     return piece

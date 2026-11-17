@@ -258,6 +258,7 @@ def content_out(c: ContentPiece) -> dict:
             "body": c.body, "approved": c.approved, "meta": c.meta,
             "scheduled_for": c.scheduled_for.isoformat() if c.scheduled_for else None,
             "file_url": f"/api/content/{c.id}/file" if c.file_path else None,
+            "poster_url": f"/api/content/{c.id}/poster" if (c.meta or {}).get("poster") else None,
             "created_at": c.created_at.isoformat()}
 
 
@@ -757,6 +758,14 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         media = {".mp4": "video/mp4", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png"}
         return FileResponse(c.file_path, media_type=media.get(Path(c.file_path).suffix.lower(), "application/octet-stream"),
                             filename=Path(c.file_path).name)
+
+    @app.get("/api/content/{content_id}/poster")
+    def content_poster(content_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        c = content_for(session, user, content_id)
+        poster = (c.meta or {}).get("poster")
+        if not poster or not Path(poster).exists():
+            raise HTTPException(404, "Anteprima non disponibile.")
+        return FileResponse(poster, media_type="image/jpeg")
 
     @app.get("/api/flyers/{flyer_id}/content")
     def flyer_content(flyer_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
