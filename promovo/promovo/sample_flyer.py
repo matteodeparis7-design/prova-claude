@@ -49,38 +49,83 @@ def _photo(color: tuple[int, int, int]) -> bytes:
     return buf.getvalue()
 
 
-def build_sample_flyer(products: list[SampleProduct] | None = None, per_page: int = 6,
+@dataclass
+class FlyerStyle:
+    """Varianti grafiche, per mettere alla prova il lettore come con volantini veri diversi."""
+    cols: int = 2
+    rows: int = 3
+    page_size: tuple[float, float] = (595, 842)                 # A4 verticale, in punti
+    price_style: str = "red"                                    # red | black | badge (bianco su riquadro)
+    euro_sign: bool = False                                     # "€ 1,99" invece di "1,99"
+    unit_price: bool = False                                    # "al kg € 7,90" in piccolo
+    background: tuple[float, float, float] = (1, 1, 1)
+    header: tuple[float, float, float] = (0.84, 0.15, 0.18)
+
+
+def build_sample_flyer(products: list[SampleProduct] | None = None, per_page: int | None = None,
                        validity: str = "Offerte valide dal 13 al 22 novembre 2026",
-                       banner: str = "SUPERSTORE") -> bytes:
-    products = products or DEFAULT_PRODUCTS
+                       banner: str = "SUPERSTORE", style: FlyerStyle | None = None) -> bytes:
+    products = products if products is not None else DEFAULT_PRODUCTS
+    st = style or FlyerStyle()
+    per_page = per_page or st.cols * st.rows
     doc = pymupdf.open()
-    W, H = 595, 842  # A4 in punti
-    cols, rows = 2, 3
-    for start in range(0, len(products), per_page):
+    W, H = st.page_size
+    cols, rows = st.cols, st.rows
+    red = (0.84, 0.15, 0.18)
+    for start in range(0, max(len(products), 1), per_page):
         page = doc.new_page(width=W, height=H)
-        page.draw_rect(pymupdf.Rect(0, 0, W, 90), color=None, fill=(0.84, 0.15, 0.18))
+        if st.background != (1, 1, 1):
+            page.draw_rect(page.rect, color=None, fill=st.background)
+        page.draw_rect(pymupdf.Rect(0, 0, W, 90), color=None, fill=st.header)
         page.insert_text((30, 50), banner, fontsize=30, fontname="hebo", color=(1, 1, 1))
         page.insert_text((30, 75), validity, fontsize=12, fontname="helv", color=(1, 1, 1))
         cell_w, cell_h = (W - 40) / cols, (H - 120) / rows
+        k = min(cell_w / 277, cell_h / 240)          # scala degli elementi rispetto alla cella standard
         for i, p in enumerate(products[start:start + per_page]):
             c, r = i % cols, i // cols
             x0, y0 = 20 + c * cell_w, 105 + r * cell_h
             box = pymupdf.Rect(x0 + 5, y0 + 5, x0 + cell_w - 5, y0 + cell_h - 5)
-            page.draw_rect(box, color=(0.8, 0.8, 0.8), width=1)
-            photo = pymupdf.Rect(box.x0 + 10, box.y0 + 10, box.x0 + 150, box.y0 + 115)
+            page.draw_rect(box, color=(0.8, 0.8, 0.8), fill=(1, 1, 1), width=1)
+            photo = pymupdf.Rect(box.x0 + 10 * k, box.y0 + 10 * k, box.x0 + 150 * k, box.y0 + 115 * k)
             page.insert_image(photo, stream=_photo(p.color))
-            page.insert_text((box.x0 + 10, box.y0 + 140), p.name, fontsize=13, fontname="hebo")
-            page.insert_text((box.x0 + 10, box.y0 + 158), p.size, fontsize=10, fontname="helv")
+            page.insert_text((box.x0 + 10 * k, box.y0 + 140 * k), p.name, fontsize=13 * k, fontname="hebo")
+            page.insert_text((box.x0 + 10 * k, box.y0 + 158 * k), p.size, fontsize=10 * k, fontname="helv")
             euros, cents = price_parts(p.price_cents)
-            page.insert_text((box.x0 + 160, box.y0 + 80), f"{euros},{cents}", fontsize=34, fontname="hebo",
-                             color=(0.84, 0.15, 0.18))
+            label = f"{'€ ' if st.euro_sign else ''}{euros},{cents}"
+            px, py, fs = box.x0 + 160 * k, box.y0 + 80 * k, 34 * k
+            if st.price_style == "badge":
+                tw = pymupdf.get_text_length(label, fontname="hebo", fontsize=fs)
+                page.draw_rect(pymupdf.Rect(px - 4 * k, py - fs * 0.85, px + tw + 4 * k, py + fs * 0.25),
+                               color=None, fill=red)
+                page.insert_text((px, py), label, fontsize=fs, fontname="hebo", color=(1, 1, 1))
+            else:
+                page.insert_text((px, py), label, fontsize=fs, fontname="hebo",
+                                 color=red if st.price_style == "red" else (0.1, 0.1, 0.1))
             if p.old_price_cents:
                 oe, oc = price_parts(p.old_price_cents)
-                page.insert_text((box.x0 + 160, box.y0 + 40), f"{oe},{oc}", fontsize=12, fontname="helv",
+                page.insert_text((px, box.y0 + 40 * k), f"{oe},{oc}", fontsize=12 * k, fontname="helv",
                                  color=(0.3, 0.3, 0.3))
                 pct = round((p.old_price_cents - p.price_cents) * 100 / p.old_price_cents)
-                page.insert_text((box.x0 + 160, box.y0 + 105), f"-{pct}%", fontsize=14, fontname="hebo")
+                page.insert_text((px, box.y0 + 105 * k), f"-{pct}%", fontsize=14 * k, fontname="hebo")
+            if st.unit_price:
+                ue, uc = price_parts(p.price_cents * 2)
+                page.insert_text((box.x0 + 10 * k, box.y0 + 172 * k), f"al kg {ue},{uc}", fontsize=7 * k,
+                                 fontname="helv")
         page.insert_text((W - 80, H - 15), f"Pagina {doc.page_count}", fontsize=8, fontname="helv")
     data = doc.tobytes()
     doc.close()
+    return data
+
+
+def make_image_only(pdf: bytes, dpi: int = 150) -> bytes:
+    """Converte ogni pagina in un'immagine senza testo, come molti volantini veri."""
+    src = pymupdf.open(stream=pdf, filetype="pdf")
+    out = pymupdf.open()
+    for page in src:
+        pix = page.get_pixmap(dpi=dpi, alpha=False)
+        new = out.new_page(width=page.rect.width, height=page.rect.height)
+        new.insert_image(new.rect, stream=pix.tobytes("png"))
+    data = out.tobytes()
+    out.close()
+    src.close()
     return data

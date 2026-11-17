@@ -12,7 +12,7 @@ from ...config import Settings
 from ...llm import LLM
 from ...models import Flyer, FlyerStatus, Offer, Store
 from .extract import extract_offers, pick_featured
-from .pdf import InvalidPDF, open_pdf, render_crop
+from .pdf import InvalidPDF, normalize_upload, open_pdf, render_crop
 
 log = logging.getLogger("promovo.flyer")
 
@@ -21,6 +21,7 @@ def create_flyer(session: Session, store: Store, pdf_bytes: bytes, settings: Set
     """Valida e salva il PDF; il volantino resta "in lettura". Solleva InvalidPDF se il file non va bene."""
     if len(pdf_bytes) > settings.max_upload_mb * 1024 * 1024:
         raise InvalidPDF(f"Il file supera {settings.max_upload_mb} MB.")
+    pdf_bytes = normalize_upload(pdf_bytes)   # anche JPG, PNG e WEBP
     doc = open_pdf(pdf_bytes)  # valida prima di salvare
     page_count = doc.page_count
     doc.close()

@@ -264,10 +264,14 @@ def _heuristic_page(info: PageInfo) -> list[RawOffer]:
         name = name_spans[0].text.strip()
         description = name_spans[1].text.strip() if len(name_spans) > 1 else ""
 
-        old = None
+        # Prezzo barrato: il più vicino al prezzo principale, entro poche volte la sua altezza
+        # (nei volantini fitti un prezzo più lontano appartiene quasi sempre al prodotto accanto).
+        old, best = None, None
+        reach = 3.5 * max(psp.bbox[3] - psp.bbox[1], psp.size)
         for sp, c in secondary:
-            if c > cents and math.dist(_center(sp.bbox), _center(psp.bbox)) < 0.25 * info.width:
-                old = c if old is None else max(old, c)
+            d = math.dist(_center(sp.bbox), _center(psp.bbox))
+            if c > cents and d <= reach and (best is None or d < best):
+                old, best = c, d
         bb = _union(region, *[s.bbox for s in name_spans])
         bbox = _clamp_bbox(bb[0] / info.width, bb[1] / info.height, bb[2] / info.width, bb[3] / info.height)
         if bbox is None:

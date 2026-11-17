@@ -1,10 +1,12 @@
 """Lettura del PDF del volantino: pagine, testo con posizioni, immagini, ritagli."""
 from __future__ import annotations
 
+import io
 from dataclasses import dataclass
 from pathlib import Path
 
 import pymupdf
+from PIL import Image
 
 MAX_PAGES = 60
 
@@ -29,6 +31,44 @@ class PageInfo:
     text: str
     spans: list[Span]
     images: list[tuple[float, float, float, float]]
+
+
+IMAGE_SIGNATURES = (b"\xff\xd8\xff", b"\x89PNG\r\n\x1a\n", b"RIFF")
+MAX_IMAGE_PIXELS = 60_000_000
+
+
+def image_to_pdf(data: bytes) -> bytes:
+    """Un volantino in JPG, PNG o WEBP diventa un PDF di una pagina, letto come gli altri."""
+    Image.MAX_IMAGE_PIXELS = MAX_IMAGE_PIXELS
+    try:
+        with Image.open(io.BytesIO(data)) as im:
+            im.load()
+            if im.width * im.height > MAX_IMAGE_PIXELS:
+                raise InvalidPDF("L'immagine è troppo grande.")
+            rgb = im.convert("RGB")
+    except InvalidPDF:
+        raise
+    except (OSError, ValueError, Image.DecompressionBombError) as exc:
+        raise InvalidPDF("L'immagine è danneggiata o in un formato non supportato.") from exc
+    buf = io.BytesIO()
+    rgb.save(buf, format="PNG")
+    doc = pymupdf.open()
+    page = doc.new_page(width=rgb.width, height=rgb.height)
+    page.insert_image(page.rect, stream=buf.getvalue())
+    pdf = doc.tobytes()
+    doc.close()
+    return pdf
+
+
+def normalize_upload(data: bytes) -> bytes:
+    """Accetta PDF e immagini; restituisce sempre un PDF."""
+    if not data:
+        raise InvalidPDF("Il file è vuoto.")
+    if data.startswith(b"%PDF"):
+        return data
+    if data.startswith(IMAGE_SIGNATURES[:2]) or (data[:4] == b"RIFF" and data[8:12] == b"WEBP"):
+        return image_to_pdf(data)
+    raise InvalidPDF("Formato non supportato: carica un PDF oppure un'immagine JPG, PNG o WEBP.")
 
 
 def open_pdf(data: bytes) -> pymupdf.Document:
