@@ -132,6 +132,16 @@ def render_page_png(page: pymupdf.Page, max_side: int = 1568) -> bytes:
     return pix.tobytes("png")
 
 
+def render_half_png(page: pymupdf.Page, half: int, max_side: int = 1568, overlap: float = 0.06) -> bytes:
+    """Metà superiore (0) o inferiore (1) della pagina, con un po' di sovrapposizione, ingrandita."""
+    w, h = page.rect.width, page.rect.height
+    y0 = 0 if half == 0 else h * (0.5 - overlap)
+    y1 = h * (0.5 + overlap) if half == 0 else h
+    rect = pymupdf.Rect(0, y0, w, y1)
+    zoom = max_side / max(rect.width, rect.height)
+    return page.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom), clip=rect, alpha=False).tobytes("png")
+
+
 def render_crop(page: pymupdf.Page, bbox_norm: list[float], out_path: Path, dpi: int = 220,
                 pad: float = 0.01) -> Path:
     """Ritaglio ad alta risoluzione del riquadro normalizzato (0..1) di un prodotto."""

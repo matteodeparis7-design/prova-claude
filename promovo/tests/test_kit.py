@@ -16,8 +16,7 @@ from promovo.modules.video.music import compose
 from promovo.modules.video.render import ffmpeg_path, render_video
 from promovo.modules.video.service import build_spec, store_contacts, whatsapp_link
 
-from conftest import TODAY, FakeLLM
-from test_api import live_pdf, make_store, register, upload  # noqa: F401
+from conftest import TODAY, FakeLLM, make_store, register, upload
 
 
 @pytest.fixture
@@ -80,7 +79,7 @@ def client(tmp_settings):
         yield c
 
 
-def test_kit_and_zip(client, live_pdf):  # noqa: F811
+def test_kit_and_zip(client, live_pdf):
     h = register(client)
     s = make_store(client, h)
     f = upload(client, h, s["id"], live_pdf)

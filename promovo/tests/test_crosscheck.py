@@ -108,7 +108,7 @@ def test_pages_with_text_are_not_rechecked(sample_pdf, fake_llm):
 def test_full_ai_reading_of_image_flyer(image_pdf, truth, fake_llm):
     """Lettura IA finta di un volantino solo immagini: i prezzi giusti vengono confermati."""
     def page_reading(content):
-        page = int(content[1]["text"].split()[1])
+        page = int(content[-1]["text"].split()[1])
         return AIPage.model_validate({"offers": [
             dict(name=o.name, brand="", description=o.description, category=o.category,
                  price=f"{o.price_cents // 100},{o.price_cents % 100:02d}", old_price=None, discount_percent=None,

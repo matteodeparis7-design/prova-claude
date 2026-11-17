@@ -6,6 +6,7 @@ esiste nel volantino viene scartato e sostituito dal testo a modello.
 from __future__ import annotations
 
 import logging
+import re
 from dataclasses import dataclass, field
 from datetime import date
 
@@ -31,8 +32,11 @@ def fmt_date(d: date | None) -> str:
 
 
 def validity_text(flyer: Flyer) -> str:
-    if flyer.valid_from and flyer.valid_to:
-        return f"dal {fmt_date(flyer.valid_from)} al {fmt_date(flyer.valid_to)}"
+    vf, vt = flyer.valid_from, flyer.valid_to
+    if vf and vt:
+        if (vf.month, vf.year) == (vt.month, vt.year):
+            return f"dal {vf.day} al {fmt_date(vt)}"           # dal 13 al 22 novembre
+        return f"dal {fmt_date(vf)} al {fmt_date(vt)}"
     if flyer.valid_to:
         return f"fino al {fmt_date(flyer.valid_to)}"
     return ""
@@ -68,12 +72,19 @@ class AIContent(BaseModel):
 
 
 _SYSTEM = (
-    "Sei l'agente Copywriter di Promovo e scrivi per un supermercato di quartiere italiano. "
-    "Scrivi testi promozionali chiari, calorosi e onesti, in italiano corretto. "
-    "Regole tassative: usa SOLO i prodotti e i prezzi forniti, scritti esattamente come dati "
-    "(formato '€ 1,99'); non inventare sconti, prodotti, date o servizi; non usare superlativi falsi. "
-    "Indica sempre il periodo di validità se fornito. Nel messaggio WhatsApp ricorda in fondo che si può "
-    "rispondere STOP per non ricevere più messaggi."
+    "Sei l'agente Copywriter di Promovo: scrivi la comunicazione settimanale di un supermercato italiano, "
+    "come farebbe un bravo social media manager locale. Italiano impeccabile, frasi brevi, ritmo.\n"
+    "Regole tassative:\n"
+    "- Usa SOLO prodotti e prezzi forniti, scritti esattamente nel formato dato (es. '€ 1,99'). "
+    "Non inventare sconti, prodotti, date, servizi o promesse; niente superlativi falsi.\n"
+    "- Apri con una frase d'attacco concreta, costruita sull'offerta più forte.\n"
+    "- Rispetta il tono di voce indicato: familiare (caldo, vicino, emoji misurate), elegante (sobrio, "
+    "niente emoji), giovane (energico, emoji), essenziale (asciutto, elenchi).\n"
+    "- Instagram: elenco leggibile, una emoji pertinente per riga se il tono lo consente, invito finale.\n"
+    "- WhatsApp: corto, prezzi in *grassetto* con gli asterischi di WhatsApp, chiudi ricordando che si può "
+    "rispondere STOP per non ricevere più messaggi.\n"
+    "- Indica sempre il periodo di validità se fornito.\n"
+    "- Hashtag: includi quelli del negozio, poi pochi altri pertinenti, senza il simbolo #."
 )
 
 
@@ -97,24 +108,88 @@ def prices_ok(text: str, allowed: set[int]) -> bool:
     return all(p in allowed for p in find_prices(text))
 
 
+CATEGORY_EMOJI = {
+    "frutta e verdura": "🍎", "carne": "🥩", "pesce": "🐟", "salumi e formaggi": "🧀", "latte e latticini": "🥛",
+    "uova": "🥚", "pane e forno": "🥖", "pasta e riso": "🍝", "dispensa": "🥫", "surgelati": "❄️",
+    "dolci e snack": "🍪", "colazione": "☕", "bevande": "🥤", "vino e alcolici": "🍷", "igiene casa": "🧽",
+    "cura persona": "🧴", "infanzia": "🍼", "animali": "🐾", "altro": "🛒",
+}
+TONES = ("familiare", "elegante", "giovane", "essenziale")
+
+
+def _short_line(o: Offer, emoji: bool) -> str:
+    name = f"{o.brand} {o.name}".strip() if o.brand and o.brand.lower() not in o.name.lower() else o.name
+    if o.description:
+        name += f" {o.description}"
+    line = f"{name}: {format_eur(o.price_cents)}"
+    if o.discount_percent:
+        line += f" (-{o.discount_percent}%)"
+    elif o.old_price_cents:
+        line += f" invece di {format_eur(o.old_price_cents)}"
+    if o.conditions:
+        line += f", {o.conditions}"
+    return (CATEGORY_EMOJI.get(o.category, "🛒") + " " if emoji else "• ") + line
+
+
+def _hook(offers: list[Offer], tone: str) -> str:
+    """Frase d'apertura costruita sull'offerta più forte (mai inventata)."""
+    best = max(offers, key=lambda o: (o.discount_percent or 0, -o.price_cents))
+    name = best.name
+    if best.discount_percent and best.discount_percent >= 15:
+        return {"elegante": f"Questa settimana: {name} con il {best.discount_percent}% di sconto.",
+                "giovane": f"-{best.discount_percent}% su {name}?! Sì, hai letto bene 🔥",
+                "essenziale": f"{name} a {format_eur(best.price_cents)} (-{best.discount_percent}%)."}.get(
+            tone, f"Fino al -{best.discount_percent}% sulla spesa di questa settimana!")
+    cheapest = min(offers, key=lambda o: o.price_cents)
+    return {"elegante": "Le nostre proposte della settimana.",
+            "giovane": f"Spesa smart: {cheapest.name} a soli {format_eur(cheapest.price_cents)} 😍",
+            "essenziale": "Le offerte della settimana."}.get(tone, "Sono arrivate le nuove offerte!")
+
+
 def template_pack(store: Store, flyer: Flyer, offers: list[Offer]) -> dict[str, dict]:
+    """Testi pronti senza IA: curati, con il tono di voce del negozio, prezzi sempre esatti."""
+    tone = store.tone if store.tone in TONES else "familiare"
+    emoji = tone != "elegante"
     validity = validity_text(flyer)
     when = f" {validity}" if validity else ""
-    lines = [offer_line(o) for o in offers]
-    bullets = "\n".join(f"• {line}" for line in lines)
     where = ", ".join(x for x in (store.address, store.city) if x)
-    ig = (f"🛒 Le offerte di {store.name}{when}!\n\n{bullets}\n\n"
-          f"Ti aspettiamo{(' in ' + where) if where else ''}.")
-    tags = ["offerte", "spesa", "volantino", "risparmio", "supermercato"]
+    hours = "; ".join(f"{k} {v}" for k, v in (store.opening_hours or {}).items())
+    lines = "\n".join(_short_line(o, emoji) for o in offers)
+    hook = _hook(offers, tone) if offers else "Le offerte della settimana."
+    cta = {"elegante": f"Vi aspettiamo{(' in ' + where) if where else ''}.",
+           "giovane": f"Ci vediamo in negozio{(' in ' + where) if where else ''}! 🛒",
+           "essenziale": f"{store.name}{(' – ' + where) if where else ''}."}.get(
+        tone, f"Ti aspettiamo{(' in ' + where) if where else ''}! 😊")
+
+    tags = list(dict.fromkeys([*(store.hashtags or []), "offerte", "volantino", "spesa", "risparmio",
+                               "supermercato"]))
     if store.city:
-        tags.append(store.city.lower().replace(" ", ""))
-    fb = (f"Nuovo volantino da {store.name}{when}.\n\nEcco alcune delle offerte:\n{bullets}\n\n"
-          f"Vieni a trovarci{(' in ' + where) if where else ''}!")
-    wa = (f"Ciao! Sono arrivate le nuove offerte di {store.name}{when}:\n{bullets}\n\n"
-          "Rispondi STOP per non ricevere più messaggi.")
-    subject = f"Le nuove offerte di {store.name}"[:80]
-    body = (f"Ciao,\n\nè uscito il nuovo volantino di {store.name}{when}. Ecco le offerte da non perdere:\n\n"
-            f"{bullets}\n\nTi aspettiamo{(' in ' + where) if where else ''}.\n\nLo staff di {store.name}")
+        tags.append(re.sub(r"\W", "", store.city.lower()))
+    tags = list(dict.fromkeys(t for t in tags if t))[:12]
+
+    ig = f"{hook}\n\n{lines}\n\n📅 Offerte valide{when}.\n{cta}" if validity else f"{hook}\n\n{lines}\n\n{cta}"
+    if not emoji:
+        ig = ig.replace("📅 ", "")
+    fb_intro = {"elegante": f"È disponibile il nuovo volantino di {store.name}{when}.",
+                "giovane": f"Nuovo volantino {store.name}{when} e sconti che non puoi perdere 👇",
+                "essenziale": f"Volantino {store.name}{when}."}.get(
+        tone, f"È uscito il nuovo volantino di {store.name}{when}! Ecco alcune delle offerte che ti aspettano:")
+    fb = f"{fb_intro}\n\n{lines}\n\n{cta}"
+    if hours:
+        fb += f"\nOrari: {hours}."
+    wa_lines = "\n".join(f"{_short_line(o, emoji).split(': ')[0]}: *{format_eur(o.price_cents)}*"
+                          + (f" (-{o.discount_percent}%)" if o.discount_percent else "") for o in offers)
+    wa = (f"*{store.name}* – nuove offerte{when} 🛒\n\n{wa_lines}\n\n{cta}"
+          + ("\n" + f"Orari: {hours}" if hours else "") + "\n\nRispondi STOP per non ricevere più messaggi.")
+    if not emoji:
+        wa = wa.replace(" 🛒", "")
+    best = max(offers, key=lambda o: (o.discount_percent or 0)) if offers else None
+    subject = (f"{best.name} a {format_eur(best.price_cents)} e le altre offerte di {store.name}"
+               if best else f"Le nuove offerte di {store.name}")[:80]
+    plain = "\n".join(_short_line(o, False) for o in offers)
+    body = (f"Ciao,\n\n{hook}\n\nEcco una selezione dal nuovo volantino di {store.name}{when}:\n\n{plain}\n\n"
+            f"{cta}" + (f"\nOrari: {hours}." if hours else "") +
+            f"\n\nA presto,\nlo staff di {store.name}\n\nOfferte valide fino a esaurimento scorte.")
     return {
         "instagram": {"title": "Post Instagram", "body": ig, "meta": {"hashtags": tags}},
         "facebook": {"title": "Post Facebook", "body": fb, "meta": {}},
@@ -133,6 +208,9 @@ def generate_content(store: Store, flyer: Flyer, llm: LLM | None) -> ContentPack
     facts = "\n".join(f"- {offer_line(o)} [categoria: {o.category}]" for o in offers)
     info = (f"Negozio: {store.name}\nInsegna: {store.banner or '-'}\nIndirizzo: {store.address or '-'}, "
             f"{store.city or '-'}\nServizi: {', '.join(store.services) or '-'}\n"
+            f"Tono di voce: {store.tone or 'familiare'}\n"
+            f"Hashtag del negozio: {', '.join(store.hashtags or []) or '-'}\n"
+            f"Orari: {'; '.join(f'{k} {v}' for k, v in (store.opening_hours or {}).items()) or '-'}\n"
             f"Validità: {validity_text(flyer) or 'non indicata'}\n\nOfferte da promuovere:\n{facts}")
     try:
         ai = llm.parse(system=_SYSTEM, content=[{"type": "text", "text": info}], schema=AIContent,

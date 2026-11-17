@@ -22,7 +22,7 @@ from ...llm import AIRefused, AIUnavailable, LLM, image_block
 from ...money import discount_percent, find_prices, parse_price
 from ...text_utils import CATEGORIES, coerce_category, normalize, parse_iso_date, parse_validity
 from .crosscheck import crosscheck
-from .pdf import PageInfo, Span, page_info, render_page_png
+from .pdf import PageInfo, Span, page_info, render_half_png, render_page_png
 
 log = logging.getLogger("promovo.flyer")
 
@@ -158,8 +158,15 @@ def extract_with_ai(doc: pymupdf.Document, llm: LLM, today: date | None = None) 
     for page in doc:
         info = page_info(page)
         png = render_page_png(page)
+        # Pagina intera (per le posizioni) + due metà ingrandite (per leggere bene i caratteri piccoli).
+        top, bottom = render_half_png(page, 0), render_half_png(page, 1)
         content = [
+            {"type": "text", "text": "Immagine 1: pagina intera. Le coordinate vanno SEMPRE riferite a questa."},
             image_block(png),
+            {"type": "text", "text": "Immagine 2: metà superiore ingrandita, solo per leggere meglio."},
+            image_block(top),
+            {"type": "text", "text": "Immagine 3: metà inferiore ingrandita, solo per leggere meglio."},
+            image_block(bottom),
             {"type": "text", "text": f"Pagina {info.number} di {doc.page_count}.\n"
                                      f"Testo estratto dal PDF:\n{info.text[:12000] or '(nessun testo)'}"},
         ]

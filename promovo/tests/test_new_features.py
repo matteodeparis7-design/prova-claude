@@ -10,8 +10,7 @@ from promovo.api import create_app
 from promovo.db import Database
 from promovo.models import Store
 
-from conftest import FakeLLM
-from test_api import live_pdf, make_store, register, upload  # noqa: F401  (fixture e utilità condivise)
+from conftest import FakeLLM, make_store, register, upload
 
 
 @pytest.fixture
@@ -46,7 +45,7 @@ def test_store_settings_and_logo(client):
     assert client.get(f"/api/stores/{s['id']}", headers=h).json()["logo_url"] is None
 
 
-def test_offer_management(client, live_pdf):  # noqa: F811
+def test_offer_management(client, live_pdf):
     h = register(client)
     s = make_store(client, h)
     f = upload(client, h, s["id"], live_pdf)
@@ -74,7 +73,7 @@ def test_offer_management(client, live_pdf):  # noqa: F811
     assert len(client.get(f"/api/flyers/{f['id']}", headers=h).json()["offers"]) == 12
 
 
-def test_confirm_prices(client, live_pdf):  # noqa: F811
+def test_confirm_prices(client, live_pdf):
     h = register(client)
     s = make_store(client, h)
     f = upload(client, h, s["id"], live_pdf)
@@ -94,7 +93,7 @@ def test_confirm_prices(client, live_pdf):  # noqa: F811
     assert r.json() == {"confirmed": 2, "unverified_left": 0}
 
 
-def test_agency_overview(client, live_pdf):  # noqa: F811
+def test_agency_overview(client, live_pdf):
     h = register(client)
     a = make_store(client, h, name="Negozio A")
     make_store(client, h, name="Negozio B")

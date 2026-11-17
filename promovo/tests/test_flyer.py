@@ -32,7 +32,7 @@ def test_heuristic_reads_every_offer(sample_pdf):
 
 def _ai_pages(content):
     """Risposta IA finta: legge il numero di pagina dal testo e restituisce offerte coerenti."""
-    text = content[1]["text"]
+    text = content[-1]["text"]
     page = int(text.split()[1])
     if page == 1:
         return AIPage.model_validate({"offers": [

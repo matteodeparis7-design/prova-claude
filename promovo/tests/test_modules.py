@@ -44,7 +44,7 @@ def test_content_template(store, flyer):
     pack = generate_content(store, flyer, None)
     assert pack.source == "template"
     assert set(pack.texts) == {"instagram", "facebook", "whatsapp", "newsletter"}
-    assert "dal 13 novembre al 22 novembre" in pack.texts["instagram"]["body"]
+    assert "dal 13 al 22 novembre" in pack.texts["instagram"]["body"]
     assert "STOP" in pack.texts["whatsapp"]["body"]
     allowed = {o.price_cents for o in flyer.offers} | {o.old_price_cents for o in flyer.offers if o.old_price_cents}
     for t in pack.texts.values():

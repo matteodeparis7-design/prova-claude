@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import itertools
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 from typing import Any, Callable
 
@@ -120,3 +120,37 @@ def fake_llm() -> FakeLLM:
 
 
 TODAY = date(2026, 11, 15)  # dentro il periodo del volantino di prova (13-22 novembre 2026)
+
+
+# ------------------------------------------------------------------ utilità per i test delle API
+
+def register(client, email="titolare@test.it", org="Agenzia Test"):
+    r = client.post("/api/auth/register", json={"organization": org, "email": email, "password": "password123",
+                                                "name": "Titolare"})
+    assert r.status_code == 201, r.text
+    return {"Authorization": f"Bearer {r.json()['token']}"}
+
+
+def make_store(client, h, **kw):
+    body = {"name": "Superstore Colleferro", "address": "Via Roma 1", "city": "Colleferro", **kw}
+    r = client.post("/api/stores", json=body, headers=h)
+    assert r.status_code == 201, r.text
+    return r.json()
+
+
+@pytest.fixture(scope="module")
+def live_pdf():
+    """Volantino valido da ieri a tra 10 giorni: le offerte risultano attive oggi."""
+    start, end = date.today() - timedelta(days=1), date.today() + timedelta(days=10)
+    return build_sample_flyer(validity=f"Offerte valide dal {start:%d/%m/%Y} al {end:%d/%m/%Y}")
+
+
+def upload(client, h, store_id, pdf):
+    r = client.post(f"/api/stores/{store_id}/flyers", headers=h,
+                    files={"file": ("volantino.pdf", pdf, "application/pdf")}, data={"title": ""})
+    assert r.status_code == 202, r.text
+    assert r.json()["status"] == "processing"
+    # La lettura avviene in background; il client di test la completa prima di rispondere.
+    flyer = client.get(f"/api/flyers/{r.json()['id']}", headers=h).json()
+    assert flyer["status"] == "ready", flyer
+    return flyer

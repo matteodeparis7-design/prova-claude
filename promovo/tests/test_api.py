@@ -7,9 +7,8 @@ from fastapi.testclient import TestClient
 from promovo.api import create_app
 from promovo.db import Database
 from promovo.modules.content.service import AIContent
-from promovo.sample_flyer import build_sample_flyer
 
-from conftest import FakeLLM
+from conftest import FakeLLM, make_store, register, upload
 
 
 @pytest.fixture
@@ -18,38 +17,6 @@ def app_ctx(tmp_settings):
     app = create_app(tmp_settings, llm=llm, db=Database("sqlite://"))
     with TestClient(app) as client:
         yield client, llm
-
-
-def register(client, email="titolare@test.it", org="Agenzia Test"):
-    r = client.post("/api/auth/register", json={"organization": org, "email": email, "password": "password123",
-                                                "name": "Titolare"})
-    assert r.status_code == 201, r.text
-    return {"Authorization": f"Bearer {r.json()['token']}"}
-
-
-def make_store(client, h, **kw):
-    body = {"name": "Superstore Colleferro", "address": "Via Roma 1", "city": "Colleferro", **kw}
-    r = client.post("/api/stores", json=body, headers=h)
-    assert r.status_code == 201, r.text
-    return r.json()
-
-
-@pytest.fixture(scope="module")
-def live_pdf():
-    """Volantino valido da ieri a tra 10 giorni: le offerte risultano attive oggi."""
-    start, end = date.today() - timedelta(days=1), date.today() + timedelta(days=10)
-    return build_sample_flyer(validity=f"Offerte valide dal {start:%d/%m/%Y} al {end:%d/%m/%Y}")
-
-
-def upload(client, h, store_id, pdf):
-    r = client.post(f"/api/stores/{store_id}/flyers", headers=h,
-                    files={"file": ("volantino.pdf", pdf, "application/pdf")}, data={"title": ""})
-    assert r.status_code == 202, r.text
-    assert r.json()["status"] == "processing"
-    # La lettura avviene in background; il client di test la completa prima di rispondere.
-    flyer = client.get(f"/api/flyers/{r.json()['id']}", headers=h).json()
-    assert flyer["status"] == "ready", flyer
-    return flyer
 
 
 def test_health_and_dashboard(app_ctx):
