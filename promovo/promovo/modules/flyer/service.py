@@ -17,7 +17,8 @@ from .pdf import InvalidPDF, extract_photo, normalize_upload, open_pdf, render_c
 log = logging.getLogger("promovo.flyer")
 
 
-def create_flyer(session: Session, store: Store, pdf_bytes: bytes, settings: Settings, title: str = "") -> Flyer:
+def create_flyer(session: Session, store: Store, pdf_bytes: bytes, settings: Settings, title: str = "",
+                 competitor: str = "") -> Flyer:
     """Valida e salva il PDF; il volantino resta "in lettura". Solleva InvalidPDF se il file non va bene."""
     if len(pdf_bytes) > settings.max_upload_mb * 1024 * 1024:
         raise InvalidPDF(f"Il file supera {settings.max_upload_mb} MB.")
@@ -27,7 +28,7 @@ def create_flyer(session: Session, store: Store, pdf_bytes: bytes, settings: Set
     doc.close()
     settings.ensure_dirs()
     flyer = Flyer(store_id=store.id, title=title, pdf_path="", pdf_sha256=hashlib.sha256(pdf_bytes).hexdigest(),
-                  page_count=page_count, status=FlyerStatus.processing)
+                  page_count=page_count, status=FlyerStatus.processing, competitor=competitor.strip()[:120])
     session.add(flyer)
     session.flush()
     # Un file per volantino: cancellarne uno non tocca gli altri.

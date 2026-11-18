@@ -14,7 +14,7 @@ from .imaging import load_logo
 from .models import Customer, Organization, Role, Store, User
 from .modules.flyer.service import ingest_flyer
 from .modules.video.render import font
-from .sample_flyer import build_sample_flyer
+from .sample_flyer import SampleProduct, build_sample_flyer
 from .security import hash_password
 
 DEMO_EMAIL = "demo@promovo.it"
@@ -57,6 +57,18 @@ def seed_demo(db: Database, settings: Settings) -> bool:
         pdf = build_sample_flyer(validity=f"Offerte valide dal {start:%d/%m/%Y} al {end:%d/%m/%Y}",
                                  banner="SUPERMERCATO DEMO", illustrated=True)
         ingest_flyer(s, store, pdf, settings, None, title="Volantino di prova")
+        # Un concorrente immaginario, per vedere subito il radar del quartiere.
+        rival = build_sample_flyer(
+            [SampleProduct("Spaghetti", "500 g", 89, None, (230, 190, 90)),
+             SampleProduct("Passata di pomodoro", "700 g", 89, None, (200, 40, 40)),
+             SampleProduct("Caffè macinato", "500 g", 449, None, (90, 60, 40)),
+             SampleProduct("Olio extravergine di oliva", "750 ml", 599, None, (120, 150, 40)),
+             SampleProduct("Biscotti frollini", "350 g", 149, None, (210, 160, 90)),
+             SampleProduct("Salmone affumicato", "100 g", 329, None, (240, 140, 100))],
+            validity=f"Offerte valide dal {start:%d/%m/%Y} al {end:%d/%m/%Y}", banner="CONCORRENTE")
+        from .modules.flyer.service import create_flyer, process_flyer
+        process_flyer(s, create_flyer(s, store, rival, settings, title="Volantino Market Esempio",
+                                      competitor="Market Esempio (concorrente di prova)"), settings, None)
         s.add_all([
             Customer(store_id=store.id, name="Anna Verdi", phone="+393330000001", marketing_consent=True,
                      preferred_categories=["pesce"]),

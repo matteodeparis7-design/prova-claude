@@ -59,7 +59,8 @@ class ClipFailed(RuntimeError):
 def current_flyer(session: Session, store: Store, today: date | None = None) -> Flyer | None:
     """Il volantino in corso (o, se nessuno è in corso, l'ultimo pronto)."""
     today = today or date.today()
-    rows = session.scalars(select(Flyer).where(Flyer.store_id == store.id, Flyer.status == FlyerStatus.ready)
+    rows = session.scalars(select(Flyer).where(Flyer.store_id == store.id, Flyer.status == FlyerStatus.ready,
+                                              Flyer.competitor == "")
                            .order_by(Flyer.created_at.desc(), Flyer.id.desc())).all()
     rows = [f for f in rows if f.offers]
     for f in rows:

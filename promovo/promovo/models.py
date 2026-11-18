@@ -125,6 +125,8 @@ class Flyer(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     store_id: Mapped[int] = mapped_column(ForeignKey("stores.id", ondelete="CASCADE"), index=True)
     title: Mapped[str] = mapped_column(String(300), default="")
+    # Vuoto = volantino del negozio; altrimenti nome del concorrente (radar del quartiere).
+    competitor: Mapped[str] = mapped_column(String(120), default="")
     pdf_path: Mapped[str] = mapped_column(String(500))
     pdf_sha256: Mapped[str] = mapped_column(String(64))
     page_count: Mapped[int] = mapped_column(Integer, default=0)

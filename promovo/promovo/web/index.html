@@ -172,6 +172,13 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .rec audio { height: 36px; max-width: 100%; }
 @keyframes blink { 50% { opacity: .25; } }
 .cap-box { white-space: pre-wrap; font-size: 13.5px; background: var(--line-2); border-radius: 10px; padding: 10px 12px; max-height: 120px; overflow: auto; }
+.radar-sum { display: flex; gap: 10px; flex-wrap: wrap; margin: 4px 0 14px; }
+.radar-sum .chip { font-size: 13.5px; padding: 6px 12px; }
+.rlist { display: grid; }
+.rrow { display: grid; grid-template-columns: 1.6fr 1fr 1.3fr auto; gap: 12px; align-items: start; padding: 11px 4px; border-top: 1px solid var(--line-2); font-size: 14px; }
+.rrow .u { display: block; font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
+.rrow .rv { text-align: right; }
+@media (max-width: 700px) { .rrow { grid-template-columns: 1fr 1fr; } .rrow .rp { grid-column: 1 / -1; } .rrow .rv { grid-column: 1 / -1; text-align: left; display: flex; gap: 8px; align-items: center; } }
 .plan { display: grid; gap: 2px; margin-top: 6px; }
 .plan-row { display: grid; grid-template-columns: 230px 1fr; gap: 16px; padding: 12px 4px; border-top: 1px solid var(--line); font-size: 14px; }
 .plan-row:first-child { border-top: 0; }
@@ -325,6 +332,7 @@ tr:last-child td { border-bottom: 0; }
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
   <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L17 6h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.6"/></symbol>
   <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M8.5 21h7"/></symbol>
+  <symbol id="i-radar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><path d="M12 12l6-6"/><circle cx="12" cy="12" r="1.2"/></symbol>
   <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
   <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
 </svg>
@@ -665,7 +673,61 @@ VIEWS.flyers = async (el, opts) => {
   drop.addEventListener("drop", e => { if (e.dataTransfer.files[0]) uploadFlyer(e.dataTransfer.files[0]); });
   file.onchange = () => { if (file.files[0]) uploadFlyer(file.files[0]); };
   bindFlyerItems(el);
+  competitorsCard(el);
 };
+
+async function competitorsCard(el) {
+  const box = document.createElement("div");
+  box.className = "card"; box.id = "compCard";
+  el.appendChild(box);
+  const comps = await api(`/api/stores/${S.storeId}/competitors`);
+  box.innerHTML = `<h2>${icon("i-radar")} Volantini dei concorrenti</h2>
+    <p class="sub">Carica i volantini dei supermercati vicini: Promovo li legge e ti dice su quali prodotti sei più conveniente, così li metti in evidenza. Restano solo tuoi: i nomi dei concorrenti non compaiono mai nei contenuti pubblicati.</p>
+    <div class="row" style="align-items:flex-end"><div class="f"><label class="l" for="compName">Concorrente</label><input class="in" id="compName" placeholder="es. Conad via Roma"></div>
+      <div><button class="btn sec" id="compBtn">${icon("i-upload")} Carica il suo volantino</button><input type="file" id="compFile" accept="application/pdf,image/jpeg,image/png,image/webp" class="hidden"></div></div>
+    ${S.ai ? "" : `<div class="hint">Con l'IA spenta si leggono solo i volantini con il testo dentro il PDF.</div>`}
+    <div id="compState"></div>
+    <div class="stack tight" style="margin-top:14px">${comps.map(c => `<div class="flyer-item" style="cursor:default"><div class="ic">${icon("i-radar")}</div>
+      <div class="t"><b>${esc(c.competitor)}</b><span class="muted">${c.status === "processing" ? "in lettura…" : c.status === "failed" ? "lettura non riuscita" : `${c.valid_from ? `dal ${itDate(c.valid_from)} al ${itDate(c.valid_to)} · ` : ""}${c.offer_count} offerte lette`}</span></div>
+      <button class="btn ghost sm" data-cdelf="${c.id}" aria-label="Elimina">${icon("i-trash")}</button></div>`).join("") || `<div class="muted">Nessun volantino dei concorrenti ancora.</div>`}</div>`;
+  const btn = $("#compBtn", box), fileIn = $("#compFile", box);
+  btn.onclick = () => { if ($("#compName", box).value.trim().length < 2) { toast("Scrivi prima il nome del concorrente.", "err"); $("#compName", box).focus(); return; } fileIn.click(); };
+  fileIn.onchange = () => busy(btn, async () => {
+    const fd = new FormData(); fd.append("file", fileIn.files[0]); fd.append("competitor", $("#compName", box).value.trim());
+    let f = await api(`/api/stores/${S.storeId}/competitors`, {body: fd});
+    while (f.status === "processing") { $("#compState", box).innerHTML = notice("info", "Lettura del volantino del concorrente…", "i-radar"); await sleep(2500); f = await api(`/api/flyers/${f.id}`); }
+    if (f.status === "failed") throw new Error("Lettura non riuscita: " + f.error);
+    toast(`${f.offers.length} offerte lette dal volantino del concorrente.`);
+    box.remove(); competitorsCard(el);
+  }, "Lettura…");
+  $$("[data-cdelf]", box).forEach(b => b.onclick = async () => { if (await confirmBox("Eliminare questo volantino?", "Non verrà più usato per i confronti.", "Elimina", true)) busy(b, async () => { await api(`/api/flyers/${b.dataset.cdelf}`, {method: "DELETE"}); box.remove(); competitorsCard(el); }); });
+}
+
+async function radarCard(box, f) {
+  let r;
+  try { r = await api(`/api/flyers/${f.id}/radar`); } catch (e) { box.remove(); return; }
+  if (!r.competitors.length) {
+    box.innerHTML = `<div class="toolbar"><div style="flex:1"><h2>${icon("i-radar")} Radar del quartiere</h2><p class="sub" style="margin:0">Carica i volantini dei concorrenti vicini: Promovo ti dirà dove sei più conveniente, da mettere in evidenza nei video.</p></div>
+      <button class="btn sec sm" id="toComp">${icon("i-plus")} Aggiungi un concorrente</button></div>`;
+    $("#toComp", box).onclick = () => go("flyers").then(() => { const c = $("#compCard"); if (c) c.scrollIntoView({behavior: "smooth"}); });
+    return;
+  }
+  const s = r.summary;
+  const todo = r.suggest_feature.filter(id => !(f.offers.find(o => o.id === id) || {}).is_featured);
+  const verdict = v => v === "meno caro" ? `<span class="chip ok">${icon("i-check")} più conveniente</span>` : v === "più caro" ? `<span class="chip warn">${icon("i-alert")} più caro</span>` : `<span class="chip grey">uguale</span>`;
+  box.innerHTML = `<div class="toolbar"><div style="flex:1"><h2>${icon("i-radar")} Radar del quartiere</h2>
+      <p class="sub" style="margin:0">Confronto con ${r.competitors.map(c => esc(c.name)).join(", ")}. Formati diversi? Si confronta il prezzo al kg o al litro.</p></div>
+      ${todo.length ? `<button class="btn sm" id="radarFeat">${icon("i-star")} ${todo.length === 1 ? "Metti in evidenza quello dove vinci" : `Metti in evidenza i ${todo.length} dove vinci`}</button>` : r.suggest_feature.length ? `<span class="chip ok">${icon("i-check")} già in evidenza</span>` : ""}</div>
+    ${s.compared ? `<div class="radar-sum"><span class="chip ok">più conveniente su ${s.cheaper}</span><span class="chip warn">più caro su ${s.dearer}</span><span class="chip grey">uguale su ${s.same}</span><span class="muted" style="align-self:center">${s.compared} prodotti in comune</span></div>
+    <div class="rlist">${r.rows.slice(0, 12).map(x => `<div class="rrow">
+        <div class="rp"><b>${esc(x.offer)}</b>${x.is_featured ? ` <span class="chip gold" style="font-size:11px;padding:2px 8px">in evidenza</span>` : ""}<span class="u">${esc(x.description || "")}</span></div>
+        <div class="rc"><span class="u">Tu</span><b>${esc(x.price)}</b><span class="u">${esc(x.own_unit)}</span></div>
+        <div class="rc"><span class="u" title="${esc(x.competitor_offer)}">${esc(x.competitor)}</span><b>${esc(x.competitor_price)}</b><span class="u">${esc(x.competitor_unit)}</span></div>
+        <div class="rv">${verdict(x.verdict)}${x.verdict !== "uguale" ? `<span class="u">${Math.abs(x.diff_pct).toFixed(0)}% ${x.diff_pct > 0 ? "in meno" : "in più"}</span>` : ""}</div></div>`).join("")}
+    </div>` : `<p class="muted">Nessun prodotto in comune con i volantini dei concorrenti di questo periodo.</p>`}`;
+  const fb = $("#radarFeat", box);
+  if (fb) fb.onclick = () => busy(fb, async () => { await api(`/api/flyers/${f.id}/feature`, {json: {offer_ids: todo}}); toast("Messi in evidenza: saranno i primi nel Reel e nelle grafiche."); go("flyers", {flyer: f.id, step: "make"}); });
+}
 
 async function uploadFlyer(f) {
   const state = $("#uploadState");
@@ -811,6 +873,7 @@ function stepMake(el, f, content) {
   const has = new Set(content.map(c => c.kind === "video" ? "video_" + c.meta.format : c.kind === "image" ? "images" : c.kind === "whatsapp_personal" ? "messages" : "texts"));
   const unverified = f.offers.filter(o => !o.price_verified).length;
   el.innerHTML = `
+    <div class="card" id="radarBox"><div class="muted">Radar del quartiere…</div></div>
     <div class="card">
       <h2>Cosa vuoi creare?</h2><p class="sub">Scegli i materiali: il montatore, il grafico e il copywriter li preparano uno dopo l'altro. Puoi rifarli quando vuoi.</p>
       ${unverified ? notice("warn", `Attenzione: ${unverified} prezzi non sono ancora confermati. Conviene controllarli prima.`) : ""}
@@ -818,6 +881,7 @@ function stepMake(el, f, content) {
       <div id="jobState"></div>
     </div>
     <div class="sticky-bar"><span class="muted" id="selInfo"></span><button class="btn lg" id="makeBtn">${icon("i-spark")} Crea i materiali</button></div>`;
+  radarCard($("#radarBox"), f);
   const upd = () => { $("#selInfo").textContent = S.makeSel.size ? `${S.makeSel.size} materiali selezionati` : "Seleziona almeno un materiale"; $("#makeBtn").disabled = !S.makeSel.size; };
   $$("[data-mk]", el).forEach(c => c.onchange = () => { c.checked ? S.makeSel.add(c.dataset.mk) : S.makeSel.delete(c.dataset.mk); c.closest(".mk").classList.toggle("on", c.checked); upd(); });
   upd();

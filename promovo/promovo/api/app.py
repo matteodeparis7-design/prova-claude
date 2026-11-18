@@ -43,6 +43,7 @@ from ..modules.video.service import render_flyer_video
 from ..modules.clip.analyze import ClipError
 from ..modules.clip.service import AUDIO_EXT, VIDEO_EXT, VOICE_MODES, ClipFailed, delete_clip_files, make_reel, script_for
 from .. import voice as voicemod
+from ..modules.radar.service import radar as radar_report
 from .deps import (
     AppState, bearer_token, content_for, current_user, flyer_for, get_session, job_for, offer_for, order_for,
     require_owner, state, store_for,
@@ -105,6 +106,10 @@ class StoreIn(BaseModel):
     video_music: bool = True
 
     _clean_tags = field_validator("hashtags")(lambda cls, v: _clean_hashtags(v))
+
+
+class FeatureIn(BaseModel):
+    offer_ids: list[int] = Field(max_length=50)
 
 
 class StorePatch(BaseModel):
@@ -253,7 +258,7 @@ def flyer_out(f: Flyer, with_offers: bool = False) -> dict:
            "valid_from": f.valid_from.isoformat() if f.valid_from else None,
            "valid_to": f.valid_to.isoformat() if f.valid_to else None, "status": f.status.value,
            "extraction_method": f.extraction_method, "error": f.error, "warnings": f.warnings,
-           "offer_count": len(f.offers), "unverified_count": sum(1 for o in f.offers if not o.price_verified),
+           "competitor": f.competitor, "offer_count": len(f.offers), "unverified_count": sum(1 for o in f.offers if not o.price_verified),
            "created_at": f.created_at.isoformat()}
     if with_offers:
         out["offers"] = [offer_out(o) for o in f.offers]
@@ -581,7 +586,7 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         out = []
         for st in session.scalars(select(Store).where(Store.organization_id == user.organization_id)
                                   .order_by(Store.name)).all():
-            last = session.scalars(select(Flyer).where(Flyer.store_id == st.id)
+            last = session.scalars(select(Flyer).where(Flyer.store_id == st.id, Flyer.competitor == "")
                                    .order_by(Flyer.created_at.desc(), Flyer.id.desc()).limit(1)).first()
             pieces = session.scalars(select(ContentPiece).where(ContentPiece.flyer_id == last.id,
                                                                 ContentPiece.kind != "plan")).all() if last else []
@@ -640,10 +645,60 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         background.add_task(run_flyer_job, state(request), f.id)
         return flyer_out(f)
 
+    # -------------------------------------------------- radar del quartiere
+
+    @app.post("/api/stores/{store_id}/competitors", status_code=202)
+    async def upload_competitor(store_id: int, request: Request, background: BackgroundTasks,
+                                file: UploadFile = File(...), competitor: str = Form(...),
+                                user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Volantino di un concorrente della zona: si legge come gli altri, serve solo per il confronto."""
+        store = store_for(session, user, store_id)
+        name = competitor.strip()
+        if len(name) < 2:
+            raise HTTPException(400, "Scrivi il nome del concorrente (es. «Conad via Roma»).")
+        st = state(request)
+        limit = st.settings.max_upload_mb * 1024 * 1024
+        data = await file.read(limit + 1)
+        if len(data) > limit:
+            raise HTTPException(413, f"Il file supera {st.settings.max_upload_mb} MB.")
+        try:
+            flyer = create_flyer(session, store, data, st.settings, title=f"Volantino {name}"[:300], competitor=name)
+        except InvalidPDF as exc:
+            raise HTTPException(400, str(exc)) from exc
+        session.commit()
+        background.add_task(run_flyer_job, st, flyer.id)
+        return flyer_out(flyer)
+
+    @app.get("/api/stores/{store_id}/competitors")
+    def list_competitors(store_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        store = store_for(session, user, store_id)
+        rows = session.scalars(select(Flyer).where(Flyer.store_id == store.id, Flyer.competitor != "")
+                               .order_by(Flyer.created_at.desc(), Flyer.id.desc())).all()
+        return [flyer_out(f) for f in rows]
+
+    @app.get("/api/flyers/{flyer_id}/radar")
+    def flyer_radar(flyer_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        f = flyer_for(session, user, flyer_id)
+        if f.competitor:
+            raise HTTPException(400, "Il radar si calcola sui volantini del negozio, non su quelli dei concorrenti.")
+        return radar_report(session, f.store, f)
+
+    @app.post("/api/flyers/{flyer_id}/feature")
+    def feature_offers(flyer_id: int, body: FeatureIn, user: User = Depends(current_user),
+                       session: Session = Depends(get_session)):
+        """Mette in evidenza le offerte indicate (es. quelle dove il negozio è il più conveniente)."""
+        f = flyer_for(session, user, flyer_id)
+        ids = set(body.offer_ids)
+        for o in f.offers:
+            if o.id in ids:
+                o.is_featured = True
+        session.flush()
+        return flyer_out(f, with_offers=True)
+
     @app.get("/api/stores/{store_id}/flyers")
     def list_flyers(store_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
         store = store_for(session, user, store_id)
-        rows = session.scalars(select(Flyer).where(Flyer.store_id == store.id)
+        rows = session.scalars(select(Flyer).where(Flyer.store_id == store.id, Flyer.competitor == "")
                                .order_by(Flyer.created_at.desc(), Flyer.id.desc())).all()
         return [flyer_out(f) for f in rows]
 
@@ -1147,7 +1202,7 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         count = lambda model, *cond: session.scalar(select(func.count()).select_from(model).where(*cond))  # noqa: E731
         return {
             "store": store_out(store),
-            "flyers": count(Flyer, Flyer.store_id == store.id),
+            "flyers": count(Flyer, Flyer.store_id == store.id, Flyer.competitor == ""),
             "active_offers": len(active_offers(session, store.id)),
             "customers": count(Customer, Customer.store_id == store.id),
             "customers_with_consent": count(Customer, Customer.store_id == store.id,

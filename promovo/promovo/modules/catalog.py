@@ -14,7 +14,7 @@ def active_flyers(session: Session, store_id: int, today: date | None = None) ->
     """Volantini validi oggi; se nessuno ha date, l'ultimo pronto."""
     today = today or date.today()
     ready = session.scalars(
-        select(Flyer).where(Flyer.store_id == store_id, Flyer.status == FlyerStatus.ready)
+        select(Flyer).where(Flyer.store_id == store_id, Flyer.status == FlyerStatus.ready, Flyer.competitor == "")
         .order_by(Flyer.created_at.desc(), Flyer.id.desc())
     ).all()
     current = [f for f in ready if f.valid_from and f.valid_to and f.valid_from <= today <= f.valid_to]
