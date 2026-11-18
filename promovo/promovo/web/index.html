@@ -175,7 +175,7 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .radar-sum { display: flex; gap: 10px; flex-wrap: wrap; margin: 4px 0 14px; }
 .radar-sum .chip { font-size: 13.5px; padding: 6px 12px; }
 .rlist { display: grid; }
-.rrow { display: grid; grid-template-columns: 1.6fr 1fr 1.3fr auto; gap: 12px; align-items: start; padding: 11px 4px; border-top: 1px solid var(--line-2); font-size: 14px; }
+.rrow { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1.3fr) 170px; gap: 12px; align-items: start; padding: 11px 4px; border-top: 1px solid var(--line-2); font-size: 14px; }
 .rrow .u { display: block; font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
 .rrow .rv { text-align: right; }
 @media (max-width: 700px) { .rrow { grid-template-columns: 1fr 1fr; } .rrow .rp { grid-column: 1 / -1; } .rrow .rv { grid-column: 1 / -1; text-align: left; display: flex; gap: 8px; align-items: center; } }
@@ -754,7 +754,7 @@ async function radarCard(box, f) {
         <div class="rp"><b>${esc(x.offer)}</b>${x.is_featured ? ` <span class="chip gold" style="font-size:11px;padding:2px 8px">in evidenza</span>` : ""}<span class="u">${esc(x.description || "")}</span></div>
         <div class="rc"><span class="u">Tu</span><b>${esc(x.price)}</b><span class="u">${esc(x.own_unit)}</span></div>
         <div class="rc"><span class="u" title="${esc(x.competitor_offer)}">${esc(x.competitor)}</span><b>${esc(x.competitor_price)}</b><span class="u">${esc(x.competitor_unit)}</span></div>
-        <div class="rv">${verdict(x.verdict)}${x.verdict !== "uguale" ? `<span class="u">${Math.abs(x.diff_pct).toFixed(0)}% ${x.diff_pct > 0 ? "in meno" : "in più"}</span>` : ""}</div></div>`).join("")}
+        <div class="rv">${verdict(x.verdict)}${x.verdict !== "uguale" ? `<span class="u">${Math.abs(x.diff_pct).toFixed(0)}% ${x.diff_pct > 0 ? "in meno" : "in più"}</span>` : ""}${x.verdict === "più caro" && x.is_featured ? `<span class="u" style="color:#8a5a00">è in evidenza: valuta se spingerne un altro</span>` : ""}</div></div>`).join("")}
     </div>` : `<p class="muted">Nessun prodotto in comune con i volantini dei concorrenti di questo periodo.</p>`}`;
   const fb = $("#radarFeat", box);
   if (fb) fb.onclick = () => busy(fb, async () => { await api(`/api/flyers/${f.id}/feature`, {json: {offer_ids: todo}}); toast("Messi in evidenza: saranno i primi nel Reel e nelle grafiche."); go("flyers", {flyer: f.id, step: "make"}); });
