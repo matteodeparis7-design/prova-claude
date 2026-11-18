@@ -296,6 +296,8 @@ def computed_prices(f: Facts) -> set[int]:
     for c in f.combos:
         allowed.update((c.total_cents, c.saving_cents))
     allowed.add(f.total_saving)
+    for o in f.all_offers:
+        allowed.update(find_prices(o.unit_price_text or ""))
     allowed.update(find_prices(f.hours))     # orari come "8.30-13.00" non sono prezzi
     return allowed
 
@@ -570,39 +572,66 @@ class Written:
     issues: list[str]
 
 
+STRATEGY = {
+    "combo": "Una cena completa con i prodotti in offerta, con il totale già calcolato.",
+    "half": "Il prodotto con lo sconto più forte: metà prezzo, detto con i numeri.",
+    "saving": "Il risparmio in euro sul prodotto protagonista.",
+    "under_euro": "I prodotti sotto l'euro: una ragione semplice per entrare.",
+    "occasion": "La ricorrenza della settimana, con i prodotti del volantino che la accompagnano.",
+    "fresh": "Il reparto fresco della settimana: più offerte nello stesso banco.",
+    "stock": "Le offerte da scorta: prodotti che si comprano oggi e si usano per settimane.",
+    "weekend": "Il fine settimana: cosa portare in tavola sabato e domenica.",
+    "basket": "Tre prodotti di reparti diversi, con il totale già sommato.",
+    "total": "Il risparmio complessivo della settimana, calcolato offerta per offerta.",
+    "hero": "Il prodotto protagonista e il suo prezzo.",
+}
+
+
 def write_week(store: Store, flyer: Flyer, offers: list[Offer] | None = None, weather: dict | None = None,
-               today: date | None = None, seed: int | None = None) -> Written:
-    """Scrive Instagram e Facebook della settimana. Prova più idee e tiene la prima senza difetti."""
+               today: date | None = None, seed: int | None = None, history: list[dict] | None = None,
+               avoid: set[str] | None = None, version: int = 0) -> Written:
+    """Scrive Instagram, Facebook e la didascalia per Reel e TikTok della settimana.
+
+    history: cosa è già uscito per questo negozio nelle settimane scorse (la redazione non si ripete);
+    avoid: idee da non riproporre ("Un'altra idea"); version: cambia le formulazioni a parità di volantino.
+    """
+    from . import editor
     f = gather_facts(store, flyer, offers, weather, today)
     tags = hashtags(f)
     if not f.offers:
         empty = f"Le offerte di {store.name}" + (f", {f.validity}" if f.validity else "") + "."
         return Written({"instagram": {"title": "Post Instagram", "body": empty, "meta": {"hashtags": tags}},
-                        "facebook": {"title": "Post Facebook", "body": empty, "meta": {}}}, None, f, [])
-    rng = random.Random(seed if seed is not None else (flyer.id or 0) * 7919 + (store.id or 0))
+                        "facebook": {"title": "Post Facebook", "body": empty, "meta": {}},
+                        "reel": {"title": "Didascalia per Reel e TikTok", "body": empty, "meta": {}}}, None, f, [])
+    base = seed if seed is not None else (flyer.id or 0) * 7919 + (store.id or 0)
+    rng = random.Random(base + version * 104729 + TONES.index(f.tone) * 31)
+    history = history or []
+    used = set()
+    for past in history[:6]:
+        used.update(v for k, v in past.items() if k in ("hook_id", "layout", "intro", "close", "opener") and v)
+    said_before = {normalize(p.get("hook", "")) for p in history if p.get("hook")}
     allowed = computed_prices(f)
-    tried = [choose_angle(f, rng)]
-    for _, k in _candidates(f):
-        if k != tried[0].kind:
-            tried.append(write_angle(f, k, rng))
     best = None
-    for angle in tried:
-        ig, fb = _clean(instagram(f, angle, rng), f.tone), _clean(facebook(f, angle, rng), f.tone)
+    for idea in editor.choose(f, history, rng, avoid)[:6]:
+        d = editor.draft(f, idea, rng, used, said_before)
+        ig, ig_meta = editor.instagram(f, d, rng, used)
+        fb, fb_meta = editor.facebook(f, d, rng, used)
+        ig, fb = _clean(ig, f.tone), _clean(fb, f.tone)
         issues = review(ig, allowed, f.tone) + review(fb, allowed, f.tone)
-        if best is None or len(issues) < len(best[3]):
-            best = (angle, ig, fb, issues)
+        if best is None or len(issues) < len(best[4]):
+            best = (d, ig, fb, {**ig_meta, **fb_meta}, issues)
         if not issues:
             break
-    angle, ig, fb, issues = best
-    strategy = {"combo": "Una cena completa con i prodotti in offerta, con il totale già calcolato.",
-                "half": "Il prodotto con lo sconto più forte: metà prezzo, detto con i numeri.",
-                "saving": "Il risparmio in euro sul prodotto protagonista.",
-                "under_euro": "I prodotti sotto l'euro: una ragione semplice per entrare.",
-                "hero": "Il prodotto protagonista e il suo prezzo."}[angle.kind]
+    d, ig, fb, ids, issues = best
+    combo = next((c for c in f.combos if list(c.items) == d.featured), None) if d.kind == "combo" else None
+    angle = Angle(d.kind, d.hook, d.detail, combo=combo, featured=d.featured)
+    meta = {"hashtags": tags, "strategy": STRATEGY.get(d.kind, ""), "angle": d.kind, "hero": d.meta.get("hero", ""),
+            "hook_id": d.hook_id, "hook": d.hook, "version": version, **ids}
+    reel = _clean(editor.reel_caption(f, d, tags), f.tone)
     return Written({
-        "instagram": {"title": "Post Instagram", "body": ig, "meta": {"hashtags": tags, "strategy": strategy,
-                                                                       "angle": angle.kind}},
-        "facebook": {"title": "Post Facebook", "body": fb, "meta": {"angle": angle.kind}},
+        "instagram": {"title": "Post Instagram", "body": ig, "meta": meta},
+        "facebook": {"title": "Post Facebook", "body": fb, "meta": {"angle": d.kind}},
+        "reel": {"title": "Didascalia per Reel e TikTok", "body": reel, "meta": {"angle": d.kind}},
     }, angle, f, issues)
 
 

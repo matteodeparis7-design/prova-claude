@@ -101,7 +101,7 @@ def test_flyer_offers_content_video(app_ctx, live_pdf):
     r = client.post(f"/api/flyers/{flyer['id']}/content", headers=h)
     assert r.status_code == 201
     body = r.json()
-    assert body["source"] == "ai" and len(body["content"]) == 3 and body["warnings"]
+    assert body["source"] == "ai" and len(body["content"]) == 4 and body["warnings"]
     cid = body["content"][0]["id"]
     r = client.patch(f"/api/content/{cid}", headers=h, json={"approved": True, "body": "Testo corretto"})
     assert r.json()["approved"] and r.json()["body"] == "Testo corretto"
@@ -117,7 +117,7 @@ def test_flyer_offers_content_video(app_ctx, live_pdf):
     assert video.status_code == 200 and video.content[4:8] == b"ftyp"
 
     ov = client.get(f"/api/stores/{store['id']}/overview", headers=h).json()
-    assert ov["flyers"] == 1 and ov["content_to_approve"] == 2  # un testo (l'altro è approvato) e il video
+    assert ov["flyers"] == 1 and ov["content_to_approve"] == 3  # due testi (uno è approvato) e il video
 
     # Rilettura: le offerte vengono ricreate da capo.
     r = client.post(f"/api/flyers/{flyer['id']}/reprocess", headers=h)

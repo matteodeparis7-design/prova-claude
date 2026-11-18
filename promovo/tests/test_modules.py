@@ -36,13 +36,13 @@ def test_active_offers(session, store, flyer):
 def test_content_by_agents(session, store, flyer):
     pack = generate_content(store, flyer, None, today=TODAY)
     assert pack.source == "agents" and pack.warnings == []
-    assert set(pack.texts) == {"instagram", "facebook", "plan"}
-    assert "dal 13 al 22 novembre" in pack.texts["instagram"]["body"]
+    assert set(pack.texts) == {"instagram", "facebook", "reel", "plan"}
+    assert "22 novembre" in pack.texts["instagram"]["body"]          # la fine delle offerte si dice sempre
     allowed = computed_prices(gather_facts(store, flyer, None, None, TODAY))
     for t in pack.texts.values():
         assert prices_ok(t["body"], allowed)
     pieces = save_content(session, store, flyer, pack)
-    assert {p.kind for p in pieces} == {"instagram", "facebook", "plan"}
+    assert {p.kind for p in pieces} == {"instagram", "facebook", "reel", "plan"}
     assert all(not p.approved for p in pieces)
     assert save_content(session, store, flyer, pack) and len(flyer.store.flyers) == 1   # niente doppioni
 

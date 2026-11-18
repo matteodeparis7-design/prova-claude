@@ -29,7 +29,7 @@ from ..modules.catalog import active_offers
 from ..modules.kit import DEFAULT_ITEMS, ITEMS, build_zip, run_kit
 from ..modules.content.service import generate_content, save_content
 from ..modules.flyer.pdf import InvalidPDF
-from ..modules.flyer.service import create_flyer, delete_flyer_files, process_flyer
+from ..modules.flyer.service import create_flyer, delete_flyer_files, process_flyer, replicate_flyer
 from ..modules.video.render import FORMATS
 from ..modules.video.service import render_flyer_video
 from ..modules.clip.analyze import ClipError
@@ -104,6 +104,11 @@ class StoreIn(BaseModel):
 class KeyIn(BaseModel):
     service: str = Field(pattern="^(ai|voice)$")
     key: str = Field(max_length=400)
+
+
+class ReplicateIn(BaseModel):
+    store_ids: list[int] = Field(min_length=1, max_length=200)
+    make: bool = True                  # crea subito tutti i materiali per ogni negozio
 
 
 class FeatureIn(BaseModel):
@@ -880,10 +885,15 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
     # -------------------------------------------------- contenuti e video
 
     @app.post("/api/flyers/{flyer_id}/content", status_code=201)
-    def make_content(flyer_id: int, request: Request, user: User = Depends(current_user),
+    def make_content(flyer_id: int, request: Request, another: bool = False, user: User = Depends(current_user),
                      session: Session = Depends(get_session)):
+        """Scrive (o riscrive) i testi del volantino. another=true: un'idea diversa da quella attuale."""
         f = flyer_for(session, user, flyer_id)
-        pack = generate_content(f.store, f, state(request).llm)
+        from ..modules.weather.service import weekly_weather
+        st = state(request)
+        weather = weekly_weather(f.store, f, fetch=st.weather_fetch, enabled=st.settings.weather) \
+            if st.settings.weather else None
+        pack = generate_content(f.store, f, st.llm, weather=weather, another=another)
         pieces = save_content(session, f.store, f, pack)
         return {"source": pack.source, "warnings": pack.warnings, "content": [content_out(p) for p in pieces]}
 
@@ -926,6 +936,33 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         rows = session.scalars(select(ContentPiece).where(ContentPiece.flyer_id == f.id).order_by(ContentPiece.id)).all()
         return [content_out(c) for c in rows]
 
+    @app.post("/api/flyers/{flyer_id}/replicate", status_code=202)
+    def replicate(flyer_id: int, body: ReplicateIn, request: Request, background: BackgroundTasks,
+                  user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Catene: lo stesso volantino per altri punti vendita, con i materiali di ciascuno."""
+        f = flyer_for(session, user, flyer_id)
+        if f.status != FlyerStatus.ready or not f.offers:
+            raise HTTPException(409, "Il volantino non è pronto o non ha offerte.")
+        out = []
+        for sid in dict.fromkeys(body.store_ids):
+            if sid == f.store_id:
+                continue
+            target = store_for(session, user, sid)
+            copy = replicate_flyer(session, f, target, state(request).settings)
+            item = {"store_id": target.id, "store": target.name, "flyer_id": copy.id, "job_id": None}
+            if body.make:
+                job = Job(store_id=target.id, kind="kit", params={"flyer_id": copy.id, "items": AUTOPILOT_ITEMS},
+                          result={"total": len(AUTOPILOT_ITEMS), "done": 0, "current": "", "errors": []})
+                session.add(job)
+                session.flush()
+                item["job_id"] = job.id
+            out.append(item)
+        session.commit()
+        for item in out:
+            if item["job_id"]:
+                background.add_task(run_kit_job, state(request), item["job_id"])
+        return out
+
     @app.post("/api/flyers/{flyer_id}/kit", status_code=202)
     def make_kit(flyer_id: int, body: KitIn, request: Request, background: BackgroundTasks,
                  user: User = Depends(current_user), session: Session = Depends(get_session)):
@@ -943,6 +980,18 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         session.commit()
         background.add_task(run_kit_job, state(request), job.id)
         return job_out(job)
+
+    @app.get("/api/flyers/{flyer_id}/report.pdf")
+    def download_report(flyer_id: int, request: Request, user: User = Depends(current_user),
+                        session: Session = Depends(get_session)):
+        """Il report della settimana da consegnare al cliente."""
+        from ..modules.report import build_report
+        f = flyer_for(session, user, flyer_id)
+        out = state(request).settings.data_dir / "renders" / f"report_{uuid.uuid4().hex}.pdf"
+        build_report(session, f.store, f, out)
+        name = re.sub(r"[^\w]+", "_", f"Report_{f.store.name}")[:60] + ".pdf"
+        return FileResponse(out, media_type="application/pdf", filename=name,
+                            background=StarletteTask(lambda: out.unlink(missing_ok=True)))
 
     @app.get("/api/flyers/{flyer_id}/kit.zip")
     def download_kit(flyer_id: int, request: Request, approved_only: bool = False,

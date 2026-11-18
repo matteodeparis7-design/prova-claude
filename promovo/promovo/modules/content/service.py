@@ -31,7 +31,7 @@ __all__ = ["KINDS", "TONES", "AI_TELLS", "CATEGORY_EMOJI", "ContentPack", "gener
            "weekly_plan", "template_pack", "featured_offers", "hero_offer", "product_name", "validity_text",
            "fmt_date", "fmt_day", "saving", "ai_tells", "prices_ok"]
 
-KINDS = ("instagram", "facebook", "plan")
+KINDS = ("instagram", "facebook", "reel", "plan")
 AI_TELLS = BANNED
 
 
@@ -121,10 +121,44 @@ def weekly_plan(store: Store, flyer: Flyer, offers: list[Offer], today: date | N
 
 # ------------------------------------------------------------------ la redazione interna
 
+def history_for(store: Store, flyer: Flyer) -> list[dict]:
+    """Cosa ha già pubblicato la redazione per questo negozio, dal volantino più recente."""
+    from sqlalchemy.orm import object_session
+    s = object_session(store)
+    if s is None or store.id is None:
+        return []
+    rows = s.scalars(select(ContentPiece).where(ContentPiece.store_id == store.id, ContentPiece.kind == "instagram",
+                                                ContentPiece.flyer_id != flyer.id)
+                     .order_by(ContentPiece.created_at.desc(), ContentPiece.id.desc()).limit(8)).all()
+    return [dict(r.meta or {}) for r in rows]
+
+
+def current_angle(store: Store, flyer: Flyer) -> dict:
+    from sqlalchemy.orm import object_session
+    s = object_session(store)
+    if s is None or flyer.id is None:
+        return {}
+    row = s.scalars(select(ContentPiece).where(ContentPiece.flyer_id == flyer.id, ContentPiece.kind == "instagram")
+                    .order_by(ContentPiece.id.desc()).limit(1)).first()
+    return dict(row.meta or {}) if row else {}
+
+
 def template_pack(store: Store, flyer: Flyer, offers: list[Offer], weather: dict | None = None,
-                  today: date | None = None) -> dict[str, dict]:
-    """I testi della redazione interna (senza IA esterna), con il piano della settimana."""
-    w = write_week(store, flyer, offers, weather=weather, today=today)
+                  today: date | None = None, another: bool = False) -> dict[str, dict]:
+    """I testi della redazione interna (senza IA esterna), con il piano della settimana.
+    another=True: un'altra idea rispetto a quella già scritta per questo volantino."""
+    history = history_for(store, flyer)
+    avoid, version = set(), 0
+    if another:
+        cur = current_angle(store, flyer)
+        if cur.get("angle"):
+            avoid.add(f"{cur['angle']}:{cur.get('hero', '')}")
+            avoid.update(cur.get("tried") or [])          # tutte le idee già proposte per questo volantino
+            history = [cur] + history
+        version = int(cur.get("version") or 0) + 1
+    w = write_week(store, flyer, offers, weather=weather, today=today, history=history, avoid=avoid, version=version)
+    if avoid:
+        w.texts["instagram"].setdefault("meta", {})["tried"] = sorted(avoid)
     texts = dict(w.texts)
     hero = (w.angle.featured[0] if w.angle and w.angle.featured else None)
     texts["plan"] = {"title": "Piano della settimana",
@@ -186,9 +220,9 @@ def _ai_brief(f: Facts, draft: dict[str, dict]) -> str:
 
 
 def generate_content(store: Store, flyer: Flyer, llm: LLM | None, weather: dict | None = None,
-                     today: date | None = None) -> ContentPack:
+                     today: date | None = None, another: bool = False) -> ContentPack:
     offers = featured_offers(flyer)
-    texts = template_pack(store, flyer, offers, weather=weather, today=today)
+    texts = template_pack(store, flyer, offers, weather=weather, today=today, another=another)
     if not offers:
         return ContentPack(texts=texts, source="agents", warnings=["Nessuna offerta nel volantino."])
     if llm is None:

@@ -109,3 +109,41 @@ def delete_flyer_files(flyer: Flyer, settings: Settings) -> None:
             f.unlink(missing_ok=True)
     if flyer.pdf_path:
         Path(flyer.pdf_path).unlink(missing_ok=True)
+
+
+def replicate_flyer(session: Session, flyer: Flyer, target: Store, settings: Settings) -> Flyer:
+    """Lo stesso volantino per un altro punto vendita della catena: offerte, prezzi già controllati e
+    ritagli vengono copiati (niente seconda lettura); i materiali poi si creano con i dati del negozio."""
+    import shutil
+    settings.ensure_dirs()
+    copy = Flyer(store_id=target.id, title=flyer.title, pdf_path="", pdf_sha256=flyer.pdf_sha256,
+                 page_count=flyer.page_count, valid_from=flyer.valid_from, valid_to=flyer.valid_to,
+                 status=FlyerStatus.ready, extraction_method=flyer.extraction_method, error="",
+                 warnings=list(flyer.warnings or []), competitor="")
+    session.add(copy)
+    session.flush()
+    pdf_path = settings.data_dir / "flyers" / f"{copy.id}.pdf"
+    if flyer.pdf_path and Path(flyer.pdf_path).exists():
+        shutil.copyfile(flyer.pdf_path, pdf_path)
+    copy.pdf_path = str(pdf_path)
+    dst_dir = settings.data_dir / "crops" / str(copy.id)
+    dst_dir.mkdir(parents=True, exist_ok=True)
+
+    def moved(path: str) -> str:
+        if not path or not Path(path).exists():
+            return ""
+        dst = dst_dir / Path(path).name
+        shutil.copyfile(path, dst)
+        return str(dst)
+    for o in flyer.offers:
+        session.add(Offer(
+            flyer_id=copy.id, position=o.position, page=o.page, name=o.name, brand=o.brand,
+            description=o.description, category=o.category, price_cents=o.price_cents,
+            old_price_cents=o.old_price_cents, discount_percent=o.discount_percent,
+            unit_price_text=o.unit_price_text, conditions=o.conditions, bbox=list(o.bbox or []),
+            crop_path=moved(o.crop_path), photo_bbox=list(o.photo_bbox or []), photo_path=moved(o.photo_path),
+            manual=o.manual, price_verified=o.price_verified, verified_by=o.verified_by,
+            is_featured=o.is_featured, cost_cents=o.cost_cents))
+    session.flush()
+    session.refresh(copy)
+    return copy

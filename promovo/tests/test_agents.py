@@ -100,7 +100,7 @@ def test_autopilot_reads_and_makes_everything(client, live_pdf, monkeypatch):
     assert job["result"]["stage"] == "done" and job["result"]["offers"] == 12 and job["result"]["unverified"] == 0
     assert job["result"]["done"] == ["texts", "images"] and job["result"]["errors"] == []
     kinds = {c["kind"] for c in client.get(f"/api/flyers/{r.json()['id']}/content", headers=h).json()}
-    assert kinds == {"instagram", "facebook", "plan", "image"}
+    assert kinds == {"instagram", "facebook", "reel", "plan", "image"}
 
 
 def test_autopilot_reports_unreadable_flyer(client, monkeypatch):
@@ -113,3 +113,35 @@ def test_autopilot_reports_unreadable_flyer(client, monkeypatch):
                     files={"file": ("v.pdf", doc.tobytes(), "application/pdf")}, data={"autopilot": "true"})
     job = client.get(f"/api/jobs/{r.json()['autopilot_job']}", headers=h).json()
     assert job["status"] == "failed" and "Nessuna offerta" in job["error"]
+
+
+def test_chain_replicates_flyer_to_other_stores(client, live_pdf, monkeypatch):
+    monkeypatch.setattr("promovo.api.app.AUTOPILOT_ITEMS", ["texts"])
+    h = register(client)
+    main = make_store(client, h)
+    other = make_store(client, h, name="Superstore Velletri", address="Corso Italia 4", city="Velletri")
+    third = make_store(client, h, name="Superstore Artena", address="Piazza Vittorio 2", city="Artena")
+    r = client.post(f"/api/stores/{main['id']}/flyers", headers=h, files={"file": ("v.pdf", live_pdf, "application/pdf")})
+    fid = r.json()["id"]
+    r = client.post(f"/api/flyers/{fid}/replicate", headers=h, json={"store_ids": [other["id"], third["id"], main["id"]]})
+    assert r.status_code == 202, r.text
+    items = r.json()
+    assert [i["store_id"] for i in items] == [other["id"], third["id"]]          # il negozio di partenza si salta
+    for item, st in zip(items, (other, third)):
+        job = client.get(f"/api/jobs/{item['job_id']}", headers=h).json()
+        assert job["status"] == "done", job
+        fl = client.get(f"/api/flyers/{item['flyer_id']}", headers=h).json()
+        assert fl["store_id"] == st["id"] and len(fl["offers"]) == 12 and fl["unverified_count"] == 0
+        ig = next(c for c in client.get(f"/api/flyers/{item['flyer_id']}/content", headers=h).json() if c["kind"] == "instagram")
+        assert st["city"] in ig["body"]                                            # i dati sono del suo negozio
+        img = client.get(fl["offers"][0]["image_url"], headers=h)
+        assert img.status_code == 200
+    # eliminare l'originale non tocca le copie
+    assert client.delete(f"/api/flyers/{fid}", headers=h).status_code == 204
+    fl = client.get(f"/api/flyers/{items[0]['flyer_id']}", headers=h).json()
+    assert client.get(fl["offers"][0]["image_url"], headers=h).status_code == 200
+    # un negozio di un'altra organizzazione non si può usare
+    h2 = register(client, email="altro@test.it", org="Altra")
+    foreign = make_store(client, h2, name="Altro negozio")
+    r2 = client.post(f"/api/stores/{other['id']}/flyers", headers=h, files={"file": ("v.pdf", live_pdf, "application/pdf")})
+    assert client.post(f"/api/flyers/{r2.json()['id']}/replicate", headers=h, json={"store_ids": [foreign["id"]]}).status_code == 404

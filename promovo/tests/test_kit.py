@@ -91,7 +91,7 @@ def test_kit_and_zip(client, live_pdf):
     assert job["result"]["done"] == ["texts", "images", "video_square"] and job["result"]["errors"] == []
     content = client.get(f"/api/flyers/{f['id']}/content", headers=h).json()
     kinds = sorted({c["kind"] for c in content})
-    assert kinds == ["facebook", "image", "instagram", "plan", "video"]
+    assert kinds == ["facebook", "image", "instagram", "plan", "reel", "video"]
     img = next(c for c in content if c["kind"] == "image")
     got = client.get(img["file_url"], headers=h)
     assert got.headers["content-type"] == "image/jpeg" and Image.open(io.BytesIO(got.content)).size[0] == 1080
@@ -108,9 +108,15 @@ def test_kit_and_zip(client, live_pdf):
     assert any("/Video/" in n and n.endswith(".mp4") for n in names)
     assert sum("/Immagini/" in n for n in names) == 8
     assert any(n.endswith("Testi/Instagram.txt") for n in names)
+    assert any(n.endswith("Report_della_settimana.pdf") for n in names)
+    rep = client.get(f"/api/flyers/{f['id']}/report.pdf", headers=h)
+    assert rep.status_code == 200 and rep.content[:4] == b"%PDF"
+    import pymupdf
+    text = "".join(p.get_text() for p in pymupdf.open(stream=rep.content, filetype="pdf"))
+    assert "Report della settimana" in text and "Offerte e controllo dei prezzi" in text and "Omnibus" in text
     # Solo i contenuti approvati.
     z2 = client.get(f"/api/flyers/{f['id']}/kit.zip?approved_only=true", headers=h)
-    assert [n for n in zipfile.ZipFile(io.BytesIO(z2.content)).namelist() if not n.endswith(("LEGGIMI.txt", "Piano_della_settimana.txt"))] == []
+    assert [n for n in zipfile.ZipFile(io.BytesIO(z2.content)).namelist() if not n.endswith(("LEGGIMI.txt", "Piano_della_settimana.txt", "Report_della_settimana.pdf"))] == []
     # Il file temporaneo dello ZIP viene cancellato dopo l'invio.
     renders = client.app.state.promovo.settings.data_dir / "renders"
     assert not list(renders.glob("pacchetto_*.zip"))

@@ -62,7 +62,8 @@ def _safe(name: str) -> str:
     return s[:60] or "file"
 
 
-TEXT_FILES = {"instagram": "Instagram.txt", "facebook": "Facebook.txt", "plan": "Piano_della_settimana.txt"}
+TEXT_FILES = {"instagram": "Instagram.txt", "facebook": "Facebook.txt", "reel": "Reel_e_TikTok.txt",
+              "plan": "Piano_della_settimana.txt"}
 
 
 def build_zip(session: Session, store: Store, flyer: Flyer, out_path: Path, approved_only: bool = False) -> Path:
@@ -85,8 +86,17 @@ def build_zip(session: Session, store: Store, flyer: Flyer, out_path: Path, appr
         summary += ["", "Contenuto della cartella:", "- Video: pronti per Instagram, TikTok, Facebook e schermi in negozio",
                     "- Immagini: post e storie", "- Testi: da copiare insieme alle immagini o ai video",
                     "- Piano_della_settimana.txt: cosa pubblicare, dove e in che giorno",
+                    "- Report_della_settimana.pdf: il riepilogo da consegnare al negozio",
                     "", "Ricorda: pubblica solo i contenuti che hai controllato."]
         z.writestr(f"{root}/LEGGIMI.txt", "\n".join(summary))
+        try:   # il report per il cliente: se qualcosa va storto il pacchetto si scarica lo stesso
+            from .report import build_report
+            rep = build_report(session, store, flyer, out_path.with_name(out_path.stem + "_report.pdf"))
+            z.write(rep, f"{root}/Report_della_settimana.pdf")
+            rep.unlink(missing_ok=True)
+        except Exception:  # noqa: BLE001
+            import logging
+            logging.getLogger("promovo.kit").exception("Report non creato")
         for p in pieces:
             if p.kind in TEXT_FILES:
                 body = p.body

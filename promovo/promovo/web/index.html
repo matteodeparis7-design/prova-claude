@@ -189,6 +189,8 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .plan-row:first-child { border-top: 0; }
 .plan-when { font-weight: 700; color: var(--brand); }
 @media (max-width: 700px) { .plan-row { grid-template-columns: 1fr; gap: 4px; } }
+.chain-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
+.chain-list .switch { align-items: flex-start; } .chain-list .switch .muted { display: block; font-size: 12px; }
 .crew { border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin-top: 14px; background: var(--card); }
 .crew-head { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
 .crew-row { display: flex; gap: 12px; align-items: center; padding: 9px 4px; border-top: 1px solid var(--line-2); }
@@ -250,7 +252,7 @@ video { width: 100%; max-height: 460px; border-radius: 10px; background: #000; d
 .post-head { display: flex; align-items: center; gap: 10px; }
 .post-head .ic { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; color: #fff; flex: none; }
 .post-head .t { flex: 1; min-width: 0; } .post-head .t b { display: block; font-size: 14px; }
-.ic-instagram { background: linear-gradient(45deg, #f09433, #dc2743 50%, #bc1888); } .ic-facebook { background: #1877f2; }
+.ic-instagram { background: linear-gradient(45deg, #f09433, #dc2743 50%, #bc1888); } .ic-facebook { background: #1877f2; } .ic-reel { background: #111827; }
 .ic-whatsapp, .ic-whatsapp_personal { background: #25a244; } .ic-newsletter { background: var(--ink-2); }
 .tags-line { color: var(--info); font-size: 13px; word-break: break-word; }
 .sticky-bar { position: sticky; bottom: 12px; z-index: 4; margin-top: 18px; display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; background: var(--ink); color: #fff; padding: 12px 14px; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
@@ -423,7 +425,7 @@ const NAV = [
   ["store", "Negozio", "i-store"], ["settings", "Impostazioni", "i-settings", "Opzioni"],
 ];
 const STATUS = {uploaded: "caricato", processing: "in lettura", ready: "pronto", failed: "errore"};
-const KIND = {instagram: "Instagram", facebook: "Facebook", video: "Video", image: "Immagine"};
+const KIND = {instagram: "Instagram", facebook: "Facebook", reel: "Reel e TikTok (didascalia)", video: "Video", image: "Immagine"};
 const CATEGORIES = ["frutta e verdura","carne","pesce","salumi e formaggi","latte e latticini","uova","pane e forno","pasta e riso","dispensa","surgelati","dolci e snack","colazione","bevande","vino e alcolici","igiene casa","cura persona","infanzia","animali","altro"];
 const VERIFIED = {"testo PDF": "letto dal testo del PDF", "OCR": "confermato dalla lettura ottica", "doppia lettura": "confermato da una seconda lettura ingrandita", "doppia lettura IA": "confermato dalla seconda lettura dell'IA", "persona": "confermato da te"};
 const MAKE = [
@@ -894,6 +896,7 @@ function stepCheck(el, f, content = []) {
         Promovo legge ogni prezzo e poi lo <b>ricontrolla da solo</b> sul volantino. I prezzi <b>verdi</b> sono già confermati. Quelli <b>gialli</b> non è riuscito a confermarli: guarda il ritaglio del volantino accanto e premi <b>«È giusto»</b>, oppure correggilo.
         <div class="legend"><span class="chip ok">${icon("i-check")} confermato</span><span class="chip warn">${icon("i-alert")} da controllare</span></div></div></div>
       ${(f.warnings || []).filter(w => !/da controllare a mano|non trovati nel testo|non confermati/.test(w)).map(w => notice("warn", w)).join("")}
+      ${f.offers.some(o => o.old_price_cents) ? `<div class="hint" style="margin-top:10px">Prezzi barrati: per legge (direttiva Omnibus) il prezzo «prima» deve essere il più basso praticato nei 30 giorni precedenti lo sconto. Promovo usa quello stampato sul volantino: se hai dubbi, chiedi conferma al negozio.</div>` : ""}
       ${f.error ? notice("err", f.error) : ""}
       <div class="meter" style="margin-top:16px"><div class="bar"><div style="width:${total ? Math.round(okN / total * 100) : 0}%"></div></div><b>${okN} di ${total} prezzi confermati</b></div>
       <div class="toolbar" style="margin-top:16px">
@@ -1028,7 +1031,7 @@ function stepPublish(el, f, content) {
   const strategy = (content.find(c => c.meta && c.meta.strategy) || {meta: {}}).meta.strategy;
   if (!content.length) { el.innerHTML = `<div class="card">${empty("i-spark", "Nessun materiale ancora", "Crea video, immagini e testi nel passo 2.", `<button class="btn" id="toMake">Vai a «Crea i materiali»</button>`)}</div>`; $("#toMake").onclick = () => go("flyers", {flyer: f.id, step: "make"}); return; }
   const vids = content.filter(c => c.kind === "video"), imgs = content.filter(c => c.kind === "image");
-  const texts = content.filter(c => ["instagram", "facebook"].includes(c.kind));
+  const texts = content.filter(c => ["instagram", "facebook", "reel"].includes(c.kind));
   const approved = content.filter(c => c.approved).length;
   const apBtn = c => `<button class="btn sm ${c.approved ? "sec" : "okb"}" data-ap="${c.id}">${c.approved ? "Approvato ✓" : "Approva"}</button>`;
   const yellow = f.offers.filter(o => !o.price_verified).length;
@@ -1041,14 +1044,39 @@ function stepPublish(el, f, content) {
         <div class="toolbar"><button class="btn sm sec" data-dl="${c.file_url}" data-name="${esc(c.title)}.mp4">${icon("i-download")} Scarica</button><span style="flex:1"></span>${apBtn(c)}</div></div>`).join("")}</div></div>` : ""}
     ${imgs.length ? `<div class="card"><div class="toolbar"><div style="flex:1"><h2>${icon("i-image")} Immagini</h2><p class="sub" style="margin:0">Tocca un'immagine per ingrandirla.</p></div><button class="btn sm sec" id="apImgs">Approva tutte le immagini</button></div>
       <div class="gallery" style="margin-top:14px">${imgs.map(c => `<div class="gal" data-big="${c.file_url}"><img data-src="${c.file_url}" alt="${esc(c.title)}"><div class="lab"><span class="chip grey">${esc(c.title)}</span>${c.approved ? `<span class="chip ok">${icon("i-check")}</span>` : ""}</div></div>`).join("")}</div></div>` : ""}
-    ${texts.length ? `<div class="card"><h2>${icon("i-msg")} Testi</h2><p class="sub">Puoi modificarli; «Copia» li porta negli appunti, pronti da incollare sotto il video o l'immagine.</p>${strategy ? `<div class="explain" style="margin-bottom:14px">${icon("i-spark")}<div><b>L'idea della settimana</b><br>${esc(strategy)}</div></div>` : ""}
+    ${texts.length ? `<div class="card"><h2>${icon("i-msg")} Testi</h2><p class="sub">Puoi modificarli; «Copia» li porta negli appunti, pronti da incollare sotto il video o l'immagine.</p>${strategy ? `<div class="explain" style="margin-bottom:14px">${icon("i-spark")}<div style="flex:1"><b>L'idea della settimana</b><br>${esc(strategy)}<div class="hint" style="margin-top:4px">Gli agenti ricordano cosa hanno scritto nelle settimane precedenti per questo negozio e non si ripetono.</div></div><button class="btn sec sm" id="another" style="align-self:center">${icon("i-spark")} Un'altra idea</button></div>` : ""}
       <div class="grid g2" style="margin-top:0">${texts.map(c => `<div class="post" data-post="${c.id}"><div class="post-head"><div class="ic ic-${esc(c.kind)}">${icon("i-msg")}</div><div class="t"><b>${esc(KIND[c.kind])}</b><span class="muted">${esc(c.meta.source === "ai" ? "rivisto con l'IA" : "scritto dagli agenti Promovo")}</span></div>${c.approved ? `<span class="chip ok">approvato</span>` : ""}</div>
         <textarea class="in" aria-label="Testo">${esc(c.body)}</textarea>${c.meta.hashtags && c.meta.hashtags.length ? `<div class="tags-line">${c.meta.hashtags.map(h => "#" + esc(h)).join(" ")}</div>` : ""}
         <div class="toolbar"><button class="btn sm sec" data-copy="${c.id}">${icon("i-copy")} Copia</button><button class="btn sm sec" data-save="${c.id}">Salva</button><span style="flex:1"></span>${apBtn(c)}</div></div>`).join("")}</div></div>` : ""}
+    ${S.stores.length > 1 ? `<div class="card" id="chainCard"><h2>${icon("i-store")} Lo stesso volantino per altri punti vendita</h2>
+      <p class="sub">Per le catene: le offerte e i prezzi già controllati vengono copiati, senza rileggere il volantino. Gli agenti preparano i materiali di ogni negozio con il suo logo, i suoi colori, indirizzo, orari e tono, e ricordano cosa hanno già pubblicato per ciascuno.</p>
+      <div class="chain-list">${S.stores.filter(x => x.id !== S.storeId).map(x => `<label class="switch"><input type="checkbox" data-chain="${x.id}" checked> <span>${esc(x.name)}<span class="muted">${esc([x.address, x.city].filter(Boolean).join(", "))}</span></span></label>`).join("")}</div>
+      <div class="toolbar" style="margin-top:12px"><button class="btn sec" id="chainGo">${icon("i-spark")} Prepara i materiali per i negozi selezionati</button></div>
+      <div id="chainState"></div></div>` : ""}
     <div class="sticky-bar"><span class="muted">${approved} di ${content.length} materiali approvati</span>
-      <div class="toolbar">${approved < content.length ? `<button class="btn sec sm" id="apAll">Approva tutto</button>` : ""}<button class="btn" id="zip">${icon("i-download")} Scarica tutto (ZIP)</button></div></div>`;
+      <div class="toolbar">${approved < content.length ? `<button class="btn sec sm" id="apAll">Approva tutto</button>` : ""}<button class="btn sec" id="report">${icon("i-flyer")} Report per il cliente (PDF)</button><button class="btn" id="zip">${icon("i-download")} Scarica tutto (ZIP)</button></div></div>`;
   const reload = () => go("flyers", {flyer: f.id, step: "publish"});
   const tc = $("#toCheck"); if (tc) tc.onclick = () => go("flyers", {flyer: f.id, step: "check"});
+  const cg = $("#chainGo");
+  if (cg) cg.onclick = () => busy(cg, async () => {
+    const ids = $$("[data-chain]", el).filter(c => c.checked).map(c => Number(c.dataset.chain));
+    if (!ids.length) throw new Error("Seleziona almeno un negozio.");
+    const items = await api(`/api/flyers/${f.id}/replicate`, {json: {store_ids: ids, make: true}});
+    const box = $("#chainState");
+    let left = items.length;
+    while (left) {
+      const states = await Promise.all(items.map(async it => ({...it, job: it.job_id ? await api(`/api/jobs/${it.job_id}`) : {status: "done", result: {}}})));
+      left = states.filter(x => ["queued", "running"].includes(x.job.status)).length;
+      box.innerHTML = `<div class="crew" style="margin-top:12px">${states.map(x => { const st = x.job.status, r = x.job.result || {};
+        const label = st === "done" ? "pronto" : st === "failed" ? "problema" : st === "running" ? (r.current ? r.current + "…" : "al lavoro") : "in attesa";
+        return `<div class="crew-row ${st === "done" ? "done" : st === "running" ? "run" : st === "failed" ? "err" : "wait"}"><span class="n">${st === "done" ? icon("i-check") : st === "running" ? `<span class="spin dark"></span>` : icon("i-store")}</span><div><b>${esc(x.store)}</b><span class="muted">${label}</span></div>${st === "done" ? `<button class="btn sm sec" data-open-chain="${x.store_id}" data-fl="${x.flyer_id}">Apri ${icon("i-arrow")}</button>` : ""}</div>`; }).join("")}</div>`;
+      $$("[data-open-chain]", box).forEach(b => b.onclick = () => { selectStore(Number(b.dataset.openChain)); go("flyers", {flyer: Number(b.dataset.fl), step: "publish"}); });
+      if (left) await sleep(2000);
+    }
+    toast("Materiali pronti per tutti i negozi selezionati.");
+  }, "Gli agenti sono al lavoro…");
+  const an = $("#another");
+  if (an) an.onclick = () => busy(an, async () => { await api(`/api/flyers/${f.id}/content?another=true`, {method: "POST"}); toast("Nuova idea pronta: testi riscritti."); reload(); }, "Scrivo…");
   const approve = async (ids, val = true) => { for (const id of ids) await api(`/api/content/${id}`, {method: "PATCH", json: {approved: val}}); };
   $$("[data-ap]", el).forEach(b => b.onclick = () => busy(b, async () => { const c = content.find(x => x.id === Number(b.dataset.ap)); await approve([c.id], !c.approved); reload(); }));
   $$("[data-play]", el).forEach(p => p.onclick = async () => { p.innerHTML = `<span class="spin" style="width:20px;height:20px;border:2px solid #fff;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite"></span>`; const url = await blobUrl(p.dataset.play); p.outerHTML = `<video controls autoplay playsinline src="${url}"></video>`; });
@@ -1064,6 +1092,10 @@ function stepPublish(el, f, content) {
   });
   $$("[data-save]", el).forEach(b => b.onclick = () => busy(b, async () => { await api(`/api/content/${b.dataset.save}`, {method: "PATCH", json: {body: $("textarea", b.closest("[data-post]")).value}}); toast("Testo salvato."); }));
   const aa = $("#apAll"); if (aa) aa.onclick = () => busy(aa, async () => { await approve(content.filter(c => !c.approved).map(c => c.id)); toast("Tutto approvato."); reload(); });
+  $("#report").onclick = e => busy(e.currentTarget, async () => {
+    await download(`/api/flyers/${f.id}/report.pdf`, `Report_${(currentStore().name || "negozio").replace(/\W+/g, "_")}.pdf`);
+    toast("Report scaricato: è il riepilogo da consegnare al negozio.");
+  }, "Preparo il report…");
   $("#zip").onclick = e => busy(e.currentTarget, async () => {
     const onlyApproved = approved > 0 && approved < content.length && await confirmBox("Cosa vuoi scaricare?", `Hai approvato ${approved} materiali su ${content.length}. Vuoi scaricare solo quelli approvati?`, "Solo gli approvati");
     await download(`/api/flyers/${f.id}/kit.zip${onlyApproved ? "?approved_only=true" : ""}`, `Promovo_${(currentStore().name || "negozio").replace(/\W+/g, "_")}.zip`);
