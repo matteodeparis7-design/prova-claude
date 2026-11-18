@@ -3001,11 +3001,13 @@ passata 4:  nessuno scambio: fine</code></pre></figure>
 <p><strong>Passo 1. Che cosa riceve e che cosa restituisce?</strong> Riceve la lista e la soglia. Deve dare <strong>due</strong> risultati, ma <code>return</code> ne restituisce <strong>uno solo</strong>: quindi uno lo restituisco con <code>return</code> (i maggiori) e l'altro con un <strong>parametro di output</strong>, cioè un puntatore alla variabile del chiamante (<code>int *uguali</code>). La lista viene solo <strong>letta</strong>, quindi basta <code>TipoLista</code> (non <code>TipoLista *</code>).</p>
 <figure class="codice"><pre><code><span class="kt">int</span><span class="w"> </span><span class="nf">contaSoglia</span><span class="p">(</span><span class="n">TipoLista</span><span class="w"> </span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">soglia</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">uguali</span><span class="p">);</span></code></pre></figure>
 <p><strong>Passo 2. Un esempio a mano.</strong> Lista <code>9 -&gt; 4 -&gt; 7 -&gt; NULL</code>, soglia 7: maggiori di 7 c'è solo il 9 (1 valore); uguali c'è il 7 (1 valore). Quindi la funzione deve restituire 1 e mettere 1 in <code>*uguali</code>.</p>
-<p><strong>Passo 3. L'algoritmo in italiano.</strong>
-1. azzero i due contatori;
-2. scorro la lista nodo per nodo (schema di scansione);
-3. per ogni nodo: se il valore è maggiore, conto un maggiore; se è uguale, conto un uguale;
-4. alla fine restituisco i maggiori.</p>
+<p><strong>Passo 3. L'algoritmo in italiano.</strong></p>
+<ol>
+<li>azzero i due contatori;</li>
+<li>scorro la lista nodo per nodo (schema di scansione);</li>
+<li>per ogni nodo: se il valore è maggiore, conto un maggiore; se è uguale, conto un uguale;</li>
+<li>alla fine restituisco i maggiori.</li>
+</ol>
 <p><strong>Passo 4. Il codice</strong>, traducendo ogni passo:</p>
 <figure class="codice"><pre><code><span class="kt">int</span><span class="w"> </span><span class="nf">contaSoglia</span><span class="p">(</span><span class="n">TipoLista</span><span class="w"> </span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">soglia</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">uguali</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">maggiori</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">                       </span><span class="cm">/* 1. contatori a zero           */</span>

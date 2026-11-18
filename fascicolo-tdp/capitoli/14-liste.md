@@ -86,6 +86,7 @@ int contaSoglia(TipoLista l, int soglia, int *uguali);
 **Passo 2. Un esempio a mano.** Lista `9 -> 4 -> 7 -> NULL`, soglia 7: maggiori di 7 c'è solo il 9 (1 valore); uguali c'è il 7 (1 valore). Quindi la funzione deve restituire 1 e mettere 1 in `*uguali`.
 
 **Passo 3. L'algoritmo in italiano.**
+
 1. azzero i due contatori;
 2. scorro la lista nodo per nodo (schema di scansione);
 3. per ogni nodo: se il valore è maggiore, conto un maggiore; se è uguale, conto un uguale;
