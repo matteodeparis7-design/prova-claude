@@ -23,8 +23,10 @@ from ..video.render import (
 )
 from ..video.service import build_spec, to_video_offer
 
-FORMATS = {"cover": (1080, 1350), "story": (1080, 1920), "offer": (1080, 1080)}
-LABELS = {"cover": "Post copertina", "story": "Storia", "offer": "Post offerta"}
+FORMATS = {"cover": (1080, 1350), "story": (1080, 1920), "offer": (1080, 1080), "idea": (1080, 1350)}
+LABELS = {"cover": "Post copertina", "story": "Storia", "offer": "Post offerta", "idea": "Post idea della settimana"}
+# Idee che hanno senso come grafica a sé (più prodotti insieme o una ricorrenza)
+IDEA_KINDS = {"combo", "occasion", "under_euro", "fresh", "stock", "weekend", "basket"}
 
 
 def _card(o: VideoOffer, w: int, h: int, brand, accent, u: float) -> Image.Image:
@@ -116,6 +118,68 @@ def grid_image(store: Store, flyer: Flyer, kind: str) -> Image.Image:
     return img.convert("RGB")
 
 
+def idea_image(store: Store, flyer: Flyer, idea: dict) -> Image.Image | None:
+    """La grafica dell'idea della settimana: titolo grande, i prodotti dell'idea, dove e fino a quando.
+    Cambia ogni settimana perché cambia l'idea (cena completa, ricorrenza, reparto, scorta...)."""
+    if idea.get("angle") not in IDEA_KINDS or not idea.get("headline"):
+        return None
+    by_id = {o.id: o for o in flyer.offers}
+    items = [by_id[i] for i in idea.get("featured_ids") or [] if i in by_id][:4]
+    if len(items) < 2:
+        return None
+    W, H = FORMATS["idea"]
+    u = W / 1080
+    brand, accent = hex_rgb(store.brand_color), hex_rgb(store.accent_color)
+    img = soft_background(W, H, brand, u)
+    d = ImageDraw.Draw(img)
+    pad = int(64 * u)
+    # testata: logo e periodo
+    y = int(56 * u)
+    logo = logo_image(store.logo_path or None, int(260 * u), int(84 * u), PAPER)
+    if logo is not None:
+        img.alpha_composite(logo, (pad, y))
+    vt = validity_text(flyer)
+    if vt:
+        fv, lv = fit_text(vt.capitalize(), int(420 * u), int(40 * u), int(30 * u), True, 1)
+        d.text((W - pad, y + int(42 * u)), lv[0], font=fv, fill=readable_on_paper(brand), anchor="rm")
+    y += int(130 * u)
+    # occhiello e titolo
+    fe, le = fit_text("QUESTA SETTIMANA", W - 2 * pad, int(40 * u), int(30 * u), True, 1)
+    d.text((pad, y), le[0], font=fe, fill=readable_on_paper(brand))
+    y += int(52 * u)
+    fh, lh = fit_text(idea["headline"], W - 2 * pad, int(260 * u), int(112 * u), True, 2, min_size=int(60 * u))
+    for ln in lh:
+        d.text((pad, y), ln, font=fh, fill=INK)
+        y += int(fh.size * 1.12)
+    if idea.get("headline_sub"):
+        fs, ls = fit_text(idea["headline_sub"], W - 2 * pad, int(50 * u), int(38 * u), False, 1)
+        d.text((pad, y + int(6 * u)), ls[0], font=fs, fill=(96, 100, 112))
+        y += int(64 * u)
+    # i prodotti dell'idea
+    top, bottom = y + int(30 * u), H - int(120 * u)
+    gap = int(26 * u)
+    n = len(items)
+    cols, rows = (n, 1) if n <= 3 else (2, 2)
+    cw = (W - 2 * pad - gap * (cols - 1)) // cols
+    ch = min((bottom - top - gap * (rows - 1)) // rows, int(cw * (1.45 if rows == 1 else 1.12)))
+    grid_h = rows * ch + (rows - 1) * gap
+    top += max(0, (bottom - top - grid_h) // 2)
+    for i, o in enumerate(items):
+        c, r = i % cols, i // cols
+        card = _shadowed(_card(to_video_offer(o), cw, ch, brand, accent, u), u)
+        cx = pad + c * (cw + gap) + cw // 2
+        cy = top + r * (ch + gap) + ch // 2
+        paste(img, card, cx - card.width / 2, cy - card.height / 2)
+    # piede: dove
+    where = ", ".join(x for x in (store.address, store.city) if x) or store.name
+    band = Image.new("RGBA", (W, int(96 * u)), brand + (255,))
+    img.alpha_composite(band, (0, H - band.height))
+    ff, lf = fit_text(f"{store.name} · {where}" if where != store.name else store.name, W - 2 * pad,
+                      int(50 * u), int(34 * u), True, 1)
+    d.text((W / 2, H - band.height / 2), lf[0], font=ff, fill=text_on(brand), anchor="mm")
+    return img.convert("RGB")
+
+
 def offer_image(store: Store, flyer: Flyer, offer_index: int) -> Image.Image:
     """Immagine quadrata di una sola offerta: lo stesso fotogramma finale del video."""
     spec = build_spec(store, flyer, "square", music=False)
@@ -139,9 +203,16 @@ def render_flyer_images(session: Session, store: Store, flyer: Flyer, settings: 
             Path(old.file_path).unlink(missing_ok=True)
         session.delete(old)
     pieces = []
-    jobs = [("cover", None), ("story", None)] + [("offer", i) for i in range(min(6, len(flyer.offers)))]
+    from ..video.service import week_idea
+    idea = week_idea(flyer)
+    jobs = [("idea", None), ("cover", None), ("story", None)] + [("offer", i) for i in range(min(6, len(flyer.offers)))]
     for kind, idx in jobs:
-        img = grid_image(store, flyer, kind) if idx is None else offer_image(store, flyer, idx)
+        if kind == "idea":
+            img = idea_image(store, flyer, idea)
+            if img is None:
+                continue
+        else:
+            img = grid_image(store, flyer, kind) if idx is None else offer_image(store, flyer, idx)
         name = f"flyer{flyer.id}_img_{kind}{'' if idx is None else f'_{idx + 1}'}.jpg"
         path = out_dir / name
         img.save(path, format="JPEG", quality=92, optimize=True)

@@ -83,7 +83,8 @@ def ideas(f: Facts) -> list[Idea]:
         match = [o for o in pool if rank(o) < 99]
         if match:
             match.sort(key=lambda o: (rank(o), -pct(o)))
-            out.append(Idea("occasion", 4.3, match[:3], {"occ": occ}, hero=match[0].name))
+            near = start <= occ.day <= end + timedelta(days=2)       # la ricorrenza cade proprio in questi giorni
+            out.append(Idea("occasion", 4.3 + (0.9 if near else 0.0), match[:3], {"occ": occ}, hero=match[0].name))
     if f.combos and len(f.combos[0].items) >= 3:
         c = f.combos[0]
         out.append(Idea("combo", 3.0 + 0.4 * len(c.items), list(c.items), {"combo": c}, hero=c.recipe.key))
@@ -462,3 +463,46 @@ def reel_caption(f: Facts, d: Draft, tags: list[str]) -> str:
     end = f" Fino al {fmt_date(f.flyer.valid_to)}." if f.flyer.valid_to else ""
     head = d.hook if len(d.hook) <= 110 else d.hook.split(":")[0] + "."
     return f"{head}{end}\n\n" + " ".join("#" + t for t in tags[:5])
+
+
+# ------------------------------------------------------------------ 5. il titolo breve (video e grafiche)
+
+def headline(f: Facts, d: Draft) -> tuple[str, str]:
+    """Titolo breve dell'idea (max ~30 caratteri) e sottotitolo, per l'apertura dei video e la grafica
+    «idea della settimana». Stessa idea dei testi: la settimana ha un'unica voce."""
+    k, o = d.kind, (d.featured[0] if d.featured else None)
+    sub = ""
+    if k == "combo":
+        c = next((c for c in f.combos if list(c.items) == d.featured), f.combos[0] if f.combos else None)
+        if c is not None:
+            return f"{c.recipe.title}: {format_eur(c.total_cents)}", "Tutto in offerta questa settimana"
+    if k == "occasion":
+        start, end = week_dates(f.flyer, f.today)
+        occ = next((x for x in occasions_in(start, end)), None)
+        if occ is not None:
+            when = _occ_when(occ).rstrip(".")
+            title = f"Verso {occ.the}" if len(occ.the) <= 24 else _cap(occ.the)
+            return title, when or "Le offerte della settimana"
+    if k == "half" and o is not None:
+        return "Metà prezzo", f"{product_name(o, False)} a {_p(o)}"
+    if k == "under_euro":
+        return "Sotto l'euro", f"{idea_count(f)} prodotti a meno di un euro"
+    if k == "fresh":
+        dept = FRESH.get(o.category, "") if o is not None else ""
+        return (f"Dal reparto {dept}" if dept else "Il reparto fresco"), "Le offerte della settimana"
+    if k == "stock":
+        return "Settimana della scorta", "Prodotti da tenere in casa"
+    if k == "weekend":
+        return "Il fine settimana", "Cosa portare in tavola"
+    if k == "basket":
+        tot = sum(x.price_cents for x in d.featured)
+        return f"Tre prodotti, {format_eur(tot)}", "Tutti in offerta questa settimana"
+    if k == "total":
+        return f"Risparmi {format_eur(f.total_saving)}", "Con le offerte della settimana"
+    if o is not None and len(product_name(o, False)) <= 22:
+        return product_name(o, False), f"a {_po(o)}"
+    return "Le offerte della settimana", sub
+
+
+def idea_count(f: Facts) -> int:
+    return len(f.under_euro)

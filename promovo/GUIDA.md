@@ -68,11 +68,29 @@ In cima c'è il **Piano della settimana**: giorno per giorno cosa pubblicare, do
 con un clic). Approva quello che ti piace e premi **Scarica tutto (ZIP)**: è il pacchetto pronto
 da consegnare al negozio o da pubblicare.
 
-**I testi.** Li scrive la redazione di Promovo, da sola: calcola i numeri veri (risparmio in euro,
-prodotti sotto l'euro, metà prezzo), cerca le **cene complete** che si possono fare con i prodotti
-in offerta («Carbonara con € 8,26: tutto in offerta questa settimana») e sceglie l'idea migliore.
-Scrive nel tono del negozio (familiare, elegante, giovane, essenziale) e un caporedattore automatico
-toglie le frasi fatte («imperdibile», «scopri»...) e controlla che ogni prezzo citato esista davvero.
+**L'idea della settimana.** La redazione di Promovo sceglie ogni settimana un'idea diversa tra
+quelle che i numeri permettono: una **cena completa** con i prodotti in offerta e il suo totale
+(«Carbonara: € 8,26»), una **ricorrenza** del calendario (Pasqua, Natale, Ferragosto, rientro a scuola...),
+i prodotti **sotto l'euro**, il **reparto fresco**, la **scorta**, il **fine settimana**, il prodotto a
+**metà prezzo**... e la usa ovunque: nei testi, nell'apertura del Reel e in una grafica dedicata
+(«Post idea della settimana»).
+
+**Mai la stessa cosa.** Gli agenti ricordano cosa hanno pubblicato per ogni negozio nelle settimane
+precedenti (idea, prodotto protagonista, frasi) e non si ripetono. Se un'idea non ti convince, premi
+**«Un'altra idea»** sopra i testi: ne propongono subito un'altra, mai una già vista.
+
+**I testi.** Post Instagram, post Facebook e una didascalia breve per Reel e TikTok, nel tono del negozio
+(familiare, elegante, giovane, essenziale), con strutture diverse ogni settimana. Un caporedattore
+automatico toglie le frasi fatte («imperdibile», «scopri»...) e controlla che ogni prezzo citato esista davvero.
+
+**Il report per il cliente.** Il pulsante **«Report per il cliente (PDF)»** (e lo ZIP) contiene un
+documento pronto da consegnare al negozio: offerte e prezzi controllati (con il modo in cui è stato
+confermato ciascuno), l'idea della settimana, il piano, l'anteprima dei materiali, il confronto con i
+concorrenti e le note di conformità (prezzi barrati e regola Omnibus).
+
+**Catene di negozi.** Se gestisci più punti vendita, in fondo al passo 3 trovi **«Lo stesso volantino per
+altri punti vendita»**: scegli i negozi e gli agenti preparano i materiali di ognuno con il suo logo,
+colori, indirizzo, orari e tono, senza rileggere il volantino.
 
 ## 4. Dal banco al Reel
 

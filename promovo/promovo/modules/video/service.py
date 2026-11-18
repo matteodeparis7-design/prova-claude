@@ -57,6 +57,17 @@ def store_contacts(store: Store) -> tuple[list[str], str, str]:
     return lines, link, "Scrivici su WhatsApp" if link else ""
 
 
+def week_idea(flyer: Flyer) -> dict:
+    """L'idea della settimana scelta dalla redazione per questo volantino (titolo breve, prodotti)."""
+    from sqlalchemy.orm import object_session
+    s = object_session(flyer)
+    if s is None or flyer.id is None:
+        return {}
+    row = s.scalars(select(ContentPiece).where(ContentPiece.flyer_id == flyer.id, ContentPiece.kind == "instagram")
+                    .order_by(ContentPiece.id.desc()).limit(1)).first()
+    return dict(row.meta or {}) if row else {}
+
+
 def build_spec(store: Store, flyer: Flyer, fmt: str = "landscape", scale: float = 1.0,
                max_offers: int | None = None, music: bool | None = None) -> VideoSpec:
     if fmt not in FORMATS:
@@ -66,10 +77,16 @@ def build_spec(store: Store, flyer: Flyer, fmt: str = "landscape", scale: float 
     offers = list(flyer.offers)[:limit] if fmt == "landscape" else featured_offers(flyer, limit)
     address = ", ".join(x for x in (store.address, store.city) if x)
     contacts, qr, qr_label = store_contacts(store)
+    idea = week_idea(flyer)
+    default = flyer.title if flyer.title and flyer.title.lower() not in (store.name.lower(), "superstore") \
+        and len(flyer.title) > 3 else "Le offerte della settimana"
+    # Sui social il video si apre con l'idea della settimana (la stessa dei testi); sugli schermi in
+    # negozio resta il titolo del volantino.
+    headline = idea.get("headline") if fmt != "landscape" and idea.get("headline") else default
     return VideoSpec(
         store_name=store.name,
-        headline=flyer.title if flyer.title and flyer.title.lower() not in (store.name.lower(), "superstore")
-        and len(flyer.title) > 3 else "Le offerte della settimana",
+        headline=headline,
+        idea_headline=headline != default,
         validity=validity_text(flyer),
         address=address,
         offers=[to_video_offer(o) for o in offers],

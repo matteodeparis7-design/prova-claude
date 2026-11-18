@@ -73,6 +73,7 @@ class VideoSpec:
     qr_label: str = ""
     music: bool = False
     warnings: list[str] = field(default_factory=list)
+    idea_headline: bool = False         # il titolo è l'idea della settimana: protagonista dell'apertura
 
 
 # ---------------------------------------------------------------- utilità grafiche
@@ -118,7 +119,9 @@ def font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
 
 
 def wrap(text: str, fnt: ImageFont.FreeTypeFont, max_width: int, max_lines: int) -> list[str]:
-    words = text.split()
+    # il simbolo dell'euro resta sempre attaccato al suo numero ("€ 8,26" non va mai a capo)
+    text = re.sub(r"€ (?=\d)", "€\u00a0", " ".join(text.split()))
+    words = [w for w in text.split(" ") if w]
     lines: list[str] = []
     cur = ""
     for w in words:
@@ -529,9 +532,14 @@ class Renderer:
         fg = text_on(self.brand)
         logo = logo_image(self.spec.logo_path, int(W * 0.5), int(H * (0.18 if self.portrait else 0.24)), self.brand)
         maxw = int(W * 0.84)
-        fs, ls = fit_text(self.spec.store_name, maxw, int(H * 0.22), int(118 * u), True, 2)
+        if self.spec.idea_headline:
+            # l'idea della settimana in grande, il negozio piccolo sopra (il logo c'è già)
+            fs, ls = fit_text(self.spec.store_name, maxw, int(H * 0.08), int(46 * u), False, 1)
+            fh, lh = fit_text(self.spec.headline, maxw, int(H * 0.3), int(128 * u), True, 3, min_size=int(48 * u))
+        else:
+            fs, ls = fit_text(self.spec.store_name, maxw, int(H * 0.22), int(118 * u), True, 2)
+            fh, lh = fit_text(self.spec.headline, maxw, int(H * 0.16), int(58 * u), False, 2)
         name = text_layer(ls, fs, fg, "center")
-        fh, lh = fit_text(self.spec.headline, maxw, int(H * 0.16), int(58 * u), False, 2)
         head = text_layer(lh, fh, fg, "center")
         val = pill(self.spec.validity, int(38 * u), self.accent) if self.spec.validity else None
         blocks = [b for b in (logo, name, head) if b is not None]

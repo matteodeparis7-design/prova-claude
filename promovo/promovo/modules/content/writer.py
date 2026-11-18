@@ -625,7 +625,10 @@ def write_week(store: Store, flyer: Flyer, offers: list[Offer] | None = None, we
     d, ig, fb, ids, issues = best
     combo = next((c for c in f.combos if list(c.items) == d.featured), None) if d.kind == "combo" else None
     angle = Angle(d.kind, d.hook, d.detail, combo=combo, featured=d.featured)
+    head, head_sub = editor.headline(f, d)
     meta = {"hashtags": tags, "strategy": STRATEGY.get(d.kind, ""), "angle": d.kind, "hero": d.meta.get("hero", ""),
+            "headline": head, "headline_sub": head_sub,
+            "featured_ids": [o.id for o in d.featured if getattr(o, "id", None)],
             "hook_id": d.hook_id, "hook": d.hook, "version": version, **ids}
     reel = _clean(editor.reel_caption(f, d, tags), f.tone)
     return Written({
