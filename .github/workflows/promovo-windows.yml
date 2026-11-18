@@ -89,6 +89,7 @@ jobs:
           $dist = "promovo\dist\Promovo"
           Remove-Item -Recurse -Force "$dist\Dati Promovo" -ErrorAction SilentlyContinue
           Copy-Item "promovo\packaging\LEGGIMI.txt" "$dist\LEGGIMI.txt"
+          Copy-Item "promovo\packaging\Avvia Promovo (se si chiude subito).bat" "$dist\"
           Copy-Item "promovo\GUIDA.md" "$dist\GUIDA.md"
           Compress-Archive -Path $dist -DestinationPath "Promovo_Windows.zip" -CompressionLevel Optimal
           "{0:N0} MB" -f ((Get-Item "Promovo_Windows.zip").Length / 1MB)

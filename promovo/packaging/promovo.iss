@@ -33,11 +33,13 @@ Name: "desktopicon"; Description: "Crea un'icona sul Desktop"; GroupDescription:
 [Files]
 Source: "..\dist\Promovo\*"; DestDir: "{app}"; Excludes: "Dati Promovo\*"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "LEGGIMI.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Avvia Promovo (se si chiude subito).bat"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\GUIDA.md"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\Promovo"; Filename: "{app}\Promovo.exe"; WorkingDir: "{app}"
 Name: "{group}\Guida di Promovo"; Filename: "{app}\LEGGIMI.txt"
+Name: "{group}\Promovo (con messaggi di errore)"; Filename: "{app}\Avvia Promovo (se si chiude subito).bat"; WorkingDir: "{app}"
 Name: "{group}\Disinstalla Promovo"; Filename: "{uninstallexe}"
 Name: "{userdesktop}\Promovo"; Filename: "{app}\Promovo.exe"; WorkingDir: "{app}"; Tasks: desktopicon
 
