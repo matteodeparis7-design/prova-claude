@@ -1009,6 +1009,12 @@ def read_page(page: pymupdf.Page, page_no: int, confirm: bool = True) -> PageRea
         offers += lines_to_offers_from(extra, lines, page_no, offers)
     find_photos(rgb, offers, lines)
     for o in offers:
+        card = getattr(o, "card_bbox", None) or o.bbox
+        o.erase = [[ln.x0, ln.y0, ln.x1, ln.y1] for ln in lines                       # type: ignore[attr-defined]
+                   if card[0] <= ln.cx <= card[2] and card[1] <= ln.cy <= card[3]
+                   and (ln.kind in ("price", "unit", "format") or (ln.kind == "name" and ln.used)
+                        or (ln.kind == "noise" and "%" in ln.text and len(ln.text) <= 6))]
+    for o in offers:
         o.confirmed = False                                                        # type: ignore[attr-defined]
         o.alternative = None                                                       # type: ignore[attr-defined]
     if confirm:

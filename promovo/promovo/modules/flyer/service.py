@@ -13,7 +13,7 @@ from ...config import Settings
 from ...llm import LLM
 from ...models import Flyer, FlyerStatus, Offer, Store
 from .extract import extract_offers, pick_featured
-from .pdf import InvalidPDF, extract_photo, normalize_upload, open_pdf, render_crop
+from .pdf import InvalidPDF, clean_card, extract_photo, normalize_upload, open_pdf, render_crop
 
 log = logging.getLogger("promovo.flyer")
 
@@ -59,6 +59,9 @@ def process_flyer(session: Session, flyer: Flyer, settings: Settings, llm: LLM |
             photo = ""
             if raw.photo_bbox:
                 photo = str(extract_photo(doc[raw.page - 1], raw.photo_bbox, crops_dir / f"{idx:03d}_foto.png"))
+            elif raw.erase:
+                cleaned = clean_card(doc[raw.page - 1], raw.bbox, raw.erase, crops_dir / f"{idx:03d}_foto.png")
+                photo = str(cleaned) if cleaned else ""
             offers.append(Offer(
                 flyer_id=flyer.id, position=idx, page=raw.page, name=raw.name, brand=raw.brand,
                 description=raw.description, category=raw.category, price_cents=raw.price_cents,

@@ -47,6 +47,7 @@ class RawOffer:
     price_verified: bool = False
     verified_by: str = ""
     photo_bbox: list[float] | None = None     # solo la foto del prodotto, se individuata
+    erase: list[list[float]] = field(default_factory=list)   # scritte del volantino da togliere dalla foto
 
 
 @dataclass
@@ -321,6 +322,7 @@ def _from_ocr(o, page_no: int) -> RawOffer:
         bbox=list(getattr(o, "card_bbox", None) or o.bbox), photo_bbox=list(o.photo_bbox) if o.photo_bbox else None,
         price_verified=bool(getattr(o, "confirmed", False)),
         verified_by="doppia lettura" if getattr(o, "confirmed", False) else "",
+        erase=[list(e) for e in getattr(o, "erase", [])],
     )
 
 

@@ -166,3 +166,50 @@ def extract_photo(page: pymupdf.Page, bbox_norm: list[float], out_path: Path, dp
     pix = page.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom), clip=rect, alpha=False)
     img = Image.open(io.BytesIO(pix.tobytes("png")))
     return save_product_photo(img, out_path)
+
+
+def clean_card(page: pymupdf.Page, bbox_norm: list[float], erase: list[list[float]], out_path: Path,
+               dpi: int = 260) -> Path | None:
+    """Il riquadro dell'offerta senza nome, prezzi e sconti stampati (ricostruendo lo sfondo):
+    resta il prodotto, pronto per video e grafiche che hanno già il loro cartellino del prezzo."""
+    import cv2
+    import numpy as np
+    from ...imaging import save_product_photo
+    w, h = page.rect.width, page.rect.height
+    x0, y0, x1, y1 = bbox_norm
+    rect = pymupdf.Rect(x0 * w, y0 * h, x1 * w, y1 * h)
+    zoom = dpi / 72
+    pix = page.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom), clip=rect, alpha=False)
+    rgb = np.frombuffer(pix.samples, np.uint8).reshape(pix.height, pix.width, pix.n)[..., :3].copy()
+    mask = np.zeros(rgb.shape[:2], np.uint8)
+    gray = rgb.mean(axis=2)
+    for ex0, ey0, ex1, ey1 in erase:
+        px0 = int((ex0 - x0) / max(1e-9, x1 - x0) * pix.width)
+        py0 = int((ey0 - y0) / max(1e-9, y1 - y0) * pix.height)
+        px1 = int((ex1 - x0) / max(1e-9, x1 - x0) * pix.width)
+        py1 = int((ey1 - y0) / max(1e-9, y1 - y0) * pix.height)
+        m = max(3, int(0.18 * (py1 - py0)))
+        # Si ricostruisce lo sfondo solo se intorno alla scritta è uniforme: su foto o bollini colorati
+        # resterebbero delle macchie, e allora meglio il riquadro originale del volantino.
+        r = 2 * m
+        ring = gray[max(0, py0 - r):py1 + r, max(0, px0 - r):px1 + r].copy()
+        inner = np.zeros_like(ring, bool)
+        inner[min(r, py0):min(r, py0) + max(0, py1 - py0), min(r, px0):min(r, px0) + max(0, px1 - px0)] = True
+        vals = ring[~inner]
+        if vals.size and (np.abs(vals - np.median(vals)) < 18).mean() < 0.8:
+            return None
+        mask[max(0, py0 - m):max(0, py1 + m), max(0, px0 - m):max(0, px1 + m)] = 255
+    if mask.any():
+        rgb = cv2.inpaint(rgb, mask, 7, cv2.INPAINT_TELEA)
+    # via il vuoto intorno al prodotto: si tiene solo ciò che non è sfondo, con un piccolo margine
+    border = np.concatenate([rgb[0], rgb[-1], rgb[:, 0], rgb[:, -1]]).astype(int)
+    bg = np.median(border, axis=0)
+    fg = np.abs(rgb.astype(int) - bg).sum(axis=2) > 40
+    fg = cv2.morphologyEx(fg.astype(np.uint8), cv2.MORPH_OPEN, np.ones((11, 11), np.uint8)) > 0   # via linee e residui sottili
+    ys, xs = np.nonzero(fg)
+    if len(xs) > 0.01 * fg.size:
+        x_0, x_1 = np.percentile(xs, [0.5, 99.5]).astype(int)
+        y_0, y_1 = np.percentile(ys, [0.5, 99.5]).astype(int)
+        pad = int(0.06 * max(x_1 - x_0, y_1 - y_0))
+        rgb = rgb[max(0, y_0 - pad):y_1 + pad, max(0, x_0 - pad):x_1 + pad]
+    return save_product_photo(Image.fromarray(rgb), out_path)
