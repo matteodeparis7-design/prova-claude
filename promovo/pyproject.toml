@@ -15,6 +15,7 @@ dependencies = [
     "numpy>=1.26",
     "imageio-ffmpeg>=0.5",
     "tzdata>=2024.1",   # fusi orari su Windows, dove il sistema non li fornisce
+    "segno>=1.5",       # QR code nella scena finale dei video
 ]
 
 [project.optional-dependencies]
