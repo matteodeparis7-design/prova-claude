@@ -76,7 +76,7 @@ class FakeLLM:
 @pytest.fixture
 def tmp_settings(tmp_path: Path) -> Settings:
     s = Settings(database_url="sqlite://", data_dir=tmp_path / "data", model="test", ai_mode="off",
-                 token_ttl_hours=24, max_upload_mb=10)
+                 token_ttl_hours=24, max_upload_mb=10, weather=False)
     s.ensure_dirs()
     return s
 

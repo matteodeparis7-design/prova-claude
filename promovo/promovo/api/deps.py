@@ -20,6 +20,7 @@ class AppState:
     db: Database
     llm: LLM | None
     voice_client: object | None = None      # client HTTP per la voce (solo nei test se ne passa uno finto)
+    weather_fetch: object | None = None     # funzione che scarica le previsioni (nei test, una finta)
 
 
 def state(request: Request) -> AppState:

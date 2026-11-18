@@ -44,6 +44,7 @@ from ..modules.clip.analyze import ClipError
 from ..modules.clip.service import AUDIO_EXT, VIDEO_EXT, VOICE_MODES, ClipFailed, delete_clip_files, make_reel, script_for
 from .. import voice as voicemod
 from ..modules.radar.service import radar as radar_report
+from ..modules.weather.service import weekly_weather
 from .deps import (
     AppState, bearer_token, content_for, current_user, flyer_for, get_session, job_for, offer_for, order_for,
     require_owner, state, store_for,
@@ -682,6 +683,14 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         if f.competitor:
             raise HTTPException(400, "Il radar si calcola sui volantini del negozio, non su quelli dei concorrenti.")
         return radar_report(session, f.store, f)
+
+    @app.get("/api/flyers/{flyer_id}/weather")
+    def flyer_weather(flyer_id: int, request: Request, user: User = Depends(current_user),
+                      session: Session = Depends(get_session)):
+        """Previsioni della zona per i giorni del volantino e prodotti da spingere."""
+        f = flyer_for(session, user, flyer_id)
+        st = state(request)
+        return weekly_weather(f.store, f, fetch=st.weather_fetch, enabled=st.settings.weather)
 
     @app.post("/api/flyers/{flyer_id}/feature")
     def feature_offers(flyer_id: int, body: FeatureIn, user: User = Depends(current_user),

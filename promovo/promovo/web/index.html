@@ -179,6 +179,11 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .rrow .u { display: block; font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
 .rrow .rv { text-align: right; }
 @media (max-width: 700px) { .rrow { grid-template-columns: 1fr 1fr; } .rrow .rp { grid-column: 1 / -1; } .rrow .rv { grid-column: 1 / -1; text-align: left; display: flex; gap: 8px; align-items: center; } }
+.wdays { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.wday { flex: none; min-width: 92px; border: 1px solid var(--line); border-radius: 12px; padding: 9px 10px; background: #fff; font-size: 13px; }
+.wday b { display: block; font-size: 18px; } .wday.hot { border-color: #f3b37a; background: #fff6ee; } .wday.cold { border-color: #9cc0ef; background: #f2f7ff; } .wday.wet { border-color: #a9b8cc; background: #f4f6f9; }
+.wadv { display: flex; gap: 12px; align-items: center; padding: 11px 0; border-top: 1px solid var(--line-2); flex-wrap: wrap; }
+.wadv .t { flex: 1; min-width: 220px; font-size: 14px; }
 .plan { display: grid; gap: 2px; margin-top: 6px; }
 .plan-row { display: grid; grid-template-columns: 230px 1fr; gap: 16px; padding: 12px 4px; border-top: 1px solid var(--line); font-size: 14px; }
 .plan-row:first-child { border-top: 0; }
@@ -333,6 +338,7 @@ tr:last-child td { border-bottom: 0; }
   <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L17 6h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.6"/></symbol>
   <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M8.5 21h7"/></symbol>
   <symbol id="i-radar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><path d="M12 12l6-6"/><circle cx="12" cy="12" r="1.2"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
   <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
   <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
 </svg>
@@ -703,6 +709,31 @@ async function competitorsCard(el) {
   $$("[data-cdelf]", box).forEach(b => b.onclick = async () => { if (await confirmBox("Eliminare questo volantino?", "Non verrà più usato per i confronti.", "Elimina", true)) busy(b, async () => { await api(`/api/flyers/${b.dataset.cdelf}`, {method: "DELETE"}); box.remove(); competitorsCard(el); }); });
 }
 
+async function weatherCard(box, f) {
+  let w;
+  try { w = await api(`/api/flyers/${f.id}/weather`); } catch (e) { box.remove(); return; }
+  if (!w.available) {
+    box.innerHTML = `<div class="toolbar"><div style="flex:1"><h2>${icon("i-sun")} Il meteo della settimana</h2><p class="sub" style="margin:0">Previsioni non disponibili adesso (${esc(w.reason)}). Quando ci sono, Promovo ti dice cosa spingere nei giorni di caldo, freddo o pioggia.</p></div></div>`;
+    return;
+  }
+  const cls = d => d.signals.includes("caldo") ? "hot" : d.signals.includes("freddo") ? "cold" : d.signals.includes("pioggia") ? "wet" : "";
+  const what = a => a.signal === "caldo" ? `caldo, ${a.tmax}°` : a.signal === "freddo" ? `freddo, ${a.tmax}° di massima` : "pioggia";
+  box.innerHTML = `<h2>${icon("i-sun")} Il meteo della settimana</h2><p class="sub">Previsioni per ${esc(w.place)} nei giorni del volantino. Il tempo cambia quello che la gente compra: Promovo te lo dice prima.</p>
+    <div class="wdays">${w.days.map(d => `<div class="wday ${cls(d)}"><span class="muted">${esc(d.label)}</span><b>${d.tmax}°</b><span>${esc(d.sky)}${d.rain_prob >= 40 ? " · " + d.rain_prob + "%" : ""}</span></div>`).join("")}</div>
+    ${w.advice.length ? `<div style="margin-top:10px">${w.advice.map((a, i) => {
+      const todo = a.offers.filter(o => !o.is_featured);
+      return `<div class="wadv"><div class="t"><b>${esc(a.label)}: ${what(a)}</b> · ${esc(a.why)}<div class="muted">Dal tuo volantino: ${a.offers.map(o => esc(o.name)).join(", ")}</div></div>
+        ${todo.length ? `<button class="btn sec sm" data-wfeat="${i}">${icon("i-star")} Metti in evidenza</button>` : `<span class="chip ok">${icon("i-check")} in evidenza</span>`}</div>`;
+    }).join("")}</div>`
+    : `<p class="muted" style="margin:12px 0 0">Nessun giorno particolare: tempo nella norma, nessun prodotto da spingere per il meteo.</p>`}`;
+  $$("[data-wfeat]", box).forEach(b => b.onclick = () => busy(b, async () => {
+    const a = w.advice[Number(b.dataset.wfeat)];
+    await api(`/api/flyers/${f.id}/feature`, {json: {offer_ids: a.offers.map(o => o.id)}});
+    toast("Messi in evidenza: il piano della settimana li metterà nelle storie di quel giorno.");
+    go("flyers", {flyer: f.id, step: "make"});
+  }));
+}
+
 async function radarCard(box, f) {
   let r;
   try { r = await api(`/api/flyers/${f.id}/radar`); } catch (e) { box.remove(); return; }
@@ -874,6 +905,7 @@ function stepMake(el, f, content) {
   const unverified = f.offers.filter(o => !o.price_verified).length;
   el.innerHTML = `
     <div class="card" id="radarBox"><div class="muted">Radar del quartiere…</div></div>
+    <div class="card" id="weatherBox"><div class="muted">Il meteo della settimana…</div></div>
     <div class="card">
       <h2>Cosa vuoi creare?</h2><p class="sub">Scegli i materiali: il montatore, il grafico e il copywriter li preparano uno dopo l'altro. Puoi rifarli quando vuoi.</p>
       ${unverified ? notice("warn", `Attenzione: ${unverified} prezzi non sono ancora confermati. Conviene controllarli prima.`) : ""}
@@ -882,6 +914,7 @@ function stepMake(el, f, content) {
     </div>
     <div class="sticky-bar"><span class="muted" id="selInfo"></span><button class="btn lg" id="makeBtn">${icon("i-spark")} Crea i materiali</button></div>`;
   radarCard($("#radarBox"), f);
+  weatherCard($("#weatherBox"), f);
   const upd = () => { $("#selInfo").textContent = S.makeSel.size ? `${S.makeSel.size} materiali selezionati` : "Seleziona almeno un materiale"; $("#makeBtn").disabled = !S.makeSel.size; };
   $$("[data-mk]", el).forEach(c => c.onchange = () => { c.checked ? S.makeSel.add(c.dataset.mk) : S.makeSel.delete(c.dataset.mk); c.closest(".mk").classList.toggle("on", c.checked); upd(); });
   upd();

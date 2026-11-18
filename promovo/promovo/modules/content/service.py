@@ -454,7 +454,7 @@ def template_pack(store: Store, flyer: Flyer, offers: list[Offer]) -> dict[str, 
 # ------------------------------------------------------------------ piano della settimana
 
 def weekly_plan(store: Store, flyer: Flyer, offers: list[Offer], today: date | None = None,
-                hero: Offer | None = None) -> str:
+                hero: Offer | None = None, weather: dict | None = None) -> str:
     """Cosa pubblicare, dove e quando, con i materiali che Promovo ha appena creato."""
     start = flyer.valid_from or today or date.today()
     end = flyer.valid_to or start + timedelta(days=6)
@@ -486,6 +486,18 @@ def weekly_plan(store: Store, flyer: Flyer, offers: list[Offer], today: date | N
     if span >= 3:
         items.append((day(span), "ore 9:00", "Instagram · Storia con la copertina",
                       "Ultimo giorno di offerte: la storia con tutte le offerte e la data di fine."))
+    # Meteo: nei giorni di caldo, freddo o pioggia, una storia con i prodotti che il tempo fa vendere.
+    for a in ((weather or {}).get("advice") or [])[:2]:
+        try:
+            d = date.fromisoformat(a["date"])
+        except (KeyError, ValueError):
+            continue
+        if not (start <= d <= end) or not a.get("offers"):
+            continue
+        word = {"caldo": f"caldo, {a.get('tmax')} °C", "freddo": f"freddo, {a.get('tmax')} °C di massima",
+                "pioggia": "pioggia"}.get(a.get("signal"), a.get("signal", ""))
+        names = ", ".join(o["name"] for o in a["offers"][:3])
+        items.append((d, "ore 11:00", "Instagram e Facebook · Storia", f"Previsto {word}: metti in storia {names}."))
     items.append((day(0), "per tutta la settimana", "Televisori in negozio · Video schermo 16:9",
                   "In loop alla cassa e all'ingresso: mostra tutte le offerte."))
     items.sort(key=lambda x: (x[0], x[1] == "per tutta la settimana", x[1]))
@@ -500,7 +512,7 @@ def weekly_plan(store: Store, flyer: Flyer, offers: list[Offer], today: date | N
 
 # ------------------------------------------------------------------ con l'IA
 
-def _store_info(store: Store, flyer: Flyer, offers: list[Offer]) -> str:
+def _store_info(store: Store, flyer: Flyer, offers: list[Offer], weather_line: str = "") -> str:
     hero = hero_offer(offers)
     return (
         f"NEGOZIO\nNome: {store.name}\nInsegna: {store.banner or '-'}\n"
@@ -511,6 +523,7 @@ def _store_info(store: Store, flyer: Flyer, offers: list[Offer]) -> str:
         f"Hashtag del negozio: {', '.join(store.hashtags or []) or '-'}\n\n"
         f"SETTIMANA\nValidità: {validity_text(flyer) or 'non indicata'}\n"
         f"Contesto: {'; '.join(occasions(flyer))}\n"
+        + (f"Meteo previsto nella zona: {weather_line}\n" if weather_line else "") +
         f"Prodotto protagonista suggerito: {product_name(hero)}\n\n"
         f"OFFERTE (con i numeri già calcolati, da usare così come sono)\n{offer_facts(offers)}"
     )
@@ -528,14 +541,17 @@ def _match_offer(name: str, offers: list[Offer]) -> Offer | None:
     return None
 
 
-def generate_content(store: Store, flyer: Flyer, llm: LLM | None) -> ContentPack:
+def generate_content(store: Store, flyer: Flyer, llm: LLM | None, weather: dict | None = None) -> ContentPack:
     offers = featured_offers(flyer)
     template = template_pack(store, flyer, offers)
+    if weather and weather.get("advice") and offers:
+        template["plan"]["body"] = weekly_plan(store, flyer, offers, weather=weather)
     if not offers:
         return ContentPack(texts=template, source="template", warnings=["Nessuna offerta nel volantino."])
     if llm is None:
         return ContentPack(texts=template, source="template")
-    info = _store_info(store, flyer, offers)
+    from ..weather.service import weather_note
+    info = _store_info(store, flyer, offers, weather_note(weather or {}))
     try:
         draft = llm.parse(system=_SYSTEM, content=[{"type": "text", "text": info}], schema=AIContent,
                           effort="high", max_tokens=12000)
@@ -576,7 +592,8 @@ def generate_content(store: Store, flyer: Flyer, llm: LLM | None) -> ContentPack
     if "STOP" not in texts["whatsapp"]["body"]:
         texts["whatsapp"]["body"] += f"\n\n{STOP_LINE}"
     chosen = _match_offer(getattr(draft, "protagonista", ""), offers)
-    texts["plan"] = ({"title": "Piano della settimana", "body": weekly_plan(store, flyer, offers, hero=chosen),
+    texts["plan"] = ({"title": "Piano della settimana", "body": weekly_plan(store, flyer, offers, hero=chosen,
+                                                                            weather=weather),
                       "meta": {}} if chosen else template["plan"])
     return ContentPack(texts=texts, source="ai", warnings=warnings)
 

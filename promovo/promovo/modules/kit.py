@@ -40,7 +40,9 @@ def run_kit(session: Session, store: Store, flyer: Flyer, settings: Settings, ll
             progress(item, n, len(todo))
         try:
             if item == "texts":
-                pack = generate_content(store, flyer, llm)
+                from .weather.service import weekly_weather
+                weather = weekly_weather(store, flyer, enabled=settings.weather)
+                pack = generate_content(store, flyer, llm, weather=weather)
                 save_content(session, store, flyer, pack)
                 warnings.extend(pack.warnings)
             elif item == "images":
