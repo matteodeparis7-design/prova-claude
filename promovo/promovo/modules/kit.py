@@ -65,14 +65,14 @@ def _safe(name: str) -> str:
 
 
 TEXT_FILES = {"instagram": "Instagram.txt", "facebook": "Facebook.txt", "whatsapp": "WhatsApp.txt",
-              "newsletter": "Newsletter.txt"}
+              "newsletter": "Newsletter.txt", "plan": "Piano_della_settimana.txt"}
 
 
 def build_zip(session: Session, store: Store, flyer: Flyer, out_path: Path, approved_only: bool = False) -> Path:
     pieces = session.scalars(select(ContentPiece).where(ContentPiece.flyer_id == flyer.id)
                              .order_by(ContentPiece.id)).all()
     if approved_only:
-        pieces = [p for p in pieces if p.approved]
+        pieces = [p for p in pieces if p.approved or p.kind == "plan"]   # il piano non si approva
     root = _safe(f"{store.name}_{flyer.valid_from or flyer.id}")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(out_path, "w", zipfile.ZIP_DEFLATED) as z:
@@ -87,6 +87,7 @@ def build_zip(session: Session, store: Store, flyer: Flyer, out_path: Path, appr
             summary.append(line)
         summary += ["", "Contenuto della cartella:", "- Video: pronti per Instagram, TikTok, Facebook e schermi in negozio",
                     "- Immagini: post e storie", "- Testi: da copiare insieme alle immagini o ai video",
+                    "- Piano_della_settimana.txt: cosa pubblicare, dove e in che giorno",
                     "", "Ricorda: pubblica solo i contenuti che hai controllato."]
         z.writestr(f"{root}/LEGGIMI.txt", "\n".join(summary))
         personal = []
@@ -99,7 +100,7 @@ def build_zip(session: Session, store: Store, flyer: Flyer, out_path: Path, appr
                 name = TEXT_FILES[p.kind] if p.kind != "newsletter" else "Newsletter.txt"
                 if p.kind == "newsletter":
                     body = f"Oggetto: {p.title}\n\n{body}"
-                z.writestr(f"{root}/Testi/{name}", body)
+                z.writestr(f"{root}/{name}" if p.kind == "plan" else f"{root}/Testi/{name}", body)
             elif p.kind == "whatsapp_personal":
                 personal.append(f"--- {p.title} ({(p.meta or {}).get('phone', '')}) ---\n{p.body}\n")
             elif p.file_path and Path(p.file_path).exists():

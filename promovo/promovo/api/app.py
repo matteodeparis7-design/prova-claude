@@ -536,7 +536,8 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
                                   .order_by(Store.name)).all():
             last = session.scalars(select(Flyer).where(Flyer.store_id == st.id)
                                    .order_by(Flyer.created_at.desc(), Flyer.id.desc()).limit(1)).first()
-            pieces = session.scalars(select(ContentPiece).where(ContentPiece.flyer_id == last.id)).all() if last else []
+            pieces = session.scalars(select(ContentPiece).where(ContentPiece.flyer_id == last.id,
+                                                                ContentPiece.kind != "plan")).all() if last else []
             out.append({
                 "store": store_out(st),
                 "last_flyer": flyer_out(last) if last else None,
@@ -961,7 +962,7 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
             "open_orders": count(Order, Order.store_id == store.id,
                                  Order.status.in_([OrderStatus.new, OrderStatus.confirmed, OrderStatus.ready])),
             "content_to_approve": count(ContentPiece, ContentPiece.store_id == store.id,
-                                        ContentPiece.approved.is_(False)),
+                                        ContentPiece.approved.is_(False), ContentPiece.kind != "plan"),
             "sales_rows": count(SaleRecord, SaleRecord.store_id == store.id),
         }
 

@@ -61,6 +61,11 @@ Ci vuole circa un minuto: vedi l'avanzamento passo per passo.
 
 ### Passo 3: Approva e scarica
 
+In cima trovi il **Piano della settimana**: giorno per giorno, cosa pubblicare, dove e a che ora
+(per esempio: lunedì il Reel su Instagram, martedì mattina il WhatsApp ai clienti, venerdì la storia
+per il fine settimana, l'ultimo giorno la storia «ultimi giorni»). Con l'IA accesa trovi anche
+**l'idea della settimana**: il prodotto protagonista scelto e perché.
+
 Guardi i video, sfogli le grafiche, leggi i testi (puoi modificarli e copiarli con un clic).
 Approvi quello che ti piace e premi **Scarica tutto (ZIP)**: ricevi un'unica cartella con video,
 immagini e testi pronti da pubblicare.
@@ -78,14 +83,28 @@ Se il negozio ti manda le vendite di cassa (file CSV), qui vedi quanto ha vendut
   WhatsApp (o il sito) del negozio.
 - **Clienti**: l'elenco dei clienti, con il consenso a ricevere messaggi. Chi risponde STOP viene
   tolto subito.
-- **Ordini**: gli ordini da ritirare in negozio raccolti dall'assistente.
+- **Prenotazioni**: quando un cliente scrive all'assistente «mettetemi da parte 2 pacchi di caffè,
+  passo domani», la richiesta arriva qui. Tu la prepari e gliela dai quando passa in negozio.
+  Niente pagamenti online e niente consegne: è il vecchio «me lo tiene da parte?», ma via chat.
+  Se non ti serve, la spegni dalle impostazioni del negozio.
 - **Assistente**: risponde alle domande dei clienti su offerte, orari e servizi (serve l'IA).
 
 ## 4. Con o senza intelligenza artificiale
 
 Senza chiave dell'IA Promovo funziona già: legge i volantini PDF digitali, crea video, grafiche
-e testi a modello. Con la chiave (variabile `ANTHROPIC_API_KEY`) legge anche i volantini fatti
-di sole immagini, scrive testi più vari e attiva l'assistente clienti.
+e testi a modello (scritti a mano, con i numeri veri: risparmio in euro, prezzi sotto l'euro).
+
+Con l'IA accesa i testi li scrive una piccola redazione:
+1. il **copywriter** sceglie l'idea della settimana e scrive un testo diverso per ogni canale;
+2. il **caporedattore** lo rilegge e toglie tutto quello che «suona da IA»
+   (imperdibile, scopri, viaggio nel gusto, emoji a ogni riga...);
+3. infine Promovo controlla che ogni prezzo citato esista davvero nel volantino.
+
+**Come accendere l'IA:** crea una chiave su console.anthropic.com (serve una carta: si paga a consumo,
+pochi centesimi per volantino), crea accanto a AVVIA_PROMOVO_WINDOWS.bat un file di testo chiamato
+**CHIAVE_IA.txt** e incollaci dentro la chiave. Riavvia Promovo: nella finestra nera comparirà
+«Intelligenza artificiale: ACCESA». La chiave resta solo sul tuo computer: non mandarla a nessuno,
+nemmeno in chat.
 In basso a sinistra c'è sempre scritto se l'IA è accesa o spenta.
 
 ## 5. Se qualcosa non va

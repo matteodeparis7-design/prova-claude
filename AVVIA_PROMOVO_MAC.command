@@ -21,6 +21,10 @@ fi
 echo "  Controllo dei componenti..."
 .venv/bin/python -m pip install --quiet --upgrade pip >/dev/null 2>&1
 .venv/bin/python -m pip install --quiet --upgrade . || { read -r -p "  Errore: fai una foto e mandala in chat. Invio per chiudere."; exit 1; }
+# La chiave dell'IA si può incollare nel file CHIAVE_IA.txt, accanto a questo file.
+if [ -z "$ANTHROPIC_API_KEY" ] && [ -f "$(dirname "$0")/CHIAVE_IA.txt" ]; then
+  export ANTHROPIC_API_KEY="$(head -n 1 "$(dirname "$0")/CHIAVE_IA.txt" | tr -d '[:space:]')"
+fi
 [ -z "$ANTHROPIC_API_KEY" ] && export PROMOVO_AI=off
 echo
 echo "  Promovo si sta avviando: il browser si aprira' appena e' pronto."

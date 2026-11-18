@@ -43,10 +43,12 @@ def test_active_offers_and_search(session, store, flyer):
 def test_content_template(store, flyer):
     pack = generate_content(store, flyer, None)
     assert pack.source == "template"
-    assert set(pack.texts) == {"instagram", "facebook", "whatsapp", "newsletter"}
+    assert set(pack.texts) == {"instagram", "facebook", "whatsapp", "newsletter", "plan"}
     assert "dal 13 al 22 novembre" in pack.texts["instagram"]["body"]
     assert "STOP" in pack.texts["whatsapp"]["body"]
     allowed = {o.price_cents for o in flyer.offers} | {o.old_price_cents for o in flyer.offers if o.old_price_cents}
+    allowed |= {o.old_price_cents - o.price_cents for o in flyer.offers if o.old_price_cents}   # risparmi calcolati
+    allowed |= {800, 2000, 900, 1300}                      # orari del negozio (8.00-20.00, 9.00-13.00)
     for t in pack.texts.values():
         assert prices_ok(t["body"], allowed)
 
@@ -65,7 +67,7 @@ def test_content_ai_with_price_guard(session, store, flyer, fake_llm):
     assert any("facebook" in w for w in pack.warnings)
     assert pack.texts["whatsapp"]["body"].endswith("Rispondi STOP per non ricevere più messaggi.")
     pieces = save_content(session, store, flyer, pack)
-    assert {p.kind for p in pieces} == {"instagram", "facebook", "whatsapp", "newsletter"}
+    assert {p.kind for p in pieces} == {"instagram", "facebook", "whatsapp", "newsletter", "plan"}
     assert all(not p.approved for p in pieces)
 
 
@@ -284,3 +286,57 @@ def test_campaign_only_with_consent_and_stop(session, store, flyer):
     assert a.marketing_consent is False and a.consent_at is None
     assert build_campaign(session, store, flyer) == []
     assert not handle_inbound(session, store, "3330000001", "Ciao, a che ora chiudete?")
+
+
+# ------------------------------------------------------------------ copywriter: qualità dei testi
+
+from promovo.modules.content.service import AIEdited, ai_tells, hero_offer  # noqa: E402
+
+
+@pytest.mark.parametrize("tone", ["familiare", "elegante", "giovane", "essenziale"])
+def test_template_texts_sound_human(session, store, flyer, tone):
+    store.tone = tone
+    pack = generate_content(store, flyer, None)
+    for kind, t in pack.texts.items():
+        assert ai_tells(t["title"] + "\n" + t["body"]) == [], (tone, kind)
+        assert "—" not in t["body"]
+        if tone in ("elegante", "essenziale") and kind != "plan":
+            assert not any(ord(ch) > 0x2600 for ch in t["body"]), (tone, kind)   # niente emoji
+    hero = hero_offer([o for o in flyer.offers])
+    first = pack.texts["instagram"]["body"].splitlines()[0]
+    assert hero.name.lower() in first.lower()          # la prima riga nomina il protagonista
+    assert len(pack.texts["whatsapp"]["body"]) <= 700
+    assert pack.texts["newsletter"]["title"] and len(pack.texts["newsletter"]["title"]) <= 45
+
+
+def test_weekly_plan_uses_real_days(store, flyer):
+    plan = generate_content(store, flyer, None).texts["plan"]["body"]
+    assert "13 novembre" in plan and "Reel 9:16" in plan and "WhatsApp" in plan
+    assert "22 novembre" in plan                       # l'ultimo giorno di offerte
+
+
+def test_ai_editor_pass_rewrites_and_flags(store, flyer, fake_llm):
+    draft = dict(strategia="Protagonista la pasta.", instagram_caption="Offerte imperdibili! Scopri il volantino",
+                 hashtags=["offerte"], facebook_post="Spaghetti a € 0,79.", whatsapp_message="Spaghetti a € 0,79",
+                 newsletter_subject="Spaghetti a € 0,79", newsletter_body="Spaghetti a € 0,79.")
+    fake_llm.on_parse("AIContent", lambda c: AIContent(**draft))
+    seen = {}
+
+    def editor(content):
+        seen["text"] = content[0]["text"]
+        return AIEdited(difetti=["«imperdibili» e «scopri» sono frasi fatte"],
+                        **{**draft, "instagram_caption": "Spaghetti 500 g a € 0,79: € 0,50 in meno."})
+    fake_llm.on_parse("AIEdited", editor)
+    pack = generate_content(store, flyer, fake_llm)
+    assert pack.texts["instagram"]["body"] == "Spaghetti 500 g a € 0,79: € 0,50 in meno."   # il risparmio è ammesso
+    assert pack.texts["instagram"]["meta"]["strategy"] == "Protagonista la pasta."
+    assert "BOZZE DEL COPYWRITER" in seen["text"] and "risparmio € 0,50" in seen["text"]
+    assert ("parse", "AIEdited") in fake_llm.calls
+
+
+def test_ai_text_with_cliches_is_flagged(store, flyer, fake_llm):
+    fake_llm.on_parse("AIContent", lambda c: AIContent(
+        instagram_caption="Un viaggio nel gusto: spaghetti a € 0,79!", hashtags=[], facebook_post="ok € 0,79",
+        whatsapp_message="€ 0,79", newsletter_subject="Pasta", newsletter_body="€ 0,79"))
+    pack = generate_content(store, flyer, fake_llm)          # nessun caporedattore: resta la bozza
+    assert any("instagram" in w and "viaggio" in w for w in pack.warnings)

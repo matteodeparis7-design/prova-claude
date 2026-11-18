@@ -103,7 +103,7 @@ def test_flyer_offers_content_video(app_ctx, live_pdf):
     r = client.post(f"/api/flyers/{flyer['id']}/content", headers=h)
     assert r.status_code == 201
     body = r.json()
-    assert body["source"] == "ai" and len(body["content"]) == 4 and body["warnings"]
+    assert body["source"] == "ai" and len(body["content"]) == 5 and body["warnings"]
     cid = body["content"][0]["id"]
     r = client.patch(f"/api/content/{cid}", headers=h, json={"approved": True, "body": "Testo corretto"})
     assert r.json()["approved"] and r.json()["body"] == "Testo corretto"
