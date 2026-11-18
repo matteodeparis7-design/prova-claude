@@ -78,6 +78,17 @@ Ogni voce del programma 2026/27 pubblicato dal professore, con il capitolo del f
 
 I capitoli 16-21 non aggiungono argomenti nuovi: servono a **prepararti alla prova** (metodo, tracce risolte e da svolgere, orale, formulario, palestra).
 
+## Se studi da solo, senza seguire le lezioni
+
+Il fascicolo è scritto per poter **sostituire le lezioni**: segue l'ordine del corso e contiene tutto il programma. Ci sono però alcune cose che devi fare comunque, perché l'esame le richiede:
+
+1. **Iscriviti alla Classroom del corso** (il link è sulla [pagina del corso](https://www.diag.uniroma1.it/marte/homepage/didattica/tdp-latina.html)), con l'email istituzionale. Lì escono gli **avvisi** e i testi degli **homework**: senza homework accettati non puoi fare l'esame, anche se non segui.
+2. **Fai gli homework da solo**, appena escono, rispettando i 5 giorni tra una consegna e l'altra: sono la tua verifica che stai imparando.
+3. **Usa il materiale del sito** come complemento: nella cartella delle esercitazioni guidate ci sono i testi delle EG con i suggerimenti passo passo e i programmi del professore. Gli argomenti sono gli stessi del fascicolo (capitolo per capitolo trovi indicato a quali lezioni ed EG corrisponde).
+4. **Studia nell'ordine del fascicolo**: ogni capitolo usa quello che c'è nei precedenti. Non saltare il [Laboratorio](#laboratorio).
+5. **Se una spiegazione non ti è chiara**, segnati pagina e frase e chiedi (anche a me): rileggere la stessa frase tre volte non serve, serve una spiegazione diversa.
+6. **Controlla prima di ogni appello** la pagina degli esami e Classroom, perché date e regole possono cambiare.
+
 ## Testi di riferimento
 
 - **testo1**: A. Bellini, A. Guidi, *Linguaggio C*, McGraw-Hill. È il testo principale, nuovo da quest'anno: il professore preferisce che lo adottiate.

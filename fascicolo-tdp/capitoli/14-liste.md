@@ -71,6 +71,53 @@ Variante con massimo e parametro di output (restituisce 0 se la lista è vuota):
 
 {{inc liste.c maxLista}}
 
+## Come si costruisce una funzione sulla lista, ragionando passo passo
+
+All'esame non c'è una funzione già pronta da ricordare: bisogna **costruirla**. Ecco il ragionamento completo, da usare ogni volta.
+
+**Problema**: scrivere una funzione che, ricevendo una lista di interi e un valore `soglia`, restituisca quanti valori sono **maggiori** della soglia e, in più, quanti sono **uguali** alla soglia.
+
+**Passo 1. Che cosa riceve e che cosa restituisce?** Riceve la lista e la soglia. Deve dare **due** risultati, ma `return` ne restituisce **uno solo**: quindi uno lo restituisco con `return` (i maggiori) e l'altro con un **parametro di output**, cioè un puntatore alla variabile del chiamante (`int *uguali`). La lista viene solo **letta**, quindi basta `TipoLista` (non `TipoLista *`).
+
+```c
+int contaSoglia(TipoLista l, int soglia, int *uguali);
+```
+
+**Passo 2. Un esempio a mano.** Lista `9 -> 4 -> 7 -> NULL`, soglia 7: maggiori di 7 c'è solo il 9 (1 valore); uguali c'è il 7 (1 valore). Quindi la funzione deve restituire 1 e mettere 1 in `*uguali`.
+
+**Passo 3. L'algoritmo in italiano.**
+1. azzero i due contatori;
+2. scorro la lista nodo per nodo (schema di scansione);
+3. per ogni nodo: se il valore è maggiore, conto un maggiore; se è uguale, conto un uguale;
+4. alla fine restituisco i maggiori.
+
+**Passo 4. Il codice**, traducendo ogni passo:
+
+```c
+int contaSoglia(TipoLista l, int soglia, int *uguali) {
+  int maggiori = 0;                       /* 1. contatori a zero           */
+  TipoNodo *p;
+  *uguali = 0;                            /*    anche quello di output     */
+  for (p = l; p != NULL; p = p->next) {   /* 2. scansione                  */
+    if (p->info > soglia)                 /* 3. confronto                  */
+      maggiori++;
+    else if (p->info == soglia)
+      (*uguali)++;                        /*    parentesi obbligatorie!    */
+  }
+  return maggiori;                        /* 4. risultato                  */
+}
+```
+
+**Passo 5. Controllo i casi limite**, facendo l'esecuzione simulata a mente:
+
+- **lista vuota** (`l == NULL`): il ciclo non parte, restituisce 0 e `*uguali` vale 0. Corretto.
+- **un solo nodo**: un giro di ciclo, poi `p` diventa `NULL`. Corretto.
+- **esempio del passo 2**: giro 1, 9 > 7, maggiori = 1; giro 2, 4 non è né maggiore né uguale; giro 3, 7 == 7, `*uguali` = 1. Restituisce 1. Corretto.
+
+**Passo 6. Come si chiama dal `main`**: `m = contaSoglia(lista, 7, &u);` con `&u`, perché la funzione deve scrivere dentro `u`.
+
+Ogni esercizio 1 d'esame si risolve con questi sei passi: cambiano solo i campi della struct e le condizioni.
+
 ## Inserimento in testa
 
 {{inc liste.c insTesta}}

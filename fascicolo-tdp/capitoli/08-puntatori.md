@@ -37,6 +37,37 @@ p = &x;          /* &x = indirizzo di x: ora p "punta a" x                      
 `int *p; *p = 3;` scrive in un indirizzo casuale. Un puntatore va **sempre** inizializzato: a `NULL`, all'indirizzo di una variabile, o al risultato di `malloc`.
 :::
 
+## Passo passo: seguire la memoria riga per riga
+
+Il modo sicuro per capire un programma con i puntatori è **disegnare la memoria** e aggiornarla a ogni riga. Ogni variabile è una casella con un indirizzo (gli indirizzi qui sono inventati, servono solo per il disegno).
+
+```c
+int a = 10, b = 20;
+int *p, *q;
+p = &a;
+q = &b;
+*p = *p + 5;
+q = p;
+*q = 99;
+printf("a=%d b=%d *p=%d *q=%d\n", a, b, *p, *q);
+```
+
+| Riga eseguita | a (ind. 100) | b (ind. 104) | p | q | Perché |
+|---|---|---|---|---|---|
+| `int a = 10, b = 20;` | 10 | 20 | ? | ? | p e q non sono ancora inizializzati: contengono indirizzi casuali |
+| `p = &a;` | 10 | 20 | 100 | ? | in p va l'**indirizzo** di a: ora "p punta ad a" |
+| `q = &b;` | 10 | 20 | 100 | 104 | q punta a b |
+| `*p = *p + 5;` | **15** | 20 | 100 | 104 | `*p` è "la variabile puntata da p", cioè a: a = 10 + 5 |
+| `q = p;` | 15 | 20 | 100 | **100** | si copia l'**indirizzo** contenuto in p: ora anche q punta ad a (b non cambia!) |
+| `*q = 99;` | **99** | 20 | 100 | 100 | `*q` è a: a = 99 |
+
+Stampa: `a=99 b=20 *p=99 *q=99`.
+
+Le due cose da distinguere, che sono l'origine di quasi tutti gli errori:
+
+- `q = p;` copia **l'indirizzo**: dopo, p e q puntano alla **stessa** variabile;
+- `*q = *p;` copia **il valore**: le due variabili puntate restano diverse, ma con lo stesso numero dentro.
+
 ## Parametri di output (passaggio per indirizzo)
 
 Per permettere a una funzione di **modificare una variabile del chiamante**, le si passa l'**indirizzo** della variabile. La funzione lavora con `*parametro`.

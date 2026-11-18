@@ -396,14 +396,24 @@ details[open] > summary { border-bottom: 1px solid var(--rule); }
 </tbody>
 </table>
 <p>I capitoli 16-21 non aggiungono argomenti nuovi: servono a <strong>prepararti alla prova</strong> (metodo, tracce risolte e da svolgere, orale, formulario, palestra).</p>
-<h2 id="esame-4">Testi di riferimento</h2>
+<h2 id="esame-4">Se studi da solo, senza seguire le lezioni</h2>
+<p>Il fascicolo è scritto per poter <strong>sostituire le lezioni</strong>: segue l'ordine del corso e contiene tutto il programma. Ci sono però alcune cose che devi fare comunque, perché l'esame le richiede:</p>
+<ol>
+<li><strong>Iscriviti alla Classroom del corso</strong> (il link è sulla <a href="https://www.diag.uniroma1.it/marte/homepage/didattica/tdp-latina.html">pagina del corso</a>), con l'email istituzionale. Lì escono gli <strong>avvisi</strong> e i testi degli <strong>homework</strong>: senza homework accettati non puoi fare l'esame, anche se non segui.</li>
+<li><strong>Fai gli homework da solo</strong>, appena escono, rispettando i 5 giorni tra una consegna e l'altra: sono la tua verifica che stai imparando.</li>
+<li><strong>Usa il materiale del sito</strong> come complemento: nella cartella delle esercitazioni guidate ci sono i testi delle EG con i suggerimenti passo passo e i programmi del professore. Gli argomenti sono gli stessi del fascicolo (capitolo per capitolo trovi indicato a quali lezioni ed EG corrisponde).</li>
+<li><strong>Studia nell'ordine del fascicolo</strong>: ogni capitolo usa quello che c'è nei precedenti. Non saltare il <a href="#laboratorio">Laboratorio</a>.</li>
+<li><strong>Se una spiegazione non ti è chiara</strong>, segnati pagina e frase e chiedi (anche a me): rileggere la stessa frase tre volte non serve, serve una spiegazione diversa.</li>
+<li><strong>Controlla prima di ogni appello</strong> la pagina degli esami e Classroom, perché date e regole possono cambiare.</li>
+</ol>
+<h2 id="esame-5">Testi di riferimento</h2>
 <ul>
 <li><strong>testo1</strong>: A. Bellini, A. Guidi, <em>Linguaggio C</em>, McGraw-Hill. È il testo principale, nuovo da quest'anno: il professore preferisce che lo adottiate.</li>
 <li><strong>testo2</strong>: D. Calvanese, P. Liberatore, F. Massacci, R. Rosati, <em>Programmazione di strutture dati in C</em>, Progetto Leonardo. Serve per <strong>test</strong>, <strong>liste</strong> (cap. 6) e <strong>alberi</strong> (cap. 8). Dalla lezione sulle liste in poi il corso lo usa "ufficialmente".</li>
 <li>In alternativa al testo1 si può usare il Deitel &amp; Deitel (testo degli anni scorsi), seguendo le annotazioni del programma 2024/25.</li>
 </ul>
 <p>Nel fascicolo, accanto a ogni capitolo, trovi tra parentesi i capitoli del testo indicati dal programma.</p>
-<h2 id="esame-5">Le date (A.A. 2026/27, dal sito del corso)</h2>
+<h2 id="esame-6">Le date (A.A. 2026/27, dal sito del corso)</h2>
 <table>
 <thead>
 <tr>
@@ -451,7 +461,7 @@ details[open] > summary { border-bottom: 1px solid var(--rule); }
 </tbody>
 </table>
 <p>Le date possono cambiare: controlla sempre la <a href="https://www.diag.uniroma1.it/marte/homepage/didattica/tdp-latina/tdp-esami.html">pagina esami del corso</a> e Classroom.</p>
-<h2 id="esame-6">Come usare questo fascicolo</h2>
+<h2 id="esame-7">Come usare questo fascicolo</h2>
 <p>Prima di tutto leggi il <a href="#laboratorio">Laboratorio</a>: spiega come si <strong>impara a programmare in C</strong> davvero (ambiente, errori del compilatore, debugging, metodo). Alla fine del fascicolo c'è la <a href="#palestra">Palestra di programmazione</a>, con 22 esercizi graduati da fare al computer man mano che studi. Il fascicolo segue l'ordine del corso. Ogni capitolo ha spiegazioni semplici, codice C commentato e provato, riquadri colorati ed esercizi con soluzione. Nella versione web la soluzione è nascosta (si apre cliccando "Soluzione"); sul fascicolo stampato <strong>coprila con un foglio</strong> finché non hai provato davvero da solo.</p>
 <p>Riquadri colorati: blu <strong>All'esame</strong> (cosa serve per lo scritto e l'orale), rosso <strong>Errore tipico</strong> (sbagli che costano punti), verde <strong>Da sapere</strong> (collegamenti utili), viola <strong>Esercizio</strong>.</p>
 <h3>Un piano di studio consigliato (circa 8 settimane prima di gennaio)</h3>
@@ -1954,7 +1964,85 @@ dopo il return: l&#x27;RDA di mcd sparisce, in main  m = 5</code></pre></figure>
 <li><code>NULL</code> (definito in <code>stdio.h</code> e <code>stdlib.h</code>) è il puntatore che <strong>non punta a niente</strong>. Dereferenziare <code>NULL</code> fa andare in crash il programma.</li>
 </ul>
 <aside class="box box-errore"><p class="box-titolo">Puntatore non inizializzato</p><p><code>int *p; *p = 3;</code> scrive in un indirizzo casuale. Un puntatore va <strong>sempre</strong> inizializzato: a <code>NULL</code>, all'indirizzo di una variabile, o al risultato di <code>malloc</code>.</p></aside>
-<h2 id="puntatori-2">Parametri di output (passaggio per indirizzo)</h2>
+<h2 id="puntatori-2">Passo passo: seguire la memoria riga per riga</h2>
+<p>Il modo sicuro per capire un programma con i puntatori è <strong>disegnare la memoria</strong> e aggiornarla a ogni riga. Ogni variabile è una casella con un indirizzo (gli indirizzi qui sono inventati, servono solo per il disegno).</p>
+<figure class="codice"><pre><code><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">20</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">q</span><span class="p">;</span>
+<span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">;</span>
+<span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">b</span><span class="p">;</span>
+<span class="o">*</span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+<span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="p">;</span>
+<span class="o">*</span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">99</span><span class="p">;</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">"a=%d b=%d *p=%d *q=%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">q</span><span class="p">);</span></code></pre></figure>
+<table>
+<thead>
+<tr>
+<th>Riga eseguita</th>
+<th>a (ind. 100)</th>
+<th>b (ind. 104)</th>
+<th>p</th>
+<th>q</th>
+<th>Perché</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>int a = 10, b = 20;</code></td>
+<td>10</td>
+<td>20</td>
+<td>?</td>
+<td>?</td>
+<td>p e q non sono ancora inizializzati: contengono indirizzi casuali</td>
+</tr>
+<tr>
+<td><code>p = &amp;a;</code></td>
+<td>10</td>
+<td>20</td>
+<td>100</td>
+<td>?</td>
+<td>in p va l'<strong>indirizzo</strong> di a: ora "p punta ad a"</td>
+</tr>
+<tr>
+<td><code>q = &amp;b;</code></td>
+<td>10</td>
+<td>20</td>
+<td>100</td>
+<td>104</td>
+<td>q punta a b</td>
+</tr>
+<tr>
+<td><code>*p = *p + 5;</code></td>
+<td><strong>15</strong></td>
+<td>20</td>
+<td>100</td>
+<td>104</td>
+<td><code>*p</code> è "la variabile puntata da p", cioè a: a = 10 + 5</td>
+</tr>
+<tr>
+<td><code>q = p;</code></td>
+<td>15</td>
+<td>20</td>
+<td>100</td>
+<td><strong>100</strong></td>
+<td>si copia l'<strong>indirizzo</strong> contenuto in p: ora anche q punta ad a (b non cambia!)</td>
+</tr>
+<tr>
+<td><code>*q = 99;</code></td>
+<td><strong>99</strong></td>
+<td>20</td>
+<td>100</td>
+<td>100</td>
+<td><code>*q</code> è a: a = 99</td>
+</tr>
+</tbody>
+</table>
+<p>Stampa: <code>a=99 b=20 *p=99 *q=99</code>.</p>
+<p>Le due cose da distinguere, che sono l'origine di quasi tutti gli errori:</p>
+<ul>
+<li><code>q = p;</code> copia <strong>l'indirizzo</strong>: dopo, p e q puntano alla <strong>stessa</strong> variabile;</li>
+<li><code>*q = *p;</code> copia <strong>il valore</strong>: le due variabili puntate restano diverse, ma con lo stesso numero dentro.</li>
+</ul>
+<h2 id="puntatori-3">Parametri di output (passaggio per indirizzo)</h2>
 <p>Per permettere a una funzione di <strong>modificare una variabile del chiamante</strong>, le si passa l'<strong>indirizzo</strong> della variabile. La funzione lavora con <code>*parametro</code>.</p>
 <figure class="codice"><figcaption>codice/basi.c</figcaption><pre><code><span class="kt">void</span><span class="w"> </span><span class="nf">scambioNO</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">     </span><span class="cm">/* SBAGLIATA: scambia due COPIE      */</span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
@@ -1981,7 +2069,7 @@ dopo il return: l&#x27;RDA di mcd sparisce, in main  m = 5</code></pre></figure>
 <span class="cm">/* nel chiamante: */</span>
 <span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">analizza</span><span class="p">(</span><span class="n">lista</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">mx</span><span class="p">);</span></code></pre></figure>
 <aside class="box box-errore"><p class="box-titolo">Parentesi con ++</p><p>Dentro la funzione, per incrementare un contatore di output scrivi <code>(*conta)++;</code>. Senza parentesi <code>*conta++</code> incrementa il <strong>puntatore</strong> (precedenza di <code>++</code>) e non il valore. In alternativa: <code>*conta = *conta + 1;</code>.</p></aside>
-<h2 id="puntatori-3">Puntatori e array</h2>
+<h2 id="puntatori-4">Puntatori e array</h2>
 <p>Il <strong>nome di un array</strong> è l'indirizzo del suo primo elemento: <code>v</code> equivale a <code>&amp;v[0]</code>.</p>
 <p><strong>Aritmetica dei puntatori</strong>: se <code>p</code> punta a un elemento di un array, <code>p + 1</code> punta all'elemento <strong>successivo</strong> (il compilatore aggiunge <code>sizeof(tipo)</code> byte, non 1). Quindi:</p>
 <table>
@@ -2029,7 +2117,7 @@ dopo il return: l&#x27;RDA di mcd sparisce, in main  m = 5</code></pre></figure>
 <span class="n">massimo</span><span class="p">(</span><span class="n">v</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span><span class="w">     </span><span class="cm">/* massimo degli ultimi 5: v[5] ... v[9] */</span>
 <span class="n">massimo</span><span class="p">(</span><span class="o">&amp;</span><span class="n">v</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span><span class="w">     </span><span class="cm">/* massimo di v[3] ... v[6]              */</span></code></pre></figure>
 <p>Dentro la funzione, <code>v[0]</code> è l'elemento da cui si è partiti.</p>
-<h2 id="puntatori-4">Funzioni che restituiscono puntatori</h2>
+<h2 id="puntatori-5">Funzioni che restituiscono puntatori</h2>
 <p>Una funzione può restituire un indirizzo, ad esempio quello di un elemento trovato in un array, o <code>NULL</code> se non lo trova:</p>
 <figure class="codice"><pre><code><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="nf">cercaPrimoNegativo</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="p">[],</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">dim</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
@@ -2039,7 +2127,7 @@ dopo il return: l&#x27;RDA di mcd sparisce, in main  m = 5</code></pre></figure>
 <span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
 <span class="p">}</span></code></pre></figure>
 <p>Va bene restituire l'indirizzo di qualcosa che <strong>sopravvive</strong> alla funzione (un elemento dell'array del chiamante, memoria allocata con <code>malloc</code>), <strong>mai</strong> quello di una variabile locale.</p>
-<h2 id="puntatori-5">Puntatori a puntatori</h2>
+<h2 id="puntatori-6">Puntatori a puntatori</h2>
 <p>Se una funzione deve <strong>modificare un puntatore</strong> del chiamante (ad esempio la testa di una lista), le si passa l'indirizzo del puntatore: un <strong>puntatore a puntatore</strong>.</p>
 <figure class="codice"><pre><code><span class="kt">void</span><span class="w"> </span><span class="nf">azzera</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">**</span><span class="n">pp</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="o">*</span><span class="n">pp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span><span class="w">                  </span><span class="cm">/* modifica il puntatore del chiamante */</span>
@@ -2907,7 +2995,39 @@ passata 4:  nessuno scambio: fine</code></pre></figure>
 <span class="w">      </span><span class="o">*</span><span class="n">pmax</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">l</span><span class="o">-&gt;</span><span class="n">info</span><span class="p">;</span>
 <span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 <span class="p">}</span></code></pre></figure>
-<h2 id="liste-6">Inserimento in testa</h2>
+<h2 id="liste-6">Come si costruisce una funzione sulla lista, ragionando passo passo</h2>
+<p>All'esame non c'è una funzione già pronta da ricordare: bisogna <strong>costruirla</strong>. Ecco il ragionamento completo, da usare ogni volta.</p>
+<p><strong>Problema</strong>: scrivere una funzione che, ricevendo una lista di interi e un valore <code>soglia</code>, restituisca quanti valori sono <strong>maggiori</strong> della soglia e, in più, quanti sono <strong>uguali</strong> alla soglia.</p>
+<p><strong>Passo 1. Che cosa riceve e che cosa restituisce?</strong> Riceve la lista e la soglia. Deve dare <strong>due</strong> risultati, ma <code>return</code> ne restituisce <strong>uno solo</strong>: quindi uno lo restituisco con <code>return</code> (i maggiori) e l'altro con un <strong>parametro di output</strong>, cioè un puntatore alla variabile del chiamante (<code>int *uguali</code>). La lista viene solo <strong>letta</strong>, quindi basta <code>TipoLista</code> (non <code>TipoLista *</code>).</p>
+<figure class="codice"><pre><code><span class="kt">int</span><span class="w"> </span><span class="nf">contaSoglia</span><span class="p">(</span><span class="n">TipoLista</span><span class="w"> </span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">soglia</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">uguali</span><span class="p">);</span></code></pre></figure>
+<p><strong>Passo 2. Un esempio a mano.</strong> Lista <code>9 -&gt; 4 -&gt; 7 -&gt; NULL</code>, soglia 7: maggiori di 7 c'è solo il 9 (1 valore); uguali c'è il 7 (1 valore). Quindi la funzione deve restituire 1 e mettere 1 in <code>*uguali</code>.</p>
+<p><strong>Passo 3. L'algoritmo in italiano.</strong>
+1. azzero i due contatori;
+2. scorro la lista nodo per nodo (schema di scansione);
+3. per ogni nodo: se il valore è maggiore, conto un maggiore; se è uguale, conto un uguale;
+4. alla fine restituisco i maggiori.</p>
+<p><strong>Passo 4. Il codice</strong>, traducendo ogni passo:</p>
+<figure class="codice"><pre><code><span class="kt">int</span><span class="w"> </span><span class="nf">contaSoglia</span><span class="p">(</span><span class="n">TipoLista</span><span class="w"> </span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">soglia</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">uguali</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">maggiori</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">                       </span><span class="cm">/* 1. contatori a zero           */</span>
+<span class="w">  </span><span class="n">TipoNodo</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="p">;</span>
+<span class="w">  </span><span class="o">*</span><span class="n">uguali</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">                            </span><span class="cm">/*    anche quello di output     */</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">l</span><span class="p">;</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">   </span><span class="cm">/* 2. scansione                  */</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">info</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">soglia</span><span class="p">)</span><span class="w">                 </span><span class="cm">/* 3. confronto                  */</span>
+<span class="w">      </span><span class="n">maggiori</span><span class="o">++</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">info</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">soglia</span><span class="p">)</span>
+<span class="w">      </span><span class="p">(</span><span class="o">*</span><span class="n">uguali</span><span class="p">)</span><span class="o">++</span><span class="p">;</span><span class="w">                        </span><span class="cm">/*    parentesi obbligatorie!    */</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">maggiori</span><span class="p">;</span><span class="w">                        </span><span class="cm">/* 4. risultato                  */</span>
+<span class="p">}</span></code></pre></figure>
+<p><strong>Passo 5. Controllo i casi limite</strong>, facendo l'esecuzione simulata a mente:</p>
+<ul>
+<li><strong>lista vuota</strong> (<code>l == NULL</code>): il ciclo non parte, restituisce 0 e <code>*uguali</code> vale 0. Corretto.</li>
+<li><strong>un solo nodo</strong>: un giro di ciclo, poi <code>p</code> diventa <code>NULL</code>. Corretto.</li>
+<li><strong>esempio del passo 2</strong>: giro 1, 9 &gt; 7, maggiori = 1; giro 2, 4 non è né maggiore né uguale; giro 3, 7 == 7, <code>*uguali</code> = 1. Restituisce 1. Corretto.</li>
+</ul>
+<p><strong>Passo 6. Come si chiama dal <code>main</code></strong>: <code>m = contaSoglia(lista, 7, &amp;u);</code> con <code>&amp;u</code>, perché la funzione deve scrivere dentro <code>u</code>.</p>
+<p>Ogni esercizio 1 d'esame si risolve con questi sei passi: cambiano solo i campi della struct e le condizioni.</p>
+<h2 id="liste-7">Inserimento in testa</h2>
 <figure class="codice"><figcaption>codice/liste.c</figcaption><pre><code><span class="cm">/* inserimento in testa: la testa cambia, quindi serve TipoLista *</span>
 <span class="cm">   restituisce 1 se l'inserimento riesce, 0 se la malloc fallisce       */</span>
 <span class="kt">int</span><span class="w"> </span><span class="nf">insTesta</span><span class="p">(</span><span class="n">TipoLista</span><span class="w"> </span><span class="o">*</span><span class="n">pl</span><span class="p">,</span><span class="w"> </span><span class="n">TipoInfo</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -2930,7 +3050,7 @@ passata 4:  nessuno scambio: fine</code></pre></figure>
 <figure class="codice"><pre><code><span class="n">TipoLista</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
 <span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
 <span class="w">  </span><span class="n">insTesta</span><span class="p">(</span><span class="o">&amp;</span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w">         </span><span class="cm">/* l: 3 -&gt; 2 -&gt; 1 -&gt; NULL */</span></code></pre></figure>
-<h2 id="liste-7">Inserimento in coda</h2>
+<h2 id="liste-8">Inserimento in coda</h2>
 <p>Bisogna arrivare all'<strong>ultimo</strong> nodo (quello con <code>next == NULL</code>) e attaccargli il nuovo. Caso speciale: se la lista è vuota, il nuovo nodo diventa la testa.</p>
 <figure class="codice"><figcaption>codice/liste.c</figcaption><pre><code><span class="cm">/* inserimento in coda, versione "con caso speciale" per la lista vuota */</span>
 <span class="kt">int</span><span class="w"> </span><span class="nf">insCoda</span><span class="p">(</span><span class="n">TipoLista</span><span class="w"> </span><span class="o">*</span><span class="n">pl</span><span class="p">,</span><span class="w"> </span><span class="n">TipoInfo</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -2977,7 +3097,7 @@ passata 4:  nessuno scambio: fine</code></pre></figure>
 +---+---+       +---+---+     +---+------+
   ^ p parte da qui, quindi p non e` mai NULL</code></pre></figure>
 <p>Il RG è comodo in <strong>tutte</strong> le operazioni in cui serve il predecessore: inserimento in coda, inserimento ordinato, eliminazione (anche di più nodi, vedi capitolo 18).</p>
-<h2 id="liste-8">Inserimento ordinato</h2>
+<h2 id="liste-9">Inserimento ordinato</h2>
 <p>Lista ordinata in modo crescente: bisogna trovare il <strong>primo nodo con info ≥ x</strong> e inserire il nuovo nodo <strong>prima</strong> di lui. Per inserire "prima" serve il nodo <strong>precedente</strong>: si scorre con <strong>due puntatori</strong>, <code>prec</code> e <code>corr</code>.</p>
 <figure class="codice"><figcaption>codice/liste.c</figcaption><pre><code><span class="cm">/* inserimento che mantiene la lista ordinata in modo CRESCENTE */</span>
 <span class="kt">int</span><span class="w"> </span><span class="nf">insOrdinato</span><span class="p">(</span><span class="n">TipoLista</span><span class="w"> </span><span class="o">*</span><span class="n">pl</span><span class="p">,</span><span class="w"> </span><span class="n">TipoInfo</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -3011,7 +3131,7 @@ aggancio:   nuovo-&gt;next = corr  ([6] -&gt; [7])
 DOPO:       *pl --&gt; [1] --&gt; [5] --&gt; [6] --&gt; [7] --&gt; [9] --&gt; NULL</code></pre></figure>
 <p>I casi da controllare: lista vuota (<code>prec</code> resta <code>NULL</code>: nuova testa), x più piccolo di tutti (<code>prec == NULL</code>: nuova testa), x più grande di tutti (<code>corr == NULL</code>: in coda), x in mezzo.</p>
 <p>Per le stringhe la condizione diventa <code>strcmp(corr-&gt;info.nome, nome) &lt; 0</code>.</p>
-<h2 id="liste-9">Eliminazione di un elemento</h2>
+<h2 id="liste-10">Eliminazione di un elemento</h2>
 <p>Stessa tecnica dei due puntatori: si cerca il nodo da eliminare <strong>ricordando il precedente</strong>, poi lo si "scavalca" e si libera la memoria.</p>
 <figure class="codice"><figcaption>codice/liste.c</figcaption><pre><code><span class="cm">/* elimina il PRIMO nodo che contiene x; restituisce 1 se eliminato, 0 se assente */</span>
 <span class="kt">int</span><span class="w"> </span><span class="nf">elimina</span><span class="p">(</span><span class="n">TipoLista</span><span class="w"> </span><span class="o">*</span><span class="n">pl</span><span class="p">,</span><span class="w"> </span><span class="n">TipoInfo</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -3040,7 +3160,7 @@ prec=[1] corr=[5]          prec-&gt;next = corr-&gt;next      free(corr)
 <li>Dimenticare il caso "elimino il primo nodo": va cambiata la testa (<code>*pl = corr-&gt;next</code>), quindi il parametro deve essere <code>TipoLista *</code>.</li>
 <li>Se il nodo contiene stringhe esatte, liberarle <strong>prima</strong> del nodo: <code>free(corr-&gt;info.nome); free(corr);</code>. Altrimenti è un memory leak.</li>
 </ul></aside>
-<h2 id="liste-10">Deallocazione di tutta la lista</h2>
+<h2 id="liste-11">Deallocazione di tutta la lista</h2>
 <figure class="codice"><figcaption>codice/liste.c</figcaption><pre><code><span class="kt">void</span><span class="w"> </span><span class="nf">dealloca</span><span class="p">(</span><span class="n">TipoLista</span><span class="w"> </span><span class="o">*</span><span class="n">pl</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="n">TipoNodo</span><span class="w"> </span><span class="o">*</span><span class="n">daLiberare</span><span class="p">;</span>
 <span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">pl</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -3050,7 +3170,7 @@ prec=[1] corr=[5]          prec-&gt;next = corr-&gt;next      free(corr)
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span></code></pre></figure>
 <p>Bisogna salvare il nodo da liberare, <strong>avanzare</strong>, e poi liberare: dopo <code>free</code> non si può più seguire il suo <code>next</code>.</p>
-<h2 id="liste-11">Funzioni ricorsive sulle liste</h2>
+<h2 id="liste-12">Funzioni ricorsive sulle liste</h2>
 <p>Una lista è <strong>vuota</strong> oppure è <strong>un nodo seguito da una lista</strong>. Le funzioni ricorsive seguono tutte lo stesso schema: caso base <code>l == NULL</code>, caso ricorsivo che usa <code>l-&gt;info</code> e chiama la funzione su <code>l-&gt;next</code>.</p>
 <figure class="codice"><figcaption>codice/liste.c</figcaption><pre><code><span class="cm">/* una lista e` VUOTA oppure e` un NODO seguito da una LISTA:</span>
 <span class="cm">   e` una struttura intrinsecamente ricorsiva                           */</span>
@@ -3080,7 +3200,7 @@ RDA contaRic  l=[1]-&gt;NULL     info==1:  1 + contaRic(NULL)   -&gt; 1 + 0 = 1
 RDA contaRic  l=[4]-&gt;...      info!=1:  contaRic([1])        -&gt; 1
 RDA contaRic  l=[1]-&gt;...      info==1:  1 + contaRic([4])    -&gt; 1 + 1 = 2
 RDA main                      riceve 2</code></pre></figure>
-<h2 id="liste-12">Liste di struct (come all'esame)</h2>
+<h2 id="liste-13">Liste di struct (come all'esame)</h2>
 <p>All'esame l'informazione del nodo non è un <code>int</code> ma una <strong>struct</strong> con i dati dell'elemento. Lo schema è sempre questo:</p>
 <figure class="codice"><pre><code><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">nome</span><span class="p">;</span><span class="w">                  </span><span class="cm">/* stringa di lunghezza ignota: esatta   */</span>
