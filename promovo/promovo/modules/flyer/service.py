@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import logging
+from collections.abc import Callable
 from datetime import date
 from pathlib import Path
 
@@ -40,7 +41,7 @@ def create_flyer(session: Session, store: Store, pdf_bytes: bytes, settings: Set
 
 
 def process_flyer(session: Session, flyer: Flyer, settings: Settings, llm: LLM | None,
-                  today: date | None = None) -> Flyer:
+                  today: date | None = None, progress: Callable[[int, int], None] | None = None) -> Flyer:
     """Legge le offerte di un volantino già salvato. In caso di errore il volantino resta senza offerte."""
     try:
         doc = open_pdf(Path(flyer.pdf_path).read_bytes())
@@ -49,7 +50,7 @@ def process_flyer(session: Session, flyer: Flyer, settings: Settings, llm: LLM |
         session.flush()
         return flyer
     try:
-        result = extract_offers(doc, llm, today)
+        result = extract_offers(doc, llm, today, progress)
         featured = pick_featured(result.offers)
         crops_dir = settings.data_dir / "crops" / str(flyer.id)
         offers = []

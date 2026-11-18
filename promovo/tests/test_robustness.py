@@ -53,7 +53,7 @@ def test_text_flyers_read_exactly(variant):
     assert sorted((key(o) for o in res.offers), key=str) == expected
 
 
-@pytest.mark.skipif(not ocr_available(), reason="Tesseract non installato")
+@pytest.mark.skipif(not ocr_available(), reason="lettura ottica non installata")
 @pytest.mark.parametrize("variant", list(VARIANTS))
 def test_image_flyers_ocr_never_confirms_wrong_prices(variant):
     pdf = build_sample_flyer(**VARIANTS[variant])
@@ -121,10 +121,15 @@ def test_encrypted_and_too_long_pdfs():
         open_pdf(_too_many_pages())
 
 
+@pytest.mark.skipif(not ocr_available(), reason="lettura ottica non installata")
 def test_image_flyer_ingest_without_ai(session, store, tmp_settings):
+    """Una foto del volantino, senza IA: gli agenti la leggono con la lettura ottica."""
     flyer = ingest_flyer(session, store, _image_bytes("JPEG"), tmp_settings, None, today=TODAY)
-    assert flyer.status == FlyerStatus.ready and flyer.offers == []
-    assert any("serve l'IA" in w for w in flyer.warnings)
+    assert flyer.status == FlyerStatus.ready and flyer.extraction_method == "ocr"
+    truth = {(p.name, p.price_cents) for p in DEFAULT_PRODUCTS[:6]}
+    got = {(o.name, o.price_cents) for o in flyer.offers}
+    assert len(got & truth) >= 5
+    assert all((o.name, o.price_cents) in truth for o in flyer.offers if o.price_verified)
 
 
 def test_flyer_without_offers_or_dates(session, store, tmp_settings):
@@ -193,13 +198,3 @@ def test_video_without_system_ffmpeg(store, big_flyer, tmp_path, monkeypatch):
     assert abs(probe_duration(out) - 3.0) < 0.2
 
 
-def test_rome_time_without_timezone_database():
-    """Su Windows senza fusi orari si usa l'ora italiana calcolata, identica a quella vera."""
-    from datetime import datetime, timedelta
-    from zoneinfo import ZoneInfo
-    from promovo.modules.assistant.agent import _RomeFallback
-    fb, real = _RomeFallback(), ZoneInfo("Europe/Rome")
-    t = datetime(2026, 1, 1)
-    while t.year == 2026:
-        assert t.replace(tzinfo=fb).utcoffset() == t.replace(tzinfo=real).utcoffset(), t
-        t += timedelta(hours=7)

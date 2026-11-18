@@ -1,7 +1,7 @@
 [project]
 name = "promovo"
-version = "0.1.0"
-description = "Promovo: la piattaforma di agenti IA per il marketing e i clienti dei supermercati"
+version = "1.0.0"
+description = "Promovo: gli agenti che trasformano il volantino del supermercato in contenuti pronti per i social"
 requires-python = ">=3.11"
 dependencies = [
     "anthropic>=2.10",
@@ -17,6 +17,8 @@ dependencies = [
     "tzdata>=2024.1",   # fusi orari su Windows, dove il sistema non li fornisce
     "segno>=1.5",       # QR code nella scena finale dei video
     "httpx>=0.27",      # chiamate al servizio della voce (ElevenLabs)
+    "rapidocr==3.10.0", # lettura ottica dei volantini fatti di immagini (modelli PP-OCRv6, sul computer)
+    "onnxruntime>=1.20",
 ]
 
 [project.optional-dependencies]

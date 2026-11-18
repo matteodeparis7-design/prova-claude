@@ -33,15 +33,15 @@ def _card(o: VideoOffer, w: int, h: int, brand, accent, u: float) -> Image.Image
     d = ImageDraw.Draw(card)
     d.rounded_rectangle((0, 0, w - 1, h - 1), radius=int(34 * u), fill=WHITE + (255,))
     pad = int(22 * u)
-    img_h = int(h * 0.52)
+    img_h = int(h * 0.47)
     prod = product_visual(o.image_path, w - 2 * pad, img_h, brand, u * 0.6, o.name)
     card.alpha_composite(prod, (pad, pad))
     y = pad + img_h + int(6 * u)
-    fn, ln = fit_text(o.name, w - 2 * pad, int(h * 0.17), int(40 * u), True, 2, min_size=int(20 * u))
+    fn, ln = fit_text(o.name, w - 2 * pad, int(h * 0.15), int(34 * u), True, 2, min_size=int(18 * u))
     name = text_layer(ln, fn, INK)
     card.alpha_composite(name, (pad, y))
     y += name.height + int(4 * u)
-    price = price_block(o.price_cents, int(h * 0.15), brand)
+    price = price_block(o.price_cents, int(h * 0.22), brand)      # il prezzo è ciò che vende: ben visibile
     if price.width > w - 2 * pad:
         price = scaled(price, (w - 2 * pad) / price.width)
     py = h - pad - price.height
@@ -52,9 +52,9 @@ def _card(o: VideoOffer, w: int, h: int, brand, accent, u: float) -> Image.Image
             card.alpha_composite(desc, (pad, y))
     card.alpha_composite(price, (pad, py))
     if o.old_price_cents:
-        old = old_price_line(o.old_price_cents, int(24 * u), (110, 112, 120))
+        old = old_price_line(o.old_price_cents, int(28 * u), (110, 112, 120))
         if pad + price.width + int(14 * u) + old.width <= w - pad:
-            card.alpha_composite(old, (pad + price.width + int(14 * u), py + price.height - old.height))
+            card.alpha_composite(old, (pad + price.width + int(14 * u), py + price.height - old.height - int(4 * u)))
     if o.discount_percent:
         burst = discount_burst(o.discount_percent, int(min(w, h) * 0.3), accent)
         card.alpha_composite(burst, (w - burst.width - int(8 * u), int(8 * u)))

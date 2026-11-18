@@ -11,7 +11,7 @@ from sqlalchemy import select
 from .config import Settings
 from .db import Database
 from .imaging import load_logo
-from .models import Customer, Organization, Role, Store, User
+from .models import Organization, Role, Store, User
 from .modules.flyer.service import ingest_flyer
 from .modules.video.render import font
 from .sample_flyer import SampleProduct, build_sample_flyer
@@ -47,7 +47,7 @@ def seed_demo(db: Database, settings: Settings) -> bool:
                    password_hash=hash_password(DEMO_PASSWORD)))
         store = Store(organization_id=org.id, name="Supermercato Demo", banner="Demo", address="Via Roma 1",
                       city="Colleferro", phone="06 0000000", opening_hours={"lun-sab": "8:00-20:00", "dom": "9:00-13:00"},
-                      services=["ritiro in negozio"], tone="familiare", whatsapp="333 0000000",
+                      tone="familiare", whatsapp="333 0000000",
                       hashtags=["supermercatodemo", "spesacolleferro"])
         s.add(store)
         s.flush()
@@ -69,9 +69,4 @@ def seed_demo(db: Database, settings: Settings) -> bool:
         from .modules.flyer.service import create_flyer, process_flyer
         process_flyer(s, create_flyer(s, store, rival, settings, title="Volantino Market Esempio",
                                       competitor="Market Esempio (concorrente di prova)"), settings, None)
-        s.add_all([
-            Customer(store_id=store.id, name="Anna Verdi", phone="+393330000001", marketing_consent=True,
-                     preferred_categories=["pesce"]),
-            Customer(store_id=store.id, name="Bruno Neri", phone="+393330000002"),
-        ])
     return True

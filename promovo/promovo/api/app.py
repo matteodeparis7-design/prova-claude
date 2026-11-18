@@ -4,10 +4,7 @@ from __future__ import annotations
 import logging
 import re
 import secrets
-import threading
-import time
 import uuid
-from collections import defaultdict, deque
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -21,23 +18,18 @@ from sqlalchemy.orm import Session
 
 from ..config import Settings, get_settings
 from ..db import Database
-from ..llm import AIRefused, AIUnavailable, LLM, get_llm
-from ..models import (
-    ContentPiece, Conversation, Customer, Flyer, FlyerStatus, Job, JobStatus, Offer, Order, OrderStatus, Organization, Role,
-    SaleRecord, Store, User,
-)
+from ..llm import AIRefused, AIUnavailable, LLM
+from .. import keys
+from ..models import ContentPiece, Flyer, FlyerStatus, Job, JobStatus, Offer, Organization, Role, Store, User
 from ..imaging import ImageError, load_logo, open_image, save_product_photo
 from ..money import discount_percent, format_eur, parse_price
 from ..security import hash_password, issue_token, revoke_token, verify_password
 from ..text_utils import CATEGORIES
-from ..modules.analytics.service import SalesImportError, flyer_performance, import_sales_csv
-from ..modules.assistant.agent import OrderError, chat, normalize_phone
 from ..modules.catalog import active_offers
 from ..modules.kit import DEFAULT_ITEMS, ITEMS, build_zip, run_kit
 from ..modules.content.service import generate_content, save_content
 from ..modules.flyer.pdf import InvalidPDF
 from ..modules.flyer.service import create_flyer, delete_flyer_files, process_flyer
-from ..modules.loyalty.service import build_campaign, handle_inbound, set_consent
 from ..modules.video.render import FORMATS
 from ..modules.video.service import render_flyer_video
 from ..modules.clip.analyze import ClipError
@@ -46,7 +38,7 @@ from .. import voice as voicemod
 from ..modules.radar.service import radar as radar_report
 from ..modules.weather.service import weekly_weather
 from .deps import (
-    AppState, bearer_token, content_for, current_user, flyer_for, get_session, job_for, offer_for, order_for,
+    AppState, bearer_token, content_for, current_user, flyer_for, get_session, job_for, offer_for,
     require_owner, state, store_for,
 )
 
@@ -107,6 +99,11 @@ class StoreIn(BaseModel):
     video_music: bool = True
 
     _clean_tags = field_validator("hashtags")(lambda cls, v: _clean_hashtags(v))
+
+
+class KeyIn(BaseModel):
+    service: str = Field(pattern="^(ai|voice)$")
+    key: str = Field(max_length=400)
 
 
 class FeatureIn(BaseModel):
@@ -195,40 +192,6 @@ class ContentPatch(BaseModel):
     scheduled_for: datetime | None = None
 
 
-class ChatIn(BaseModel):
-    message: str = Field(min_length=1, max_length=4000)
-    conversation_id: int | None = None
-
-
-class CustomerIn(BaseModel):
-    name: str = Field(default="", max_length=200)
-    phone: str = Field(min_length=6, max_length=40)
-    email: str = Field(default="", max_length=255)
-    marketing_consent: bool = False
-    preferred_categories: list[str] = Field(default_factory=list)
-
-    @field_validator("preferred_categories")
-    @classmethod
-    def _cats(cls, v: list[str]) -> list[str]:
-        bad = [c for c in v if c not in CATEGORIES]
-        if bad:
-            raise ValueError(f"Categorie non valide: {', '.join(bad)}")
-        return v
-
-
-class ConsentIn(BaseModel):
-    marketing_consent: bool
-
-
-class OrderPatch(BaseModel):
-    status: OrderStatus
-
-
-class InboundIn(BaseModel):
-    phone: str = Field(max_length=40)
-    text: str = Field(max_length=4000)
-
-
 # ------------------------------------------------------------------ serializzazione
 
 def store_out(s: Store) -> dict:
@@ -275,45 +238,10 @@ def content_out(c: ContentPiece) -> dict:
             "created_at": c.created_at.isoformat()}
 
 
-def order_out(o: Order) -> dict:
-    return {"id": o.id, "store_id": o.store_id, "customer_name": o.customer_name,
-            "customer_phone": o.customer_phone, "status": o.status.value,
-            "pickup_at": o.pickup_at.isoformat() if o.pickup_at else None, "notes": o.notes,
-            "total_cents": o.total_cents, "total": format_eur(o.total_cents),
-            "items": [{"offer_id": i.offer_id, "name": i.name, "quantity": i.quantity,
-                       "unit_price": format_eur(i.unit_price_cents)} for i in o.items],
-            "created_at": o.created_at.isoformat()}
-
-
-def customer_out(c: Customer) -> dict:
-    return {"id": c.id, "name": c.name, "phone": c.phone, "email": c.email,
-            "marketing_consent": c.marketing_consent, "preferred_categories": c.preferred_categories}
-
-
 def job_out(j: Job) -> dict:
     return {"id": j.id, "kind": j.kind, "status": j.status.value, "params": j.params, "result": j.result,
             "error": j.error, "created_at": j.created_at.isoformat(),
             "finished_at": j.finished_at.isoformat() if j.finished_at else None}
-
-
-# ------------------------------------------------------------------ limite di richieste (chat pubblica)
-
-class RateLimiter:
-    def __init__(self, limit: int, window_s: float):
-        self.limit, self.window = limit, window_s
-        self.hits: dict[str, deque] = defaultdict(deque)
-        self.lock = threading.Lock()
-
-    def allow(self, key: str) -> bool:
-        now = time.monotonic()
-        with self.lock:
-            q = self.hits[key]
-            while q and now - q[0] > self.window:
-                q.popleft()
-            if len(q) >= self.limit:
-                return False
-            q.append(now)
-            return True
 
 
 # ------------------------------------------------------------------ lavori in background
@@ -364,6 +292,77 @@ def run_kit_job(app_state: AppState, job_id: int) -> None:
             log.exception("Pacchetto del lavoro %s fallito", job_id)
         job.finished_at = datetime.now(timezone.utc)
         s.commit()
+    finally:
+        s.close()
+
+
+AUTOPILOT_ITEMS = ["texts", "images", "video_portrait", "video_square", "video_landscape"]
+
+
+def run_autopilot_job(app_state: AppState, job_id: int) -> None:
+    """Gli agenti fanno tutto da soli: leggono il volantino, controllano i prezzi, scelgono le offerte,
+    scrivono i testi, preparano grafiche e video e il piano della settimana."""
+    s = app_state.db.new_session()
+    try:
+        job = s.get(Job, job_id)
+        if job is None:
+            return
+        job.status = JobStatus.running
+        job.result = {**job.result, "stage": "reading"}
+        s.commit()
+        flyer_id = job.params["flyer_id"]
+
+        def update(**kw) -> None:
+            j = s.get(Job, job_id)
+            j.result = {**(j.result or {}), **kw}
+            s.commit()
+
+        # 1. Lettore e Controllo
+        try:
+            flyer = s.get(Flyer, flyer_id)
+            process_flyer(s, flyer, app_state.settings, app_state.llm,
+                          progress=lambda page, pages: update(stage="reading", page=page + 1, pages=pages))
+            s.commit()
+        except Exception:  # noqa: BLE001 - l'ultimo riparo: il volantino resta con l'errore
+            s.rollback()
+            log.exception("Lettura del volantino %s fallita", flyer_id)
+            flyer = s.get(Flyer, flyer_id)
+            if flyer is not None:
+                flyer.status, flyer.error = FlyerStatus.failed, "Errore interno durante la lettura."
+            s.commit()
+        flyer = s.get(Flyer, flyer_id)
+        job = s.get(Job, job_id)
+        if flyer is None or flyer.status != FlyerStatus.ready or not flyer.offers:
+            job.status = JobStatus.failed
+            job.error = (flyer.error if flyer is not None and flyer.error else
+                         "Nessuna offerta trovata nel volantino: aggiungile a mano o prova un file più nitido.")
+            job.result = {**job.result, "stage": "failed"}
+            job.finished_at = datetime.now(timezone.utc)
+            s.commit()
+            return
+        update(stage="checked", offers=len(flyer.offers),
+               unverified=sum(1 for o in flyer.offers if not o.price_verified))
+        # 2. Stratega, copywriter, grafico, montatore, pianificatore
+        store = s.get(Store, job.store_id)
+        items = job.params.get("items") or AUTOPILOT_ITEMS
+
+        def progress(item: str, done: int, total: int) -> None:
+            update(stage="making", item=item, current=ITEMS.get(item, ""), done=done, total=total)
+        res = run_kit(s, store, flyer, app_state.settings, app_state.llm, items, progress)
+        job = s.get(Job, job_id)
+        job.result = {**job.result, **res, "stage": "done", "current": "", "item": ""}
+        job.status = JobStatus.done if res["done"] else JobStatus.failed
+        job.error = "; ".join(res["errors"])[:2000]
+        job.finished_at = datetime.now(timezone.utc)
+        s.commit()
+    except Exception as exc:  # noqa: BLE001
+        s.rollback()
+        log.exception("Pilota automatico %s fallito", job_id)
+        job = s.get(Job, job_id)
+        if job is not None:
+            job.status, job.error = JobStatus.failed, str(exc)[:2000]
+            job.finished_at = datetime.now(timezone.utc)
+            s.commit()
     finally:
         s.close()
 
@@ -443,13 +442,13 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
     db = db or Database(settings.database_url)
     db.create_all()
     settings.ensure_dirs()
-    if llm is None and use_ai and settings.ai_mode != "off":
-        llm = get_llm(settings.ai_mode, settings.model)
+    keys.load_voice_key(settings)
+    if llm is None and use_ai:
+        llm = keys.make_llm(settings)
 
     app = FastAPI(title="Promovo", version="0.1.0",
-                  description="Piattaforma di agenti IA per il marketing e i clienti dei supermercati.")
+                  description="Agenti che trasformano il volantino del supermercato in contenuti pronti per i social.")
     app.state.promovo = AppState(settings=settings, db=db, llm=llm)
-    public_limiter = RateLimiter(limit=20, window_s=60)
 
     @app.exception_handler(AIUnavailable)
     async def _ai_unavailable(_: Request, exc: AIUnavailable):
@@ -459,17 +458,51 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
     async def _ai_refused(_: Request, exc: AIRefused):
         return JSONResponse(status_code=422, content={"detail": str(exc)})
 
-    def need_llm(request: Request) -> LLM:
-        llm_ = state(request).llm
-        if llm_ is None:
-            raise AIUnavailable("IA non configurata.")
-        return llm_
-
     # -------------------------------------------------- sistema
 
     @app.get("/api/health")
     def health(request: Request):
         return {"ok": True, "ai": state(request).llm is not None, "version": app.version}
+
+    # -------------------------------------------------- impostazioni: chiavi facoltative
+
+    def settings_out(request: Request) -> dict:
+        st = state(request)
+        from ..modules.flyer import ocr
+        out = {"agents": {"ocr": ocr.available(), "weather": st.settings.weather},
+               "ai_mode_off": st.settings.ai_mode == "off"}
+        for service in keys.SERVICES:
+            key = keys.get(st.settings, service)
+            out[service] = {"configured": bool(key), "masked": keys.mask(key), "source": keys.source(st.settings, service)}
+        out["ai"]["active"] = st.llm is not None
+        return out
+
+    @app.get("/api/settings")
+    def get_app_settings(request: Request, user: User = Depends(current_user)):
+        return settings_out(request)
+
+    @app.post("/api/settings/keys")
+    def save_key(body: KeyIn, request: Request, user: User = Depends(require_owner)):
+        st = state(request)
+        try:
+            key = keys.clean(body.service, body.key)
+            (keys.test_ai if body.service == "ai" else keys.test_voice)(key, st.key_test_client)
+        except keys.KeyError_ as exc:
+            raise HTTPException(422, str(exc)) from exc
+        keys.save(st.settings, body.service, key)
+        if body.service == "ai":
+            st.llm = keys.make_llm(st.settings, st.llm_client)
+        return settings_out(request)
+
+    @app.delete("/api/settings/keys/{service}")
+    def delete_key(service: str, request: Request, user: User = Depends(require_owner)):
+        if service not in keys.SERVICES:
+            raise HTTPException(404, "Servizio sconosciuto.")
+        st = state(request)
+        keys.remove(st.settings, service)
+        if service == "ai":
+            st.llm = keys.make_llm(st.settings, None) if keys.get(st.settings, "ai") else None
+        return settings_out(request)
 
     @app.get("/", response_class=HTMLResponse)
     def dashboard():
@@ -596,8 +629,6 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
                 "last_flyer": flyer_out(last) if last else None,
                 "content_total": len(pieces),
                 "content_approved": sum(1 for p in pieces if p.approved),
-                "open_orders": session.scalar(select(func.count()).select_from(Order).where(
-                    Order.store_id == st.id, Order.status.in_([OrderStatus.new, OrderStatus.confirmed, OrderStatus.ready]))),
             })
         return out
 
@@ -616,8 +647,11 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
     @app.post("/api/stores/{store_id}/flyers", status_code=202)
     async def upload_flyer(store_id: int, request: Request, background: BackgroundTasks,
                            file: UploadFile = File(...), title: str = Form(default=""),
+                           autopilot: bool = Form(default=False),
                            user: User = Depends(current_user), session: Session = Depends(get_session)):
-        """Salva il PDF e avvia la lettura in background: interrogare GET /api/flyers/{id} fino a "ready"."""
+        """Salva il PDF e avvia la lettura in background: interrogare GET /api/flyers/{id} fino a "ready".
+        Con autopilot=true gli agenti preparano anche tutti i materiali: seguire il lavoro con
+        GET /api/jobs/{autopilot_job}."""
         store = store_for(session, user, store_id)
         st = state(request)
         limit = st.settings.max_upload_mb * 1024 * 1024
@@ -629,6 +663,13 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         except InvalidPDF as exc:
             raise HTTPException(400, str(exc)) from exc
         session.commit()
+        if autopilot:
+            job = Job(store_id=store.id, kind="autopilot", params={"flyer_id": flyer.id, "items": AUTOPILOT_ITEMS},
+                      result={"stage": "queued", "total": len(AUTOPILOT_ITEMS), "done": 0, "current": "", "errors": []})
+            session.add(job)
+            session.commit()
+            background.add_task(run_autopilot_job, st, job.id)
+            return {**flyer_out(flyer), "autopilot_job": job.id}
         background.add_task(run_flyer_job, st, flyer.id)
         return flyer_out(flyer)
 
@@ -892,7 +933,7 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         f = flyer_for(session, user, flyer_id)
         if f.status != FlyerStatus.ready or not f.offers:
             raise HTTPException(409, "Il volantino non è pronto o non ha offerte.")
-        running = session.scalars(select(Job).where(Job.store_id == f.store_id, Job.kind == "kit",
+        running = session.scalars(select(Job).where(Job.store_id == f.store_id, Job.kind.in_(["kit", "autopilot"]),
                                                     Job.status.in_([JobStatus.queued, JobStatus.running]))).all()
         if any(j.params.get("flyer_id") == f.id for j in running):
             raise HTTPException(409, "I materiali di questo volantino sono già in preparazione.")
@@ -1080,131 +1121,6 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         session.flush()
         return store_out(store)
 
-    # -------------------------------------------------- assistente clienti e ordini
-
-    @app.post("/api/stores/{store_id}/chat")
-    def staff_chat(store_id: int, body: ChatIn, request: Request, user: User = Depends(current_user),
-                   session: Session = Depends(get_session)):
-        store = store_for(session, user, store_id)
-        return _chat(session, store, body, need_llm(request), channel="test")
-
-    @app.post("/public/stores/{store_id}/chat")
-    def public_chat(store_id: int, body: ChatIn, request: Request, session: Session = Depends(get_session)):
-        client = request.client.host if request.client else "?"
-        if not public_limiter.allow(f"{client}:{store_id}"):
-            raise HTTPException(429, "Troppi messaggi, riprova tra un minuto.")
-        store = session.get(Store, store_id)
-        if store is None:
-            raise HTTPException(404, "Negozio non trovato.")
-        return _chat(session, store, body, need_llm(request), channel="web")
-
-    def _chat(session: Session, store: Store, body: ChatIn, llm_: LLM, channel: str) -> dict:
-        conv = None
-        if body.conversation_id is not None:
-            conv = session.get(Conversation, body.conversation_id)
-            if conv is None or conv.store_id != store.id:
-                raise HTTPException(404, "Conversazione non trovata.")
-        reply, conv = chat(session, store, llm_, body.message, conv, channel=channel)
-        return {"reply": reply, "conversation_id": conv.id}
-
-    @app.post("/api/stores/{store_id}/inbound")
-    def inbound(store_id: int, body: InboundIn, user: User = Depends(current_user),
-                session: Session = Depends(get_session)):
-        """Messaggio ricevuto da un canale esterno (es. WhatsApp): gestisce le richieste di STOP."""
-        store = store_for(session, user, store_id)
-        return {"unsubscribed": handle_inbound(session, store, body.phone, body.text)}
-
-    @app.get("/api/stores/{store_id}/orders")
-    def list_orders(store_id: int, status_filter: OrderStatus | None = None, user: User = Depends(current_user),
-                    session: Session = Depends(get_session)):
-        store = store_for(session, user, store_id)
-        q = select(Order).where(Order.store_id == store.id)
-        if status_filter is not None:
-            q = q.where(Order.status == status_filter)
-        return [order_out(o) for o in session.scalars(q.order_by(Order.created_at.desc(), Order.id.desc())).all()]
-
-    @app.patch("/api/orders/{order_id}")
-    def patch_order(order_id: int, body: OrderPatch, user: User = Depends(current_user),
-                    session: Session = Depends(get_session)):
-        o = order_for(session, user, order_id)
-        allowed = {
-            OrderStatus.new: {OrderStatus.confirmed, OrderStatus.cancelled},
-            OrderStatus.confirmed: {OrderStatus.ready, OrderStatus.cancelled},
-            OrderStatus.ready: {OrderStatus.collected, OrderStatus.cancelled},
-            OrderStatus.collected: set(),
-            OrderStatus.cancelled: set(),
-        }
-        if body.status not in allowed[o.status]:
-            raise HTTPException(409, f"Passaggio non consentito: da {o.status.value} a {body.status.value}.")
-        o.status = body.status
-        session.flush()
-        return order_out(o)
-
-    # -------------------------------------------------- clienti e fedeltà
-
-    @app.get("/api/stores/{store_id}/customers")
-    def list_customers(store_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
-        store = store_for(session, user, store_id)
-        rows = session.scalars(select(Customer).where(Customer.store_id == store.id).order_by(Customer.id)).all()
-        return [customer_out(c) for c in rows]
-
-    @app.post("/api/stores/{store_id}/customers", status_code=201)
-    def add_customer(store_id: int, body: CustomerIn, user: User = Depends(current_user),
-                     session: Session = Depends(get_session)):
-        store = store_for(session, user, store_id)
-        try:
-            phone = normalize_phone(body.phone)
-        except OrderError as exc:
-            raise HTTPException(422, str(exc)) from exc
-        if session.scalar(select(Customer).where(Customer.store_id == store.id, Customer.phone == phone)):
-            raise HTTPException(409, "Cliente già presente con questo telefono.")
-        c = Customer(store_id=store.id, name=body.name, phone=phone, email=body.email,
-                     preferred_categories=body.preferred_categories)
-        session.add(c)
-        session.flush()
-        set_consent(session, c, body.marketing_consent)
-        return customer_out(c)
-
-    @app.patch("/api/customers/{customer_id}/consent")
-    def customer_consent(customer_id: int, body: ConsentIn, user: User = Depends(current_user),
-                         session: Session = Depends(get_session)):
-        c = session.get(Customer, customer_id)
-        if c is None or c.store.organization_id != user.organization_id:
-            raise HTTPException(404, "Cliente non trovato.")
-        set_consent(session, c, body.marketing_consent)
-        return customer_out(c)
-
-    @app.post("/api/flyers/{flyer_id}/campaign", status_code=201)
-    def campaign(flyer_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
-        f = flyer_for(session, user, flyer_id)
-        pieces = build_campaign(session, f.store, f)
-        return {"messages": [content_out(p) for p in pieces]}
-
-    # -------------------------------------------------- vendite e risultati
-
-    @app.post("/api/stores/{store_id}/sales", status_code=201)
-    async def upload_sales(store_id: int, file: UploadFile = File(...), user: User = Depends(current_user),
-                           session: Session = Depends(get_session)):
-        store = store_for(session, user, store_id)
-        data = await file.read(50 * 1024 * 1024 + 1)
-        if len(data) > 50 * 1024 * 1024:
-            raise HTTPException(413, "Il file supera 50 MB.")
-        try:
-            rep = import_sales_csv(session, store, data)
-        except SalesImportError as exc:
-            raise HTTPException(400, str(exc)) from exc
-        return {"imported": rep.imported, "skipped": rep.skipped, "errors": rep.errors,
-                "first_day": rep.first_day.isoformat() if rep.first_day else None,
-                "last_day": rep.last_day.isoformat() if rep.last_day else None}
-
-    @app.get("/api/flyers/{flyer_id}/performance")
-    def performance(flyer_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
-        f = flyer_for(session, user, flyer_id)
-        try:
-            return flyer_performance(session, f)
-        except SalesImportError as exc:
-            raise HTTPException(409, str(exc)) from exc
-
     @app.get("/api/stores/{store_id}/overview")
     def overview(store_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
         store = store_for(session, user, store_id)
@@ -1213,14 +1129,8 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
             "store": store_out(store),
             "flyers": count(Flyer, Flyer.store_id == store.id, Flyer.competitor == ""),
             "active_offers": len(active_offers(session, store.id)),
-            "customers": count(Customer, Customer.store_id == store.id),
-            "customers_with_consent": count(Customer, Customer.store_id == store.id,
-                                            Customer.marketing_consent.is_(True)),
-            "open_orders": count(Order, Order.store_id == store.id,
-                                 Order.status.in_([OrderStatus.new, OrderStatus.confirmed, OrderStatus.ready])),
             "content_to_approve": count(ContentPiece, ContentPiece.store_id == store.id,
                                         ContentPiece.approved.is_(False), ContentPiece.kind != "plan"),
-            "sales_rows": count(SaleRecord, SaleRecord.store_id == store.id),
         }
 
     @app.exception_handler(IntegrityError)

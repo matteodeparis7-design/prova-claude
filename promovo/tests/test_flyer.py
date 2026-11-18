@@ -79,7 +79,7 @@ def test_ai_unavailable_falls_back(sample_pdf, fake_llm):
     res = extract_offers(open_pdf(sample_pdf), fake_llm, TODAY)
     assert res.method == "heuristic"
     assert len(res.offers) == len(DEFAULT_PRODUCTS)
-    assert "IA non disponibile" in res.warnings[0]
+    assert "IA facoltativa non disponibile" in res.warnings[0]
 
 
 def test_ai_bad_dates_are_dropped(sample_pdf, fake_llm):
@@ -106,7 +106,7 @@ def test_image_only_page_warns():
     data = doc.tobytes()
     res = extract_offers(open_pdf(data), None, TODAY)
     assert res.offers == []
-    assert any("solo immagine" in w for w in res.warnings)
+    assert any("nessuna offerta riconosciuta" in w or "solo di immagini" in w for w in res.warnings)
 
 
 def test_ingest_and_delete(session, store, sample_pdf, tmp_settings):

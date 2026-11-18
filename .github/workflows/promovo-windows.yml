@@ -27,6 +27,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install ".[test]" pyinstaller
 
+      - name: Prepara la lettura ottica (i modelli vengono inclusi nel programma)
+        working-directory: promovo
+        run: python -c "from promovo.sample_flyer import build_sample_flyer, make_image_only; from promovo.modules.flyer.pdf import open_pdf; from promovo.modules.flyer import ocr; d = open_pdf(make_image_only(build_sample_flyer())); r = ocr.read_page(d[0], 1); print(len(r.offers), 'offerte lette'); assert len(r.offers) >= 5"
+
       - name: Tutti i test, su Windows
         working-directory: promovo
         env:
@@ -80,6 +84,19 @@ jobs:
           }
           if ($c.status -ne "done") { $c | ConvertTo-Json -Depth 5; throw "Reel dal banco non creato" }
           Write-Host "Reel dal banco creato: $($c.result.duration) secondi"
+          # Pilota automatico su un volantino fatto solo di immagini: lettura ottica + tutti i materiali
+          python -c "from promovo.sample_flyer import build_sample_flyer, make_image_only; open('volantino_foto.pdf','wb').write(make_image_only(build_sample_flyer()))"
+          $up = curl.exe -s -X POST "$base/api/stores/$($store.id)/flyers" -H "Authorization: Bearer $($login.token)" `
+                -F "file=@volantino_foto.pdf;type=application/pdf" -F "autopilot=true" | ConvertFrom-Json
+          for ($i = 0; $i -lt 400; $i++) {
+            $a = Invoke-RestMethod "$base/api/jobs/$($up.autopilot_job)" -Headers $hd
+            if ($a.status -in @("done", "failed")) { break }
+            Start-Sleep -Seconds 3
+          }
+          if ($a.status -ne "done" -or $a.result.offers -lt 8) { $a | ConvertTo-Json -Depth 5; throw "Pilota automatico non riuscito" }
+          Write-Host "Pilota automatico: $($a.result.offers) offerte lette dall'immagine, materiali: $($a.result.done -join ', ')"
+          $cfg = Invoke-RestMethod "$base/api/settings" -Headers $hd
+          if (-not $cfg.agents.ocr) { throw "Lettura ottica non disponibile nel programma" }
           Stop-Process -Id $proc.Id -Force
           Get-Content avvio.txt -TotalCount 20
 
@@ -144,4 +161,5 @@ jobs:
             In alternativa: Promovo_Windows.zip, da ESTRARRE (tasto destro > Estrai tutto) prima di aprire Promovo.exe.
             Accesso di prova: demo@promovo.it / promovo2026. Istruzioni nel file LEGGIMI.txt.
             Questa versione è stata provata automaticamente su Windows prima della pubblicazione
-            (test completi, avvio del programma, video, grafiche e Reel dal banco).
+            (test completi, avvio del programma, pilota automatico su un volantino fatto di immagini,
+            video, grafiche e Reel dal banco).

@@ -189,6 +189,20 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .plan-row:first-child { border-top: 0; }
 .plan-when { font-weight: 700; color: var(--brand); }
 @media (max-width: 700px) { .plan-row { grid-template-columns: 1fr; gap: 4px; } }
+.crew { border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin-top: 14px; background: var(--card); }
+.crew-head { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.crew-row { display: flex; gap: 12px; align-items: center; padding: 9px 4px; border-top: 1px solid var(--line-2); }
+.crew-row > div { flex: 1; display: flex; flex-direction: column; font-size: 14px; }
+.crew-row .n { flex: none; width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: var(--line-2); color: var(--muted); }
+.crew-row.run .n { background: var(--info-soft); color: var(--info); } .crew-row.done .n { background: var(--ok-soft); color: var(--ok); }
+.crew-row.err .n { background: var(--err-soft); color: var(--err); } .crew-row.wait { opacity: .62; }
+.spin.dark { width: 16px; height: 16px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; display: inline-block; animation: spin .7s linear infinite; }
+.agents { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; margin-top: 6px; }
+.agent { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
+.agent .n { flex: none; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); }
+.agent > div { flex: 1; display: flex; flex-direction: column; gap: 2px; font-size: 14px; }
+.agent .chip { flex: none; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .explain { display: flex; gap: 14px; padding: 16px; border-radius: 14px; background: var(--info-soft); color: #1b3a66; font-size: 14px; }
 .explain .legend { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
 .meter { display: flex; align-items: center; gap: 12px; }
@@ -405,27 +419,24 @@ tr:last-child td { border-bottom: 0; }
 <script>
 "use strict";
 const NAV = [
-  ["home", "Panoramica", "i-home", "Home"], ["flyers", "Volantini", "i-flyer"], ["clips", "Dal banco", "i-camera"], ["customers", "Clienti", "i-users"],
-  ["orders", "Prenotazioni", "i-bag", "Prenot."], ["assistant", "Assistente", "i-chat", "Chat"], ["store", "Negozio", "i-settings"],
+  ["home", "Panoramica", "i-home", "Home"], ["flyers", "Volantini", "i-flyer"], ["clips", "Dal banco", "i-camera"],
+  ["store", "Negozio", "i-store"], ["settings", "Impostazioni", "i-settings", "Opzioni"],
 ];
-const STATUS = {uploaded: "caricato", processing: "in lettura", ready: "pronto", failed: "errore", new: "nuovo",
-  confirmed: "confermato", collected: "ritirato", cancelled: "annullato"};
-const KIND = {instagram: "Instagram", facebook: "Facebook", whatsapp: "WhatsApp", newsletter: "Newsletter",
-  video: "Video", image: "Immagine", whatsapp_personal: "Messaggio personale"};
+const STATUS = {uploaded: "caricato", processing: "in lettura", ready: "pronto", failed: "errore"};
+const KIND = {instagram: "Instagram", facebook: "Facebook", video: "Video", image: "Immagine"};
 const CATEGORIES = ["frutta e verdura","carne","pesce","salumi e formaggi","latte e latticini","uova","pane e forno","pasta e riso","dispensa","surgelati","dolci e snack","colazione","bevande","vino e alcolici","igiene casa","cura persona","infanzia","animali","altro"];
-const VERIFIED = {"testo PDF": "letto dal testo del PDF", "OCR": "confermato dalla lettura ottica", "doppia lettura IA": "confermato da una seconda lettura", "persona": "confermato da te"};
+const VERIFIED = {"testo PDF": "letto dal testo del PDF", "OCR": "confermato dalla lettura ottica", "doppia lettura": "confermato da una seconda lettura ingrandita", "doppia lettura IA": "confermato dalla seconda lettura dell'IA", "persona": "confermato da te"};
 const MAKE = [
   ["video_portrait", "i-video", "Reel 9:16", "Per Instagram, TikTok e storie. Le 6 offerte migliori, con musica.", true],
   ["video_landscape", "i-video", "Video schermo 16:9", "Per i televisori in negozio. Tutte le offerte, in loop.", true],
   ["video_square", "i-video", "Video post 1:1", "Per il feed di Facebook e Instagram.", false],
   ["images", "i-image", "Immagini", "Copertina, storia e un'immagine per ogni offerta in evidenza.", true],
-  ["texts", "i-msg", "Testi", "Instagram, Facebook, WhatsApp e newsletter, con il tono del negozio.", true],
-  ["messages", "i-users", "Messaggi personali", "Un WhatsApp su misura per ogni cliente con consenso.", false],
+  ["texts", "i-msg", "Testi e piano", "Post Instagram e Facebook nel tono del negozio, e il piano di pubblicazione.", true],
 ];
 const TONES = [["familiare", "Familiare", "Caldo e vicino, emoji misurate"], ["elegante", "Elegante", "Sobrio, senza emoji"],
   ["giovane", "Giovane", "Energico, tante emoji"], ["essenziale", "Essenziale", "Breve e diretto"]];
 const S = { token: null, storeId: null, view: "home", opts: {}, me: null, stores: [], ai: false,
-  offerFilter: "all", conv: null, chat: [], blobs: new Map(), makeSel: null };
+  offerFilter: "all", blobs: new Map(), makeSel: null };
 try { S.token = localStorage.getItem("promovo_token") || null; S.storeId = Number(localStorage.getItem("promovo_store")) || null; } catch (e) {}
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -555,7 +566,7 @@ $("#authBtn").onclick = () => busy($("#authBtn"), async () => {
 ["#email", "#password"].forEach(id => $(id).addEventListener("keydown", e => { if (e.key === "Enter") $("#authBtn").click(); }));
 $("#logoutBtn").onclick = async () => { try { await api("/api/auth/logout", {method: "POST"}); } catch (e) {} logout(); };
 function logout() {
-  S.token = null; S.storeId = null; S.chat = []; S.conv = null;
+  S.token = null; S.storeId = null;
   S.blobs.forEach(u => URL.revokeObjectURL(u)); S.blobs.clear(); save();
   $("#appView").classList.add("hidden"); $("#authView").classList.remove("hidden");
 }
@@ -574,7 +585,7 @@ async function go(view, opts = {}) {
   document.title = title + " · Promovo";
   window.scrollTo(0, 0);
   const el = $("#view");
-  if (!S.storeId && view !== "store" && view !== "home") { el.innerHTML = noStore(); bindNoStore(); return; }
+  if (!S.storeId && !["store", "home", "settings"].includes(view)) { el.innerHTML = noStore(); bindNoStore(); return; }
   el.innerHTML = `<div class="card"><div class="muted">Caricamento…</div><div class="progress"><div></div></div></div>`;
   try { await VIEWS[view](el, opts); loadImages(el); }
   catch (e) { el.innerHTML = `<div class="card">${empty("i-alert", "Qualcosa non ha funzionato", e.message, `<button class="btn sec" id="retry">Riprova</button>`)}</div>`; $("#retry").onclick = () => go(view, opts); }
@@ -592,7 +603,7 @@ async function loadStores() {
 $("#storeSel").onchange = () => {
   const v = $("#storeSel").value;
   if (v === "new") { $("#storeSel").value = S.storeId ? String(S.storeId) : "new"; go("store", {create: true}); return; }
-  S.storeId = Number(v); S.conv = null; S.chat = []; save(); go(S.view === "home" || S.view === "store" ? S.view : "flyers");
+  S.storeId = Number(v); save(); go(S.view === "home" || S.view === "store" ? S.view : "flyers");
 };
 const currentStore = () => S.stores.find(s => s.id === S.storeId);
 function selectStore(id) { S.storeId = id; $("#storeSel").value = String(id); save(); }
@@ -607,7 +618,6 @@ VIEWS.home = async el => {
   const many = ov.length > 1 || (S.me && S.me.organization.kind === "agency");
   const todo = ov.reduce((n, x) => n + (x.last_flyer ? x.last_flyer.unverified_count : 0), 0);
   const toApprove = ov.reduce((n, x) => n + (x.content_total - x.content_approved), 0);
-  const orders = ov.reduce((n, x) => n + x.open_orders, 0);
   el.innerHTML = `
     <div class="card" style="background:linear-gradient(135deg,#1b2440,#141b2d);color:#fff;border:0">
       <div class="row" style="align-items:center">
@@ -616,14 +626,14 @@ VIEWS.home = async el => {
         <button class="btn lg" id="newFlyer">${icon("i-upload")} Carica un volantino</button>
       </div>
     </div>
-    <div class="grid g4" style="margin-top:18px">
-      ${[["i-store", "Negozi", ov.length], ["i-alert", "Prezzi da controllare", todo], ["i-spark", "Da approvare", toApprove], ["i-bag", "Prenotazioni aperte", orders]].map(([ic, k, v]) => `<div class="card kpi"><div class="ic">${icon(ic)}</div><div><div class="v">${v}</div><div class="k">${k}</div></div></div>`).join("")}
+    <div class="grid g3" style="margin-top:18px">
+      ${[["i-store", "Negozi", ov.length], ["i-alert", "Prezzi da controllare", todo], ["i-spark", "Da approvare", toApprove]].map(([ic, k, v]) => `<div class="card kpi"><div class="ic">${icon(ic)}</div><div><div class="v">${v}</div><div class="k">${k}</div></div></div>`).join("")}
     </div>
     <div class="card"><div class="toolbar"><div style="flex:1"><h2>${many ? "I tuoi negozi" : "Questa settimana"}</h2><p class="sub" style="margin:0">Lo stato dell'ultimo volantino di ogni negozio.</p></div>
       ${many ? `<button class="btn sec" id="addStore">${icon("i-plus")} Aggiungi negozio</button>` : ""}</div>
       <div class="grid g3" style="margin-top:16px">${ov.map(storeCard).join("")}</div></div>
-    <div class="card"><h2>Come funziona, ogni settimana</h2><p class="sub">Quattro passaggi, pochi minuti per negozio.</p>
-      <div class="grid g4">${[["i-upload", "1. Carica", "Il PDF o la foto del volantino."], ["i-check", "2. Controlla", "I prezzi in giallo, con un clic ciascuno."], ["i-spark", "3. Crea", "Video, immagini e testi in automatico."], ["i-download", "4. Pubblica", "Approva e scarica tutto in un file ZIP."]].map(([ic, t, d]) => `<div class="step" style="flex-direction:column;align-items:flex-start"><span class="n" style="background:var(--brand-soft);color:var(--brand)">${icon(ic)}</span><div class="t"><b>${t}</b><span class="muted">${d}</span></div></div>`).join("")}</div></div>`;
+    <div class="card"><h2>Come funziona, ogni settimana</h2><p class="sub">Quattro passaggi, pochi minuti per negozio: il lavoro lo fanno gli agenti.</p>
+      <div class="grid g4">${[["i-upload", "1. Carica", "Il PDF o anche solo la foto del volantino."], ["i-spark", "2. Gli agenti preparano", "Testi, immagini, Reel, video e il piano della settimana."], ["i-check", "3. Controlla", "Solo i prezzi in giallo, con un clic ciascuno."], ["i-download", "4. Consegna", "Approva e scarica tutto in un file ZIP."]].map(([ic, t, d]) => `<div class="step" style="flex-direction:column;align-items:flex-start"><span class="n" style="background:var(--brand-soft);color:var(--brand)">${icon(ic)}</span><div class="t"><b>${t}</b><span class="muted">${d}</span></div></div>`).join("")}</div></div>`;
   $("#newFlyer").onclick = () => go("flyers");
   const add = $("#addStore"); if (add) add.onclick = () => go("store", {create: true});
   $$("[data-open-store]", el).forEach(b => b.onclick = () => { selectStore(Number(b.dataset.openStore)); const f = b.dataset.flyer; go("flyers", f ? {flyer: Number(f)} : {}); });
@@ -660,13 +670,13 @@ VIEWS.flyers = async (el, opts) => {
   const flyers = await api(`/api/stores/${S.storeId}/flyers`);
   el.innerHTML = `
     <div class="card">
-      <h2>Nuovo volantino per ${esc(currentStore().name)}</h2><p class="sub">Gli agenti leggono ogni offerta: nome, formato, prezzo, sconto e foto del prodotto.</p>
+      <h2>Nuovo volantino per ${esc(currentStore().name)}</h2><p class="sub">Carica il PDF o una foto del volantino: gli agenti leggono ogni offerta e, se vuoi, preparano subito testi, grafiche e video.</p>
       <div class="drop" id="drop" tabindex="0" role="button" aria-label="Carica un volantino">
         <div class="ic">${icon("i-upload")}</div>
         <b>Trascina qui il volantino</b><div class="muted">oppure tocca per sceglierlo · PDF, JPG, PNG o WEBP fino a 40 MB</div>
         <input type="file" id="file" accept="application/pdf,image/jpeg,image/png,image/webp" class="hidden">
       </div>
-      ${S.ai ? "" : notice("info", "L'intelligenza artificiale è spenta: si leggono i volantini con il testo dentro il PDF. Quelli fatti solo di immagini (molto comuni) richiedono l'IA accesa.", "i-spark")}
+      <label class="switch" style="margin-top:12px"><input type="checkbox" id="autoPilot" ${S.autopilot !== false ? "checked" : ""}> <span><b>Pilota automatico:</b> gli agenti preparano tutto da soli (testi, immagini, Reel, video per i post e per gli schermi, piano della settimana)</span></label>
       <div id="uploadState"></div>
     </div>
     <div class="card"><h2>Volantini di ${esc(currentStore().name)}</h2>
@@ -678,6 +688,7 @@ VIEWS.flyers = async (el, opts) => {
   ["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); }));
   drop.addEventListener("drop", e => { if (e.dataTransfer.files[0]) uploadFlyer(e.dataTransfer.files[0]); });
   file.onchange = () => { if (file.files[0]) uploadFlyer(file.files[0]); };
+  $("#autoPilot").onchange = e => { S.autopilot = e.target.checked; };
   bindFlyerItems(el);
   competitorsCard(el);
 };
@@ -691,7 +702,6 @@ async function competitorsCard(el) {
     <p class="sub">Carica i volantini dei supermercati vicini: Promovo li legge e ti dice su quali prodotti sei più conveniente, così li metti in evidenza. Restano solo tuoi: i nomi dei concorrenti non compaiono mai nei contenuti pubblicati.</p>
     <div class="row" style="align-items:flex-end"><div class="f"><label class="l" for="compName">Concorrente</label><input class="in" id="compName" placeholder="es. Conad via Roma"></div>
       <div><button class="btn sec" id="compBtn">${icon("i-upload")} Carica il suo volantino</button><input type="file" id="compFile" accept="application/pdf,image/jpeg,image/png,image/webp" class="hidden"></div></div>
-    ${S.ai ? "" : `<div class="hint">Con l'IA spenta si leggono solo i volantini con il testo dentro il PDF.</div>`}
     <div id="compState"></div>
     <div class="stack tight" style="margin-top:14px">${comps.map(c => `<div class="flyer-item" style="cursor:default"><div class="ic">${icon("i-radar")}</div>
       <div class="t"><b>${esc(c.competitor)}</b><span class="muted">${c.status === "processing" ? "in lettura…" : c.status === "failed" ? "lettura non riuscita" : `${c.valid_from ? `dal ${itDate(c.valid_from)} al ${itDate(c.valid_to)} · ` : ""}${c.offer_count} offerte lette`}</span></div>
@@ -766,8 +776,10 @@ async function uploadFlyer(f) {
   try {
     if (f.size > 40 * 1024 * 1024) throw new Error("Il file supera 40 MB.");
     show(`Caricamento di «${f.name}»…`);
-    const fd = new FormData(); fd.append("file", f);
+    const auto = S.autopilot !== false;
+    const fd = new FormData(); fd.append("file", f); fd.append("autopilot", auto ? "true" : "false");
     let fl = await api(`/api/stores/${S.storeId}/flyers`, {body: fd});
+    if (auto && fl.autopilot_job) return followAgents(state, fl);
     const t0 = Date.now();
     while (fl.status === "processing") {
       const s = Math.round((Date.now() - t0) / 1000);
@@ -781,8 +793,58 @@ async function uploadFlyer(f) {
   } catch (e) { state.innerHTML = notice("err", e.message); }
 }
 
+// ---------- gli agenti al lavoro (pilota automatico)
+const CREW = [
+  ["reading", "i-flyer", "Lettore", "legge ogni offerta del volantino"],
+  ["checked", "i-check", "Controllo", "rilegge ogni prezzo per confermarlo"],
+  ["texts", "i-msg", "Stratega e copywriter", "l'idea della settimana e i testi"],
+  ["images", "i-image", "Grafico", "copertina, storie e immagini delle offerte"],
+  ["video_portrait", "i-video", "Montatore", "Reel 9:16 con musica"],
+  ["video_square", "i-video", "Montatore", "video per i post 1:1"],
+  ["video_landscape", "i-video", "Montatore", "video per gli schermi in negozio"],
+];
+async function followAgents(box, fl) {
+  const t0 = Date.now();
+  let j = await api(`/api/jobs/${fl.autopilot_job}`);
+  const order = CREW.map(c => c[0]);
+  const draw = () => {
+    const r = j.result || {};
+    const stage = r.stage || "queued";
+    const making = order.indexOf(r.item);
+    const state = k => {
+      const i = order.indexOf(k);
+      if (j.status === "failed" && stage === "failed") return i === 0 ? "err" : "wait";
+      if (k === "reading") return stage === "queued" || stage === "reading" ? "run" : "done";
+      if (k === "checked") return stage === "queued" || stage === "reading" ? "wait" : "done";
+      if (stage === "done") return (r.done || []).includes(k) ? "done" : ((r.errors || []).some(e => e) ? "err" : "done");
+      if (stage !== "making") return "wait";
+      return i < making ? "done" : i === making ? "run" : "wait";
+    };
+    const extra = k => k === "reading" && r.pages ? ` · pagina ${r.page} di ${r.pages}` : k === "checked" && r.offers ? ` · ${r.offers} offerte, ${r.unverified || 0} da controllare` : "";
+    const secs = Math.round((Date.now() - t0) / 1000);
+    box.innerHTML = `<div class="crew"><div class="crew-head"><b>${icon("i-spark")} Gli agenti stanno lavorando sul volantino</b><span class="muted">${secs} s · puoi lasciare aperta questa pagina</span></div>
+      ${CREW.map(([k, ic, who, what]) => { const s = state(k); return `<div class="crew-row ${s}"><span class="n">${s === "done" ? icon("i-check") : s === "run" ? `<span class="spin dark"></span>` : icon(ic)}</span><div><b>${who}</b><span class="muted">${what}${extra(k)}</span></div><span class="chip ${s === "done" ? "ok" : s === "run" ? "info" : s === "err" ? "err" : "grey"}">${s === "done" ? "fatto" : s === "run" ? "al lavoro" : s === "err" ? "problema" : "in attesa"}</span></div>`; }).join("")}
+      <div class="progress det"><div style="width:${Math.round(((order.filter(k => state(k) === "done").length) / order.length) * 100)}%"></div></div></div>`;
+  };
+  while (["queued", "running"].includes(j.status)) {
+    draw();
+    await sleep(1500);
+    if (S.view !== "flyers") return;               // l'utente è andato altrove: il lavoro continua lo stesso
+    j = await api(`/api/jobs/${fl.autopilot_job}`);
+  }
+  draw();
+  forget("/api/content");
+  if (j.status === "failed" && (!j.result || j.result.stage !== "done")) {
+    box.insertAdjacentHTML("beforeend", notice("err", j.error || "Il volantino non è stato letto."));
+    return go("flyers", {flyer: fl.id, step: "check"});
+  }
+  const r = j.result || {};
+  toast(r.unverified ? `Materiali pronti. Controlla ${r.unverified} prezzi segnati in giallo prima di pubblicare.` : "Tutto pronto: materiali creati e prezzi confermati.");
+  go("flyers", {flyer: fl.id, step: r.unverified ? "check" : "publish"});
+}
+
 // ---------- percorso del volantino
-const STEPS = [["check", "Controlla le offerte", "prezzi e foto"], ["make", "Crea i materiali", "video, immagini, testi"], ["publish", "Approva e scarica", "pronto da pubblicare"], ["results", "Risultati", "vendite della settimana"]];
+const STEPS = [["check", "Controlla le offerte", "prezzi e foto"], ["make", "Crea i materiali", "video, immagini, testi"], ["publish", "Approva e scarica", "pronto da pubblicare"]];
 
 async function flyerView(el, id, step) {
   const [f, content] = await Promise.all([api(`/api/flyers/${id}`), api(`/api/flyers/${id}/content`)]);
@@ -795,15 +857,15 @@ async function flyerView(el, id, step) {
   const materials = content.filter(c => c.kind !== "plan");   // il piano si legge, non si approva
   const approved = materials.filter(c => c.approved).length;
   step = step || (unverified || !f.offers.length ? "check" : !content.length ? "make" : "publish");
-  const done = {check: f.offers.length > 0 && !unverified, make: content.length > 0, publish: materials.length > 0 && approved === materials.length, results: false};
+  const done = {check: f.offers.length > 0 && !unverified, make: content.length > 0, publish: materials.length > 0 && approved === materials.length};
   const sub = {check: unverified ? `${unverified} da controllare` : `${f.offers.length} offerte ok`, make: materials.length ? `${materials.length} materiali` : "da fare",
-    publish: materials.length ? `${approved}/${materials.length} approvati` : "—", results: "dopo la settimana"};
+    publish: materials.length ? `${approved}/${materials.length} approvati` : "—"};
   el.innerHTML = `
     <button class="btn ghost" id="back" style="margin-bottom:8px">${icon("i-back")} Volantini</button>
     <div class="card">
       <div class="row" style="align-items:center">
         <div class="f" style="min-width:220px"><h2 style="font-size:21px">${esc(f.title || "Volantino " + f.id)}</h2>
-          <div class="muted">${f.valid_from ? `Valido dal ${itDate(f.valid_from)} al ${itDate(f.valid_to)}` : "Date di validità non trovate"} · ${f.page_count} pag. · ${f.offers.length} offerte · ${f.extraction_method === "ai" ? "letto dall'IA" : "letto senza IA"}</div></div>
+          <div class="muted">${f.valid_from ? `Valido dal ${itDate(f.valid_from)} al ${itDate(f.valid_to)}` : "Date di validità non trovate"} · ${f.page_count} pag. · ${f.offers.length} offerte · ${f.extraction_method === "ai" ? "letto con l'IA facoltativa" : f.extraction_method === "ocr" ? "letto dagli agenti (lettura ottica)" : "letto dagli agenti"}</div></div>
         <button class="btn ghost sm" id="reprocess">Rileggi</button><button class="btn ghost sm" id="delFlyer" style="color:var(--err)">${icon("i-trash")} Elimina</button>
       </div>
       <div class="wizard">${STEPS.map(([k, t, d], i) => `<button class="wstep ${k === step ? "on" : ""} ${done[k] && k !== step ? "done" : ""}" data-step="${k}"><span class="n">${done[k] && k !== step ? icon("i-check") : i + 1}</span><span class="t"><b>${t}</b><span>${esc(sub[k])}</span></span></button>`).join("")}</div>
@@ -814,14 +876,14 @@ async function flyerView(el, id, step) {
   $("#reprocess").onclick = async e => { if (await confirmBox("Rileggere il volantino?", "Le offerte verranno lette da capo: le correzioni fatte a mano andranno perse.", "Rileggi")) busy(e.currentTarget, async () => { await api(`/api/flyers/${id}/reprocess`, {method: "POST"}); forget(`/api/offers`); toast("Rilettura avviata."); go("flyers", {flyer: id}); }); };
   $("#delFlyer").onclick = async e => { if (await confirmBox("Eliminare il volantino?", "Verranno eliminati offerte, video, immagini e testi di questo volantino.", "Elimina", true)) busy(e.currentTarget, async () => { await api(`/api/flyers/${id}`, {method: "DELETE"}); toast("Volantino eliminato."); go("flyers"); }); };
   const body = $("#stepBody");
-  if (step === "check") stepCheck(body, f);
-  else if (step === "make") stepMake(body, f, content);
-  else if (step === "publish") stepPublish(body, f, content);
-  else stepResults(body, f);
+  if (step === "check") stepCheck(body, f, content);
+  else if (step === "make") stepMake(body, f, content, S.opts.autostart);
+  else stepPublish(body, f, content);
   loadImages(el);
 }
 
-function stepCheck(el, f) {
+function stepCheck(el, f, content = []) {
+  const made = content.filter(c => c.kind !== "plan");
   const total = f.offers.length;
   const unverified = f.offers.filter(o => !o.price_verified);
   const okN = total - unverified.length;
@@ -839,10 +901,10 @@ function stepCheck(el, f) {
         <span style="flex:1"></span>
         <button class="btn sec sm" id="addOffer">${icon("i-plus")} Aggiungi un'offerta mancante</button>
       </div>
-      <div class="olist">${shown.map(offerRow).join("") || empty(total ? "i-check" : "i-flyer", total ? "Niente da mostrare" : "Nessuna offerta letta", total ? "Nessuna offerta in questo filtro." : (S.ai ? "Prova a rileggere il volantino, o aggiungi le offerte a mano." : "Questo volantino è fatto di immagini: accendi l'IA, oppure aggiungi le offerte a mano."))}</div>
+      <div class="olist">${shown.map(offerRow).join("") || empty(total ? "i-check" : "i-flyer", total ? "Niente da mostrare" : "Nessuna offerta letta", total ? "Nessuna offerta in questo filtro." : "Il file potrebbe essere poco nitido: prova a rileggerlo, a caricarne uno di qualità migliore o aggiungi le offerte a mano.")}</div>
     </div>
     <div class="sticky-bar"><span class="muted">${unverified.length ? `Ancora ${unverified.length} prezzi da controllare` : "Tutti i prezzi sono confermati"}</span>
-      <div class="toolbar">${unverified.length ? `<button class="btn sec sm" id="confirmAll">Li ho controllati tutti</button>` : ""}<button class="btn" id="next" ${total ? "" : "disabled"}>Avanti: crea i materiali ${icon("i-arrow")}</button></div></div>`;
+      <div class="toolbar">${unverified.length ? `<button class="btn sec sm" id="confirmAll">Li ho controllati tutti</button>` : ""}${made.length ? `<button class="btn sec" id="remake">${icon("i-spark")} Rifai i materiali</button><button class="btn" id="toPub">Vai ai materiali ${icon("i-arrow")}</button>` : `<button class="btn" id="next" ${total ? "" : "disabled"}>Avanti: crea i materiali ${icon("i-arrow")}</button>`}</div></div>`;
   $$("[data-filter]", el).forEach(b => b.onclick = () => { S.offerFilter = b.dataset.filter; go("flyers", {flyer: f.id, step: "check"}); });
   $$("[data-crop]", el).forEach(c => c.onclick = () => lightbox(c.dataset.crop));
   $$("[data-ok]", el).forEach(b => b.onclick = () => busy(b, async () => { await api(`/api/offers/${b.dataset.ok}`, {method: "PATCH", json: {confirm: true}}); go("flyers", {flyer: f.id, step: "check"}); }));
@@ -851,7 +913,15 @@ function stepCheck(el, f) {
   $("#addOffer").onclick = () => editOffer(null, f.id);
   const ca = $("#confirmAll");
   if (ca) ca.onclick = async () => { if (await confirmBox("Confermare tutti i prezzi?", `Confermi di aver controllato i ${unverified.length} prezzi gialli sul volantino?`, "Sì, li ho controllati")) busy(ca, async () => { await api(`/api/flyers/${f.id}/confirm`, {json: {offer_ids: unverified.map(o => o.id)}}); toast("Prezzi confermati."); go("flyers", {flyer: f.id, step: "check"}); }); };
-  $("#next").onclick = async () => { if (unverified.length && !(await confirmBox("Ci sono prezzi da controllare", `${unverified.length} prezzi non sono ancora confermati. Conviene controllarli prima di creare video e grafiche.`, "Vai avanti lo stesso"))) return; go("flyers", {flyer: f.id, step: "make"}); };
+  const nx = $("#next");
+  if (nx) nx.onclick = async () => { if (unverified.length && !(await confirmBox("Ci sono prezzi da controllare", `${unverified.length} prezzi non sono ancora confermati. Conviene controllarli prima di creare video e grafiche.`, "Vai avanti lo stesso"))) return; go("flyers", {flyer: f.id, step: "make"}); };
+  const tp = $("#toPub"); if (tp) tp.onclick = () => go("flyers", {flyer: f.id, step: "publish"});
+  const rm = $("#remake");
+  if (rm) rm.onclick = () => {
+    const kinds = new Set(made.map(c => c.kind === "video" ? "video_" + c.meta.format : c.kind === "image" ? "images" : "texts"));
+    S.makeSel = new Set(MAKE.map(x => x[0]).filter(k => kinds.has(k)));
+    go("flyers", {flyer: f.id, step: "make", autostart: true});
+  };
 }
 
 const offerRow = o => `<div class="orow ${o.price_verified ? "" : "unverified"}">
@@ -899,9 +969,9 @@ function editOffer(o, flyerId) {
   });
 }
 
-function stepMake(el, f, content) {
+function stepMake(el, f, content, autostart = false) {
   if (!S.makeSel) S.makeSel = new Set(MAKE.filter(x => x[4]).map(x => x[0]));
-  const has = new Set(content.map(c => c.kind === "video" ? "video_" + c.meta.format : c.kind === "image" ? "images" : c.kind === "whatsapp_personal" ? "messages" : "texts"));
+  const has = new Set(content.map(c => c.kind === "video" ? "video_" + c.meta.format : c.kind === "image" ? "images" : "texts"));
   const unverified = f.offers.filter(o => !o.price_verified).length;
   el.innerHTML = `
     <div class="card" id="radarBox"><div class="muted">Radar del quartiere…</div></div>
@@ -937,6 +1007,7 @@ function stepMake(el, f, content) {
     else toast("Materiali pronti!");
     go("flyers", {flyer: f.id, step: "publish"});
   }, "Creazione in corso…");
+  if (autostart) $("#makeBtn").click();
 }
 
 function planCard(c) {
@@ -954,11 +1025,12 @@ function stepPublish(el, f, content) {
   const strategy = (content.find(c => c.meta && c.meta.strategy) || {meta: {}}).meta.strategy;
   if (!content.length) { el.innerHTML = `<div class="card">${empty("i-spark", "Nessun materiale ancora", "Crea video, immagini e testi nel passo 2.", `<button class="btn" id="toMake">Vai a «Crea i materiali»</button>`)}</div>`; $("#toMake").onclick = () => go("flyers", {flyer: f.id, step: "make"}); return; }
   const vids = content.filter(c => c.kind === "video"), imgs = content.filter(c => c.kind === "image");
-  const texts = content.filter(c => ["instagram", "facebook", "whatsapp", "newsletter"].includes(c.kind));
-  const pers = content.filter(c => c.kind === "whatsapp_personal");
+  const texts = content.filter(c => ["instagram", "facebook"].includes(c.kind));
   const approved = content.filter(c => c.approved).length;
   const apBtn = c => `<button class="btn sm ${c.approved ? "sec" : "okb"}" data-ap="${c.id}">${c.approved ? "Approvato ✓" : "Approva"}</button>`;
+  const yellow = f.offers.filter(o => !o.price_verified).length;
   el.innerHTML = `
+    ${yellow ? `<div class="card">${notice("warn", `${yellow} prezzi non sono ancora confermati: controllali prima di pubblicare. Se ne correggi uno, rifai i materiali con un clic.`)}<div class="toolbar" style="margin-top:10px"><button class="btn sec sm" id="toCheck">${icon("i-check")} Controlla i prezzi</button></div></div>` : ""}
     ${plan ? planCard(plan) : ""}
     ${vids.length ? `<div class="card"><h2>${icon("i-video")} Video</h2><p class="sub">Guardali, poi approvali o scaricali.</p>
       <div class="vids">${vids.map(c => `<div class="vid"><div class="ph" data-play="${c.file_url}" title="Guarda il video">${c.poster_url ? `<img data-src="${c.poster_url}" alt="">` : ""}<span class="play"><svg class="i" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></span></div>
@@ -967,14 +1039,13 @@ function stepPublish(el, f, content) {
     ${imgs.length ? `<div class="card"><div class="toolbar"><div style="flex:1"><h2>${icon("i-image")} Immagini</h2><p class="sub" style="margin:0">Tocca un'immagine per ingrandirla.</p></div><button class="btn sm sec" id="apImgs">Approva tutte le immagini</button></div>
       <div class="gallery" style="margin-top:14px">${imgs.map(c => `<div class="gal" data-big="${c.file_url}"><img data-src="${c.file_url}" alt="${esc(c.title)}"><div class="lab"><span class="chip grey">${esc(c.title)}</span>${c.approved ? `<span class="chip ok">${icon("i-check")}</span>` : ""}</div></div>`).join("")}</div></div>` : ""}
     ${texts.length ? `<div class="card"><h2>${icon("i-msg")} Testi</h2><p class="sub">Puoi modificarli; «Copia» li porta negli appunti, pronti da incollare sotto il video o l'immagine.</p>${strategy ? `<div class="explain" style="margin-bottom:14px">${icon("i-spark")}<div><b>L'idea della settimana</b><br>${esc(strategy)}</div></div>` : ""}
-      <div class="grid g2" style="margin-top:0">${texts.map(c => `<div class="post" data-post="${c.id}"><div class="post-head"><div class="ic ic-${esc(c.kind)}">${icon(c.kind === "newsletter" ? "i-send" : "i-msg")}</div><div class="t"><b>${esc(KIND[c.kind])}</b><span class="muted">${esc(c.kind === "newsletter" ? "Oggetto: " + c.title : (c.meta.source === "ai" ? "scritto dall'IA" : "modello Promovo"))}</span></div>${c.approved ? `<span class="chip ok">approvato</span>` : ""}</div>
+      <div class="grid g2" style="margin-top:0">${texts.map(c => `<div class="post" data-post="${c.id}"><div class="post-head"><div class="ic ic-${esc(c.kind)}">${icon("i-msg")}</div><div class="t"><b>${esc(KIND[c.kind])}</b><span class="muted">${esc(c.meta.source === "ai" ? "rivisto con l'IA" : "scritto dagli agenti Promovo")}</span></div>${c.approved ? `<span class="chip ok">approvato</span>` : ""}</div>
         <textarea class="in" aria-label="Testo">${esc(c.body)}</textarea>${c.meta.hashtags && c.meta.hashtags.length ? `<div class="tags-line">${c.meta.hashtags.map(h => "#" + esc(h)).join(" ")}</div>` : ""}
         <div class="toolbar"><button class="btn sm sec" data-copy="${c.id}">${icon("i-copy")} Copia</button><button class="btn sm sec" data-save="${c.id}">Salva</button><span style="flex:1"></span>${apBtn(c)}</div></div>`).join("")}</div></div>` : ""}
-    ${pers.length ? `<div class="card"><h2>${icon("i-users")} Messaggi personali (${pers.length})</h2><p class="sub">Uno per ogni cliente con consenso, con le offerte delle sue categorie preferite.</p>
-      <div class="grid g3">${pers.map(c => `<div class="card" style="box-shadow:none"><b>${esc(c.title)}</b><div class="muted">${esc(c.meta.phone || "")}</div><p style="white-space:pre-wrap;font-size:14px">${esc(c.body)}</p><div class="toolbar"><button class="btn sm sec" data-copyp="${c.id}">${icon("i-copy")} Copia</button><span style="flex:1"></span>${apBtn(c)}</div></div>`).join("")}</div></div>` : ""}
     <div class="sticky-bar"><span class="muted">${approved} di ${content.length} materiali approvati</span>
       <div class="toolbar">${approved < content.length ? `<button class="btn sec sm" id="apAll">Approva tutto</button>` : ""}<button class="btn" id="zip">${icon("i-download")} Scarica tutto (ZIP)</button></div></div>`;
   const reload = () => go("flyers", {flyer: f.id, step: "publish"});
+  const tc = $("#toCheck"); if (tc) tc.onclick = () => go("flyers", {flyer: f.id, step: "check"});
   const approve = async (ids, val = true) => { for (const id of ids) await api(`/api/content/${id}`, {method: "PATCH", json: {approved: val}}); };
   $$("[data-ap]", el).forEach(b => b.onclick = () => busy(b, async () => { const c = content.find(x => x.id === Number(b.dataset.ap)); await approve([c.id], !c.approved); reload(); }));
   $$("[data-play]", el).forEach(p => p.onclick = async () => { p.innerHTML = `<span class="spin" style="width:20px;height:20px;border:2px solid #fff;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite"></span>`; const url = await blobUrl(p.dataset.play); p.outerHTML = `<video controls autoplay playsinline src="${url}"></video>`; });
@@ -988,7 +1059,6 @@ function stepPublish(el, f, content) {
     const text = $("textarea", card).value + (c.meta.hashtags && c.meta.hashtags.length ? "\n\n" + c.meta.hashtags.map(h => "#" + h).join(" ") : "");
     try { await navigator.clipboard.writeText(text); toast("Testo copiato: incollalo dove vuoi."); } catch (e) { $("textarea", card).select(); toast("Copia automatica non disponibile: il testo è selezionato, copialo a mano.", "err"); }
   });
-  $$("[data-copyp]", el).forEach(b => b.onclick = async () => { const c = content.find(x => x.id === Number(b.dataset.copyp)); try { await navigator.clipboard.writeText(c.body); toast("Messaggio copiato."); } catch (e) { toast("Copia non disponibile su questo browser.", "err"); } });
   $$("[data-save]", el).forEach(b => b.onclick = () => busy(b, async () => { await api(`/api/content/${b.dataset.save}`, {method: "PATCH", json: {body: $("textarea", b.closest("[data-post]")).value}}); toast("Testo salvato."); }));
   const aa = $("#apAll"); if (aa) aa.onclick = () => busy(aa, async () => { await approve(content.filter(c => !c.approved).map(c => c.id)); toast("Tutto approvato."); reload(); });
   $("#zip").onclick = e => busy(e.currentTarget, async () => {
@@ -996,22 +1066,6 @@ function stepPublish(el, f, content) {
     await download(`/api/flyers/${f.id}/kit.zip${onlyApproved ? "?approved_only=true" : ""}`, `Promovo_${(currentStore().name || "negozio").replace(/\W+/g, "_")}.zip`);
     toast("Download avviato.");
   }, "Preparo lo ZIP…");
-}
-
-async function stepResults(el, f) {
-  let perf = null, err = "";
-  try { perf = await api(`/api/flyers/${f.id}/performance`); } catch (e) { err = e.message; }
-  const measured = perf && perf.summary.offers_measured;
-  el.innerHTML = `<div class="card"><h2>${icon("i-chart")} Com'è andata?</h2><p class="sub">Promovo confronta le vendite di cassa durante il volantino con lo stesso numero di giorni prima, offerta per offerta.</p>
-    ${err ? notice("warn", err) : ""}
-    ${perf && measured ? `<div class="grid g4">
-        <div class="card kpi" style="box-shadow:none"><div class="ic">${icon("i-chart")}</div><div><div class="v">${perf.summary.revenue_change_percent === null ? "n/d" : (perf.summary.revenue_change_percent > 0 ? "+" : "") + perf.summary.revenue_change_percent + "%"}</div><div class="k">Incasso sulle offerte</div></div></div>
-        <div class="card kpi" style="box-shadow:none"><div class="ic">${icon("i-check")}</div><div><div class="v">${perf.summary.offers_measured}</div><div class="k">Offerte misurate</div></div></div></div>
-      ${perf.suggestions.map(x => notice("info", x, "i-spark")).join("")}
-      <div class="tw" style="margin-top:14px"><table><thead><tr><th>Offerta</th><th>Pezzi prima</th><th>Pezzi durante</th><th>Variazione</th></tr></thead><tbody>${perf.offers.filter(o => o.matched_products.length).map(o => `<tr><td>${esc(o.name)}</td><td>${o.qty_before}</td><td>${o.qty_during}</td><td>${o.uplift_percent === null ? "n/d" : `<span class="chip ${o.uplift_percent >= 0 ? "ok" : "err"}">${o.uplift_percent > 0 ? "+" : ""}${o.uplift_percent}%</span>`}</td></tr>`).join("")}</tbody></table></div>`
-      : !err ? notice("info", "Nessuna vendita trovata per questo volantino. Importa il file CSV delle vendite di cassa dalla sezione Clienti.", "i-chart") : ""}
-    <div style="margin-top:14px"><button class="btn sec" id="toSales">${icon("i-upload")} Importa vendite di cassa</button></div></div>`;
-  $("#toSales").onclick = () => go("customers");
 }
 
 // ---------- dal banco al Reel
@@ -1193,97 +1247,14 @@ function bindClipCards(el, reload) {
   $$("[data-cdel]", el).forEach(b => b.onclick = async () => { if (await confirmBox("Eliminare questo Reel?", "Il video verrà cancellato. Il video originale non è più disponibile.", "Elimina", true)) busy(b, async () => { await api(`/api/content/${b.dataset.cdel}`, {method: "DELETE"}); forget("/api/content"); reload(); }); });
 }
 
-// ---------- clienti
-VIEWS.customers = async el => {
-  const cs = await api(`/api/stores/${S.storeId}/customers`);
-  el.innerHTML = `<div class="grid g2" style="margin-top:0">
-    <div class="card"><h2>Nuovo cliente</h2><p class="sub">I messaggi promozionali partono solo verso chi ha dato il consenso. Chi risponde STOP viene tolto subito.</p>
-      <div class="stack tight"><div><label class="l" for="cuName">Nome</label><input class="in" id="cuName" autocomplete="off"></div>
-        <div><label class="l" for="cuPhone">Telefono (WhatsApp)</label><input class="in" id="cuPhone" inputmode="tel" placeholder="es. 333 1234567"></div>
-        <div><label class="l">Cosa compra più volentieri (facoltativo)</label><div class="qchips" id="cuCats" style="margin-top:0">${CATEGORIES.filter(c => c !== "altro").map(c => `<button type="button" data-cat="${c}">${c}</button>`).join("")}</div></div>
-        <label class="switch"><input type="checkbox" id="cuConsent"> Ha dato il consenso a ricevere le offerte</label>
-        <button class="btn" id="cuAdd">${icon("i-plus")} Aggiungi cliente</button></div></div>
-    <div class="card"><h2>Vendite di cassa</h2><p class="sub">Importa il file CSV esportato dalla cassa per misurare i risultati di ogni volantino. Colonne: data, prodotto, quantita, incasso.</p>
-      <div class="drop" id="salesDrop" style="padding:24px" tabindex="0" role="button"><b>Scegli il file CSV</b><div class="muted">separatore ; oppure ,</div><input type="file" id="salesFile" accept=".csv,text/csv" class="hidden"></div>
-      <div id="salesOut"></div></div></div>
-    <div class="card" style="margin-top:18px"><h2>Clienti (${cs.length})</h2>
-      ${cs.length ? `<div class="tw"><table><thead><tr><th>Nome</th><th>Telefono</th><th>Preferenze</th><th>Consenso</th><th></th></tr></thead><tbody>${cs.map(c => `
-        <tr><td><b>${esc(c.name || "—")}</b></td><td>${esc(c.phone)}</td><td class="muted">${esc(c.preferred_categories.join(", ") || "—")}</td>
-        <td>${c.marketing_consent ? `<span class="chip ok">sì</span>` : `<span class="chip grey">no</span>`}</td>
-        <td><button class="btn sm sec" data-c="${c.id}" data-v="${!c.marketing_consent}">${c.marketing_consent ? "Revoca" : "Registra consenso"}</button></td></tr>`).join("")}</tbody></table></div>`
-        : empty("i-users", "Nessun cliente", "Aggiungi i clienti che vogliono ricevere le offerte su WhatsApp.")}</div>`;
-  const cats = new Set();
-  $$("[data-cat]", el).forEach(b => b.onclick = () => { const c = b.dataset.cat; cats.has(c) ? cats.delete(c) : cats.add(c); b.style.background = cats.has(c) ? "var(--brand-soft)" : "#fff"; b.style.borderColor = cats.has(c) ? "var(--brand)" : ""; });
-  $("#cuAdd").onclick = e => busy(e.currentTarget, async () => {
-    if (!$("#cuPhone").value.trim()) throw new Error("Scrivi il numero di telefono.");
-    await api(`/api/stores/${S.storeId}/customers`, {json: {name: $("#cuName").value.trim(), phone: $("#cuPhone").value.trim(), marketing_consent: $("#cuConsent").checked, preferred_categories: [...cats]}});
-    toast("Cliente aggiunto."); go("customers");
-  });
-  $$("[data-c]", el).forEach(b => b.onclick = () => busy(b, async () => { await api(`/api/customers/${b.dataset.c}/consent`, {method: "PATCH", json: {marketing_consent: b.dataset.v === "true"}}); go("customers"); }));
-  $("#salesDrop").onclick = () => $("#salesFile").click();
-  $("#salesDrop").onkeydown = e => { if (e.key === "Enter") $("#salesFile").click(); };
-  $("#salesFile").onchange = async () => {
-    const f = $("#salesFile").files[0]; if (!f) return;
-    const fd = new FormData(); fd.append("file", f);
-    $("#salesOut").innerHTML = `<div class="progress"><div></div></div>`;
-    try { const r = await api(`/api/stores/${S.storeId}/sales`, {body: fd});
-      $("#salesOut").innerHTML = notice("ok", `Importate ${r.imported} righe dal ${itDate(r.first_day)} al ${itDate(r.last_day)}${r.skipped ? ` · ${r.skipped} righe scartate` : ""}. Trovi i risultati nel passo 4 di ogni volantino.`, "i-check") + r.errors.slice(0, 5).map(x => notice("warn", x)).join(""); }
-    catch (e) { $("#salesOut").innerHTML = notice("err", e.message); }
-  };
-};
-
-// ---------- ordini
-VIEWS.orders = async el => {
-  const orders = await api(`/api/stores/${S.storeId}/orders`);
-  const next = {new: ["confirmed", "Conferma"], confirmed: ["ready", "È pronto"], ready: ["collected", "Ritirato"]};
-  const chip = {new: "info", confirmed: "gold", ready: "ok", collected: "grey", cancelled: "err"};
-  el.innerHTML = `<div class="card"><h2>Prenotazioni dei clienti</h2><p class="sub">Quando un cliente scrive all'assistente, per esempio «mettetemi da parte 2 pacchi di caffè, passo domani», la prenotazione arriva qui. Tu la prepari e gliela consegni quando passa in negozio: niente pagamenti online, niente consegne.</p>
-    ${orders.length ? `<div class="tw"><table><thead><tr><th>#</th><th>Cliente</th><th>Ritiro</th><th>Articoli</th><th>Totale</th><th>Stato</th><th></th></tr></thead><tbody>${orders.map(o => `
-      <tr><td><b>${o.id}</b></td><td>${esc(o.customer_name)}<div class="muted">${esc(o.customer_phone)}</div></td><td>${itDateTime(o.pickup_at)}</td>
-      <td>${o.items.map(i => `${i.quantity} × ${esc(i.name)}`).join("<br>")}${o.notes ? `<div class="muted">${esc(o.notes)}</div>` : ""}</td><td><b>${esc(o.total)}</b></td>
-      <td><span class="chip ${chip[o.status]}">${esc(STATUS[o.status])}</span></td>
-      <td style="white-space:nowrap">${next[o.status] ? `<button class="btn sm" data-o="${o.id}" data-s="${next[o.status][0]}">${next[o.status][1]}</button> <button class="btn sm ghost" data-o="${o.id}" data-s="cancelled">Annulla</button>` : ""}</td></tr>`).join("")}</tbody></table></div>`
-      : empty("i-bag", "Nessun ordine", "Quando un cliente ordina tramite l'assistente, lo trovi qui.")}</div>`;
-  $$("[data-o]", el).forEach(b => b.onclick = async () => { if (b.dataset.s === "cancelled" && !(await confirmBox("Annullare l'ordine?", "Il cliente non potrà più ritirarlo.", "Annulla ordine", true))) return; busy(b, async () => { await api(`/api/orders/${b.dataset.o}`, {method: "PATCH", json: {status: b.dataset.s}}); toast("Ordine aggiornato."); go("orders"); }); });
-};
-
-// ---------- assistente
-VIEWS.assistant = async el => {
-  el.innerHTML = `<div class="grid g2" style="margin-top:0">
-    <div class="card"><h2>Assistente clienti</h2><p class="sub">L'agente che risponde ai clienti del negozio: offerte, orari, servizi e prenotazioni da ritirare in negozio. I prezzi li legge sempre dal volantino, non li inventa.</p>
-      ${S.ai ? "" : notice("warn", "L'intelligenza artificiale non è attiva: l'assistente risponderà quando sarà configurata la chiave.")}
-      <div class="chat" id="chatBox" style="margin-top:12px"></div>
-      <div class="qchips">${["Avete il caffè in offerta?", "A che ora chiudete domenica?", "Vorrei ordinare 2 confezioni di pasta per domani"].map(q => `<button data-q="${esc(q)}">${esc(q)}</button>`).join("")}</div>
-      <div class="row" style="margin-top:10px"><div class="f"><input class="in" id="chatIn" placeholder="Scrivi come un cliente…" aria-label="Messaggio"></div><button class="btn" id="chatSend" aria-label="Invia">${icon("i-send")}</button></div></div>
-    <div class="card"><h2>Dove risponde</h2><p class="sub">Per ora puoi provarlo qui. Ecco i canali previsti.</p>
-      <div class="steps">
-        <div class="step"><span class="n">${icon("i-chat")}</span><div class="t"><b>Chat sul sito del negozio</b><span class="muted">Pronta: si collega al sito con un indirizzo dedicato.</span></div><span class="chip ok">pronta</span></div>
-        <div class="step"><span class="n">${icon("i-msg")}</span><div class="t"><b>WhatsApp Business</b><span class="muted">Risponde ai messaggi e gestisce lo STOP.</span></div><span class="chip grey">in arrivo</span></div>
-        <div class="step"><span class="n">${icon("i-bag")}</span><div class="t"><b>Prenotazioni</b><span class="muted">Le trovi nella sezione Prenotazioni.</span></div><span class="chip ok">pronta</span></div>
-      </div></div></div>`;
-  const box = $("#chatBox");
-  const draw = () => { box.innerHTML = S.chat.map(m => `<div class="bubble ${m.who}">${esc(m.text)}</div>`).join("") || `<div class="muted" style="margin:auto;text-align:center">Scrivi un messaggio o tocca un esempio qui sotto.</div>`; box.scrollTop = box.scrollHeight; };
-  draw();
-  const send = text => busy($("#chatSend"), async () => {
-    text = (text || "").trim(); if (!text) return;
-    $("#chatIn").value = ""; S.chat.push({who: "me", text}); draw();
-    try { const r = await api(`/api/stores/${S.storeId}/chat`, {json: {message: text, conversation_id: S.conv}}); S.conv = r.conversation_id; S.chat.push({who: "bot", text: r.reply}); }
-    catch (e) { S.chat.push({who: "sys", text: e.message}); }
-    draw();
-  });
-  $("#chatSend").onclick = () => send($("#chatIn").value);
-  $("#chatIn").addEventListener("keydown", e => { if (e.key === "Enter") send($("#chatIn").value); });
-  $$("[data-q]", el).forEach(b => b.onclick = () => send(b.dataset.q));
-};
-
 // ---------- negozio
 VIEWS.store = async (el, opts) => {
   const creating = !S.storeId || opts.create;
-  const s = creating ? {name: "", banner: "", address: "", city: "", phone: "", whatsapp: "", website: "", brand_color: "#e5482f", accent_color: "#f5b83d", pickup_enabled: true, opening_hours: {}, tone: "familiare", hashtags: [], video_music: true, logo_url: null} : currentStore();
+  const s = creating ? {name: "", banner: "", address: "", city: "", phone: "", whatsapp: "", website: "", brand_color: "#e5482f", accent_color: "#f5b83d", opening_hours: {}, tone: "familiare", hashtags: [], video_music: true, logo_url: null} : currentStore();
   const hours = Object.entries(s.opening_hours || {}).map(([k, v]) => `${k}: ${v}`).join("\n");
   let tone = s.tone || "familiare";
   el.innerHTML = `<div class="card" style="max-width:920px">
-    <h2>${creating ? "Nuovo negozio" : "Impostazioni di " + esc(s.name)}</h2><p class="sub">Questi dati compaiono nei video, nelle grafiche, nei testi e nelle risposte dell'assistente.</p>
+    <h2>${creating ? "Nuovo negozio" : "Impostazioni di " + esc(s.name)}</h2><p class="sub">Questi dati compaiono nei video, nelle grafiche e nei testi del negozio.</p>
     <div class="settings-sec"><div><h3>Identità</h3><p class="muted">Nome, insegna, logo e colori del negozio.</p></div><div class="stack tight">
       <div class="row"><div class="f"><label class="l" for="stName">Nome del negozio *</label><input class="in" id="stName" value="${esc(s.name)}" placeholder="es. Superstore Colleferro"></div>
         <div class="f"><label class="l" for="stBanner">Insegna</label><input class="in" id="stBanner" value="${esc(s.banner)}" placeholder="es. Decò, Conad…"></div></div>
@@ -1295,19 +1266,18 @@ VIEWS.store = async (el, opts) => {
       <div><label class="l">Tono di voce</label><div class="tones">${TONES.map(([k, t, d]) => `<div class="tone ${k === tone ? "on" : ""}" data-tone="${k}" tabindex="0" role="button"><b>${t}</b><span>${d}</span></div>`).join("")}</div></div>
       <div><label class="l" for="stTags">Hashtag del negozio</label><input class="in" id="stTags" value="${esc((s.hashtags || []).map(h => "#" + h).join(" "))}" placeholder="es. #superstorecolleferro #spesacolleferro"><div class="hint">Separati da spazi: compaiono in tutti i post.</div></div>
       <label class="switch"><input type="checkbox" id="stMusic" ${s.video_music ? "checked" : ""}> Musica nei video (originale, senza diritti da pagare)</label></div></div>
-    <div class="settings-sec"><div><h3>Contatti e orari</h3><p class="muted">Usati nei video finali (con QR code) e dall'assistente.</p></div><div class="stack tight">
+    <div class="settings-sec"><div><h3>Contatti e orari</h3><p class="muted">Compaiono nella scena finale dei video (con il QR code) e in fondo ai post.</p></div><div class="stack tight">
       <div class="row"><div class="f"><label class="l" for="stAddress">Indirizzo</label><input class="in" id="stAddress" value="${esc(s.address)}"></div>
         <div class="f"><label class="l" for="stCity">Città</label><input class="in" id="stCity" value="${esc(s.city)}"></div></div>
       <div class="row"><div class="f"><label class="l" for="stPhone">Telefono</label><input class="in" id="stPhone" value="${esc(s.phone)}"></div>
         <div class="f"><label class="l" for="stWa">WhatsApp</label><input class="in" id="stWa" value="${esc(s.whatsapp)}" placeholder="per il QR code nei video"></div>
         <div class="f"><label class="l" for="stWeb">Sito o pagina social</label><input class="in" id="stWeb" value="${esc(s.website)}" placeholder="es. www.negozio.it"></div></div>
-      <div><label class="l" for="stHours">Orari (una riga per volta)</label><textarea class="in" id="stHours" style="min-height:90px" placeholder="lun-sab: 8:00-20:00&#10;dom: 9:00-13:00">${esc(hours)}</textarea></div>
-      <label class="switch"><input type="checkbox" id="stPickup" ${s.pickup_enabled ? "checked" : ""}> Accetta prenotazioni da ritirare in negozio</label></div></div>
+      <div><label class="l" for="stHours">Orari (una riga per volta)</label><textarea class="in" id="stHours" style="min-height:90px" placeholder="lun-sab: 8:00-20:00&#10;dom: 9:00-13:00">${esc(hours)}</textarea></div></div></div>
     ${creating ? "" : `<div class="settings-sec"><div><h3>Voce del negozio</h3><p class="muted">I Reel «dal banco» possono parlare con la voce del titolare.</p></div><div class="stack tight" id="voiceSec">
       ${s.voice_ready ? `${notice("info", `Voce attiva: ${s.voice_consent_name}, consenso dato il ${itDate(s.voice_consent_at)}. I video con questa voce riportano la scritta «Voce generata con IA».`, "i-mic")}
         <div><button class="btn ghost sm" id="voiceDel" style="color:var(--err)">${icon("i-trash")} Elimina la voce</button></div>`
       : `<p class="hint" style="margin:0">Due possibilità: registrare la tua voce vera ogni volta (sempre disponibile, dalla pagina «Dal banco»), oppure creare qui una voce generata che legge i testi al posto tuo. Per la seconda registra almeno 30 secondi leggendo il testo qui sotto.</p>
-        ${s.voice_service ? "" : notice("warn", "Per la voce generata serve una chiave ElevenLabs: crea il file CHIAVE_VOCE.txt accanto al file di avvio e incollaci la chiave (vedi la guida).")}
+        ${s.voice_service ? "" : `${notice("warn", "Per la voce generata serve la chiave ElevenLabs (facoltativa): si inserisce in Impostazioni.")}<div><button class="btn sec sm" id="toSettings">${icon("i-settings")} Vai alle Impostazioni</button></div>`}
         <div class="script">Buongiorno e benvenuti. Questa settimana al banco trovate il pesce fresco, la frutta di stagione e tante offerte sulla spesa di tutti i giorni. Passate a trovarci: vi aspettiamo dal lunedì al sabato, e la domenica mattina. Se avete bisogno di un consiglio, chiedete pure: siamo qui per questo.</div>
         <div id="voiceRec"></div>
         <div class="row"><div class="f"><label class="l" for="voiceName">Nome e cognome di chi presta la voce</label><input class="in" id="voiceName" placeholder="es. Mario Rossi"></div></div>
@@ -1324,7 +1294,7 @@ VIEWS.store = async (el, opts) => {
     for (const line of $("#stHours").value.split("\n")) { const i = line.indexOf(":"); if (i > 0) opening_hours[line.slice(0, i).trim()] = line.slice(i + 1).trim(); }
     const body = {name: $("#stName").value.trim(), banner: $("#stBanner").value.trim(), address: $("#stAddress").value.trim(), city: $("#stCity").value.trim(),
       phone: $("#stPhone").value.trim(), whatsapp: $("#stWa").value.trim(), website: $("#stWeb").value.trim(), opening_hours,
-      brand_color: $("#stColor").value, accent_color: $("#stAccent").value, pickup_enabled: $("#stPickup").checked,
+      brand_color: $("#stColor").value, accent_color: $("#stAccent").value,
       tone, hashtags: $("#stTags").value.split(/[\s,]+/).filter(Boolean), video_music: $("#stMusic").checked};
     if (body.name.length < 2) throw new Error("Scrivi il nome del negozio.");
     const r = creating ? await api("/api/stores", {json: body}) : await api(`/api/stores/${S.storeId}`, {method: "PATCH", json: body});
@@ -1350,16 +1320,83 @@ VIEWS.store = async (el, opts) => {
   }, "Creazione della voce…");
   const vdel = $("#voiceDel");
   if (vdel) vdel.onclick = async () => { if (await confirmBox("Eliminare la voce del negozio?", "La voce generata verrà cancellata anche da ElevenLabs. I video già creati restano.", "Elimina", true)) busy(vdel, async () => { await api(`/api/stores/${S.storeId}/voice`, {method: "DELETE"}); await loadStores(); go("store"); }); };
+  const ts = $("#toSettings"); if (ts) ts.onclick = () => go("settings");
   const del = $("#stDelete");
-  if (del) del.onclick = async () => { if (await confirmBox(`Eliminare «${s.name}»?`, "Verranno eliminati volantini, video, clienti e ordini di questo negozio. L'operazione non si può annullare.", "Elimina definitivamente", true)) busy(del, async () => { await api(`/api/stores/${S.storeId}`, {method: "DELETE"}); S.storeId = null; await loadStores(); toast("Negozio eliminato."); go("home"); }); };
+  if (del) del.onclick = async () => { if (await confirmBox(`Eliminare «${s.name}»?`, "Verranno eliminati volantini, video, immagini e testi di questo negozio. L'operazione non si può annullare.", "Elimina definitivamente", true)) busy(del, async () => { await api(`/api/stores/${S.storeId}`, {method: "DELETE"}); S.storeId = null; await loadStores(); toast("Negozio eliminato."); go("home"); }); };
+};
+
+// ---------- impostazioni
+const AGENTS = [
+  ["i-flyer", "Lettore", "Legge il volantino, anche quando è fatto solo di immagini, e rilegge ogni prezzo per confermarlo."],
+  ["i-spark", "Stratega e copywriter", "Sceglie l'idea della settimana e scrive i testi nel tono del negozio, con i numeri veri."],
+  ["i-image", "Grafico", "Prepara copertina, storie e un'immagine per ogni offerta, con i colori e il logo del negozio."],
+  ["i-video", "Montatore", "Monta Reel, video per i post e per gli schermi in negozio, con musica originale."],
+  ["i-camera", "Regista dal banco", "Trasforma un video girato col telefono in un Reel stabilizzato, con titoli e prezzi."],
+  ["i-radar", "Analista prezzi", "Confronta il volantino con quelli dei concorrenti e indica dove sei più conveniente."],
+  ["i-sun", "Meteorologo", "Guarda le previsioni della settimana e suggerisce cosa spingere nei giorni di caldo, freddo o pioggia."],
+  ["i-calendar", "Pianificatore", "Prepara il calendario di pubblicazione e cosa filmare al banco."],
+];
+
+VIEWS.settings = async el => {
+  const st = await api("/api/settings");
+  const owner = S.me && S.me.role === "owner";
+  const keyCard = (svc, title, what, how, cost) => {
+    const k = st[svc];
+    return `<div class="card" style="box-shadow:none" id="k-${svc}">
+      <div class="toolbar"><div style="flex:1"><h3 style="margin:0">${title}</h3><p class="muted" style="margin:4px 0 0">${what}</p></div>
+        ${k.configured ? `<span class="chip ok">${icon("i-check")} attiva</span>` : `<span class="chip grey">non attiva</span>`}</div>
+      ${k.configured ? `<p style="margin:12px 0 0">Chiave in uso: <b class="mono">${esc(k.masked)}</b>${k.source === "avvio" ? ` <span class="muted">(data all'avvio)</span>` : ""}</p>
+        ${owner && k.source === "impostazioni" ? `<div class="toolbar" style="margin-top:10px"><button class="btn ghost sm" data-kdel="${svc}" style="color:var(--err)">${icon("i-trash")} Rimuovi la chiave</button></div>` : ""}`
+      : owner ? `<div class="row" style="margin-top:12px;align-items:flex-end"><div class="f"><label class="l" for="key-${svc}">Incolla la chiave</label>
+          <input class="in mono" id="key-${svc}" data-key="${svc}" type="password" autocomplete="off" spellcheck="false" placeholder="${svc === "ai" ? "sk-ant-…" : "la chiave di ElevenLabs"}"></div>
+          <button class="btn" data-ksave="${svc}">${icon("i-check")} Prova e salva</button></div>
+        <div class="hint">${how}</div><div class="hint">${cost}</div>` : `<p class="muted">Solo il titolare dell'account può inserire le chiavi.</p>`}
+      <div data-kmsg="${svc}"></div></div>`;
+  };
+  el.innerHTML = `
+    <div class="card"><h2>${icon("i-spark")} Gli agenti di Promovo</h2>
+      <p class="sub">Lavorano da soli, su questo computer, senza collegamenti a servizi esterni: carichi il volantino e preparano tutto.</p>
+      <div class="agents">${AGENTS.map(([ic, t, d]) => `<div class="agent"><span class="n">${icon(ic)}</span><div><b>${t}</b><span class="muted">${d}</span></div><span class="chip ok">pronto</span></div>`).join("")}</div>
+      ${st.agents.ocr ? "" : notice("warn", "La lettura dei volantini fatti di immagini non è disponibile su questa installazione: i volantini con il testo nel PDF si leggono comunque.")}
+    </div>
+    <div class="card"><h2>${icon("i-settings")} Potenziamenti facoltativi</h2>
+      <p class="sub">Promovo funziona benissimo senza. Se vuoi, puoi aggiungere due servizi esterni a pagamento: le chiavi restano solo su questo computer.</p>
+      <div class="grid g2" style="margin-top:0">
+        ${keyCard("ai", "Intelligenza artificiale (Anthropic)", "Una seconda opinione sui volantini difficili e una revisione dei testi, accanto agli agenti.",
+          "Dove la trovi: console.anthropic.com → API Keys → Create Key. Deve iniziare con «sk-ant-».",
+          "Costo indicativo: pochi centesimi per un volantino di 2-4 pagine, circa 3-4 € per uno di 24 pagine. Si paga ad Anthropic, a consumo.")}
+        ${keyCard("voice", "Voce generata (ElevenLabs)", "Fa leggere i testi dei Reel «dal banco» con la voce del titolare, clonata con il suo consenso.",
+          "Dove la trovi: elevenlabs.io → profilo → API Keys.",
+          "Costo: secondo il piano ElevenLabs scelto. La voce registrata dal vivo resta sempre gratuita.")}
+      </div>
+      ${st.ai_mode_off ? notice("info", "L'IA facoltativa è disattivata da chi ha installato Promovo (PROMOVO_AI=off).") : ""}
+    </div>`;
+  $$("[data-ksave]", el).forEach(b => b.onclick = () => busy(b, async () => {
+    const svc = b.dataset.ksave, input = $("#key-" + svc), box = $(`[data-kmsg="${svc}"]`);
+    box.innerHTML = "";
+    try {
+      await api("/api/settings/keys", {json: {service: svc, key: input.value}});
+      input.value = "";
+      toast(svc === "ai" ? "Chiave provata e salvata: l'IA facoltativa è attiva." : "Chiave della voce provata e salvata.");
+      await refreshAi(); go("settings");
+    } catch (e) { box.innerHTML = notice("err", e.message); }
+  }, "Prova in corso…"));
+  $$("[data-key]", el).forEach(i => i.addEventListener("keydown", e => { if (e.key === "Enter") $(`[data-ksave="${i.dataset.key}"]`).click(); }));
+  $$("[data-kdel]", el).forEach(b => b.onclick = async () => {
+    if (!(await confirmBox("Rimuovere la chiave?", "Gli agenti continuano a lavorare come sempre; si spegne solo il servizio esterno.", "Rimuovi", true))) return;
+    busy(b, async () => { await api(`/api/settings/keys/${b.dataset.kdel}`, {method: "DELETE"}); await refreshAi(); toast("Chiave rimossa."); go("settings"); });
+  });
 };
 
 // ======================= avvio =======================
+async function refreshAi() {
+  try { S.ai = (await api("/api/health")).ai; } catch (e) { S.ai = false; }
+  $("#aiDot").classList.add("on");
+  $("#aiText").textContent = S.ai ? "Agenti attivi · IA facoltativa attiva" : "Agenti attivi";
+}
 async function start() {
   try { S.me = await api("/api/me"); } catch (e) { logout(); return; }
-  try { S.ai = (await api("/api/health")).ai; } catch (e) { S.ai = false; }
-  $("#aiDot").classList.toggle("on", S.ai);
-  $("#aiText").textContent = S.ai ? "Intelligenza artificiale attiva" : "IA spenta (funzioni base)";
+  await refreshAi();
   $("#authView").classList.add("hidden");
   $("#appView").classList.remove("hidden");
   $("#whoName").textContent = S.me.name || S.me.email;

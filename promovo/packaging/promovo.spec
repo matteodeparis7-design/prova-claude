@@ -8,10 +8,12 @@ datas += collect_data_files("imageio_ffmpeg")       # ffmpeg incluso (video, mus
 datas += collect_data_files("tzdata")               # fusi orari (Windows non li ha)
 datas += collect_data_files("certifi")              # certificati per le connessioni sicure
 datas += collect_data_files("segno")
+datas += collect_data_files("rapidocr")             # lettura ottica: configurazione e modelli (scaricati prima)
 
 hidden = []
 hidden += collect_submodules("promovo")             # alcuni moduli si caricano solo quando servono
 hidden += collect_submodules("uvicorn")
+hidden += collect_submodules("rapidocr")
 hidden += ["email_validator", "multipart", "python_multipart"]
 
 a = Analysis(

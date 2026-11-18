@@ -16,7 +16,6 @@ from ..models import ContentPiece, Flyer, Store
 from ..money import format_eur
 from .content.service import generate_content, save_content, validity_text
 from .graphics.service import render_flyer_images
-from .loyalty.service import build_campaign
 from .video.service import render_flyer_video
 
 ITEMS = {
@@ -25,7 +24,6 @@ ITEMS = {
     "video_portrait": "Reel 9:16",
     "video_square": "Video post 1:1",
     "video_landscape": "Video per lo schermo 16:9",
-    "messages": "Messaggi personali ai clienti",
 }
 DEFAULT_ITEMS = ["texts", "images", "video_portrait", "video_landscape"]
 
@@ -49,8 +47,6 @@ def run_kit(session: Session, store: Store, flyer: Flyer, settings: Settings, ll
                 render_flyer_images(session, store, flyer, settings)
             elif item.startswith("video_"):
                 render_flyer_video(session, store, flyer, settings, item.split("_", 1)[1])
-            elif item == "messages":
-                build_campaign(session, store, flyer)
             session.commit()
             done.append(item)
         except Exception as exc:          # si annota e si prosegue con il resto
@@ -66,8 +62,7 @@ def _safe(name: str) -> str:
     return s[:60] or "file"
 
 
-TEXT_FILES = {"instagram": "Instagram.txt", "facebook": "Facebook.txt", "whatsapp": "WhatsApp.txt",
-              "newsletter": "Newsletter.txt", "plan": "Piano_della_settimana.txt"}
+TEXT_FILES = {"instagram": "Instagram.txt", "facebook": "Facebook.txt", "plan": "Piano_della_settimana.txt"}
 
 
 def build_zip(session: Session, store: Store, flyer: Flyer, out_path: Path, approved_only: bool = False) -> Path:
@@ -92,23 +87,16 @@ def build_zip(session: Session, store: Store, flyer: Flyer, out_path: Path, appr
                     "- Piano_della_settimana.txt: cosa pubblicare, dove e in che giorno",
                     "", "Ricorda: pubblica solo i contenuti che hai controllato."]
         z.writestr(f"{root}/LEGGIMI.txt", "\n".join(summary))
-        personal = []
         for p in pieces:
             if p.kind in TEXT_FILES:
                 body = p.body
                 tags = (p.meta or {}).get("hashtags") or []
                 if tags:
                     body += "\n\n" + " ".join("#" + t for t in tags)
-                name = TEXT_FILES[p.kind] if p.kind != "newsletter" else "Newsletter.txt"
-                if p.kind == "newsletter":
-                    body = f"Oggetto: {p.title}\n\n{body}"
+                name = TEXT_FILES[p.kind]
                 z.writestr(f"{root}/{name}" if p.kind == "plan" else f"{root}/Testi/{name}", body)
-            elif p.kind == "whatsapp_personal":
-                personal.append(f"--- {p.title} ({(p.meta or {}).get('phone', '')}) ---\n{p.body}\n")
             elif p.file_path and Path(p.file_path).exists():
                 folder = "Video" if p.kind == "video" else "Immagini"
                 ext = Path(p.file_path).suffix
                 z.write(p.file_path, f"{root}/{folder}/{_safe(p.title)}{ext}")
-        if personal:
-            z.writestr(f"{root}/Testi/Messaggi_personali.txt", "\n".join(personal))
     return out_path

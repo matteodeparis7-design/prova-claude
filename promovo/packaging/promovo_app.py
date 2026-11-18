@@ -2,8 +2,9 @@
 
 - I dati (negozi, volantini, video) restano nella cartella "Dati Promovo", accanto al programma:
   si può spostare tutta la cartella o copiarla per fare un backup.
-- Le chiavi facoltative si mettono accanto al programma, in file di testo:
-  CHIAVE_IA.txt (intelligenza artificiale) e CHIAVE_VOCE.txt (voce generata, ElevenLabs).
+- Gli agenti lavorano da soli, senza collegamenti esterni. Le chiavi facoltative (IA di Anthropic,
+  voce di ElevenLabs) si inseriscono dentro Promovo, nella pagina Impostazioni. Per compatibilità
+  valgono ancora i file CHIAVE_IA.txt e CHIAVE_VOCE.txt accanto al programma.
 - Se qualcosa va storto la finestra resta aperta con il messaggio, da fotografare.
 """
 from __future__ import annotations
@@ -38,8 +39,6 @@ def prepare_environment(base: Path) -> dict[str, str]:
     voice = os.environ.get("ELEVENLABS_API_KEY") or read_key(base / "CHIAVE_VOCE.txt")
     if ai:
         env["ANTHROPIC_API_KEY"] = ai
-    else:
-        env["PROMOVO_AI"] = "off"
     if voice:
         env["ELEVENLABS_API_KEY"] = voice
     for k, v in env.items():
@@ -96,10 +95,8 @@ def main() -> None:
     say("   PROMOVO")
     say("  =============================================\n")
     say(f"  Dati salvati in: {env['PROMOVO_DATA_DIR']}")
-    say("  Intelligenza artificiale: " + ("ACCESA" if "ANTHROPIC_API_KEY" in env
-                                         else "spenta (manca il file CHIAVE_IA.txt)"))
-    say("  Voce generata: " + ("disponibile" if "ELEVENLABS_API_KEY" in env
-                             else "non attiva (facoltativa: file CHIAVE_VOCE.txt)"))
+    say("  Agenti di Promovo: attivi (lavorano su questo computer)")
+    say("  Potenziamenti facoltativi (IA, voce generata): si attivano da Impostazioni, dentro Promovo")
     say("\n  Accesso di prova:  demo@promovo.it  /  promovo2026")
     say("  NON chiudere questa finestra mentre usi Promovo. Per spegnerlo, chiudila.\n")
     if log:

@@ -91,7 +91,7 @@ def test_kit_and_zip(client, live_pdf):
     assert job["result"]["done"] == ["texts", "images", "video_square"] and job["result"]["errors"] == []
     content = client.get(f"/api/flyers/{f['id']}/content", headers=h).json()
     kinds = sorted({c["kind"] for c in content})
-    assert kinds == ["facebook", "image", "instagram", "newsletter", "plan", "video", "whatsapp"]
+    assert kinds == ["facebook", "image", "instagram", "plan", "video"]
     img = next(c for c in content if c["kind"] == "image")
     got = client.get(img["file_url"], headers=h)
     assert got.headers["content-type"] == "image/jpeg" and Image.open(io.BytesIO(got.content)).size[0] == 1080

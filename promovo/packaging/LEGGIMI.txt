@@ -11,16 +11,20 @@ PROMOVO - come si usa
 2. Si apre una finestra nera e, dopo qualche secondo, il browser con Promovo.
    Accesso di prova:  demo@promovo.it  /  promovo2026
 
-3. Per spegnere Promovo chiudi la finestra nera.
+3. Carica il volantino (PDF o foto): con il "Pilota automatico" gli agenti di Promovo
+   leggono le offerte e preparano da soli testi, immagini, Reel, video e il piano della settimana.
 
-I tuoi dati (negozi, volantini, video) restano nella cartella "Dati Promovo",
-qui accanto. Per fare una copia di sicurezza basta copiare quella cartella.
+4. Per spegnere Promovo chiudi la finestra nera.
 
-FACOLTATIVO
-- Intelligenza artificiale: crea qui accanto il file CHIAVE_IA.txt e incollaci
-  la chiave Anthropic (console.anthropic.com). Riavvia Promovo.
-- Voce generata del negozio: crea il file CHIAVE_VOCE.txt con la chiave ElevenLabs.
+Gli agenti lavorano su questo computer: non serve nessun abbonamento e nessuna chiave.
+I tuoi dati (negozi, volantini, video) restano nella cartella "Dati Promovo", qui accanto.
+Per fare una copia di sicurezza basta copiare quella cartella.
+
+FACOLTATIVO (si attiva dentro Promovo, pagina Impostazioni)
+- Intelligenza artificiale di Anthropic: una seconda opinione sui volantini difficili.
+- Voce generata di ElevenLabs: i Reel "dal banco" letti con la voce del titolare.
 Le chiavi restano solo su questo computer: non mandarle a nessuno.
 
 La guida completa e' nel file GUIDA.md (si apre anche con il Blocco note).
-Se qualcosa non va: fai una foto della finestra nera e mandala.
+Se qualcosa non va: dal menu Start apri "Promovo (con messaggi di errore)",
+fai una foto della finestra nera e mandala.

@@ -35,7 +35,7 @@ def image_pdf(sample_pdf):
     return image_only(sample_pdf)
 
 
-needs_ocr = pytest.mark.skipif(not ocr_available(), reason="Tesseract non installato")
+needs_ocr = pytest.mark.skipif(not ocr_available(), reason="lettura ottica non installata")
 
 
 def test_image_only_pdf_has_no_text(image_pdf):

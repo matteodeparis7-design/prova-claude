@@ -1,8 +1,9 @@
 """Agente "Lettore": estrae le offerte da un volantino.
 
-Due metodi:
-1. IA (Claude vede ogni pagina e legge anche il testo del PDF): il più preciso.
-2. Euristico (solo testo e immagini del PDF, senza IA): di riserva.
+Due modi di lavorare:
+1. Da solo, sul computer (sempre disponibile): il testo del PDF quando c'è; per le pagine fatte
+   di immagini la lettura ottica (OCR) che ricostruisce le offerte come farebbe una persona.
+2. Con l'IA facoltativa (Claude vede ogni pagina e legge anche il testo del PDF).
 
 Dopo l'estrazione ogni prezzo viene verificato contro il testo reale del PDF
 (agente "Controllo"): un prezzo che non compare nel PDF viene segnalato.
@@ -12,6 +13,7 @@ from __future__ import annotations
 import logging
 import math
 import re
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import date
 
@@ -19,7 +21,7 @@ import pymupdf
 from pydantic import BaseModel, Field
 
 from ...llm import AIRefused, AIUnavailable, LLM, image_block
-from ...money import discount_percent, find_prices, parse_price
+from ...money import discount_percent, find_prices, format_eur, parse_price
 from ...text_utils import CATEGORIES, coerce_category, normalize, parse_iso_date, parse_validity
 from .crosscheck import crosscheck
 from .pdf import PageInfo, Span, page_info, render_half_png, render_page_png
@@ -310,26 +312,71 @@ def _heuristic_page(info: PageInfo) -> list[RawOffer]:
     return offers
 
 
-def extract_heuristic(doc: pymupdf.Document, today: date | None = None) -> ExtractionResult:
+def _from_ocr(o, page_no: int) -> RawOffer:
+    disc = discount_percent(o.price_cents, o.old_price_cents)
+    return RawOffer(
+        page=page_no, name=o.name[:300], description=o.description[:500],
+        category=coerce_category(None, o.name, o.description), price_cents=o.price_cents,
+        old_price_cents=o.old_price_cents, discount_percent=disc, unit_price_text=o.unit_price_text[:80],
+        bbox=list(getattr(o, "card_bbox", None) or o.bbox), photo_bbox=list(o.photo_bbox) if o.photo_bbox else None,
+        price_verified=bool(getattr(o, "confirmed", False)),
+        verified_by="doppia lettura" if getattr(o, "confirmed", False) else "",
+    )
+
+
+def extract_heuristic(doc: pymupdf.Document, today: date | None = None,
+                      progress: Callable[[int, int], None] | None = None) -> ExtractionResult:
+    """Lettura senza IA esterna: testo del PDF, oppure lettura ottica per le pagine fatte di immagini."""
+    from . import ocr
     offers: list[RawOffer] = []
     warnings: list[str] = []
     texts = []
-    for page in doc:
-        info = page_info(page)
-        texts.append(info.text)
-        if not info.spans:
-            warnings.append(f"Pagina {info.number}: nessun testo nel PDF (pagina solo immagine), "
-                            "serve l'IA per leggerla.")
-            continue
-        offers.extend(_heuristic_page(info))
-    vf, vt = parse_validity(" ".join(texts[:2]), today)
     title = ""
+    used_ocr = False
+    for page in doc:
+        if progress:
+            progress(page.number, doc.page_count)
+        info = page_info(page)
+        if info.spans:
+            texts.append(info.text)
+            offers.extend(_heuristic_page(info))
+            continue
+        if not ocr.available():
+            warnings.append(f"Pagina {info.number}: pagina fatta solo di immagini e lettura ottica non disponibile.")
+            texts.append("")
+            continue
+        try:
+            reading = ocr.read_page(page, info.number)
+        except ocr.OcrUnavailable as exc:
+            warnings.append(f"Pagina {info.number}: lettura ottica non riuscita ({exc}).")
+            texts.append("")
+            continue
+        used_ocr = True
+        texts.append(reading.text)
+        if not reading.offers:
+            warnings.append(f"Pagina {info.number}: nessuna offerta riconosciuta (pagina senza prezzi o immagine "
+                            "poco nitida).")
+        for o in reading.offers:
+            if not o.name or len(o.name) < 2:
+                continue
+            raw = _from_ocr(o, info.number)
+            alt = getattr(o, "alternative", None)
+            if alt:
+                warnings.append(f"Pagina {info.number}, «{raw.name}»: il prezzo è stato letto prima {format_eur(alt)} "
+                                f"e poi {format_eur(raw.price_cents)}. Controllalo sul ritaglio.")
+            offers.append(raw)
+        if not title and page.number == 0 and reading.lines:
+            big = [ln for ln in reading.lines if ln.kind in ("noise", "name") and not ln.used and
+                   sum(c.isalpha() for c in ln.text) >= 5 and not any(n in ln.text.lower() for n in ("offert", "valid"))]
+            if big:
+                title = ocr.nice_name(max(big, key=lambda ln: ln.h).text)[:300]
+    vf, vt = parse_validity(" ".join(texts[:2]), today)
     first = page_info(doc[0])
     titled = [s for s in first.spans if not _is_noise(s.text)]
     if titled:
         title = max(titled, key=lambda s: s.size).text.strip()[:300]
-    return ExtractionResult(offers=offers, method="heuristic", title=title, valid_from=vf, valid_to=vt,
-                            warnings=warnings)
+    return ExtractionResult(offers=offers, method="ocr" if used_ocr else "heuristic", title=title,
+                            valid_from=vf, valid_to=vt, warnings=warnings)
 
 
 # ------------------------------------------------------------------ verifica e pulizia
@@ -366,15 +413,15 @@ def verify_and_clean(result: ExtractionResult, doc: pymupdf.Document, llm: LLM |
                 o.discount_percent = None
             if not o.price_verified:
                 unverified += 1
-        else:
-            o.price_verified = False
+        elif result.method != "ocr":
+            o.price_verified = False        # letto dall'IA su una pagina senza testo: si conferma dopo
         cleaned.append(o)
     cleaned.sort(key=lambda o: (o.page, round(o.bbox[1], 2), o.bbox[0]))
     warnings = list(result.warnings)
     if unverified:
         warnings.append(f"{unverified} prezzi non trovati nel testo del PDF: da controllare a mano.")
     no_text = {p for p, t in has_text.items() if not t}
-    warnings.extend(crosscheck(cleaned, doc, llm, no_text))
+    warnings.extend(crosscheck(cleaned, doc, llm, no_text, already_read=result.method == "ocr"))
     if not cleaned:
         warnings.append("Nessuna offerta trovata nel volantino.")
     return ExtractionResult(offers=cleaned, method=result.method, title=result.title,
@@ -388,14 +435,15 @@ def pick_featured(offers: list[RawOffer], limit: int = 6) -> set[int]:
     return set(ranked[:limit])
 
 
-def extract_offers(doc: pymupdf.Document, llm: LLM | None, today: date | None = None) -> ExtractionResult:
-    """Prova con l'IA; se non è disponibile usa il metodo euristico."""
+def extract_offers(doc: pymupdf.Document, llm: LLM | None, today: date | None = None,
+                   progress: Callable[[int, int], None] | None = None) -> ExtractionResult:
+    """Con l'IA facoltativa se è attiva; altrimenti (o se non risponde) lavorano gli agenti da soli."""
     if llm is not None:
         try:
             return verify_and_clean(extract_with_ai(doc, llm, today), doc, llm)
         except (AIUnavailable, AIRefused) as exc:
-            log.warning("Estrazione con IA non disponibile (%s): uso il metodo euristico.", exc)
-            res = verify_and_clean(extract_heuristic(doc, today), doc)
-            res.warnings.insert(0, f"IA non disponibile ({exc}): offerte lette con il metodo euristico.")
+            log.warning("Estrazione con IA non disponibile (%s): lavorano gli agenti da soli.", exc)
+            res = verify_and_clean(extract_heuristic(doc, today, progress), doc)
+            res.warnings.insert(0, f"IA facoltativa non disponibile ({exc}): offerte lette dagli agenti di Promovo.")
             return res
-    return verify_and_clean(extract_heuristic(doc, today), doc)
+    return verify_and_clean(extract_heuristic(doc, today, progress), doc)

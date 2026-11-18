@@ -4,7 +4,7 @@
 ; alla fine, avvia Promovo. I dati restano nella cartella "Dati Promovo" anche se si disinstalla.
 
 #define AppName "Promovo"
-#define AppVersion "0.3 beta"
+#define AppVersion "1.0"
 
 [Setup]
 AppId=PromovoBeta

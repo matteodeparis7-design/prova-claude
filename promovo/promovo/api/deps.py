@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from ..config import Settings
 from ..db import Database
 from ..llm import LLM
-from ..models import ContentPiece, Flyer, Job, Offer, Order, Role, Store, User
+from ..models import ContentPiece, Flyer, Job, Offer, Role, Store, User
 from ..security import user_for_token
 
 
@@ -21,6 +21,8 @@ class AppState:
     llm: LLM | None
     voice_client: object | None = None      # client HTTP per la voce (solo nei test se ne passa uno finto)
     weather_fetch: object | None = None     # funzione che scarica le previsioni (nei test, una finta)
+    key_test_client: object | None = None   # client finto per provare le chiavi (solo nei test)
+    llm_client: object | None = None        # client Anthropic finto (solo nei test)
 
 
 def state(request: Request) -> AppState:
@@ -91,13 +93,6 @@ def content_for(session: Session, user: User, content_id: int) -> ContentPiece:
     if piece is None or session.get(Store, piece.store_id).organization_id != user.organization_id:
         raise _not_found("Contenuto")
     return piece
-
-
-def order_for(session: Session, user: User, order_id: int) -> Order:
-    order = session.get(Order, order_id)
-    if order is None or session.get(Store, order.store_id).organization_id != user.organization_id:
-        raise _not_found("Ordine")
-    return order
 
 
 def job_for(session: Session, user: User, job_id: int) -> Job:

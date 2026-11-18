@@ -1,35 +1,25 @@
 """Controlli aggiuntivi per i volantini fatti solo di immagini (nessun testo nel PDF).
 
-Livello 1 - OCR (Tesseract, se installato): legge i prezzi stampati nella pagina e
-            conferma quelli che compaiono dentro il riquadro dell'offerta.
-Livello 2 - Doppia lettura IA: i prezzi non confermati vengono riletti da Claude su un
-            ritaglio ingrandito del singolo prodotto. Se le due letture coincidono il prezzo
-            è confermato; se sono diverse viene segnalato e resta "da controllare".
+Livello 1 - Lettura ottica sul computer: il prezzo viene riletto sul ritaglio ingrandito
+            del prodotto; se compare lo stesso prezzo, grande, è confermato.
+Livello 2 - Doppia lettura con l'IA facoltativa: i prezzi ancora non confermati vengono riletti
+            da Claude. Se le due letture coincidono il prezzo è confermato; se no resta da controllare.
 Nessun controllo cambia mai un prezzo da solo: conferma o segnala.
 """
 from __future__ import annotations
 
-import csv
-import io
 import logging
-import shutil
-import subprocess
 from dataclasses import dataclass
 
-import numpy as np
 import pymupdf
-from PIL import Image, ImageFilter
 from pydantic import BaseModel, Field
 
 from ...llm import AIRefused, AIUnavailable, LLM, image_block
-from ...money import find_prices, format_eur, parse_price
+from ...money import format_eur, parse_price
+from . import ocr
 
 log = logging.getLogger("promovo.crosscheck")
 
-OCR_DPI = 150
-# Altezza minima (in frazione della pagina) del testo di un prezzo principale: esclude
-# i prezzi al kg/litro stampati in piccolo, che non devono confermare il prezzo dell'offerta.
-MIN_PRICE_HEIGHT = 0.012
 AI_BATCH = 8
 
 
@@ -38,68 +28,43 @@ class OcrPrice:
     cents: int
     cx: float   # centro normalizzato 0..1
     cy: float
+    h: float
 
 
 def ocr_available() -> bool:
-    return shutil.which("tesseract") is not None
+    return ocr.available()
 
 
-def _tesseract_tsv(img: Image.Image, digits_only: bool) -> list[dict]:
-    buf = io.BytesIO()
-    img.save(buf, format="PNG")
-    cmd = ["tesseract", "stdin", "stdout", "--psm", "11"]
-    if digits_only:
-        cmd += ["-c", "tessedit_char_whitelist=0123456789,."]
-    else:
-        cmd += ["-l", "ita"]
-    cmd.append("tsv")
-    try:
-        out = subprocess.run(cmd, input=buf.getvalue(), capture_output=True, timeout=120, check=True).stdout
-    except (subprocess.SubprocessError, OSError) as exc:
-        log.warning("OCR non riuscito: %s", exc)
+def ocr_crop_prices(page: pymupdf.Page, bbox: list[float]) -> list[OcrPrice]:
+    """I prezzi stampati nel ritaglio di un'offerta, con posizione e altezza (coordinate della pagina)."""
+    w, h = page.rect.width, page.rect.height
+    x0, y0, x1, y1 = (max(0.0, bbox[0] - 0.01), max(0.0, bbox[1] - 0.01), min(1.0, bbox[2] + 0.01),
+                      min(1.0, bbox[3] + 0.01))
+    clip = pymupdf.Rect(x0 * w, y0 * h, x1 * w, y1 * h)
+    if clip.width < 4 or clip.height < 4:
         return []
-    rows = list(csv.DictReader(io.StringIO(out.decode("utf-8", errors="replace")), delimiter="\t",
-                               quoting=csv.QUOTE_NONE))
-    return [r for r in rows if (r.get("text") or "").strip()]
-
-
-def _variants(rgb: np.ndarray) -> list[tuple[Image.Image, bool]]:
-    """Versioni dell'immagine che aiutano l'OCR: originale e testo colorato isolato."""
-    r, g, b = (rgb[..., i].astype(int) for i in range(3))
-    out = [(Image.fromarray(rgb).convert("L"), False)]
-    masks = [
-        (r > 140) & (g < 120) & (b < 120) & (r - g > 60),    # prezzi rossi (i più comuni)
-        (r + g + b < 200),                                    # prezzi neri o molto scuri
-        (r > 200) & (g > 200) & (b > 200),                    # prezzi bianchi su riquadri colorati
-    ]
-    for m in masks:
-        img = Image.fromarray(np.where(m, 0, 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(3))
-        out.append((img, True))
+    rgb = ocr.render(page, max_side=int(min(1600, max(500, 4 * max(clip.width, clip.height)))), clip=clip)
+    out = []
+    for ln in ocr._lines_from(rgb, x0, y0, x1 - x0, y1 - y0):
+        ocr.classify(ln)
+        if ln.kind == "price" and ln.cents:
+            out.append(OcrPrice(ln.cents, ln.cx, ln.cy, ln.h))
     return out
-
-
-def ocr_page_prices(page: pymupdf.Page) -> list[OcrPrice]:
-    pix = page.get_pixmap(dpi=OCR_DPI, alpha=False)
-    rgb = np.frombuffer(pix.samples, np.uint8).reshape(pix.height, pix.width, pix.n)[..., :3]
-    found: list[OcrPrice] = []
-    for img, digits in _variants(rgb):
-        for row in _tesseract_tsv(img, digits):
-            prices = find_prices(row["text"])
-            if len(prices) != 1:
-                continue
-            try:
-                left, top, w, h = (float(row[k]) for k in ("left", "top", "width", "height"))
-            except (KeyError, ValueError):
-                continue
-            if h / pix.height < MIN_PRICE_HEIGHT:
-                continue
-            found.append(OcrPrice(prices[0], (left + w / 2) / pix.width, (top + h / 2) / pix.height))
-    return found
 
 
 def _inside(p: OcrPrice, bbox: list[float], pad: float = 0.01) -> bool:
     x0, y0, x1, y1 = bbox
     return x0 - pad <= p.cx <= x1 + pad and y0 - pad <= p.cy <= y1 + pad
+
+
+def confirm_by_ocr(page: pymupdf.Page, o) -> bool:
+    """Il prezzo dell'offerta compare, grande, nel suo ritaglio? (i prezzi piccoli sono al kg o barrati)"""
+    found = [p for p in ocr_crop_prices(page, o.bbox) if _inside(p, o.bbox)]
+    if not found:
+        return False
+    tallest = max(p.h for p in found)
+    big = {p.cents for p in found if p.h >= 0.6 * tallest}
+    return o.price_cents in big and len(big) <= 2
 
 
 class AICheckItem(BaseModel):
@@ -128,23 +93,23 @@ def _crop_png(page: pymupdf.Page, bbox: list[float], max_side: int = 700) -> byt
     return page.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom), clip=rect, alpha=False).tobytes("png")
 
 
-def crosscheck(offers: list, doc: pymupdf.Document, llm: LLM | None, pages_without_text: set[int]) -> list[str]:
-    """Conferma i prezzi delle pagine senza testo. Modifica le offerte; restituisce gli avvisi."""
+def crosscheck(offers: list, doc: pymupdf.Document, llm: LLM | None, pages_without_text: set[int],
+               already_read: bool = False) -> list[str]:
+    """Conferma i prezzi delle pagine senza testo. Modifica le offerte; restituisce gli avvisi.
+    already_read: le offerte vengono dalla lettura ottica, che ha già fatto la sua doppia lettura."""
     warnings: list[str] = []
     todo = [o for o in offers if o.page in pages_without_text and not o.price_verified]
     if not todo:
         return warnings
 
-    if ocr_available():
-        by_page: dict[int, list[OcrPrice]] = {}
+    if not already_read and ocr_available():
         for o in todo:
-            if o.page not in by_page:
-                by_page[o.page] = ocr_page_prices(doc[o.page - 1])
-            if any(p.cents == o.price_cents and _inside(p, o.bbox) for p in by_page[o.page]):
-                o.price_verified = True
-                o.verified_by = "OCR"
-    else:
-        warnings.append("OCR non installato: controllo dei prezzi solo con la doppia lettura dell'IA.")
+            try:
+                if confirm_by_ocr(doc[o.page - 1], o):
+                    o.price_verified = True
+                    o.verified_by = "OCR"
+            except ocr.OcrUnavailable:
+                break
 
     todo = [o for o in todo if not o.price_verified]
     if todo and llm is not None:
@@ -176,5 +141,5 @@ def crosscheck(offers: list, doc: pymupdf.Document, llm: LLM | None, pages_witho
 
     left = sum(1 for o in offers if o.page in pages_without_text and not o.price_verified)
     if left:
-        warnings.append(f"{left} prezzi di pagine senza testo non confermati: da controllare a mano.")
+        warnings.append(f"{left} prezzi non confermati dalla seconda lettura: da controllare a mano.")
     return warnings
