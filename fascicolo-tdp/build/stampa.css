@@ -1,15 +1,15 @@
 /* Versione per il PDF (A4). Intestazione e numeri di pagina sono aggiunti dopo, da impagina.py. */
-@page { size: A4; margin: 22mm 18mm 20mm 18mm; }
+@page { size: A4; margin: 19mm 15mm 17mm 15mm; }
 :root { color-scheme: light; }
 html, body { background: #fff !important; color: #17202d; }
-body { font-size: 11pt; line-height: 1.5; padding: 0 !important; margin: 0; }
+body { font-size: 10.5pt; line-height: 1.42; padding: 0 !important; margin: 0; }
 .stampa { display: block; }
 
 /* testo leggibile e codice fedele */
 p, li { orphans: 3; widows: 3; }
 .capitolo p, .capitolo li { max-width: none; }
 code { font-size: .88em; }
-figure.codice pre, pre code { font-size: 8.8pt; line-height: 1.42; white-space: pre-wrap; word-break: break-word; }
+figure.codice pre, pre code { font-size: 8.5pt; line-height: 1.36; white-space: pre-wrap; word-break: break-word; }
 figure.schema pre { white-space: pre; font-size: 8.2pt; }
 
 /* copertina */
@@ -37,7 +37,7 @@ figure.schema pre { white-space: pre; font-size: 8.2pt; }
 .cap-testa { margin: 0 0 6mm; padding-bottom: 4mm; border-bottom: 2px solid #1f5ea8; }
 .cap-num { font-size: 10pt; }
 .capitolo h1 { font-size: 24pt; }
-.capitolo h2 { font-size: 15pt; margin: 7mm 0 2.5mm; break-after: avoid; page-break-after: avoid; }
+.capitolo h2 { font-size: 14pt; margin: 5mm 0 2mm; break-after: avoid; page-break-after: avoid; }
 .capitolo h3 { font-size: 12pt; break-after: avoid; page-break-after: avoid; }
 .marca { position: absolute; font-size: 1px; color: #fff; }
 
@@ -54,3 +54,21 @@ details > summary { list-style: none; }
 details > summary::-webkit-details-marker { display: none; }
 details.sol { border-color: #2b6a4c; }
 details.sol > summary { color: #2b6a4c; }
+
+/* versione compatta: meno spazio vuoto */
+.capitolo p { margin: 0 0 2.2mm; }
+.capitolo ul, .capitolo ol { margin: 0 0 2.5mm; }
+.capitolo li + li { margin-top: 1px; }
+.box { margin: 3mm 0; padding: 2mm 4mm 1mm; }
+.box-titolo { margin-bottom: 1mm; font-size: 9pt; }
+figure.codice { margin: 2.5mm 0; }
+figure.codice figcaption { padding: 1mm 3.5mm; font-size: 7.5pt; }
+figure.codice pre { padding: 2mm 3.5mm; }
+details.sol, details.domanda { margin: 2mm 0 3.5mm; }
+details.sol > summary { padding: 1.5mm 4mm; }
+.sol-corpo { padding: 1mm 4mm 1mm; }
+.tab { margin: 2.5mm 0; }
+th, td { padding: 1.2mm 2.5mm; }
+.cap-testa { margin-bottom: 4mm; padding-bottom: 3mm; }
+.capitolo h1 { font-size: 22pt; }
+.capitolo h3 { margin: 4mm 0 1.5mm; }

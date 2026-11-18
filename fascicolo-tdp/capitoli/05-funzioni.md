@@ -103,47 +103,6 @@ int *sbagliata(void) {
 Per restituire memoria che "sopravvive" alla funzione si usa `malloc` (capitolo 9).
 :::
 
-## Progettare con le funzioni (il metodo del corso)
-
-Nelle lezioni e nelle EG il professore procede sempre in **fasi**:
-
-1. **ambiente di calcolo**: scrivo il `main` con le variabili e le **chiamate** delle funzioni che mi servono, come se esistessero già;
-2. **prototipi**: scrivo le dichiarazioni (che cosa riceve, che cosa restituisce ogni funzione);
-3. **algoritmo** di ogni funzione, in italiano;
-4. **definizione** in C;
-5. **test** (capitolo 13).
-
-All'esame fai lo stesso per ogni `eserN`: prima l'intestazione (cosa riceve, cosa restituisce, quali sono i parametri di output), poi l'algoritmo in due righe di commento, poi il codice.
-
-::: esame Domande d'orale
-"Che cos'è un record di attivazione e cosa contiene?" "Differenza tra parametro formale e attuale?" "Perché `scambioNO` non funziona?" "Cosa vuol dire che il passaggio è per valore?" "Differenza tra variabile locale, globale e static?"
-:::
-
-::: esercizio Esercizio 5.1
-Scrivi una funzione `int potenza(int base, int esp)` che calcola base<sup>esp</sup> (esp ≥ 0) senza usare librerie, e disegna la pila delle RDA durante la chiamata `x = potenza(2, 3);` fatta dal `main`.
-:::
-
-::: soluzione
-```c
-int potenza(int base, int esp) {
-  int i, risultato = 1;
-  for (i = 0; i < esp; i++)
-    risultato *= base;
-  return risultato;
-}
-```
-```text
-   +----------------------------------------+
-   | RDA potenza                            |
-   |  par:  base = 2   esp = 3              |
-   |  loc:  i = 0,1,2,3   risultato = 1,2,4,8 |
-   +----------------------------------------+
-   | RDA main:  x = ?                       |
-   +----------------------------------------+
-al return l'RDA di potenza sparisce e in main x = 8
-```
-:::
-
 ::: ricorda Da ricordare
 - I parametri passano **per valore**: la funzione riceve copie.
 - Ogni chiamata crea un **RDA** (parametri, variabili locali, ritorno) che sparisce al termine.

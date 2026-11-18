@@ -198,7 +198,7 @@ def scrivi_stampa(modello, parti, per_numero, pagine):
         '<li>Laboratorio per imparare a programmare in C</li>'
         '<li>Codice ANSI C compilato e collaudato</li>'
         '<li>Le tracce d\'esame del professore risolte</li>'
-        '<li>Tracce di esercitazione, palestra di 25 esercizi, orale</li>'
+        '<li>Tracce di esercitazione, palestra di 22 esercizi, orale</li>'
         '</ul>'
         '<p class="cop-nota">Materiale di studio non ufficiale, costruito sul programma e sui materiali '
         'pubblicati sul sito del corso. Per regole e date fanno fede il sito del corso e Classroom.</p>'

@@ -236,25 +236,6 @@ int main(void) {
 Nota il controllo `pos > 0` prima della divisione e il cast a `double`.
 :::
 
-::: esercizio Esercizio 4.2
-Scrivi un ciclo che stampa i numeri primi minori di 100 (come `primiCento.c` delle EG).
-:::
-
-::: soluzione
-```c
-int n, d, primo;
-for (n = 2; n < 100; n++) {
-  primo = 1;                          /* flag: suppongo che sia primo */
-  for (d = 2; d * d <= n && primo; d++)
-    if (n % d == 0)
-      primo = 0;                      /* trovato un divisore          */
-  if (primo)
-    printf("%d ", n);
-}
-```
-Basta provare i divisori fino a √n (`d * d <= n`) e fermarsi al primo divisore trovato.
-:::
-
 ::: ricorda Da ricordare
 - L'`else` si lega all'**`if` più vicino**.
 - Ogni ciclo deve avvicinarsi alla fine: chiediti **perché termina**.

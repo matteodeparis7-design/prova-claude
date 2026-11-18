@@ -119,14 +119,6 @@ int *cercaPrimoNegativo(int v[], int dim) {
 
 Va bene restituire l'indirizzo di qualcosa che **sopravvive** alla funzione (un elemento dell'array del chiamante, memoria allocata con `malloc`), **mai** quello di una variabile locale.
 
-## Puntatori a struct
-
-Con le struct (capitolo 10) e le liste userai continuamente l'operatore **freccia**:
-
-```c
-p->campo      /* equivale a  (*p).campo  : il campo della struct puntata da p */
-```
-
 ## Puntatori a puntatori
 
 Se una funzione deve **modificare un puntatore** del chiamante (ad esempio la testa di una lista), le si passa l'indirizzo del puntatore: un **puntatore a puntatore**.
@@ -162,30 +154,6 @@ printf("%d %d %d %d\n", a, b, *p, *q);
 
 ::: soluzione
 `*p = *q + 10` mette in `a` il valore 2 + 10 = 12. Poi `p = q`: ora anche `p` punta a `b`. `*p = *p * 3` mette in `b` il valore 6. Stampa: `12 6 6 6`.
-:::
-
-::: esercizio Esercizio 8.2
-Scrivi `void statistiche(int v[], int dim, int *somma, int *pari, double *media)` che calcola somma, numero di elementi pari e media dell'array.
-:::
-
-::: soluzione
-```c
-void statistiche(int v[], int dim, int *somma, int *pari, double *media) {
-  int i;
-  *somma = 0;
-  *pari = 0;
-  for (i = 0; i < dim; i++) {
-    *somma += v[i];
-    if (v[i] % 2 == 0)
-      (*pari)++;
-  }
-  if (dim > 0)
-    *media = (double) *somma / dim;
-  else
-    *media = 0;
-}
-/* chiamata:  statistiche(v, N, &s, &np, &m); */
-```
 :::
 
 ::: ricorda Da ricordare

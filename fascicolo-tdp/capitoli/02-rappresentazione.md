@@ -164,14 +164,6 @@ Il numero rappresentato è: **(-1)<sup>s</sup> × 1.M × 2<sup>E - 127</sup>**
 4. **Esponente**: E = e + 127, scritto in binario su 8 bit.
 5. **Mantissa**: M = le cifre dopo "1.", portate a 23 bit (zeri a destra se mancano; se avanzano, si **troncano**).
 
-### Esempio: 4.25 (dalle slide)
-
-4.25 = `100.01`₂ → normalizzato `1.0001` × 2<sup>2</sup> → E = 2 + 127 = 129 = `10000001`, M = `0001`.
-
-```text
-4.25  =  0 10000001 00010000000000000000000
-```
-
 ### Esempio: 796.25 (dalle slide)
 
 796 = `1100011100`, 0.25 = `.01` → `1100011100.01` = `1.10001110001` × 2<sup>9</sup>.

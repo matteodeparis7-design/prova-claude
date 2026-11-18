@@ -195,27 +195,6 @@ char *concatenaEsatta(char *a, char *b) {
 ```
 :::
 
-::: esercizio Esercizio 9.2
-Scrivi `int contaVocali(char *s)` senza usare `strlen` (scorri fino al `'\0'`).
-:::
-
-::: soluzione
-```c
-int contaVocali(char *s) {
-  int i, n = 0;
-  char c;
-  for (i = 0; s[i] != '\0'; i++) {
-    c = s[i];
-    if (c >= 'A' && c <= 'Z')
-      c = c + 32;                     /* in minuscolo */
-    if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')
-      n++;
-  }
-  return n;
-}
-```
-:::
-
 ::: ricorda Da ricordare
 - Stringa = array di char che finisce con **'\0'**.
 - Confronta con **`strcmp`**, copia con **`strcpy`** (mai `==` e `=`).

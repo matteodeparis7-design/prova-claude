@@ -5,7 +5,7 @@ Fascicolo di preparazione all'esame di *Tecniche della Programmazione* (prof. Ma
 - `Fascicolo-Tecniche-della-Programmazione.pdf`: versione da stampare (A4): copertina, indice con numeri di pagina e segnalibri, ogni capitolo su un foglio nuovo, soluzioni visibili.
 - `fascicolo.html`: versione web, con indice, caselle "studiato" e soluzioni a scomparsa.
 - `capitoli/`: il testo dei capitoli (Markdown).
-- `codice/`: tutti i programmi C del fascicolo, completi e compilabili (in `codice/palestra/` i 25 esercizi graduati).
+- `codice/`: tutti i programmi C del fascicolo, completi e compilabili (in `codice/palestra/` i 22 esercizi graduati).
 - `build/`: lo script che compone HTML e PDF.
 
 ## Provare il codice

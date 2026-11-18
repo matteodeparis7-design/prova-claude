@@ -117,23 +117,6 @@ int condensa(int v[], int dim) {
 Un solo ciclo: è più efficiente che spostare tutto indietro a ogni zero trovato.
 :::
 
-::: esercizio Esercizio 6.2
-Scrivi una funzione che riceve una matrice quadrata N×N e restituisce 1 se è simmetrica (`m[i][j] == m[j][i]` per ogni i, j), 0 altrimenti.
-:::
-
-::: soluzione
-```c
-int simmetrica(int m[][N]) {
-  int i, j;
-  for (i = 0; i < N; i++)
-    for (j = i + 1; j < N; j++)       /* basta la parte sopra la diagonale */
-      if (m[i][j] != m[j][i])
-        return 0;                     /* trovato un controesempio          */
-  return 1;
-}
-```
-:::
-
 ::: ricorda Da ricordare
 - Indici da **0 a N-1**; il C non controlla i limiti.
 - Alla funzione arriva l'**indirizzo**: passa anche la dimensione.

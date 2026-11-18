@@ -6,7 +6,7 @@
 - un metodo in 6 passi per risolvere qualsiasi esercizio
 :::
 
-Programmare si impara **programmando**, come si impara a nuotare in acqua. Leggere il fascicolo serve a capire; ma all'esame dovrai **scrivere** codice C corretto, su carta, da solo. Questo capitolo ti dice come allenarti, e alla fine del fascicolo trovi la [Palestra di programmazione](#palestra) con 25 esercizi graduati e risolti.
+Programmare si impara **programmando**, come si impara a nuotare in acqua. Leggere il fascicolo serve a capire; ma all'esame dovrai **scrivere** codice C corretto, su carta, da solo. Questo capitolo ti dice come allenarti, e alla fine del fascicolo trovi la [Palestra di programmazione](#palestra) con 22 esercizi graduati e risolti.
 
 ## 1. Prepara l'ambiente
 
@@ -98,16 +98,8 @@ Gli errori a **tempo di esecuzione** più comuni:
 5. **Traduci in C** un pezzo alla volta, compilando spesso; nei commenti indica il passo dell'algoritmo.
 6. **Prova** con casi scelti con criterio (capitolo 13): caso normale, casi limite (zero elementi, un elemento), dati "strani".
 
-## 6. Come allenarsi (il piano pratico)
-
-- **Ogni volta che studi un capitolo**, ricopia ed esegui i programmi del capitolo (non incollarli: **riscriverli** a mano allena le dita e la memoria), poi **modificali**: cambia un dato, aggiungi una funzione, introduci un errore apposta e guarda cosa dice il compilatore.
-- Fai gli **esercizi del capitolo** prima di aprire la soluzione. Se ti blocchi più di 20 minuti, guarda la soluzione, **chiudila**, e riscrivila da solo il giorno dopo.
-- Fai la **Palestra** in ordine: ogni livello usa gli strumenti dei precedenti.
-- Rifai le **EG** del corso (cartella "esercitazioni guidate" sul sito): sono esercizi pensati dal professore, con i suggerimenti passo passo.
-- Dalle liste in poi, allenati **su carta**: all'esame non c'è il compilatore. Scrivi a mano, poi ricopia al computer e guarda se compila e funziona. Gli errori che il compilatore ti trova sono quelli che all'esame ti costerebbero punti.
-
-::: esame Perché tutto questo conta all'esame
-Lo scritto chiede di **scrivere codice** corretto in 2h30, senza compilatore. Chi ha scritto e fatto girare decine di programmi scrive giusto "di mano"; chi ha solo letto le soluzioni si blocca davanti al foglio bianco. Gli homework, obbligatori, servono proprio a questo: falli tu, fino in fondo.
+::: esame Come allenarti
+Per ogni capitolo **ricopia a mano** ed esegui i programmi, poi modificali. Fai gli esercizi **prima** di aprire la soluzione; se ti blocchi più di 20 minuti guardala, chiudila e riscrivila da solo il giorno dopo. Fai la Palestra in ordine. Dalle liste in poi allenati **su carta**, come all'esame, e solo dopo ricopia al computer per vedere se compila e funziona: gli errori che trova il compilatore sono quelli che all'esame ti costerebbero punti.
 :::
 
 ::: ricorda Da ricordare

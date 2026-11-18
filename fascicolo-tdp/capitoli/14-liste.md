@@ -184,27 +184,6 @@ RDA contaRic  l=[1]->...      info==1:  1 + contaRic([4])    -> 1 + 1 = 2
 RDA main                      riceve 2
 ```
 
-## Il programma di prova completo
-
-Tutte le funzioni di questo capitolo stanno in `liste.c`, con questo `main` di prova:
-
-{{inc liste.c main}}
-
-Output reale:
-
-```text
-3 -> 2 -> 1 -> NULL
-3 -> 2 -> 1 -> 10 -> 20 -> NULL
-lunghezza: 5 (ricorsiva: 5)
-2 -> 1 -> 20 -> NULL
-massimo: 20
-contrario: 20 1 2
-1 -> 1 -> 5 -> 7 -> 9 -> NULL
-quanti 1: 2
-cerco 7: trovato
-dopo dealloca: NULL
-```
-
 ## Liste di struct (come all'esame)
 
 All'esame l'informazione del nodo non è un `int` ma una **struct** con i dati dell'elemento. Lo schema è sempre questo:
@@ -272,27 +251,6 @@ int eliminaUltimo(TipoLista *pl) {
     prec->next = NULL;
   free(corr);
   return 1;
-}
-```
-:::
-
-::: esercizio Esercizio 14.3
-Scrivi `TipoLista copiaLista(TipoLista l)` che crea e restituisce una **copia** della lista, con gli elementi nello stesso ordine.
-:::
-
-::: soluzione
-Versione ricorsiva (la più semplice): la copia di una lista vuota è vuota; altrimenti creo un nodo con la stessa info e gli attacco la copia del resto.
-```c
-TipoLista copiaLista(TipoLista l) {
-  TipoNodo *n;
-  if (l == NULL)
-    return NULL;
-  n = malloc(sizeof(TipoNodo));
-  if (n == NULL)
-    return NULL;
-  n->info = l->info;
-  n->next = copiaLista(l->next);
-  return n;
 }
 ```
 :::

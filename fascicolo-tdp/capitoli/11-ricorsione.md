@@ -98,12 +98,6 @@ Una parola è palindroma (radar, anna, ingegni) se si legge uguale nei due sensi
 
 {{inc ricorsione_ordinamento.c palin}}
 
-## Altri esempi
-
-{{inc ricorsione_ordinamento.c mcdRic}}
-
-{{inc ricorsione_ordinamento.c sommaArrayRic}}
-
 ## Ricorsione sulle liste
 
 Una lista è **vuota**, oppure è **un nodo seguito da una lista**. Per questo le funzioni ricorsive sulle liste sono naturali: caso base `l == NULL`, caso ricorsivo "faccio qualcosa col primo nodo e chiamo la funzione su `l->next`". Le trovi nel capitolo 14.
@@ -138,24 +132,6 @@ RDA contaCifre n=4    caso base           -> 1
 RDA contaCifre n=47   1 + contaCifre(4)   -> 1 + 1 = 2
 RDA contaCifre n=472  1 + contaCifre(47)  -> 1 + 2 = 3
 RDA main                                  -> riceve 3
-```
-:::
-
-::: esercizio Esercizio 11.2
-Scrivi una funzione ricorsiva `int maxArray(int v[], int n)` che restituisce il massimo dei primi n elementi (n ≥ 1).
-:::
-
-::: soluzione
-```c
-int maxArray(int v[], int n) {
-  int m;
-  if (n == 1)
-    return v[0];                 /* un solo elemento: e` lui il massimo */
-  m = maxArray(v, n - 1);        /* massimo dei primi n-1               */
-  if (v[n - 1] > m)
-    return v[n - 1];
-  return m;
-}
 ```
 :::
 

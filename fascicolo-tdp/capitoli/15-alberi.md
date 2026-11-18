@@ -83,9 +83,7 @@ Un **ABR** è un albero binario in cui, per ogni nodo, **tutti** i valori nel so
 
 Per **inserire** si passa `TipoAlbero *` perché, nel caso base, bisogna scrivere il nuovo nodo nel puntatore (radice o campo `sinistro`/`destro` del padre).
 
-{{inc alberi.c dealloca}}
-
-La deallocazione si fa in **postordine**: prima i figli, poi il nodo (dopo `free` non si potrebbero più raggiungere i figli).
+Un albero si dealloca in **postordine**: prima i figli, poi il nodo (dopo `free` non si potrebbero più raggiungere i figli).
 
 ::: esercizio Esercizio 15.1
 Scrivi `int contaMaggiori(TipoAlbero a, int x)` che conta i nodi con info > x (albero binario qualsiasi), e `int massimoABR(TipoAlbero a)` che restituisce il massimo di un ABR non vuoto.

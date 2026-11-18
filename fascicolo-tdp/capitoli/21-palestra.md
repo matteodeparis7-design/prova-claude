@@ -4,7 +4,7 @@
 - programmare in C esercitandoti dal livello base fino alle liste
 :::
 
-25 esercizi **graduati**, dal primo programma alle liste. Tutte le soluzioni sono programmi completi, compilati ed eseguiti. Come usarli:
+22 esercizi **graduati**, dal primo programma alle liste. Tutte le soluzioni sono programmi completi, compilati ed eseguiti. Come usarli:
 
 1. leggi il testo e **scrivi la tua soluzione al computer** (o su carta, dai livelli 6-7);
 2. compila e prova con l'esempio indicato e con altri dati scelti da te;
@@ -159,17 +159,7 @@ Leggi 5 interi in un array e stampali in ordine inverso.
 Ricorda: gli indici vanno da 0 a N-1; il ciclo all'indietro parte da `N - 1`.
 :::
 
-::: esercizio Esercizio P15. Quante volte compare
-Dato un array, stampa per ogni valore distinto quante volte compare.
-:::
-
-::: soluzione
-{{inc palestra/es15.c sol}}
-
-Trucco: stampo un valore solo se **non compare prima** della sua posizione (`conta(v, i, v[i]) == 0`), riusando la stessa funzione su una parte dell'array.
-:::
-
-::: esercizio Esercizio P16. Togliere i doppioni
+::: esercizio Esercizio P15. Togliere i doppioni
 Da un array **ordinato** elimina i valori ripetuti, compattando; restituisci la nuova dimensione.
 :::
 
@@ -179,19 +169,9 @@ Da un array **ordinato** elimina i valori ripetuti, compattando; restituisci la 
 `{1,1,2,4,4,4,7,9,9}` → `1 2 4 7 9`. Stessa idea di `condensa` (capitolo 6).
 :::
 
-::: esercizio Esercizio P17. Matrice trasposta
-Calcola la trasposta di una matrice 2×3 (le righe diventano colonne) e stampala.
-:::
-
-::: soluzione
-{{inc palestra/es17.c sol}}
-
-Output: `1 4 / 2 5 / 3 6`.
-:::
-
 ## Livello 5: stringhe e puntatori
 
-::: esercizio Esercizio P18. Maiuscolo e palindromo
+::: esercizio Esercizio P16. Maiuscolo e palindromo
 Leggi una parola, trasformala in maiuscolo e di' se è palindroma (versione iterativa, con due indici).
 :::
 
@@ -201,7 +181,7 @@ Leggi una parola, trasformala in maiuscolo e di' se è palindroma (versione iter
 Input `Radar` → `RADAR e` palindroma`. `%50s` impedisce di leggere più caratteri di quanti l'array ne contenga.
 :::
 
-::: esercizio Esercizio P19. strcmp e strcpy fatte a mano
+::: esercizio Esercizio P17. strcmp e strcpy fatte a mano
 Scrivi le tue versioni di `strcmp` e `strcpy`.
 :::
 
@@ -211,7 +191,7 @@ Scrivi le tue versioni di `strcmp` e `strcpy`.
 Il cuore delle stringhe C: si scorre fino al `'\0'`, che va sempre copiato.
 :::
 
-::: esercizio Esercizio P20. Scambia minimo e massimo
+::: esercizio Esercizio P18. Scambia minimo e massimo
 Scrivi una funzione che scambia di posto minimo e massimo di un array e restituisce le loro posizioni con due parametri di output.
 :::
 
@@ -223,7 +203,7 @@ Scrivi una funzione che scambia di posto minimo e massimo di un array e restitui
 
 ## Livello 6: struct, memoria dinamica, file
 
-::: esercizio Esercizio P21. Classe dinamica
+::: esercizio Esercizio P19. Classe dinamica
 Leggi n, alloca dinamicamente un array di n studenti (nome come stringa esatta, voto), calcola la media e stampa chi sta sopra la media. Libera tutto alla fine.
 :::
 
@@ -233,19 +213,9 @@ Leggi n, alloca dinamicamente un array di n studenti (nome come stringa esatta, 
 Input `3`, `anna 28`, `luca 22`, `sara 30` → media `26.67`, sopra: `anna sara`. Prima si liberano le stringhe, poi l'array.
 :::
 
-::: esercizio Esercizio P22. Salva e ricarica
-Salva un array di studenti su un file di testo e ricaricalo in un altro array.
-:::
-
-::: soluzione
-{{inc palestra/es22.c sol}}
-
-Il ciclo di lettura si ferma quando `fscanf` non legge più 2 valori (o l'array è pieno).
-:::
-
 ## Livello 7: liste
 
-::: esercizio Esercizio P23. Costruisci una lista dall'input
+::: esercizio Esercizio P20. Costruisci una lista dall'input
 Leggi interi fino allo 0 e costruisci una lista **nello stesso ordine** di input; stampala e deallocala.
 :::
 
@@ -255,7 +225,7 @@ Leggi interi fino allo 0 e costruisci una lista **nello stesso ordine** di input
 Input `5 3 8 0` → `5 -> 3 -> 8 -> NULL`. Tenere un puntatore all'**ultimo** nodo evita di riscorrere la lista a ogni inserimento.
 :::
 
-::: esercizio Esercizio P24. Sopra la media
+::: esercizio Esercizio P21. Sopra la media
 Conta i nodi di una lista con valore maggiore della media dei valori.
 :::
 
@@ -265,7 +235,7 @@ Conta i nodi di una lista con valore maggiore della media dei valori.
 Servono **due scansioni**: la prima calcola la media, la seconda conta. Lista `2 8 5 9 1` → 2.
 :::
 
-::: esercizio Esercizio P25. Dizionario ordinato (programma completo)
+::: esercizio Esercizio P22. Dizionario ordinato (programma completo)
 Programma con menu: aggiungi una parola (in ordine alfabetico, senza doppioni, come stringa esatta), elimina una parola, stampa il dizionario. Alla fine dealloca tutto.
 :::
 

@@ -102,19 +102,9 @@ Le date possono cambiare: controlla sempre la [pagina esami del corso](https://w
 
 ## Come usare questo fascicolo
 
-Prima di tutto leggi il [Laboratorio](#laboratorio): spiega come si **impara a programmare in C** davvero (ambiente, errori del compilatore, debugging, metodo). Alla fine del fascicolo c'è la [Palestra di programmazione](#palestra), con 25 esercizi graduati da fare al computer man mano che studi. Il fascicolo segue l'ordine del corso. Ogni capitolo ha spiegazioni semplici, codice C commentato e provato, riquadri colorati ed esercizi con soluzione nascosta (clicca su "Soluzione" solo dopo averci provato davvero).
+Prima di tutto leggi il [Laboratorio](#laboratorio): spiega come si **impara a programmare in C** davvero (ambiente, errori del compilatore, debugging, metodo). Alla fine del fascicolo c'è la [Palestra di programmazione](#palestra), con 22 esercizi graduati da fare al computer man mano che studi. Il fascicolo segue l'ordine del corso. Ogni capitolo ha spiegazioni semplici, codice C commentato e provato, riquadri colorati ed esercizi con soluzione nascosta (clicca su "Soluzione" solo dopo averci provato davvero).
 
-::: esame All'esame
-Questi riquadri dicono che cosa serve **proprio per lo scritto o l'orale**.
-:::
-
-::: errore Errore tipico
-Questi riquadri mostrano gli sbagli che costano punti.
-:::
-
-::: nota Da sapere
-Approfondimenti e collegamenti tra argomenti.
-:::
+Riquadri colorati: blu **All'esame** (cosa serve per lo scritto e l'orale), rosso **Errore tipico** (sbagli che costano punti), verde **Da sapere** (collegamenti utili), viola **Esercizio**.
 
 ### Un piano di studio consigliato (circa 8 settimane prima di gennaio)
 

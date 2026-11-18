@@ -45,10 +45,6 @@ Per eliminare il nodo più importante serve **il suo predecessore**: durante la 
 
 Casi controllati: lista vuota (restituisce 0); massimo in testa (`precMax == NULL`: cambia la testa, per questo il parametro è `TipoListaGuasti *`); massimo in mezzo o in coda (scavalcamento). Prima del nodo si libera la descrizione, che è una stringa esatta.
 
-Per provare le funzioni serve anche un inserimento (non richiesto dal testo), che mostra come si riempie un nodo con una stringa esatta:
-
-{{inc guasti.c aggiungi}}
-
 Output della prova (`guasti.c`): con i guasti di importanza 18, 30, 20, 10 e `imp = 18`, `eser1` restituisce il guasto "odore di gas in cantina" (30), 2 più importanti, 1 meno importante; tre chiamate di `eser2` eliminano, nell'ordine, quello da 30 (in mezzo), quello da 20 (in mezzo) e quello da 18 (in testa).
 
 ### Esercizio 3: scatola trasparente applicata a eser1
@@ -190,22 +186,6 @@ main:  n = 3
 ```
 
 In ogni RDA `rank` punta sempre alla stessa stringa `"berretto"` del chiamante (si copia il puntatore, non la stringa).
-
-## Traccia 3 (programma degli anni precedenti): "Marmotte sull'albero"
-
-::: esercizio Testo (esempio 2, immatricolati 2024-25 e precedenti)
-Stessi dati della traccia 2. I gradi possibili sono in un array globale di stringhe `gradi` = {"semplice", "marmotta", "berretto", "general0", ..., "general9", "mogol-00", ..., "mogol-99", "GR.mogol"}. A fine anno, per ogni medaglia la marmotta **sale** di un grado, per ogni reprimenda **scende** di un grado, senza superare "GR.mogol" né scendere sotto "semplice".
-**Esercizio 2**: definire la struttura dati per rappresentare il reggimento come **albero**; scrivere `eser2()` che, ricevendo un albero del reggimento e un cognome e nome, aggiorni il record della marmotta (se c'è) con il bilancio delle medaglie e delle reprimende.
-**Esercizio 3**: descrivere formalmente gli algoritmi di **visita** di un albero; esemplificarli su un albero di interi di almeno 9 nodi, con i record di attivazione.
-:::
-
-Scelgo un **albero binario di ricerca** ordinato per cognome e nome: la ricerca della marmotta scende a sinistra o a destra.
-
-{{inc marmotte_albero.c tipi}}
-
-{{inc marmotte_albero.c eser2}}
-
-L'esercizio 3 è svolto nel capitolo 15 (tre visite, albero di 9 nodi, sequenze prodotte e pila delle RDA).
 
 ::: ricorda Da ricordare
 - Le tracce si somigliano tutte: lista di struct, scansione con più risultati, modifica della lista.

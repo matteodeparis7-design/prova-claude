@@ -12,7 +12,7 @@
 
 Si scorre l'array dall'inizio finché si trova l'elemento o si arriva in fondo. Funziona **sempre**, anche se l'array non è ordinato. Nel caso peggiore fa **n** confronti.
 
-{{inc basi.c arrayFun}}
+È la funzione `indiceDi` del [capitolo 6](#array): ciclo con variabile flag che si ferma appena trova l'elemento.
 
 ## Ricerca binaria (dicotomica)
 
@@ -75,7 +75,7 @@ Come quando si ordinano le carte in mano: prendo un elemento alla volta e lo **i
 
 **Divide et impera**, ricorsivo: divido l'array a metà, ordino ricorsivamente le due metà, poi le **fondo** (*merge*) in un'unica sequenza ordinata, confrontando ogni volta i primi elementi delle due metà.
 
-{{inc ricorsione_ordinamento.c merge}}
+Esempio: `29 10 14 37 13` → metà `29 10 14` e `37 13` → ordinate `10 14 29` e `13 37` → fusione: si confrontano i primi (10 e 13, prende 10; poi 14 e 13, prende 13; ...) → `10 13 14 29 37`. Il codice completo è nel file `codice/ricorsione_ordinamento.c`.
 
 ## Quanto costano (complessità, cenni)
 
@@ -104,28 +104,6 @@ Applica a mano selection sort, bubble sort e insertion sort all'array `5 1 4 2 8
 **Bubble**: passata 1: `1 5 4 2 8` → `1 4 5 2 8` → `1 4 2 5 8` → (5 e 8 ok) `1 4 2 5 8`; passata 2: `1 2 4 5 8`; passata 3: nessuno scambio, fine.
 
 **Insertion**: inserisco 1 → `1 5|4 2 8`; inserisco 4 → `1 4 5|2 8`; inserisco 2 → `1 2 4 5|8`; inserisco 8 → `1 2 4 5 8`.
-:::
-
-::: esercizio Esercizio 12.2
-Adatta il selection sort per ordinare la tabella dei voli (capitolo 10) per **codice** crescente.
-:::
-
-::: soluzione
-```c
-void ordinaPerCodice(TipoTabella *t) {
-  int i, j, iMin;
-  TipoVolo tmp;
-  for (i = 0; i < t->quantiVoli - 1; i++) {
-    iMin = i;
-    for (j = i + 1; j < t->quantiVoli; j++)
-      if (strcmp(t->arrayVoli[j].codice, t->arrayVoli[iMin].codice) < 0)
-        iMin = j;
-    tmp = t->arrayVoli[i];                 /* le struct si assegnano con = */
-    t->arrayVoli[i] = t->arrayVoli[iMin];
-    t->arrayVoli[iMin] = tmp;
-  }
-}
-```
 :::
 
 ::: ricorda Da ricordare
