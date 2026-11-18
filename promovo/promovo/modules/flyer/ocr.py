@@ -73,6 +73,7 @@ class Line:
     kind: str = ""                   # price | unit | name | format | noise
     cents: int | None = None
     used: bool = False
+    busy: float = 0.0                # quanto è "mossa" l'immagine intorno: 0 fondo pulito, 1 foto o disegno
 
     @property
     def h(self) -> float:
@@ -502,13 +503,57 @@ def lines_to_offers(lines: list[Line], page_no: int) -> list[OcrOffer]:
     small = [p for p in prices if p not in main]
     # Impaginazione della pagina: nome sopra il prezzo o sotto? Si provano tutte e due e si tiene
     # quella che abbina più prodotti con distanze più corte (come farebbe una persona a colpo d'occhio).
+    # Le didascalie hanno quasi tutte la stessa altezza: si prova anche usando solo quelle
+    # (così le scritte stampate sulle confezioni non vengono prese per il nome del prodotto).
+    # Si prova la pagina in più modi e si tiene la lettura più coerente:
+    # - con tutte le righe;
+    # - senza le scritte minuscole (spesso stampate sulle confezioni): tra le altezze che si ripetono
+    #   su molti prodotti si prende la più grande come riferimento e si tolgono quelle sotto la metà;
+    # - con le sole righe dell'altezza più frequente (le didascalie hanno tutte lo stesso stile).
+    pools = [names]
+    if names:
+        hs = sorted(n.h for n in names)
+        viable = [x for x in hs if sum(1 for y in hs if 0.8 * x <= y <= 1.25 * x) >= max(2, 0.6 * len(main))]
+        if viable:
+            ref_h = max(viable)
+            readable = [n for n in names if n.h >= 0.5 * ref_h]
+            if len(readable) < len(names):
+                pools.append(readable)
+        best_h = max(hs, key=lambda x: sum(1 for y in hs if 0.8 * x <= y <= 1.25 * x))
+        same = [n for n in names if 0.8 * best_h <= n.h <= 1.25 * best_h]
+        if len(same) < len(names) and len(same) >= 0.7 * len(main):
+            pools.append(same)
+    results = []
+    for k, pool in enumerate(pools):
+        for below in (False, True):
+            for ln in lines:
+                ln.used = False
+            pairs = _assign(main, pool, lines, below)
+            cost = sum(d for d, _, _ in pairs) / max(1, len(pairs))
+            hs_ = [(g[0] if below else g[-1]).h for _, _, g in pairs]
+            cv = float(np.std(hs_) / np.mean(hs_)) if len(hs_) > 1 else 0.0
+            ph = float(np.median([p.h for _, p, _ in pairs])) if pairs else 1.0
+            busy = float(np.mean([g.busy for _, _, grp in pairs for g in grp])) if pairs else 0.0
+            results.append((len(pairs), -(cost / ph + 3.0 * cv + 1.5 * busy), below, k))
+    _, _, best_below, best_pool = max(results)
+    for ln in lines:
+        ln.used = False
+    return [_make_offer(p, group, lines, small, page_no)
+            for _, p, group in _assign(main, pools[best_pool], lines, best_below)]
+
+
+def _unused_old_mode(main, names, lines, small, page_no):        # pragma: no cover - tenuto per riferimento
     results = []
     for below in (False, True):
         for ln in lines:
             ln.used = False
         pairs = _assign(main, names, lines, below)
         cost = sum(d for d, _, _ in pairs) / max(1, len(pairs))
-        results.append((len(pairs), -cost, below))
+        # Le didascalie di un volantino hanno tutte lo stesso stile; le scritte sulle confezioni no.
+        hs = [(g[0] if below else g[-1]).h for _, _, g in pairs]
+        cv = float(np.std(hs) / np.mean(hs)) if len(hs) > 1 else 0.0
+        ph = float(np.median([p.h for _, p, _ in pairs])) if pairs else 1.0
+        results.append((len(pairs), -(cost / ph + 3.0 * cv), below))
     best_below = max(results)[2]
     for ln in lines:
         ln.used = False
@@ -550,7 +595,7 @@ def _make_offer(p: Line, group: list[Line], lines: list[Line], small: list[Line]
     tx0, ty0 = min(g.x0 for g in group + [p]), min(g.y0 for g in group + [p])
     tx1, ty1 = max(g.x1 for g in group + [p]), max(g.y1 for g in group + [p])
     pad = 0.4 * p.h
-    zone = (tx0 - pad, ty0 - 0.3 * p.h, tx1 + pad, ty1 + 0.2 * p.h)
+    zone = (tx0 - pad, ty0 - 0.3 * p.h, tx1 + pad, ty1 + 0.45 * p.h)
     fmts = _near(lines, "format", zone)
     for f in fmts:
         f.used = True
@@ -936,9 +981,26 @@ def reread_price(page: pymupdf.Page, line: Line) -> tuple[bool, int | None]:
     return False, None
 
 
+def measure_busy(lines: list[Line], rgb: np.ndarray) -> None:
+    """Per ogni riga: quanto varia l'immagine nella cornice intorno (didascalia su fondo pulito
+    oppure scritta sopra una foto o un disegno, come quelle stampate sulle confezioni)."""
+    H, W = rgb.shape[:2]
+    gray = rgb.mean(axis=2)
+    for ln in lines:
+        m = max(0.6 * ln.h, 0.004)
+        x0, y0 = max(0, int((ln.x0 - m) * W)), max(0, int((ln.y0 - m) * H))
+        x1, y1 = min(W, int((ln.x1 + m) * W) + 1), min(H, int((ln.y1 + m) * H) + 1)
+        ix0, iy0, ix1, iy1 = int(ln.x0 * W), int(ln.y0 * H), int(ln.x1 * W) + 1, int(ln.y1 * H) + 1
+        ring = np.ones((y1 - y0, x1 - x0), bool)
+        ring[max(0, iy0 - y0):max(0, iy1 - y0), max(0, ix0 - x0):max(0, ix1 - x0)] = False
+        vals = gray[y0:y1, x0:x1][ring]
+        ln.busy = float(min(1.0, vals.std() / 60)) if vals.size > 10 else 0.0
+
+
 def read_page(page: pymupdf.Page, page_no: int, confirm: bool = True) -> PageReading:
     lines, rgb = read_lines(page)
     _CELLS.value = Cells(rgb)
+    measure_busy(lines, rgb)
     text = "\n".join(ln.text for ln in sorted(lines, key=lambda ln: (round(ln.y0, 2), ln.x0)))
     offers = lines_to_offers(lines, page_no)
     extra = look_closer(page, lines, offers)

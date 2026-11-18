@@ -198,3 +198,15 @@ def test_video_without_system_ffmpeg(store, big_flyer, tmp_path, monkeypatch):
     assert abs(probe_duration(out) - 3.0) < 0.2
 
 
+
+
+@pytest.mark.skipif(not ocr_available(), reason="lettura ottica non installata")
+def test_image_flyer_with_text_printed_on_packages(session, store, tmp_settings):
+    """Le scritte stampate sulle confezioni ("PASSATA", "BUCATO") non devono diventare il nome del prodotto."""
+    from promovo.modules.flyer.extract import verify_and_clean
+    doc = open_pdf(make_image_only(build_sample_flyer(illustrated=True)))
+    offers = verify_and_clean(extract_heuristic(doc, TODAY), doc).offers
+    truth = {(p.name, p.price_cents) for p in DEFAULT_PRODUCTS}
+    got = {(o.name, o.price_cents) for o in offers}
+    assert len(got & truth) >= 10
+    assert {o.price_cents for o in offers} == {p.price_cents for p in DEFAULT_PRODUCTS}

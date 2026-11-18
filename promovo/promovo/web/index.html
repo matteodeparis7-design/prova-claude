@@ -1013,8 +1013,11 @@ function stepMake(el, f, content, autostart = false) {
 function planCard(c) {
   const blocks = c.body.split(/\n\s*\n/);
   const head = blocks.shift(), note = blocks.length > 1 ? blocks.pop() : "";
+  const si = blocks.findIndex(b => b.startsWith("COSA FILMARE"));
+  const shoot = si >= 0 ? blocks.splice(si, 1)[0].split("\n").slice(1).map(l => l.replace(/^- /, "")) : [];
   return `<div class="card"><h2>${icon("i-calendar")} Piano della settimana</h2><p class="sub">${esc(head)} Ogni riga dice cosa pubblicare, dove e con quale materiale qui sotto.</p>
     <div class="plan">${blocks.map(b => { const [when, where, ...what] = b.split("\n"); return `<div class="plan-row"><div class="plan-when">${esc(when)}</div><div><b>${esc(where || "")}</b><div class="muted">${esc(what.join(" "))}</div></div></div>`; }).join("")}</div>
+    ${shoot.length ? `<div class="explain" style="margin-top:14px">${icon("i-camera")}<div><b>Cosa filmare al banco questa settimana</b> <span class="muted">(poi lo monti in «Dal banco»)</span><ul style="margin:6px 0 0;padding-left:18px">${shoot.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div></div>` : ""}
     <p class="muted" style="margin:12px 0 0;font-size:13px">${esc(note)}</p>
     <div class="toolbar" style="margin-top:12px"><button class="btn sm sec" data-copy-plan>${icon("i-copy")} Copia il piano</button></div></div>`;
 }
