@@ -1,0 +1,24 @@
+PROMOVO - come si usa
+=====================
+
+1. Fai doppio clic su Promovo.exe.
+   La prima volta Windows potrebbe mostrare "Windows ha protetto il PC":
+   premi "Ulteriori informazioni" e poi "Esegui comunque".
+   (Succede con tutti i programmi nuovi che non hanno ancora una firma digitale a pagamento.)
+
+2. Si apre una finestra nera e, dopo qualche secondo, il browser con Promovo.
+   Accesso di prova:  demo@promovo.it  /  promovo2026
+
+3. Per spegnere Promovo chiudi la finestra nera.
+
+I tuoi dati (negozi, volantini, video) restano nella cartella "Dati Promovo",
+qui accanto. Per fare una copia di sicurezza basta copiare quella cartella.
+
+FACOLTATIVO
+- Intelligenza artificiale: crea qui accanto il file CHIAVE_IA.txt e incollaci
+  la chiave Anthropic (console.anthropic.com). Riavvia Promovo.
+- Voce generata del negozio: crea il file CHIAVE_VOCE.txt con la chiave ElevenLabs.
+Le chiavi restano solo su questo computer: non mandarle a nessuno.
+
+La guida completa e' nel file GUIDA.md (si apre anche con il Blocco note).
+Se qualcosa non va: fai una foto della finestra nera e mandala.

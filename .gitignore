@@ -13,3 +13,5 @@ dist/
 .venv/
 CHIAVE_IA.txt
 CHIAVE_VOCE.txt
+promovo/dist/
+promovo/build_pi/

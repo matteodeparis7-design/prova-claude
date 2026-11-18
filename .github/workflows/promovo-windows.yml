@@ -1,0 +1,114 @@
+# Costruisce Promovo per Windows (Promovo.exe), lo prova davvero e lo pubblica da scaricare.
+name: Promovo per Windows
+
+on:
+  push:
+    branches: ["claude/**", "main"]
+    paths: ["promovo/**", ".github/workflows/promovo-windows.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Installa Promovo e gli strumenti
+        working-directory: promovo
+        run: |
+          python -m pip install --upgrade pip
+          pip install ".[test]" pyinstaller
+
+      - name: Tutti i test, su Windows
+        working-directory: promovo
+        env:
+          PROMOVO_WEATHER: "off"
+        run: python -m pytest -q -p no:cacheprovider
+
+      - name: Costruisci Promovo.exe
+        working-directory: promovo/packaging
+        run: pyinstaller promovo.spec --noconfirm --distpath ..\dist --workpath ..\build_pi
+
+      - name: Avvia il programma e provalo (volantino, video, grafiche, Reel dal banco)
+        shell: pwsh
+        env:
+          PROMOVO_WEATHER: "off"
+        run: |
+          $ErrorActionPreference = "Stop"
+          $exe = Resolve-Path "promovo\dist\Promovo\Promovo.exe"
+          $proc = Start-Process -FilePath $exe -PassThru -RedirectStandardOutput avvio.txt -RedirectStandardError errori.txt
+          $base = "http://127.0.0.1:8000"
+          $ok = $false
+          for ($i = 0; $i -lt 120; $i++) {
+            try { $h = Invoke-RestMethod "$base/api/health"; $ok = $true; break } catch { Start-Sleep -Seconds 2 }
+          }
+          if (-not $ok) { Get-Content avvio.txt; Get-Content errori.txt; throw "Promovo non si e' avviato" }
+          $login = Invoke-RestMethod -Method Post "$base/api/auth/login" -ContentType "application/json" `
+                   -Body '{"email":"demo@promovo.it","password":"promovo2026"}'
+          $hd = @{ Authorization = "Bearer " + $login.token }
+          $store = (Invoke-RestMethod "$base/api/stores" -Headers $hd)[0]
+          $flyer = (Invoke-RestMethod "$base/api/stores/$($store.id)/flyers" -Headers $hd)[0]
+          Write-Host "Negozio: $($store.name) - volantino con $($flyer.offer_count) offerte"
+          $job = Invoke-RestMethod -Method Post "$base/api/flyers/$($flyer.id)/kit" -Headers $hd -ContentType "application/json" `
+                 -Body '{"items":["texts","images","video_square"]}'
+          for ($i = 0; $i -lt 300; $i++) {
+            $j = Invoke-RestMethod "$base/api/jobs/$($job.id)" -Headers $hd
+            if ($j.status -in @("done", "failed")) { break }
+            Start-Sleep -Seconds 2
+          }
+          if ($j.status -ne "done" -or $j.result.errors.Count -gt 0) { $j | ConvertTo-Json -Depth 5; throw "Materiali non creati" }
+          Write-Host "Materiali creati: $($j.result.done -join ', ')"
+          # Reel dal banco: un video di prova fatto con l'ffmpeg incluso nel programma
+          python -c "import imageio_ffmpeg,subprocess;subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(),'-y','-v','error','-f','lavfi','-i','testsrc2=s=360x640:d=7:r=30','-f','lavfi','-t','7','-i','anoisesrc=r=48000','-shortest','-pix_fmt','yuv420p','-c:a','aac','banco.mp4'],check=True)"
+          $full = Invoke-RestMethod "$base/api/flyers/$($flyer.id)" -Headers $hd
+          $offer = $full.offers[0].id
+          $resp = curl.exe -s -X POST "$base/api/stores/$($store.id)/clips" -H "Authorization: Bearer $($login.token)" `
+                  -F "video=@banco.mp4;type=video/mp4" -F "offer_id=$offer" -F "voice_mode=none"
+          $clip = $resp | ConvertFrom-Json
+          for ($i = 0; $i -lt 300; $i++) {
+            $c = Invoke-RestMethod "$base/api/jobs/$($clip.id)" -Headers $hd
+            if ($c.status -in @("done", "failed")) { break }
+            Start-Sleep -Seconds 2
+          }
+          if ($c.status -ne "done") { $c | ConvertTo-Json -Depth 5; throw "Reel dal banco non creato" }
+          Write-Host "Reel dal banco creato: $($c.result.duration) secondi"
+          Stop-Process -Id $proc.Id -Force
+          Get-Content avvio.txt -TotalCount 20
+
+      - name: Prepara il pacchetto da scaricare
+        shell: pwsh
+        run: |
+          $dist = "promovo\dist\Promovo"
+          Remove-Item -Recurse -Force "$dist\Dati Promovo" -ErrorAction SilentlyContinue
+          Copy-Item "promovo\packaging\LEGGIMI.txt" "$dist\LEGGIMI.txt"
+          Copy-Item "promovo\GUIDA.md" "$dist\GUIDA.md"
+          Compress-Archive -Path $dist -DestinationPath "Promovo_Windows.zip" -CompressionLevel Optimal
+          "{0:N0} MB" -f ((Get-Item "Promovo_Windows.zip").Length / 1MB)
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Promovo_Windows
+          path: Promovo_Windows.zip
+          retention-days: 30
+
+      - name: Pubblica da scaricare
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: promovo-beta
+          target_commitish: ${{ github.sha }}
+          name: "Promovo (beta per Windows)"
+          prerelease: true
+          files: Promovo_Windows.zip
+          body: |
+            Scarica **Promovo_Windows.zip**, estrai la cartella e fai doppio clic su **Promovo.exe**.
+            Accesso di prova: demo@promovo.it / promovo2026. Istruzioni nel file LEGGIMI.txt.
+            Questa versione è stata provata automaticamente su Windows prima della pubblicazione
+            (test completi, avvio del programma, video, grafiche e Reel dal banco).
