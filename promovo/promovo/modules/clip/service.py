@@ -145,9 +145,13 @@ def template_script(store: Store, offers: list[Offer], flyer: Flyer | None, note
         if o is not None and o not in uniq:
             uniq.append(o)
     cat = uniq[0].category if uniq else ""
-    hook = REPARTO.get(cat, f"Da {store.name}")[:38]
-    parts = []
     note = note.strip().rstrip(".")
+    # Il titolo segue le parole del negoziante; altrimenti il reparto, altrimenti il negozio.
+    if note and len(note) <= 38:
+        hook = note[:1].upper() + note[1:]
+    else:
+        hook = REPARTO.get(cat, f"Da {store.name}")[:38]
+    parts = []
     if note:
         parts.append(note[:1].upper() + note[1:] + ".")
     if uniq:

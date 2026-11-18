@@ -234,12 +234,17 @@ def pick_in_main_scene(times: np.ndarray, score: np.ndarray, cuts: list[float], 
         good = score[a:b]
         return float(np.clip(good - np.percentile(score, 30), 0, None).sum())
     a, b = max(parts, key=value)
+    # Si avvisa solo se si scarta un'inquadratura buona (non il pavimento o un tratto mosso):
+    # qualità media vicina a quella principale e durata di almeno un secondo e mezzo.
+    main_mean = float(score[a:b].mean())
+    lost = any(float(score[x:y].mean()) >= max(main_mean - 1.2, -1.5) and (times[y - 1] - times[x]) >= 1.5
+               for x, y in parts if (x, y) != (a, b))
     # i tempi del sotto-intervallo sono già quelli del video intero
     segs = pick_segments(times[a:b], score[a:b], [], target, max_segments=max_segments)
     lo, hi = float(times[a] - 0.5 / SAMPLE_FPS), float(times[b - 1] + 0.5 / SAMPLE_FPS)
     for seg in segs:
         seg.start, seg.end = max(seg.start, lo), min(seg.end, hi)
-    return [x for x in segs if x.length > 0.5], True
+    return [x for x in segs if x.length > 0.5], lost
 
 
 def analyze(path: Path, target: float = 11.0) -> Analysis:
