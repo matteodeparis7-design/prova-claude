@@ -20,10 +20,12 @@ Questo argomento esce spesso come **esercizio 3** ("descrivere il metodo a scato
 
 | Tipo | Quando si scopre | Esempio |
 |---|---|---|
-| **lessicale** | compilazione | `returna x;` (parola che non esiste) |
-| **sintattico** | compilazione | `foor (i=0; ...)`, `;` mancante |
-| **semantico** | compilazione | `int i = 8.4;` (tipi incompatibili), variabile non dichiarata |
+| **lessicale** | compilazione | un simbolo che non appartiene al linguaggio: `x = 5 @ 3;`, una stringa non chiusa `"ciao` |
+| **sintattico** | compilazione | parole giuste in ordine sbagliato: `;` mancante, parentesi non chiuse, `if x > 0` senza parentesi |
+| **semantico** | compilazione | frase corretta ma senza senso nel programma: variabile non dichiarata, funzione chiamata con il numero sbagliato di parametri |
 | **logico / di codifica** | **solo con i test** | `prod = prod + i` invece di `prod = prod * i`; `i <= i` invece di `i <= n` |
+
+Nelle slide il professore mostra questi tipi di errore su una funzione `fattITER` piena di sbagli: lo scopo è saper dire **in quale fase** ogni errore viene scoperto. Gli errori logici sono i più pericolosi, perché il compilatore non li vede.
 
 Il compilatore segnala un errore **dopo** averlo trovato: la riga sbagliata può essere **prima** di quella indicata.
 

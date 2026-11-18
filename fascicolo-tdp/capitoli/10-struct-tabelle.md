@@ -132,7 +132,7 @@ int eliminaVolo(TipoTabella *t, char cod[]) {
 ```
 
 ::: nota Limiti della tabella con array (e perché arrivano le liste)
-Con l'array il numero massimo di elementi è fissato (`MAXVOLI`): o si spreca memoria o si rischia di riempirla. Con un **array dinamico** e `realloc` si può farla crescere (`voli6.c`), ma ogni ingrandimento copia tutto. Inserire o togliere in mezzo richiede di **spostare** molti elementi. La **lista collegata** (capitolo 14) risolve questi problemi: cresce un nodo alla volta e si inserisce o elimina **senza spostare nulla**. Per questo all'esame la "tabella" va sempre realizzata come **lista**.
+Con l'array il numero massimo di elementi è fissato (`MAXVOLI`): o si spreca memoria o si rischia di riempirla. Con un **array dinamico** e `realloc` si può farla crescere (`voli6.c`), ma ogni ingrandimento copia tutto. Inserire o togliere in mezzo richiede di **spostare** molti elementi. La **lista collegata** (capitolo 14) risolve questi problemi: cresce un nodo alla volta e si inserisce o elimina **senza spostare nulla**. Per questo nei testi d'esame pubblicati la "tabella" è sempre chiesta **come lista** ("lista rappresentata mediante record e puntatori").
 :::
 
 ## Tipi di dato astratti (ADT)

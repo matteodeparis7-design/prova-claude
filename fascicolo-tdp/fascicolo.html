@@ -452,7 +452,7 @@ details[open] > summary { border-bottom: 1px solid var(--rule); }
 </table>
 <p>Le date possono cambiare: controlla sempre la <a href="https://www.diag.uniroma1.it/marte/homepage/didattica/tdp-latina/tdp-esami.html">pagina esami del corso</a> e Classroom.</p>
 <h2 id="esame-6">Come usare questo fascicolo</h2>
-<p>Prima di tutto leggi il <a href="#laboratorio">Laboratorio</a>: spiega come si <strong>impara a programmare in C</strong> davvero (ambiente, errori del compilatore, debugging, metodo). Alla fine del fascicolo c'è la <a href="#palestra">Palestra di programmazione</a>, con 22 esercizi graduati da fare al computer man mano che studi. Il fascicolo segue l'ordine del corso. Ogni capitolo ha spiegazioni semplici, codice C commentato e provato, riquadri colorati ed esercizi con soluzione nascosta (clicca su "Soluzione" solo dopo averci provato davvero).</p>
+<p>Prima di tutto leggi il <a href="#laboratorio">Laboratorio</a>: spiega come si <strong>impara a programmare in C</strong> davvero (ambiente, errori del compilatore, debugging, metodo). Alla fine del fascicolo c'è la <a href="#palestra">Palestra di programmazione</a>, con 22 esercizi graduati da fare al computer man mano che studi. Il fascicolo segue l'ordine del corso. Ogni capitolo ha spiegazioni semplici, codice C commentato e provato, riquadri colorati ed esercizi con soluzione. Nella versione web la soluzione è nascosta (si apre cliccando "Soluzione"); sul fascicolo stampato <strong>coprila con un foglio</strong> finché non hai provato davvero da solo.</p>
 <p>Riquadri colorati: blu <strong>All'esame</strong> (cosa serve per lo scritto e l'orale), rosso <strong>Errore tipico</strong> (sbagli che costano punti), verde <strong>Da sapere</strong> (collegamenti utili), viola <strong>Esercizio</strong>.</p>
 <h3>Un piano di studio consigliato (circa 8 settimane prima di gennaio)</h3>
 <table>
@@ -921,10 +921,53 @@ details[open] > summary { border-bottom: 1px solid var(--rule); }
             1011001000   (712)</code></pre></figure>
 <p>Se il risultato non sta negli n bit si ha <strong>overflow</strong>.</p>
 <p><strong>Sottrazione binaria</strong> (con il "prestito", come in decimale): 0-0=0, 1-0=1, 1-1=0, 0-1=1 <strong>con prestito</strong> di 1 dalla cifra a sinistra.</p>
-<figure class="codice schema"><pre><code>    1 1 0 1 0     (26)         colonna per colonna, da destra:
-  -   1 1 1 1     (15)         0-1: prendo in prestito -&gt; 10-1 = 1
-  -----------                  1-1 (meno il prestito) ... e cosi` via
-    0 1 0 1 1     (11)         verifica: 26 - 15 = 11 = 01011   ok</code></pre></figure>
+<figure class="codice schema"><pre><code>      1 1 0 1 0     (26)
+    - 0 1 1 1 1     (15)
+    -----------
+      0 1 0 1 1     (11)      verifica: 8 + 2 + 1 = 11 = 26 - 15   ok</code></pre></figure>
+<p>Colonna per colonna, da destra (il "prestito" vale 2 nella colonna che lo riceve e si toglie 1 alla colonna a sinistra):</p>
+<table>
+<thead>
+<tr>
+<th>Colonna</th>
+<th>Calcolo</th>
+<th>Cifra</th>
+<th>Prestito alla colonna dopo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1a (destra)</td>
+<td>0 - 1: non si può, prendo in prestito: 2 + 0 - 1 = 1</td>
+<td>1</td>
+<td>sì</td>
+</tr>
+<tr>
+<td>2a</td>
+<td>1 - 1 - 1 (prestito): non si può, prendo in prestito: 2 + 1 - 1 - 1 = 1</td>
+<td>1</td>
+<td>sì</td>
+</tr>
+<tr>
+<td>3a</td>
+<td>0 - 1 - 1: prendo in prestito: 2 + 0 - 1 - 1 = 0</td>
+<td>0</td>
+<td>sì</td>
+</tr>
+<tr>
+<td>4a</td>
+<td>1 - 1 - 1: prendo in prestito: 2 + 1 - 1 - 1 = 1</td>
+<td>1</td>
+<td>sì</td>
+</tr>
+<tr>
+<td>5a</td>
+<td>1 - 0 - 1 = 0</td>
+<td>0</td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
 <p>Nei calcolatori però non si sottrae così: si <strong>somma il complemento a due</strong> del sottraendo (vedi sotto), così basta un solo circuito.</p>
 <p><strong>Quanti bit servono al minimo?</strong> Per un numero N ≥ 0 in binario puro serve il più piccolo n tale che 2<sup>n</sup> &gt; N, cioè 2<sup>n</sup> - 1 ≥ N. Esempi: 121 &lt; 128 = 2<sup>7</sup>, quindi <strong>7 bit</strong>; 591 &lt; 1024 = 2<sup>10</sup> (e 591 &gt; 511), quindi <strong>10 bit</strong>; 256 = 2<sup>8</sup> richiede <strong>9 bit</strong> (con 8 si arriva solo a 255). In complemento a due bisogna che il numero stia in [-2<sup>n-1</sup>, 2<sup>n-1</sup>-1]: per 121 servono 8 bit, per -591 ne servono 11.</p>
 <h2 id="rappresentazione-4">Interi con segno</h2>
@@ -1398,7 +1441,7 @@ letti dal basso:  1216 = 10011000000   (11 cifre; verifica: 1024+128+64 = 1216)<
 <h3>Variabili contatore e variabili "flag"</h3>
 <ul>
 <li>Una variabile <strong>contatore</strong> conta le iterazioni (o gli eventi) e spesso decide quando fermarsi (<code>for (i = 0; i &lt; 5; i++)</code> per ripetere 5 volte).</li>
-<li>Una variabile <strong>flag</strong> ("bandiera", detta anche sentinella) vale 0 finché non accade un evento, poi viene "alzata" a 1; la condizione del ciclo la controlla (<code>while (!trovato &amp;&amp; ...)</code>). Serve per <strong>fermarsi appena</strong> si trova quello che si cerca.</li>
+<li>Una variabile <strong>flag</strong> ("bandiera"; nelle slide a volte è chiamata anche sentinella, ma in questo fascicolo "sentinella" è il valore che segna la fine dei dati) vale 0 finché non accade un evento, poi viene "alzata" a 1; la condizione del ciclo la controlla (<code>while (!trovato &amp;&amp; ...)</code>). Serve per <strong>fermarsi appena</strong> si trova quello che si cerca.</li>
 </ul>
 <h2 id="controllo-5">Gli schemi di ciclo da sapere a memoria</h2>
 <p>Quasi tutti gli esercizi sono combinazioni di questi schemi. All'esame, sulle liste, li userai identici.</p>
@@ -2316,7 +2359,7 @@ strcpy:   nuova -&gt; | P | O | C | O | \0 |   5 caratteri, nessuno sprecato</co
 <span class="w">  </span><span class="n">t</span><span class="o">-&gt;</span><span class="n">quantiVoli</span><span class="o">--</span><span class="p">;</span>
 <span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 <span class="p">}</span></code></pre></figure>
-<aside class="box box-nota"><p class="box-titolo">Limiti della tabella con array (e perché arrivano le liste)</p><p>Con l'array il numero massimo di elementi è fissato (<code>MAXVOLI</code>): o si spreca memoria o si rischia di riempirla. Con un <strong>array dinamico</strong> e <code>realloc</code> si può farla crescere (<code>voli6.c</code>), ma ogni ingrandimento copia tutto. Inserire o togliere in mezzo richiede di <strong>spostare</strong> molti elementi. La <strong>lista collegata</strong> (capitolo 14) risolve questi problemi: cresce un nodo alla volta e si inserisce o elimina <strong>senza spostare nulla</strong>. Per questo all'esame la "tabella" va sempre realizzata come <strong>lista</strong>.</p></aside>
+<aside class="box box-nota"><p class="box-titolo">Limiti della tabella con array (e perché arrivano le liste)</p><p>Con l'array il numero massimo di elementi è fissato (<code>MAXVOLI</code>): o si spreca memoria o si rischia di riempirla. Con un <strong>array dinamico</strong> e <code>realloc</code> si può farla crescere (<code>voli6.c</code>), ma ogni ingrandimento copia tutto. Inserire o togliere in mezzo richiede di <strong>spostare</strong> molti elementi. La <strong>lista collegata</strong> (capitolo 14) risolve questi problemi: cresce un nodo alla volta e si inserisce o elimina <strong>senza spostare nulla</strong>. Per questo nei testi d'esame pubblicati la "tabella" è sempre chiesta <strong>come lista</strong> ("lista rappresentata mediante record e puntatori").</p></aside>
 <h2 id="struct-5">Tipi di dato astratti (ADT)</h2>
 <p>Un <strong>tipo di dato astratto</strong> si definisce dicendo <strong>che cosa</strong> si può fare con i dati (le operazioni e il loro significato), <strong>senza dire come</strong> sono memorizzati. Esempio: l'ADT <em>Tabella</em> ha le operazioni aggiungi, elimina, cerca, modifica. Poi si sceglie una <strong>rappresentazione concreta</strong>: array di struct, array dinamico, lista collegata... Il resto del programma usa solo le funzioni, quindi si può cambiare la rappresentazione senza riscrivere tutto.</p>
 <p>L'ADT <strong>Lista</strong> è una sequenza di elementi con operazioni come: crea lista vuota, è vuota?, inserisci in testa/in coda/in ordine, elimina, cerca, lunghezza. Si può rappresentare con un array (cenni a lezione) o con <strong>struct e puntatori</strong> (la rappresentazione che usiamo).</p>
@@ -2613,17 +2656,17 @@ passata 4:  nessuno scambio: fine</code></pre></figure>
 <tr>
 <td><strong>lessicale</strong></td>
 <td>compilazione</td>
-<td><code>returna x;</code> (parola che non esiste)</td>
+<td>un simbolo che non appartiene al linguaggio: <code>x = 5 @ 3;</code>, una stringa non chiusa <code>"ciao</code></td>
 </tr>
 <tr>
 <td><strong>sintattico</strong></td>
 <td>compilazione</td>
-<td><code>foor (i=0; ...)</code>, <code>;</code> mancante</td>
+<td>parole giuste in ordine sbagliato: <code>;</code> mancante, parentesi non chiuse, <code>if x &gt; 0</code> senza parentesi</td>
 </tr>
 <tr>
 <td><strong>semantico</strong></td>
 <td>compilazione</td>
-<td><code>int i = 8.4;</code> (tipi incompatibili), variabile non dichiarata</td>
+<td>frase corretta ma senza senso nel programma: variabile non dichiarata, funzione chiamata con il numero sbagliato di parametri</td>
 </tr>
 <tr>
 <td><strong>logico / di codifica</strong></td>
@@ -2632,6 +2675,7 @@ passata 4:  nessuno scambio: fine</code></pre></figure>
 </tr>
 </tbody>
 </table>
+<p>Nelle slide il professore mostra questi tipi di errore su una funzione <code>fattITER</code> piena di sbagli: lo scopo è saper dire <strong>in quale fase</strong> ogni errore viene scoperto. Gli errori logici sono i più pericolosi, perché il compilatore non li vede.</p>
 <p>Il compilatore segnala un errore <strong>dopo</strong> averlo trovato: la riga sbagliata può essere <strong>prima</strong> di quella indicata.</p>
 <p>Un programma che compila <strong>non è detto che sia corretto</strong>. Bisogna testarlo.</p>
 <h2 id="test-3">Che cos'è un test</h2>
@@ -3085,7 +3129,7 @@ RDA main                      riceve 2</code></pre></figure>
 <span class="w">  </span><span class="n">free</span><span class="p">(</span><span class="n">corr</span><span class="p">);</span>
 <span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 <span class="p">}</span></code></pre></figure></p></div></details>
-<aside class="box box-esercizio"><p class="box-titolo">Esercizio 14.4</p><p>Scrivi <code>void invertiLista(TipoLista *pl)</code> che inverte la lista <strong>senza allocare</strong> nuovi nodi (cambiando solo i <code>next</code>).</p></aside>
+<aside class="box box-esercizio"><p class="box-titolo">Esercizio 14.3</p><p>Scrivi <code>void invertiLista(TipoLista *pl)</code> che inverte la lista <strong>senza allocare</strong> nuovi nodi (cambiando solo i <code>next</code>).</p></aside>
 <details class="sol"><summary>Soluzione</summary><div class="sol-corpo"><p><figure class="codice"><pre><code><span class="kt">void</span><span class="w"> </span><span class="nf">invertiLista</span><span class="p">(</span><span class="n">TipoLista</span><span class="w"> </span><span class="o">*</span><span class="n">pl</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="n">TipoNodo</span><span class="w"> </span><span class="o">*</span><span class="n">prec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">corr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="n">pl</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">succ</span><span class="p">;</span>
 <span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">corr</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -3833,7 +3877,7 @@ main:  n = 3</code></pre></figure>
 </ul></aside></section>
 <section class="capitolo" id="esercitazione" aria-labelledby="t-esercitazione"><header class="cap-testa"><p class="cap-num">Capitolo 18</p><h1 id="t-esercitazione">Tracce di esercitazione (nuove, stile esame)</h1></header><aside class="box box-obiettivi"><p class="box-titolo">Cosa imparerai</p><ul>
 <li>mettere alla prova la preparazione con tracce nuove</li>
-<li>eliminare più nodi, inserire in coda con controllo dei doppioni, fondere liste</li>
+<li>eliminare più nodi, inserire in coda con controllo dei doppioni, inserire dopo un nodo dato</li>
 </ul></aside>
 <p>Le ho scritte sul modello delle tracce del professore. <strong>Usale come simulazione d'esame</strong>: carta e penna, 2 ore e 30, niente fascicolo aperto. Poi correggi con le soluzioni e prova il codice al computer.</p>
 <h2 id="esercitazione-1">Traccia A: "Biblioteca di quartiere"</h2>
@@ -4107,7 +4151,7 @@ RDA main: t = 370</code></pre></figure></p>
 </tr>
 <tr>
 <td>complemento a 2, n bit</td>
-<td>[-2<sup>n-1</sup>, 2<sup>n-1</sup> - 1]; negativo: inverti i bit e somma 1</td>
+<td>[-2<sup>n-1</sup>, 2<sup>n-1</sup> - 1]; negativo -V: scrivi V su n bit, inverti tutti i bit, somma 1</td>
 </tr>
 <tr>
 <td>float 32 bit</td>
@@ -4124,7 +4168,8 @@ RDA main: t = 370</code></pre></figure></p>
 </tbody>
 </table>
 <h2 id="formulario-2">C in una pagina</h2>
-<figure class="codice"><pre><code><span class="n">printf</span><span class="p">(</span><span class="s">"%d %c %f %s %lf</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span><span class="w">   </span><span class="n">scanf</span><span class="p">(</span><span class="s">"%d %lf %s"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">stringa</span><span class="p">);</span>
+<figure class="codice"><pre><code><span class="n">printf</span><span class="p">(</span><span class="s">"%d %c %f %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span><span class="w">  </span><span class="n">scanf</span><span class="p">(</span><span class="s">"%d %lf %s"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">stringa</span><span class="p">);</span>
+<span class="cm">/* double: %f in printf, %lf in scanf (in ANSI C89 %lf in printf e` scorretto) */</span>
 <span class="cm">/* divisione intera: 7/2 == 3;  reale: (double) a / b                      */</span>
 <span class="cm">/* stringhe: strlen strcpy strcmp(a,b)==0 strcat  (string.h)              */</span>
 <span class="cm">/* memoria:  p = malloc(n * sizeof(T)); if (p == NULL) ...; free(p);       */</span>
@@ -4623,7 +4668,7 @@ RDA main: t = 370</code></pre></figure></p>
 <span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></figure></p>
 <p><code>{5,9,1,7}</code> → <code>5 1 9 7</code>, min era in 2, max in 1.</p></div></details>
-<h2 id="palestra-6">Livello 6: struct, memoria dinamica, file</h2>
+<h2 id="palestra-6">Livello 6: struct e memoria dinamica</h2>
 <aside class="box box-esercizio"><p class="box-titolo">Esercizio P19. Classe dinamica</p><p>Leggi n, alloca dinamicamente un array di n studenti (nome come stringa esatta, voto), calcola la media e stampa chi sta sopra la media. Libera tutto alla fine.</p></aside>
 <details class="sol"><summary>Soluzione</summary><div class="sol-corpo"><p><figure class="codice"><figcaption>codice/palestra/es21.c</figcaption><pre><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdlib.h&gt;</span>

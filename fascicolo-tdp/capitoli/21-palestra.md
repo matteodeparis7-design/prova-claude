@@ -201,7 +201,7 @@ Scrivi una funzione che scambia di posto minimo e massimo di un array e restitui
 `{5,9,1,7}` → `5 1 9 7`, min era in 2, max in 1.
 :::
 
-## Livello 6: struct, memoria dinamica, file
+## Livello 6: struct e memoria dinamica
 
 ::: esercizio Esercizio P19. Classe dinamica
 Leggi n, alloca dinamicamente un array di n studenti (nome come stringa esatta, voto), calcola la media e stampa chi sta sopra la media. Libera tutto alla fine.

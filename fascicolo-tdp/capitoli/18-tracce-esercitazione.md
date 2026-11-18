@@ -2,7 +2,7 @@
 
 ::: obiettivi Cosa imparerai
 - mettere alla prova la preparazione con tracce nuove
-- eliminare più nodi, inserire in coda con controllo dei doppioni, fondere liste
+- eliminare più nodi, inserire in coda con controllo dei doppioni, inserire dopo un nodo dato
 :::
 
 Le ho scritte sul modello delle tracce del professore. **Usale come simulazione d'esame**: carta e penna, 2 ore e 30, niente fascicolo aperto. Poi correggi con le soluzioni e prova il codice al computer.

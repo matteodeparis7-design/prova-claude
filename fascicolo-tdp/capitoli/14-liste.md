@@ -255,7 +255,7 @@ int eliminaUltimo(TipoLista *pl) {
 ```
 :::
 
-::: esercizio Esercizio 14.4
+::: esercizio Esercizio 14.3
 Scrivi `void invertiLista(TipoLista *pl)` che inverte la lista **senza allocare** nuovi nodi (cambiando solo i `next`).
 :::
 

@@ -82,11 +82,21 @@ Se il risultato non sta negli n bit si ha **overflow**.
 **Sottrazione binaria** (con il "prestito", come in decimale): 0-0=0, 1-0=1, 1-1=0, 0-1=1 **con prestito** di 1 dalla cifra a sinistra.
 
 ```text
-    1 1 0 1 0     (26)         colonna per colonna, da destra:
-  -   1 1 1 1     (15)         0-1: prendo in prestito -> 10-1 = 1
-  -----------                  1-1 (meno il prestito) ... e cosi` via
-    0 1 0 1 1     (11)         verifica: 26 - 15 = 11 = 01011   ok
+      1 1 0 1 0     (26)
+    - 0 1 1 1 1     (15)
+    -----------
+      0 1 0 1 1     (11)      verifica: 8 + 2 + 1 = 11 = 26 - 15   ok
 ```
+
+Colonna per colonna, da destra (il "prestito" vale 2 nella colonna che lo riceve e si toglie 1 alla colonna a sinistra):
+
+| Colonna | Calcolo | Cifra | Prestito alla colonna dopo |
+|---|---|---|---|
+| 1a (destra) | 0 - 1: non si può, prendo in prestito: 2 + 0 - 1 = 1 | 1 | sì |
+| 2a | 1 - 1 - 1 (prestito): non si può, prendo in prestito: 2 + 1 - 1 - 1 = 1 | 1 | sì |
+| 3a | 0 - 1 - 1: prendo in prestito: 2 + 0 - 1 - 1 = 0 | 0 | sì |
+| 4a | 1 - 1 - 1: prendo in prestito: 2 + 1 - 1 - 1 = 1 | 1 | sì |
+| 5a | 1 - 0 - 1 = 0 | 0 | no |
 
 Nei calcolatori però non si sottrae così: si **somma il complemento a due** del sottraendo (vedi sotto), così basta un solo circuito.
 

@@ -11,7 +11,7 @@
 |---|---|
 | binario puro, n bit | [0, 2<sup>n</sup> - 1] |
 | modulo e segno, n bit | [-(2<sup>n-1</sup> - 1), 2<sup>n-1</sup> - 1], due zeri |
-| complemento a 2, n bit | [-2<sup>n-1</sup>, 2<sup>n-1</sup> - 1]; negativo: inverti i bit e somma 1 |
+| complemento a 2, n bit | [-2<sup>n-1</sup>, 2<sup>n-1</sup> - 1]; negativo -V: scrivi V su n bit, inverti tutti i bit, somma 1 |
 | float 32 bit | 1 segno, 8 esponente (eccesso 127), 23 mantissa: (-1)<sup>s</sup> × 1.M × 2<sup>E-127</sup> |
 | potenze di 2 | 2<sup>7</sup>=128, 2<sup>8</sup>=256, 2<sup>10</sup>=1024, 2<sup>11</sup>=2048, 2<sup>15</sup>=32768, 2<sup>16</sup>=65536 |
 | ASCII | '0'=48, 'A'=65, 'a'=97, '\0'=0 |
@@ -19,7 +19,8 @@
 ## C in una pagina
 
 ```c
-printf("%d %c %f %s %lf\n", ...);   scanf("%d %lf %s", &i, &d, stringa);
+printf("%d %c %f %s\n", ...);  scanf("%d %lf %s", &i, &d, stringa);
+/* double: %f in printf, %lf in scanf (in ANSI C89 %lf in printf e` scorretto) */
 /* divisione intera: 7/2 == 3;  reale: (double) a / b                      */
 /* stringhe: strlen strcpy strcmp(a,b)==0 strcat  (string.h)              */
 /* memoria:  p = malloc(n * sizeof(T)); if (p == NULL) ...; free(p);       */

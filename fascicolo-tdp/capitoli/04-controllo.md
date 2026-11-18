@@ -128,7 +128,7 @@ Altro caso classico: `while (x != 0) x = x - 2;` termina solo se x parte pari e 
 ### Variabili contatore e variabili "flag"
 
 - Una variabile **contatore** conta le iterazioni (o gli eventi) e spesso decide quando fermarsi (`for (i = 0; i < 5; i++)` per ripetere 5 volte).
-- Una variabile **flag** ("bandiera", detta anche sentinella) vale 0 finché non accade un evento, poi viene "alzata" a 1; la condizione del ciclo la controlla (`while (!trovato && ...)`). Serve per **fermarsi appena** si trova quello che si cerca.
+- Una variabile **flag** ("bandiera"; nelle slide a volte è chiamata anche sentinella, ma in questo fascicolo "sentinella" è il valore che segna la fine dei dati) vale 0 finché non accade un evento, poi viene "alzata" a 1; la condizione del ciclo la controlla (`while (!trovato && ...)`). Serve per **fermarsi appena** si trova quello che si cerca.
 
 ## Gli schemi di ciclo da sapere a memoria
 
