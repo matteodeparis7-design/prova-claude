@@ -164,6 +164,8 @@ COME LAVORI
    (di solito quello messo in evidenza dal negozio o con il risparmio più forte) e il motivo concreto
    per cui interessa a chi fa la spesa: un risparmio in euro, un prezzo sotto l'euro, un momento d'uso
    reale (la cena del venerdì, la colazione, la scorta per la settimana), il periodo dell'anno.
+   Nel campo "protagonista" scrivi il nome di quel prodotto esattamente come nelle offerte:
+   il piano di pubblicazione della settimana sarà costruito intorno a lui.
 2. Ogni canale ha un lavoro diverso: non ripetere lo stesso testo quattro volte.
 
 PRINCIPI DI SCRITTURA
@@ -239,6 +241,7 @@ PROCEDURA
 class AIContent(BaseModel):
     strategia: str = Field(default="", description="L'idea della settimana: prodotto protagonista e perché, "
                                                     "in 2-3 frasi. Si scrive prima dei testi.")
+    protagonista: str = Field(default="", description="Nome del prodotto protagonista, come scritto nelle offerte")
     instagram_caption: str = Field(description="Didascalia Instagram senza hashtag")
     hashtags: list[str] = Field(description="6-10 hashtag senza il simbolo #")
     facebook_post: str = Field(description="Post Facebook")
@@ -450,20 +453,21 @@ def template_pack(store: Store, flyer: Flyer, offers: list[Offer]) -> dict[str, 
 
 # ------------------------------------------------------------------ piano della settimana
 
-def weekly_plan(store: Store, flyer: Flyer, offers: list[Offer], today: date | None = None) -> str:
+def weekly_plan(store: Store, flyer: Flyer, offers: list[Offer], today: date | None = None,
+                hero: Offer | None = None) -> str:
     """Cosa pubblicare, dove e quando, con i materiali che Promovo ha appena creato."""
     start = flyer.valid_from or today or date.today()
     end = flyer.valid_to or start + timedelta(days=6)
     if end < start:
         end = start + timedelta(days=6)
     span = (end - start).days
-    hero = hero_offer(offers) if offers else None
+    hero = hero or (hero_offer(offers) if offers else None)
     others = [o for o in featured_offers(flyer) if o is not hero]
 
     def day(n: int) -> date:
         return start + timedelta(days=min(max(n, 0), span))
 
-    weekend = next((start + timedelta(days=i) for i in range(span + 1)
+    weekend = next((start + timedelta(days=i) for i in range(2, span + 1)
                     if (start + timedelta(days=i)).weekday() == 4), None)   # il venerdì
     items: list[tuple[date, str, str, str]] = [
         (day(0), "ore 12:30", "Instagram e TikTok · Reel 9:16",
@@ -510,6 +514,18 @@ def _store_info(store: Store, flyer: Flyer, offers: list[Offer]) -> str:
         f"Prodotto protagonista suggerito: {product_name(hero)}\n\n"
         f"OFFERTE (con i numeri già calcolati, da usare così come sono)\n{offer_facts(offers)}"
     )
+
+
+def _match_offer(name: str, offers: list[Offer]) -> Offer | None:
+    """L'offerta che l'IA ha indicato come protagonista (solo se esiste davvero)."""
+    key = (name or "").strip().lower()
+    if not key:
+        return None
+    for o in offers:
+        full = product_name(o, False).lower()
+        if key == full or o.name.lower() in key or key in full:
+            return o
+    return None
 
 
 def generate_content(store: Store, flyer: Flyer, llm: LLM | None) -> ContentPack:
@@ -559,7 +575,9 @@ def generate_content(store: Store, flyer: Flyer, llm: LLM | None) -> ContentPack
         texts[kind] = piece
     if "STOP" not in texts["whatsapp"]["body"]:
         texts["whatsapp"]["body"] += f"\n\n{STOP_LINE}"
-    texts["plan"] = template["plan"]
+    chosen = _match_offer(getattr(draft, "protagonista", ""), offers)
+    texts["plan"] = ({"title": "Piano della settimana", "body": weekly_plan(store, flyer, offers, hero=chosen),
+                      "meta": {}} if chosen else template["plan"])
     return ContentPack(texts=texts, source="ai", warnings=warnings)
 
 

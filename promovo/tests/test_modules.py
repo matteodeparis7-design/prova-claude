@@ -340,3 +340,12 @@ def test_ai_text_with_cliches_is_flagged(store, flyer, fake_llm):
         whatsapp_message="€ 0,79", newsletter_subject="Pasta", newsletter_body="€ 0,79"))
     pack = generate_content(store, flyer, fake_llm)          # nessun caporedattore: resta la bozza
     assert any("instagram" in w and "viaggio" in w for w in pack.warnings)
+
+
+def test_plan_follows_the_ai_protagonist(store, flyer, fake_llm):
+    other = [o for o in flyer.offers if o is not hero_offer(list(flyer.offers))][0]
+    fake_llm.on_parse("AIContent", lambda c: AIContent(
+        protagonista=other.name, instagram_caption="ok", hashtags=[], facebook_post="ok",
+        whatsapp_message="ok", newsletter_subject="ok", newsletter_body="ok"))
+    plan = generate_content(store, flyer, fake_llm).texts["plan"]["body"]
+    assert f"«{other.name}», il prodotto protagonista" in plan

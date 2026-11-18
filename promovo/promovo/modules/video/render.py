@@ -561,10 +561,10 @@ class Renderer:
 
     # -- offerta
 
-    def _layout(self):
+    def _layout(self, stacked: bool | None = None):
         u, W, H = self.u, self.W, self.H
         top, bottom = self.header_h + 30 * u, H - 90 * u
-        if self.portrait:
+        if self.portrait if stacked is None else stacked:
             img_box = (int(W * 0.9), int((bottom - top) * 0.5))
             img_xy = ((W - img_box[0]) / 2, top)
             text_x, text_w = W * 0.08, int(W * 0.84)
@@ -582,8 +582,19 @@ class Renderer:
         bg = self.soft().copy()
         self._header(bg)
         self._footer(bg)
-        img_box, img_xy, text_x, text_w, text_top, text_bottom = self._layout()
+        # Nel quadrato una foto larga (pesce nel piatto, salame sul tagliere) va sopra, a tutta larghezza.
+        wide = False
+        if self.square and o.image_path:
+            try:
+                with Image.open(o.image_path) as im:
+                    wide = im.width >= im.height * 1.3
+            except OSError:
+                wide = False
+        stacked = self.portrait or wide
+        img_box, img_xy, text_x, text_w, text_top, text_bottom = self._layout(stacked)
         sq = 0.82 if self.square else 1.0
+        if wide:
+            sq = 0.7
 
         brand_l = None
         if o.brand and o.brand.lower() not in o.name.lower():
@@ -609,7 +620,7 @@ class Renderer:
         block_h = sum(x.height for x in items) + gap_s * (len(items) - 1) + gap_m + price.height
         extras = [x for x in (old, unit, cond) if x is not None]
         block_h += sum(x.height + gap_s * 1.5 for x in extras)
-        if self.portrait:
+        if stacked:
             # In verticale il prodotto occupa tutto lo spazio che il testo lascia libero.
             avail = text_bottom - img_xy[1]
             img_h = int(min(avail - block_h - 40 * u, avail * 0.66))
