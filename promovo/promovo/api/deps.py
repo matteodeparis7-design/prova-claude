@@ -19,6 +19,7 @@ class AppState:
     settings: Settings
     db: Database
     llm: LLM | None
+    voice_client: object | None = None      # client HTTP per la voce (solo nei test se ne passa uno finto)
 
 
 def state(request: Request) -> AppState:

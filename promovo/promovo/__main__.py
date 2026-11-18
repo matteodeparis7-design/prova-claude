@@ -59,9 +59,10 @@ def open_when_ready(url: str, host: str, port: int, timeout: float = 300) -> Non
 
 
 def main() -> None:
-    key = os.environ.get("ANTHROPIC_API_KEY")
-    if key is not None:   # una chiave incollata da file può portarsi dietro spazi o a capo
-        os.environ["ANTHROPIC_API_KEY"] = key.strip()
+    for name in ("ANTHROPIC_API_KEY", "ELEVENLABS_API_KEY"):
+        key = os.environ.get(name)
+        if key is not None:   # una chiave incollata da file può portarsi dietro spazi o a capo
+            os.environ[name] = key.strip()
     parser = argparse.ArgumentParser(description="Avvia la piattaforma Promovo.")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8000)

@@ -12,3 +12,4 @@ build/
 dist/
 .venv/
 CHIAVE_IA.txt
+CHIAVE_VOCE.txt

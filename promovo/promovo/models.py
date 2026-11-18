@@ -109,6 +109,10 @@ class Store(Base):
     website: Mapped[str] = mapped_column(String(200), default="")
     logo_path: Mapped[str] = mapped_column(String(500), default="")
     video_music: Mapped[bool] = mapped_column(Boolean, default=True)
+    # Voce clonata (ElevenLabs), solo con il consenso scritto di chi la presta.
+    voice_id: Mapped[str] = mapped_column(String(100), default="")
+    voice_consent_name: Mapped[str] = mapped_column(String(200), default="")
+    voice_consent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     organization: Mapped[Organization] = relationship(back_populates="stores")

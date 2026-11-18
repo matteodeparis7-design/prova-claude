@@ -27,9 +27,11 @@ class Settings:
     token_ttl_hours: int = field(default_factory=lambda: int(_env("PROMOVO_TOKEN_TTL_HOURS", "720")))
     # Dimensione massima dei PDF caricati, in MB.
     max_upload_mb: int = field(default_factory=lambda: int(_env("PROMOVO_MAX_UPLOAD_MB", "40")))
+    # Video girati col telefono ("dal banco"): più pesanti dei PDF.
+    max_video_mb: int = field(default_factory=lambda: int(_env("PROMOVO_MAX_VIDEO_MB", "400")))
 
     def ensure_dirs(self) -> None:
-        for sub in ("flyers", "renders", "crops", "logos"):
+        for sub in ("flyers", "renders", "crops", "logos", "clips", "voices"):
             (self.data_dir / sub).mkdir(parents=True, exist_ok=True)
 
 

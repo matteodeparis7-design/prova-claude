@@ -27,6 +27,8 @@ echo  Controllo dei componenti...
 
 rem La chiave dell'IA si puo' incollare nel file CHIAVE_IA.txt, accanto a questo file.
 if not defined ANTHROPIC_API_KEY if exist "%~dp0CHIAVE_IA.txt" set /p ANTHROPIC_API_KEY=<"%~dp0CHIAVE_IA.txt"
+rem La chiave per la voce generata (ElevenLabs) si puo' incollare nel file CHIAVE_VOCE.txt.
+if not defined ELEVENLABS_API_KEY if exist "%~dp0CHIAVE_VOCE.txt" set /p ELEVENLABS_API_KEY=<"%~dp0CHIAVE_VOCE.txt"
 if defined ANTHROPIC_API_KEY echo  Intelligenza artificiale: ACCESA
 if not defined ANTHROPIC_API_KEY echo  Intelligenza artificiale: spenta ^(manca CHIAVE_IA.txt^)
 if not defined ANTHROPIC_API_KEY set "PROMOVO_AI=off"

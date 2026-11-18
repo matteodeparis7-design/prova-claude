@@ -25,6 +25,10 @@ echo "  Controllo dei componenti..."
 if [ -z "$ANTHROPIC_API_KEY" ] && [ -f "$(dirname "$0")/CHIAVE_IA.txt" ]; then
   export ANTHROPIC_API_KEY="$(head -n 1 "$(dirname "$0")/CHIAVE_IA.txt" | tr -d '[:space:]')"
 fi
+# La chiave per la voce generata (ElevenLabs) si può incollare nel file CHIAVE_VOCE.txt.
+if [ -z "$ELEVENLABS_API_KEY" ] && [ -f "$(dirname "$0")/CHIAVE_VOCE.txt" ]; then
+  export ELEVENLABS_API_KEY="$(head -n 1 "$(dirname "$0")/CHIAVE_VOCE.txt" | tr -d '[:space:]')"
+fi
 [ -z "$ANTHROPIC_API_KEY" ] && export PROMOVO_AI=off
 echo
 echo "  Promovo si sta avviando: il browser si aprira' appena e' pronto."

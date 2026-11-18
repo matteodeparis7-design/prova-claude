@@ -6,6 +6,7 @@ import re
 import secrets
 import threading
 import time
+import uuid
 from collections import defaultdict, deque
 from datetime import datetime, timezone
 from pathlib import Path
@@ -39,6 +40,9 @@ from ..modules.flyer.service import create_flyer, delete_flyer_files, process_fl
 from ..modules.loyalty.service import build_campaign, handle_inbound, set_consent
 from ..modules.video.render import FORMATS
 from ..modules.video.service import render_flyer_video
+from ..modules.clip.analyze import ClipError
+from ..modules.clip.service import AUDIO_EXT, VIDEO_EXT, VOICE_MODES, ClipFailed, delete_clip_files, make_reel, script_for
+from .. import voice as voicemod
 from .deps import (
     AppState, bearer_token, content_for, current_user, flyer_for, get_session, job_for, offer_for, order_for,
     require_owner, state, store_for,
@@ -227,6 +231,9 @@ def store_out(s: Store) -> dict:
             "accent_color": s.accent_color, "services": s.services, "pickup_enabled": s.pickup_enabled,
             "tone": s.tone, "hashtags": s.hashtags or [], "whatsapp": s.whatsapp, "website": s.website,
             "video_music": s.video_music,
+            "voice_ready": bool(s.voice_id and s.voice_consent_at), "voice_consent_name": s.voice_consent_name,
+            "voice_consent_at": s.voice_consent_at.isoformat() if s.voice_consent_at else None,
+            "voice_service": voicemod.api_key() is not None,
             "logo_url": f"/api/stores/{s.id}/logo" if s.logo_path and Path(s.logo_path).exists() else None}
 
 
@@ -349,6 +356,46 @@ def run_kit_job(app_state: AppState, job_id: int) -> None:
             job = s.get(Job, job_id)
             job.status, job.error = JobStatus.failed, str(exc)[:2000]
             log.exception("Pacchetto del lavoro %s fallito", job_id)
+        job.finished_at = datetime.now(timezone.utc)
+        s.commit()
+    finally:
+        s.close()
+
+
+def run_clip_job(app_state: AppState, job_id: int) -> None:
+    """Monta un Reel "dal banco" in background."""
+    s = app_state.db.new_session()
+    try:
+        job = s.get(Job, job_id)
+        if job is None:
+            return
+        job.status = JobStatus.running
+        s.commit()
+        p = job.params
+        voice_file = Path(p["voice"]) if p.get("voice") else None
+        try:
+            store = s.get(Store, job.store_id)
+            piece = make_reel(s, store, app_state.settings, app_state.llm, Path(p["video"]), p.get("offer_id"),
+                              p.get("note", ""), p.get("voice_mode", "none"), voice_file,
+                              voice_client=app_state.voice_client, spoken_script=p.get("script", ""))
+            job = s.get(Job, job_id)
+            job.status = JobStatus.done
+            job.result = {"content_id": piece.id, "warnings": piece.meta.get("warnings", []),
+                          "duration": piece.meta.get("duration")}
+        except (ClipFailed, ClipError, voicemod.VoiceError) as exc:   # errori spiegabili al negoziante
+            s.rollback()
+            job = s.get(Job, job_id)
+            job.status, job.error = JobStatus.failed, str(exc)[:2000]
+            Path(p["video"]).unlink(missing_ok=True)
+        except Exception as exc:
+            s.rollback()
+            job = s.get(Job, job_id)
+            job.status, job.error = JobStatus.failed, f"Montaggio non riuscito: {str(exc)[:1500]}"
+            Path(p["video"]).unlink(missing_ok=True)
+            log.exception("Reel del lavoro %s fallito", job_id)
+        finally:
+            if voice_file is not None:
+                voice_file.unlink(missing_ok=True)
         job.finished_at = datetime.now(timezone.utc)
         s.commit()
     finally:
@@ -822,6 +869,152 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
     @app.get("/api/jobs/{job_id}")
     def get_job(job_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
         return job_out(job_for(session, user, job_id))
+
+    # -------------------------------------------------- dal banco al Reel
+
+    async def _save_stream(file: UploadFile, dest_dir: Path, limit_mb: int, allowed: set[str], kind: str) -> Path:
+        ext = Path(file.filename or "").suffix.lower()
+        if ext not in allowed:
+            raise HTTPException(400, f"Formato {kind} non supportato ({ext or 'senza estensione'}).")
+        dest_dir.mkdir(parents=True, exist_ok=True)
+        dst = dest_dir / f"up_{uuid.uuid4().hex}{ext}"
+        size, limit = 0, limit_mb * 1024 * 1024
+        with dst.open("wb") as fh:
+            while True:
+                chunk = await file.read(1024 * 1024)
+                if not chunk:
+                    break
+                size += len(chunk)
+                if size > limit:
+                    fh.close()
+                    dst.unlink(missing_ok=True)
+                    raise HTTPException(413, f"Il file supera {limit_mb} MB.")
+                fh.write(chunk)
+        if size == 0:
+            dst.unlink(missing_ok=True)
+            raise HTTPException(400, "Il file è vuoto.")
+        return dst
+
+    @app.post("/api/stores/{store_id}/clips", status_code=202)
+    async def create_clip(store_id: int, request: Request, background: BackgroundTasks,
+                          video: UploadFile = File(...), offer_id: str = Form(default=""), note: str = Form(default=""),
+                          voice_mode: str = Form(default="none"), voice: UploadFile | None = File(default=None),
+                          script: str = Form(default=""),
+                          user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Carica un video girato in negozio e avvia il montaggio del Reel (seguire GET /api/jobs/{id})."""
+        store = store_for(session, user, store_id)
+        st = state(request)
+        if voice_mode not in VOICE_MODES:
+            raise HTTPException(400, "Modalità della voce non valida.")
+        oid = None
+        if offer_id.strip():
+            try:
+                oid = int(offer_id)
+            except ValueError:
+                raise HTTPException(400, "Prodotto non valido.")
+            o = session.get(Offer, oid)
+            if o is None or o.flyer.store_id != store.id:
+                raise HTTPException(404, "Prodotto non trovato.")
+        if voice_mode == "ai":
+            if not (store.voice_id and store.voice_consent_at):
+                raise HTTPException(409, "Prima crea la voce del negozio, con il consenso (Negozio → Voce).")
+            if voicemod.api_key() is None:
+                raise HTTPException(409, "Per la voce generata serve la chiave ElevenLabs (CHIAVE_VOCE.txt).")
+        if voice_mode == "recorded" and voice is None:
+            raise HTTPException(400, "Manca la registrazione della voce.")
+        st.settings.ensure_dirs()
+        video_path = await _save_stream(video, st.settings.data_dir / "clips", st.settings.max_video_mb,
+                                        VIDEO_EXT, "video")
+        voice_path = None
+        if voice_mode == "recorded" and voice is not None:
+            voice_path = await _save_stream(voice, st.settings.data_dir / "voices", 50, AUDIO_EXT, "audio")
+        job = Job(store_id=store.id, kind="clip",
+                  params={"video": str(video_path), "offer_id": oid, "note": note.strip()[:300],
+                          "voice_mode": voice_mode, "voice": str(voice_path) if voice_path else "",
+                          "script": script.strip()[:500] if voice_mode == "recorded" else ""})
+        session.add(job)
+        session.commit()
+        background.add_task(run_clip_job, st, job.id)
+        return job_out(job)
+
+    @app.get("/api/stores/{store_id}/clips")
+    def list_clips(store_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        store = store_for(session, user, store_id)
+        rows = session.scalars(select(ContentPiece).where(ContentPiece.store_id == store.id,
+                                                          ContentPiece.kind == "video")
+                               .order_by(ContentPiece.created_at.desc(), ContentPiece.id.desc())).all()
+        return [content_out(c) for c in rows if (c.meta or {}).get("format") == "clip"]
+
+    @app.get("/api/stores/{store_id}/clips/script")
+    def clip_script(store_id: int, offer_id: int | None = None, note: str = "", user: User = Depends(current_user),
+                    session: Session = Depends(get_session)):
+        """Il testo da leggere per chi registra la propria voce."""
+        store = store_for(session, user, store_id)
+        return script_for(session, store, offer_id, note[:300])
+
+    @app.delete("/api/content/{content_id}", status_code=204)
+    def delete_content(content_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        c = content_for(session, user, content_id)
+        if (c.meta or {}).get("format") == "clip":
+            delete_clip_files(c)
+        session.delete(c)
+
+    # -------------------------------------------------- voce del negozio
+
+    @app.post("/api/stores/{store_id}/voice")
+    async def create_voice(store_id: int, request: Request, sample: UploadFile = File(...),
+                           consent_name: str = Form(...), consent: str = Form(default=""),
+                           user: User = Depends(require_owner), session: Session = Depends(get_session)):
+        """Crea la voce clonata dal campione registrato. Serve il consenso esplicito di chi presta la voce."""
+        store = store_for(session, user, store_id)
+        st = state(request)
+        if consent.lower() not in ("1", "true", "si", "sì", "on"):
+            raise HTTPException(400, "Serve il consenso di chi presta la voce.")
+        if len(consent_name.strip()) < 3:
+            raise HTTPException(400, "Scrivi nome e cognome di chi presta la voce.")
+        key = voicemod.api_key()
+        if key is None:
+            raise HTTPException(409, "Per la voce generata serve la chiave ElevenLabs (CHIAVE_VOCE.txt).")
+        st.settings.ensure_dirs()
+        sample_path = await _save_stream(sample, st.settings.data_dir / "voices", 50, AUDIO_EXT, "audio")
+        try:
+            from ..modules.clip.render import clean_voice
+            wav = sample_path.with_name(sample_path.stem + "_pulita.wav")
+            seconds = clean_voice(sample_path, wav)
+            if seconds < 20:
+                raise HTTPException(400, f"La registrazione dura {seconds:.0f} secondi: ne servono almeno 30 "
+                                         "per una voce credibile.")
+            try:
+                vid = voicemod.clone_voice(f"{store.name} – {consent_name.strip()}", [wav], key,
+                                           client=st.voice_client)
+            except voicemod.VoiceError as exc:
+                raise HTTPException(502, str(exc)) from exc
+        finally:
+            sample_path.unlink(missing_ok=True)
+            sample_path.with_name(sample_path.stem + "_pulita.wav").unlink(missing_ok=True)
+        if store.voice_id and store.voice_id != vid:
+            try:
+                voicemod.delete_voice(store.voice_id, key, client=st.voice_client)
+            except voicemod.VoiceError:
+                log.warning("Voce precedente non eliminata su ElevenLabs")
+        store.voice_id, store.voice_consent_name = vid, consent_name.strip()[:200]
+        store.voice_consent_at = datetime.now(timezone.utc)
+        session.flush()
+        return store_out(store)
+
+    @app.delete("/api/stores/{store_id}/voice")
+    def remove_voice(store_id: int, request: Request, user: User = Depends(require_owner),
+                     session: Session = Depends(get_session)):
+        store = store_for(session, user, store_id)
+        key = voicemod.api_key()
+        if store.voice_id and key:
+            try:
+                voicemod.delete_voice(store.voice_id, key, client=state(request).voice_client)
+            except voicemod.VoiceError:
+                log.warning("Voce non eliminata su ElevenLabs")
+        store.voice_id, store.voice_consent_name, store.voice_consent_at = "", "", None
+        session.flush()
+        return store_out(store)
 
     # -------------------------------------------------- assistente clienti e ordini
 
