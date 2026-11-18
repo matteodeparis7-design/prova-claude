@@ -58,34 +58,78 @@ def say(text: str = "") -> None:
             pass
 
 
+def pause(message: str) -> None:
+    """Tiene aperta la finestra: senza, un errore la farebbe sparire prima di poterlo leggere."""
+    say("\n  " + message)
+    try:
+        input("  Premi Invio per chiudere questa finestra...")
+    except Exception:
+        try:
+            import time
+            time.sleep(600)
+        except Exception:
+            pass
+
+
+def setup_log(base: Path) -> Path | None:
+    """Registro su file (Dati Promovo/registro.txt) oltre che sullo schermo, per capire eventuali problemi."""
+    import logging
+    try:
+        path = base / "Dati Promovo" / "registro.txt"
+        handlers = [logging.StreamHandler(), logging.FileHandler(path, encoding="utf-8")]
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+                            handlers=handlers)
+        return path
+    except Exception:
+        return None
+
+
 def main() -> None:
     base = base_dir()
+    if getattr(sys, "frozen", False) and not (base / "_internal").exists():
+        pause("Promovo e' stato aperto da dentro il file zip. Prima estrai la cartella "
+              "(tasto destro sullo zip > Estrai tutto), poi apri Promovo.exe dalla cartella estratta.")
+        sys.exit(1)
     env = prepare_environment(base)
+    log = setup_log(base)
     say("\n  =============================================")
     say("   PROMOVO")
     say("  =============================================\n")
     say(f"  Dati salvati in: {env['PROMOVO_DATA_DIR']}")
     say("  Intelligenza artificiale: " + ("ACCESA" if "ANTHROPIC_API_KEY" in env
-                                             else "spenta (manca il file CHIAVE_IA.txt)"))
+                                         else "spenta (manca il file CHIAVE_IA.txt)"))
     say("  Voce generata: " + ("disponibile" if "ELEVENLABS_API_KEY" in env
-                                 else "non attiva (facoltativa: file CHIAVE_VOCE.txt)"))
+                             else "non attiva (facoltativa: file CHIAVE_VOCE.txt)"))
     say("\n  Accesso di prova:  demo@promovo.it  /  promovo2026")
     say("  NON chiudere questa finestra mentre usi Promovo. Per spegnerlo, chiudila.\n")
+    if log:
+        say(f"  Registro: {log}\n")
     from promovo.__main__ import main as run
     sys.argv = [sys.argv[0], "--demo", "--open", *sys.argv[1:]]
     run()
+    # Se si arriva qui il server si e' fermato da solo (non chiudendo la finestra): meglio dirlo.
+    pause("Promovo si e' fermato. Se non l'hai chiuso tu, fai una foto di questa finestra e mandala.")
 
 
 if __name__ == "__main__":
     try:
         main()
-    except SystemExit:
+    except KeyboardInterrupt:
+        pass
+    except SystemExit as exc:
+        if exc.code not in (0, None):
+            if isinstance(exc.code, str):
+                say("\n  " + exc.code)
+            pause("Promovo non e' partito. Fai una foto di questa finestra e mandala in chat.")
         raise
     except BaseException:
-        traceback.print_exc()
-        print("\n  Si e' verificato un errore. Fai una foto di questa finestra e mandala in chat.")
         try:
-            input("  Premi Invio per chiudere...")
+            traceback.print_exc()
+            base = base_dir()
+            (base / "Dati Promovo").mkdir(parents=True, exist_ok=True)
+            with open(base / "Dati Promovo" / "errore.txt", "w", encoding="utf-8") as fh:
+                traceback.print_exc(file=fh)
         except Exception:
             pass
+        pause("Si e' verificato un errore. Fai una foto di questa finestra e mandala in chat.")
         sys.exit(1)

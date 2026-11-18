@@ -1,7 +1,9 @@
 PROMOVO - come si usa
 =====================
 
-1. Fai doppio clic su Promovo.exe.
+1. Fai doppio clic su Promovo.exe (o sull'icona Promovo sul Desktop).
+   Se hai scaricato lo zip: prima ESTRAI la cartella (tasto destro > Estrai tutto),
+   non aprire Promovo.exe da dentro lo zip.
    La prima volta Windows potrebbe mostrare "Windows ha protetto il PC":
    premi "Ulteriori informazioni" e poi "Esegui comunque".
    (Succede con tutti i programmi nuovi che non hanno ancora una firma digitale a pagamento.)

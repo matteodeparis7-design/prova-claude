@@ -93,10 +93,38 @@ jobs:
           Compress-Archive -Path $dist -DestinationPath "Promovo_Windows.zip" -CompressionLevel Optimal
           "{0:N0} MB" -f ((Get-Item "Promovo_Windows.zip").Length / 1MB)
 
+      - name: Crea l'installazione (Promovo_Setup.exe)
+        working-directory: promovo/packaging
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress | Out-Null }
+          & $iscc promovo.iss
+          if ($LASTEXITCODE -ne 0) { throw "Installazione non creata" }
+          Copy-Item "..\dist\Promovo_Setup.exe" "..\..\Promovo_Setup.exe"
+
+      - name: Prova l'installazione come farebbe un utente
+        shell: pwsh
+        env:
+          PROMOVO_WEATHER: "off"
+        run: |
+          $ErrorActionPreference = "Stop"
+          Start-Process -FilePath ".\Promovo_Setup.exe" -ArgumentList "/VERYSILENT","/SUPPRESSMSGBOXES","/NORESTART" -Wait
+          $exe = Join-Path $env:LOCALAPPDATA "Programs\Promovo\Promovo.exe"
+          if (-not (Test-Path $exe)) { throw "Promovo.exe non installato" }
+          $proc = Start-Process -FilePath $exe -WorkingDirectory (Split-Path $exe) -PassThru -RedirectStandardOutput inst.txt -RedirectStandardError inst_err.txt
+          $ok = $false
+          for ($i = 0; $i -lt 120; $i++) { try { Invoke-RestMethod "http://127.0.0.1:8000/api/health" | Out-Null; $ok = $true; break } catch { Start-Sleep -Seconds 2 } }
+          Stop-Process -Id $proc.Id -Force
+          if (-not $ok) { Get-Content inst.txt; Get-Content inst_err.txt; throw "Promovo installato non si avvia" }
+          Write-Host "Promovo installato e avviato correttamente da $exe"
+
       - uses: actions/upload-artifact@v4
         with:
           name: Promovo_Windows
-          path: Promovo_Windows.zip
+          path: |
+            Promovo_Windows.zip
+            Promovo_Setup.exe
           retention-days: 30
 
       - name: Pubblica da scaricare
@@ -106,9 +134,13 @@ jobs:
           target_commitish: ${{ github.sha }}
           name: "Promovo (beta per Windows)"
           prerelease: true
-          files: Promovo_Windows.zip
+          files: |
+            Promovo_Setup.exe
+            Promovo_Windows.zip
           body: |
-            Scarica **Promovo_Windows.zip**, estrai la cartella e fai doppio clic su **Promovo.exe**.
+            **Consigliato: scarica Promovo_Setup.exe** e fai doppio clic: installa Promovo con l'icona sul Desktop.
+            Se Windows dice "PC protetto da Windows": premi "Ulteriori informazioni" e poi "Esegui comunque".
+            In alternativa: Promovo_Windows.zip, da ESTRARRE (tasto destro > Estrai tutto) prima di aprire Promovo.exe.
             Accesso di prova: demo@promovo.it / promovo2026. Istruzioni nel file LEGGIMI.txt.
             Questa versione è stata provata automaticamente su Windows prima della pubblicazione
             (test completi, avvio del programma, video, grafiche e Reel dal banco).
