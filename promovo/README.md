@@ -16,7 +16,11 @@ Funziona in due modalità, senza cambiare codice:
 | Montatore | Video MP4 con musica originale, logo e QR code: schermo 16:9, Reel 9:16, post 1:1 | `modules/video` |
 | Grafico | Immagini per i social: copertina, storia e una per ogni offerta in evidenza | `modules/graphics` |
 | Regista | "Crea tutto" in un clic, con avanzamento, e pacchetto ZIP della settimana | `modules/kit.py` |
-| Assistente clienti | Risponde su offerte, orari e servizi; crea ordini da ritirare, validati dal codice | `modules/assistant` |
+| Montatore dal banco | Dal video girato col telefono al Reel: sceglie i momenti migliori, stabilizza, riconosce i prodotti (IA) e mette i prezzi verificati, sottotitoli e voce | `modules/clip` |
+| Voce del negozio | Voce registrata dal negoziante o voce clonata ElevenLabs (con consenso firmato e scritta "Voce generata con IA") | `voice.py` |
+| Radar del quartiere | Legge i volantini dei concorrenti e confronta i prezzi (al kg/litro se i formati sono diversi) | `modules/radar` |
+| Meteo | Previsioni Open-Meteo della zona: cosa spingere nei giorni di caldo, freddo o pioggia | `modules/weather` |
+| Assistente clienti | Risponde su offerte, orari e servizi; crea prenotazioni da ritirare, validate dal codice | `modules/assistant` |
 | Analista | Importa le vendite di cassa (CSV) e misura l'effetto di ogni offerta | `modules/analytics` |
 | Fedeltà | Messaggi personali solo ai clienti con consenso; gestione dello STOP | `modules/loyalty` |
 
@@ -50,6 +54,9 @@ Variabili d'ambiente:
 | `PROMOVO_MODEL` | `claude-opus-5-5` | Modello Claude |
 | `PROMOVO_AI` | `claude` | `off` per spegnere l'IA |
 | `PROMOVO_MAX_UPLOAD_MB` | `40` | Dimensione massima dei PDF |
+| `PROMOVO_MAX_VIDEO_MB` | `400` | Dimensione massima dei video "dal banco" |
+| `PROMOVO_WEATHER` | `on` | `off` per non chiedere le previsioni a Open-Meteo |
+| `ELEVENLABS_API_KEY` | – | Facoltativa: voce generata del negozio |
 
 `ffmpeg` arriva già con il pacchetto `imageio-ffmpeg`. Per controllare i prezzi dei volantini fatti solo di
 immagini serve anche l'OCR Tesseract (facoltativo ma consigliato):

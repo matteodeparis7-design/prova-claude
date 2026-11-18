@@ -74,7 +74,44 @@ immagini e testi pronti da pubblicare.
 
 Se il negozio ti manda le vendite di cassa (file CSV), qui vedi quanto ha venduto ogni offerta.
 
-## 3. Le altre pagine
+Nel passo 2, sopra i materiali, trovi anche due aiuti per scegliere cosa mettere in evidenza:
+- **Radar del quartiere**: se hai caricato i volantini dei concorrenti (pagina Volantini, in fondo),
+  vedi su quali prodotti sei più conveniente e su quali più caro. Se i formati sono diversi
+  (caffè da 250 g contro 500 g) si confronta il prezzo al kg o al litro. Un pulsante mette in
+  evidenza i prodotti dove vinci. I nomi dei concorrenti restano solo per te: non finiscono mai
+  nei post (la pubblicità che nomina i concorrenti ha regole precise).
+- **Il meteo della settimana**: le previsioni della tua città nei giorni del volantino. Se sabato
+  fa caldo, Promovo ti propone acqua, birra e gelati; se piove, pasta, sughi e dolci; se fa freddo,
+  minestre e legumi. Un clic e li metti in evidenza: il piano della settimana li inserisce nelle
+  storie di quel giorno. Serve internet (servizio gratuito Open-Meteo, nessuna chiave).
+
+## 3. Dal banco al Reel (la novità)
+
+Il contenuto che funziona di più per un negozio di quartiere è quello **vero**: il pesce appena
+sistemato al banco, la frutta di stagione, la persona che ti serve. Promovo lo trasforma in un Reel
+fatto bene, senza montaggio.
+
+1. Apri **Dal banco** e carica un video girato col telefono (15-60 secondi, come viene: anche mosso,
+   anche con l'inizio puntato per terra).
+2. **Cosa si vede**: scegli il prodotto del volantino, oppure, con l'IA accesa, lascia che lo
+   riconosca da solo (anche più prodotti nello stesso video, ognuno con il suo prezzo).
+3. **Cosa vuoi dire** (facoltativo): una frase vera, per esempio «arrivate stamattina da Anzio».
+   Promovo non inventa mai cose sui prodotti: queste le puoi dire solo tu.
+4. **La voce**: solo musica, oppure **la tua voce** (leggi il testo proposto e registri dal
+   computer o carichi l'audio dal telefono), oppure la **voce del negozio** generata con l'IA.
+5. **Crea il Reel**: in circa un minuto Promovo sceglie i momenti migliori, raddrizza in verticale
+   e stabilizza, mette logo, sottotitoli, cartellino con il prezzo verificato (solo mentre si vede
+   quel prodotto), musica e la scena finale con il QR code. Ti prepara anche la didascalia da copiare.
+
+Il Reel compare anche nel passo 3 del volantino e nel pacchetto ZIP.
+
+**Voce del negozio (facoltativa).** In Negozio → Voce del negozio registri 30 secondi leggendo un
+testo, scrivi chi presta la voce e confermi il consenso. Da quel momento i Reel possono parlare con
+quella voce. Per legge (AI Act, dal 2 agosto 2026) i video con voce generata riportano sempre la
+scritta «Voce generata con IA», e Promovo la mette da solo. Serve una chiave ElevenLabs: crea il file
+**CHIAVE_VOCE.txt** accanto ad AVVIA_PROMOVO_WINDOWS.bat e incollaci la chiave.
+
+## 4. Le altre pagine
 
 - **Panoramica**: tutti i negozi che gestisci, a colpo d'occhio, con cosa c'è da fare in ognuno.
 - **Negozio**: nome, logo, colori, tono di voce dei testi (familiare, elegante, giovane,
@@ -89,10 +126,12 @@ Se il negozio ti manda le vendite di cassa (file CSV), qui vedi quanto ha vendut
   Se non ti serve, la spegni dalle impostazioni del negozio.
 - **Assistente**: risponde alle domande dei clienti su offerte, orari e servizi (serve l'IA).
 
-## 4. Con o senza intelligenza artificiale
+## 5. Con o senza intelligenza artificiale
 
 Senza chiave dell'IA Promovo funziona già: legge i volantini PDF digitali, crea video, grafiche
 e testi a modello (scritti a mano, con i numeri veri: risparmio in euro, prezzi sotto l'euro).
+Anche «Dal banco» funziona: scegli tu il prodotto e Promovo tiene l'inquadratura principale del video.
+Con l'IA accesa riconosce da sola i prodotti inquadrati (anche più d'uno) e scrive titolo e sottotitoli.
 
 Con l'IA accesa i testi li scrive una piccola redazione:
 1. il **copywriter** sceglie l'idea della settimana e scrive un testo diverso per ogni canale;
@@ -107,7 +146,7 @@ pochi centesimi per volantino), crea accanto a AVVIA_PROMOVO_WINDOWS.bat un file
 nemmeno in chat.
 In basso a sinistra c'è sempre scritto se l'IA è accesa o spenta.
 
-## 5. Se qualcosa non va
+## 6. Se qualcosa non va
 
 - **Il browser dice "impossibile raggiungere la pagina"**: aspetta qualche secondo e ricarica;
   la finestra nera deve restare aperta.
