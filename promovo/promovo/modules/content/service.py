@@ -278,4 +278,7 @@ def save_content(session: Session, store: Store, flyer: Flyer, pack: ContentPack
         session.add(piece)
         pieces.append(piece)
     session.flush()
+    if store.till_on:                       # Parola alla cassa: la parola d'ordine di ogni canale nei testi
+        from ..till import apply as till_apply
+        till_apply(session, store, flyer)
     return pieces

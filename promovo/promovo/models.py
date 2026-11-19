@@ -105,6 +105,9 @@ class Store(Base):
     voice_id: Mapped[str] = mapped_column(String(100), default="")
     voice_consent_name: Mapped[str] = mapped_column(String(200), default="")
     voice_consent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # Parola alla cassa: una parola d'ordine per canale nei testi, contata alla cassa
+    till_on: Mapped[bool] = mapped_column(Boolean, default=False)
+    till_reward: Mapped[str] = mapped_column(String(80), default="il 5% di sconto sulla spesa")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     organization: Mapped[Organization] = relationship(back_populates="stores")
@@ -220,3 +223,23 @@ class Rescue(Base):
     sold_qty: Mapped[float | None] = mapped_column(Float, nullable=True)      # segnato a fine giornata
     closed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class TillCode(Base):
+    """Parola alla cassa: la parola d'ordine di un canale (Instagram, Facebook, WhatsApp, Reel) per un volantino."""
+    __tablename__ = "till_codes"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    store_id: Mapped[int] = mapped_column(ForeignKey("stores.id", ondelete="CASCADE"), index=True)
+    flyer_id: Mapped[int] = mapped_column(ForeignKey("flyers.id", ondelete="CASCADE"), index=True)
+    channel: Mapped[str] = mapped_column(String(20))
+    word: Mapped[str] = mapped_column(String(30))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class TillHit(Base):
+    """Quante volte, in un giorno, un cliente ha detto la parola alla cassa (solo il numero: nessun dato personale)."""
+    __tablename__ = "till_hits"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    code_id: Mapped[int] = mapped_column(ForeignKey("till_codes.id", ondelete="CASCADE"), index=True)
+    day: Mapped[date] = mapped_column(Date)
+    count: Mapped[int] = mapped_column(Integer, default=0)

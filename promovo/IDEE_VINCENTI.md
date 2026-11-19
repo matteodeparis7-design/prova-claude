@@ -139,6 +139,6 @@ Queste richiedono che Promovo abbia anche una parte su internet (oggi il program
 | Passo | Cosa | Stato |
 |---|---|---|
 | 1 | Salvaspreco | **fatto** (beta) |
-| 2 | Parola alla cassa | da fare |
+| 2 | Parola alla cassa | **fatto** (beta) |
 | 3 | Filiera vicina | da fare |
 | 4 | Calendario dei portafogli + spesa a budget | da fare |

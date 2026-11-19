@@ -28,6 +28,7 @@ stesso): più negozi, ognuno con la sua identità, e un pacchetto ZIP pronto da 
 | Scontorno (aggiuntivo) | BiRefNet lite (MIT) sul computer: prodotto senza sfondo né prezzi, con controlli e lettura ottica | `cutout.py`, `extras.py` |
 | Sottotitoli (aggiuntivo) | Whisper small (MIT) sul computer: sottotitoli a tempo di parola nei Reel dal banco | `modules/clip/transcribe.py` |
 | Salvaspreco | Merce vicina alla scadenza in offerta lampo: blocco dei prodotti scaduti, sconto consigliato, storia/post/testi, cartellino «Salvami», chili e euro salvati, post del mese | `modules/rescue.py` |
+| Parola alla cassa | Una parola d'ordine per canale nei testi (mai un prodotto in offerta, nuove a ogni volantino), contatore +1 e foglio per la cassa, clienti per canale, consigli, nel report | `modules/till.py` |
 | Copia di sicurezza | Backup ZIP, ripristino anche su un altro PC (percorsi riscritti), pacchetto assistenza, avviso nuova versione | `backup.py` |
 
 Tutti gli importi sono in centesimi interi. L'IA facoltativa è Claude (`claude-opus-5-5`, configurabile).

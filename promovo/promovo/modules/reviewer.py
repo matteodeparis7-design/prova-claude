@@ -110,7 +110,8 @@ def _text_checks(p: ContentPiece, allowed: set[int]) -> list[Check]:
         if len(set(tags)) > IG_TAGS:
             out.append(Check("testi", label, "warn", f"{len(set(tags))} hashtag: Instagram ne accetta al massimo {IG_TAGS}."))
     if p.kind != "plan":
-        wrong = [c for c in find_prices(body) if c not in allowed]
+        from .till import strip as till_strip      # il premio della Parola alla cassa non è un prezzo del volantino
+        wrong = [c for c in find_prices(till_strip(body)) if c not in allowed]
         if wrong:
             out.append(Check("testi", label, "err",
                              "Prezzi che non sono nel volantino: " + ", ".join(format_eur(c) for c in wrong[:3]) + "."))

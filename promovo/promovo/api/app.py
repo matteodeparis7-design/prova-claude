@@ -23,12 +23,12 @@ from ..config import Settings, get_settings
 from ..db import Database
 from ..llm import AIRefused, AIUnavailable, LLM
 from .. import keys
-from ..models import ContentPiece, Flyer, FlyerStatus, Job, JobStatus, Offer, Organization, Rescue, Role, Store, User
+from ..models import ContentPiece, Flyer, FlyerStatus, Job, JobStatus, Offer, Organization, Rescue, Role, Store, TillCode, User
 from ..imaging import ImageError, load_logo, open_image, save_product_photo
 from ..money import discount_percent, format_eur, parse_price
 from ..security import hash_password, issue_token, revoke_token, verify_password
 from ..text_utils import CATEGORIES
-from ..modules.catalog import active_offers
+from ..modules.catalog import active_flyers, active_offers
 from ..modules.kit import DEFAULT_ITEMS, ITEMS, build_zip, run_kit
 from ..modules.content.service import generate_content, save_content
 from ..modules.flyer.pdf import InvalidPDF
@@ -42,6 +42,7 @@ from ..modules.radar.service import radar as radar_report
 from ..modules.radar import nearby as nearbymod
 from ..modules.weather.service import weekly_weather
 from ..modules import rescue as rescuemod
+from ..modules import till as tillmod
 from .deps import (
     AppState, bearer_token, content_for, current_user, flyer_for, get_session, job_for, offer_for,
     require_owner, state, store_for,
@@ -222,7 +223,7 @@ def store_out(s: Store) -> dict:
             "phone": s.phone, "opening_hours": s.opening_hours, "brand_color": s.brand_color,
             "accent_color": s.accent_color, "services": s.services, "pickup_enabled": s.pickup_enabled,
             "tone": s.tone, "hashtags": s.hashtags or [], "whatsapp": s.whatsapp, "website": s.website,
-            "video_music": s.video_music,
+            "video_music": s.video_music, "till_on": s.till_on, "till_reward": s.till_reward,
             "voice_ready": bool(s.voice_id and s.voice_consent_at), "voice_consent_name": s.voice_consent_name,
             "voice_consent_at": s.voice_consent_at.isoformat() if s.voice_consent_at else None,
             "voice_service": voicemod.api_key() is not None,
@@ -1630,6 +1631,85 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         out = _render_tmp(state(request).settings, "impatto", ".jpg")
         rescuemod.impact_image(store, stats).save(out, quality=92)
         return FileResponse(out, media_type="image/jpeg", filename=f"Salvaspreco_{stats['month']}.jpg",
+                            background=StarletteTask(lambda: out.unlink(missing_ok=True)))
+
+    # -------------------------------------------------- Parola alla cassa
+
+    def till_code_for(session: Session, user: User, code_id: int) -> TillCode:
+        c = session.get(TillCode, code_id)
+        if c is None:
+            raise HTTPException(404, "Parola non trovata.")
+        store_for(session, user, c.store_id)
+        return c
+
+    def till_state(session: Session, store: Store) -> dict:
+        today = date.today()
+        flyers = active_flyers(session, store.id, today)
+        out = {"on": store.till_on, "reward": store.till_reward, "today": today.isoformat(), "flyer": None,
+               "results": None, "history": tillmod.history(session, store), "advice": [],
+               "channels": tillmod.CHANNELS}
+        if flyers:
+            f = flyers[0]
+            res = tillmod.results(session, store, f, today)
+            out.update(flyer={"id": f.id, "title": f.title, "valid_from": f.valid_from.isoformat() if f.valid_from else None,
+                              "valid_to": f.valid_to.isoformat() if f.valid_to else None},
+                       results=res, advice=tillmod.advice(res, [h for h in out["history"] if h["flyer_id"] != f.id]))
+        return out
+
+    @app.get("/api/stores/{store_id}/till")
+    def get_till(store_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Le parole d'ordine del volantino in corso, i clienti contati e i consigli."""
+        return till_state(session, store_for(session, user, store_id))
+
+    @app.put("/api/stores/{store_id}/till")
+    def set_till(store_id: int, body: dict, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Accende o spegne la Parola alla cassa e cambia il premio; aggiorna subito i testi del volantino in corso."""
+        store = store_for(session, user, store_id)
+        if "reward" in body:
+            try:
+                store.till_reward = tillmod.clean_reward(str(body.get("reward") or ""))
+            except ValueError as exc:
+                raise HTTPException(400, str(exc)) from exc
+        if "on" in body:
+            store.till_on = bool(body.get("on"))
+        session.flush()
+        for f in active_flyers(session, store.id, date.today()):
+            tillmod.apply(session, store, f)
+        return till_state(session, store)
+
+    @app.post("/api/till/{code_id}/hit")
+    def till_hit(code_id: int, body: dict, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """+1 (o -1 per correggere) clienti che hanno detto la parola, oggi."""
+        c = till_code_for(session, user, code_id)
+        try:
+            n = tillmod.add(session, c, date.today(), int(body.get("delta", 1)))
+        except (TypeError, ValueError) as exc:
+            raise HTTPException(400, "Si conta un cliente alla volta.") from exc
+        return {"code_id": c.id, "today": n}
+
+    @app.put("/api/till/{code_id}/count")
+    def till_count(code_id: int, body: dict, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Riporta il numero di un giorno (per esempio dal foglio della cassa)."""
+        c = till_code_for(session, user, code_id)
+        try:
+            day = date.fromisoformat(str(body.get("day")))
+            n = tillmod.set_count(session, c, day, int(body.get("count")))
+        except (TypeError, ValueError) as exc:
+            raise HTTPException(400, "Giorno o numero non validi.") from exc
+        return {"code_id": c.id, "day": day.isoformat(), "count": n}
+
+    @app.get("/api/stores/{store_id}/till-sheet")
+    def till_sheet(store_id: int, request: Request, user: User = Depends(current_user),
+                   session: Session = Depends(get_session)):
+        """Il foglio da tenere alla cassa: parole, premio e caselle per ogni giorno del volantino."""
+        store = store_for(session, user, store_id)
+        flyers = active_flyers(session, store.id, date.today())
+        if not flyers:
+            raise HTTPException(404, "Carica il volantino in corso: le parole cambiano a ogni volantino.")
+        res = tillmod.results(session, store, flyers[0], date.today())
+        out = _render_tmp(state(request).settings, "cassa", ".pdf")
+        tillmod.sheet_pdf(store, flyers[0], res, out)
+        return FileResponse(out, media_type="application/pdf", filename="Parola_alla_cassa.pdf",
                             background=StarletteTask(lambda: out.unlink(missing_ok=True)))
 
     return app

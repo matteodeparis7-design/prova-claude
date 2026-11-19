@@ -479,6 +479,14 @@ def render(store: Store, r: Rescue, data_dir: Path, today: date) -> None:
     post_image(store, r, today).save(post, quality=92)
     r.story_path, r.post_path = str(story), str(post)
     r.text, r.short_text = write_texts(store, r, today)
+    if store.till_on:                        # Parola alla cassa: la parola di WhatsApp nello stato
+        from sqlalchemy.orm import object_session
+        from .catalog import active_flyers
+        from .till import codes_for, line_for
+        s = object_session(r)
+        flyers = active_flyers(s, store.id, today) if s is not None else []
+        if flyers:
+            r.short_text += " " + line_for(store, flyers[0], codes_for(s, store, flyers[0])["whatsapp"])
 
 
 def close(r: Rescue, sold: float) -> Rescue:

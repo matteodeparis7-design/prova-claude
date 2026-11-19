@@ -239,6 +239,19 @@ def build_report(session: Session, store: Store, flyer: Flyer, out_path: Path) -
                                                    if rst["sell_through"] is not None else "") + ".", 9.5, gap=4)
         if rst["open"]:
             doc.para(f"   – {rst['open']} prodotti ancora da chiudere con i venduti.", 9, color=MUTED, gap=3)
+    # ---- Parola alla cassa
+    from ..models import TillCode
+    from . import till as tillmod
+    if session.scalars(select(TillCode).where(TillCode.flyer_id == flyer.id)).first() is not None:
+        tres = tillmod.results(session, store, flyer, date.today())
+        if tres["total"]:
+            doc.need(120, "Parola alla cassa", store)
+            doc.heading("Parola alla cassa: chi ha portato clienti in negozio")
+            doc.para(f"{tres['total']} clienti hanno detto la parola d'ordine alla cassa durante il volantino:", 9.5, gap=4)
+            for r in sorted(tres["rows"], key=lambda x: x["total"], reverse=True):
+                doc.para(f"   – {r['label']} («{r['word']}»): {r['total']} clienti ({r['share']}%)", 9, gap=3)
+            for tip in tillmod.advice(tres, []):
+                doc.para("   " + tip, 9, color=MUTED, gap=3)
     # ---- conformità
     doc.need(200, "Note di conformità", store)
     doc.heading("Note di conformità")

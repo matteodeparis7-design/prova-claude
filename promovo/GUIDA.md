@@ -170,6 +170,23 @@ non si può vendere e Promovo lo blocca. Dopo il **termine minimo** («da consum
 si può vendere se la confezione è integra e il prodotto ben conservato: Promovo lo permette e scrive la data
 nei testi, per trasparenza. Promovo non aggiunge mai qualità che non hai scritto tu.
 
+### Parola alla cassa: quali canali portano clienti in negozio
+
+I «mi piace» non dicono se un post ha portato gente in negozio. La **Parola alla cassa** sì.
+
+1. Apri **Alla cassa**, scrivi il premio per chi dice la parola (meglio uno sconto, per esempio
+   «il 5% di sconto sulla spesa»: gli sconti non sono operazioni a premio; per regali e omaggi chiedi
+   al commercialista) e attiva la funzione.
+2. Ogni canale riceve la sua parola per questo volantino (per esempio **ORIGANO** su Instagram,
+   **CANNELLA** su WhatsApp). Le parole compaiono da sole nei testi: «Dì ORIGANO alla cassa: per te il 5% di
+   sconto sulla spesa». Per i messaggi WhatsApp usa **Riga per WhatsApp**.
+3. Alla cassa: ogni volta che un cliente dice una parola, tocca **+1** (dal computer o dal telefono),
+   oppure fai un segno sul **Foglio per la cassa** stampato e riporta i numeri a fine giornata.
+4. In «Chi porta clienti» vedi i clienti per canale, la percentuale e cosa fare la settimana dopo. I
+   risultati compaiono anche nel report della settimana. Il volantino dopo avrà parole nuove.
+
+Si contano solo numeri: nessun nome e nessun dato dei clienti.
+
 ## 6. Agenti aggiuntivi (gratuiti, sul tuo computer)
 
 Nella pagina **Impostazioni**, scheda **«Agenti aggiuntivi»**: modelli open source scelti per sicurezza e

@@ -258,6 +258,25 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .rs-mats img { width: 100%; border-radius: 12px; border: 1px solid var(--line); cursor: zoom-in; }
 .rs-mats textarea { min-height: 170px; }
 .kpi.green .ic { background: #e6f4ea; color: #1c8046; }
+.till-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 980px) { .till-tiles { grid-template-columns: 1fr 1fr; } }
+.till-tile { border: 1px solid var(--line); border-radius: 18px; padding: 16px; background: #fffdf9; display: flex; flex-direction: column; gap: 8px; }
+.till-tile .ch { font-size: 13px; font-weight: 650; color: var(--muted); }
+.till-tile .w { font-family: var(--display); font-size: 26px; font-weight: 750; letter-spacing: -.3px; color: var(--brand); line-height: 1.1; overflow-wrap: normal; word-break: keep-all; }
+@media (max-width: 600px) { .till-tile .w { font-size: clamp(15px, 4.6vw, 22px); } .till-tile { padding: 12px; } }
+.till-tile .n.flash { animation: tillflash .45s ease-out; }
+@keyframes tillflash { 0% { transform: scale(1.25); color: var(--brand); } 100% { transform: scale(1); } }
+.till-tile .n { font-family: var(--display); font-size: 40px; font-weight: 750; line-height: 1; }
+.till-tile .n small { font-size: 13px; color: var(--muted); font-weight: 600; }
+.till-plus { font-size: 22px; padding: 14px; border-radius: 14px; width: 100%; }
+.till-bars .b { display: grid; grid-template-columns: 130px minmax(0, 1fr) 70px; gap: 10px; align-items: center; margin: 8px 0; }
+.till-bars .track { height: 14px; border-radius: 8px; background: var(--line-2); overflow: hidden; }
+.till-bars .fill { height: 100%; background: linear-gradient(90deg, #ec5a3d, #dc3f24); border-radius: 8px; }
+.till-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.till-table th, .till-table td { padding: 6px 4px; border-bottom: 1px solid var(--line-2); text-align: center; white-space: nowrap; }
+.till-table th:first-child, .till-table td:first-child { text-align: left; }
+.till-table input { width: 46px; padding: 5px; text-align: center; border: 1px solid #e2dbcd; border-radius: 8px; }
+.till-scroll { overflow-x: auto; }
 /* negozi (agenzia) */
 .store-card { display: flex; flex-direction: column; gap: 12px; }
 .store-head { display: flex; gap: 12px; align-items: center; }
@@ -492,6 +511,7 @@ tr:last-child td { border-bottom: 0; }
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
   <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
   <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-14 15-15-1 10-7 15-15 15z"/><path d="M5 19c3-4 6-7 10-9"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4.5"/><path d="M11.2 11.8 20 3M16 7l3 3M14 9l2 2"/></symbol>
   <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
 </svg>
 
@@ -566,7 +586,7 @@ tr:last-child td { border-bottom: 0; }
 <script>
 "use strict";
 const NAV = [
-  ["home", "Panoramica", "i-home", "Home"], ["flyers", "Volantini", "i-flyer"], ["clips", "Dal banco", "i-camera"], ["rescue", "Salvaspreco", "i-leaf", "Spreco"],
+  ["home", "Panoramica", "i-home", "Home"], ["flyers", "Volantini", "i-flyer"], ["clips", "Dal banco", "i-camera"], ["rescue", "Salvaspreco", "i-leaf", "Spreco"], ["till", "Alla cassa", "i-key", "Cassa"],
   ["store", "Negozio", "i-store"], ["settings", "Impostazioni", "i-settings", "Opzioni"],
 ];
 const STATUS = {uploaded: "caricato", processing: "in lettura", ready: "pronto", failed: "errore"};
@@ -737,7 +757,7 @@ async function go(view, opts = {}) {
   const title = opts.create ? "Nuovo negozio" : (NAV.find(n => n[0] === view) || [0, "Promovo"])[1];
   $("#pageTitle").textContent = title;
   const sub = {home: new Date().toLocaleDateString("it-IT", {weekday: "long", day: "numeric", month: "long"}), flyers: currentStore() ? currentStore().name : "",
-    clips: "Un video girato col telefono diventa un Reel", rescue: "La merce in scadenza diventa un'offerta lampo", store: currentStore() && !opts.create ? currentStore().name : "", settings: "Chiavi facoltative e informazioni"}[view] || "";
+    clips: "Un video girato col telefono diventa un Reel", rescue: "La merce in scadenza diventa un'offerta lampo", till: "Quali canali portano clienti in negozio", store: currentStore() && !opts.create ? currentStore().name : "", settings: "Chiavi facoltative e informazioni"}[view] || "";
   $("#pageSub").textContent = sub;
   document.title = title + " · Promovo";
   window.scrollTo(0, 0);
@@ -780,6 +800,7 @@ const TEAM = [
   ["i-sun", "Meteorologo", "Cosa spingere con caldo, freddo o pioggia"],
   ["i-calendar", "Pianificatore", "Calendario dei post e cosa filmare"],
   ["i-leaf", "Salvaspreco", "La merce in scadenza diventa un'offerta lampo"],
+  ["i-key", "Parola alla cassa", "Conta i clienti portati da ogni canale"],
 ];
 const IDEA_NAME = {occasion: "una ricorrenza", combo: "una cena completa", half: "il prodotto a metà prezzo", saving: "il risparmio", under_euro: "i prodotti sotto l'euro",
   fresh: "il reparto fresco", stock: "la scorta", weekend: "il fine settimana", basket: "la spesa completa", total: "il totale del carrello", hero: "il prodotto protagonista"};
@@ -1670,6 +1691,55 @@ function rsMaterials(r) {
     });
   const mm = $("#modalRoot .modal"); if (mm) mm.classList.add("big");
 }
+
+// ---------- Parola alla cassa
+VIEWS.till = async el => {
+  const t = await api(`/api/stores/${S.storeId}/till`);
+  const res = t.results, fl = t.flyer;
+  el.innerHTML = `
+    <div class="card"><h2>${icon("i-key")} Parola alla cassa</h2>
+      <p class="sub">Ogni canale ha la sua parola d'ordine, scritta nei post: «Dì <b>${res ? esc(res.rows[0].word) : "ARANCIA"}</b> alla cassa: per te ${esc(t.reward)}». Alla cassa si conta chi la dice. A fine volantino sai quale canale porta davvero clienti in negozio, non solo «mi piace». Si contano solo numeri: niente nomi, niente dati dei clienti.</p>
+      <label class="switch"><input type="checkbox" id="tillOn" ${t.on ? "checked" : ""}> <span><b>Attiva la Parola alla cassa</b> — le parole compaiono subito nei testi del volantino in corso (Instagram, Facebook, Reel) e nello stato WhatsApp del Salvaspreco</span></label>
+      <div class="row" style="margin-top:14px"><div class="f"><label class="l" for="tillReward">Cosa ricevono i clienti che dicono la parola</label><input class="in" id="tillReward" maxlength="80" value="${esc(t.reward)}"></div>
+        <div style="flex:0 0 auto"><button class="btn sec" id="tillSave">Salva</button></div></div>
+      <div class="hint">Meglio uno sconto (es. «il 5% di sconto sulla spesa»): gli sconti sul prezzo non sono «operazioni a premio» (DPR 430/2001, art. 6). Per regali e omaggi chiedi prima al commercialista.</div>
+      ${!fl ? `<div style="margin-top:14px">${notice("info", "Carica il volantino in corso: le parole cambiano a ogni volantino, così i conti di ogni settimana restano separati.")}</div>` : ""}
+    </div>
+    ${fl && res ? `
+    <div class="card"><div class="toolbar"><h2 style="flex:1">${icon("i-users")} Alla cassa, oggi</h2>
+        <button class="btn sm sec" id="tillSheet">${icon("i-download")} Foglio per la cassa</button><button class="btn sm sec" id="tillWa">${icon("i-copy")} Riga per WhatsApp</button></div>
+      <p class="sub">Un tocco su +1 ogni volta che un cliente dice la parola. Se alla cassa non c'è il computer, stampa il foglio e riporta i numeri qui sotto.${t.on ? "" : " <b>La funzione è spenta: le parole non sono ancora nei testi.</b>"}</p>
+      <div class="till-tiles">${res.rows.map(r => `<div class="till-tile"><span class="ch">${esc(r.label)}</span><span class="w">${esc(r.word)}</span>
+        <div class="n" id="tillN${r.code_id}">${r.today}<small> oggi</small></div>
+        <button class="btn till-plus" data-plus="${r.code_id}">+1</button>
+        <div class="toolbar" style="justify-content:space-between"><span class="muted" style="font-size:13px">totale ${r.total}</span><button class="btn ghost sm" data-minus="${r.code_id}" aria-label="Togli uno">−1</button></div></div>`).join("")}</div>
+    </div>
+    <div class="card"><h2>${icon("i-chart")} Chi porta clienti${fl.valid_from ? ` · volantino dal ${itDate(fl.valid_from)} al ${itDate(fl.valid_to)}` : ""}</h2>
+      <p class="sub">${res.total} ${res.total === 1 ? "cliente" : "clienti"} con la parola finora.</p>
+      <div class="till-bars">${res.rows.map(r => `<div class="b"><b>${esc(r.label)}</b><div class="track"><div class="fill" style="width:${r.total ? Math.max(2, r.share) : 0}%"></div></div><span class="muted">${r.total} · ${r.share}%</span></div>`).join("")}</div>
+      ${t.advice.length ? `<div class="explain" style="margin-top:12px">${icon("i-spark")}<div><b>Cosa fare</b><ul style="margin:6px 0 0;padding-left:18px">${t.advice.map(a => `<li>${esc(a)}</li>`).join("")}</ul></div></div>` : ""}
+      <details style="margin-top:16px"><summary class="muted" style="cursor:pointer">Riporta i numeri dal foglio della cassa</summary>
+        <div class="till-scroll" style="margin-top:10px"><table class="till-table"><tr><th>Parola</th>${res.day_labels.map(d => `<th>${esc(d)}</th>`).join("")}</tr>
+        ${res.rows.map(r => `<tr><td><b>${esc(r.word)}</b> <span class="muted">${esc(r.label)}</span></td>${r.counts.map((n, i) => `<td><input inputmode="numeric" value="${n || ""}" placeholder="0" data-code="${r.code_id}" data-day="${res.days[i]}" aria-label="${esc(r.word)} ${esc(res.day_labels[i])}"></td>`).join("")}</tr>`).join("")}</table></div>
+        <div class="hint">I numeri si salvano da soli quando esci dalla casella.</div></details>
+      ${t.history.filter(h => h.flyer_id !== fl.id).length ? `<h3 style="margin-top:18px">Volantini precedenti</h3><div class="till-scroll"><table class="till-table"><tr><th>Volantino</th>${Object.values(t.channels).map(c => `<th>${esc(c)}</th>`).join("")}<th>Totale</th></tr>
+        ${t.history.filter(h => h.flyer_id !== fl.id).map(h => `<tr><td>${esc(h.title)}${h.valid_from ? " · " + itDate(h.valid_from) : ""}</td>${Object.keys(t.channels).map(k => `<td>${h.totals[k] || 0}</td>`).join("")}<td><b>${h.total}</b></td></tr>`).join("")}</table></div>` : ""}
+    </div>` : ""}`;
+  const save = async body => { await api(`/api/stores/${S.storeId}/till`, {method: "PUT", json: body}); await loadStores(); };
+  $("#tillOn").onchange = async () => { try { await save({on: $("#tillOn").checked}); toast($("#tillOn").checked ? "Attiva: le parole sono nei testi del volantino." : "Spenta: le parole sono state tolte dai testi."); go("till"); } catch (e) { toast(e.message, "err"); } };
+  $("#tillSave").onclick = () => busy($("#tillSave"), async () => { await save({reward: $("#tillReward").value}); toast("Premio salvato e aggiornato nei testi."); go("till"); });
+  if (!res) return;
+  const hit = (id, delta, b) => busy(b, async () => { const r = await api(`/api/till/${id}/hit`, {json: {delta}}); const n = $(`#tillN${id}`); n.innerHTML = `${r.today}<small> oggi</small>`; n.classList.remove("flash"); void n.offsetWidth; n.classList.add("flash"); });
+  $$("[data-plus]", el).forEach(b => b.onclick = () => hit(b.dataset.plus, 1, b));
+  $$("[data-minus]", el).forEach(b => b.onclick = () => hit(b.dataset.minus, -1, b));
+  $$("input[data-code]", el).forEach(i => i.onchange = async () => {
+    const n = i.value.trim() === "" ? 0 : Number(i.value);
+    if (!Number.isInteger(n) || n < 0) { toast("Scrivi un numero intero.", "err"); return; }
+    try { await api(`/api/till/${i.dataset.code}/count`, {method: "PUT", json: {day: i.dataset.day, count: n}}); toast("Salvato."); } catch (e) { toast(e.message, "err"); }
+  });
+  $("#tillSheet").onclick = () => busy($("#tillSheet"), async () => { await download(`/api/stores/${S.storeId}/till-sheet`, "Parola_alla_cassa.pdf"); toast("Stampa il foglio e tienilo accanto alla cassa."); }, "Preparo…");
+  $("#tillWa").onclick = async () => { const r = res.rows.find(x => x.channel === "whatsapp"); try { await navigator.clipboard.writeText(r.line); toast("Riga copiata: incollala nei messaggi WhatsApp ai clienti."); } catch (e) { toast("Copia non riuscita.", "err"); } };
+};
 
 VIEWS.clips = async el => {
   const st = currentStore();
