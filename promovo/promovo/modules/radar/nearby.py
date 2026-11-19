@@ -149,7 +149,7 @@ def nearby(store: Store, radius_m: int = 3000, fetch: Fetch = http_json, limit: 
     """Supermercati e minimarket entro il raggio, dal più vicino. Senza rete: NearbyUnavailable."""
     radius_m = max(500, min(int(radius_m), 15000))
     lat, lon, precision = locate(store, fetch)
-    query = (f'[out:json][timeout:25];(nwr["shop"~"^(supermarket|convenience|department_store|wholesale)$"]'
+    query = (f'[out:json][timeout:25];(nwr["shop"~"^(supermarket|convenience)$"]'
              f'(around:{radius_m},{lat:.6f},{lon:.6f}););out center tags 200;')
 
     def go():

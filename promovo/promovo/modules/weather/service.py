@@ -104,11 +104,13 @@ Fetch = Callable[[str, dict], dict]
 def http_json(url: str, params: dict, timeout: float = 6.0) -> dict:
     full = url + "?" + urllib.parse.urlencode(params)
     req = urllib.request.Request(full, headers={"User-Agent": "Promovo"})
-    try:
-        with urllib.request.urlopen(req, timeout=timeout) as r:  # noqa: S310 (URL fissi, solo https)
-            return json.loads(r.read().decode("utf-8"))
-    except Exception as exc:  # rete assente, servizio fermo, risposta strana: si va avanti senza meteo
-        raise WeatherUnavailable(f"previsioni non raggiungibili ({exc.__class__.__name__})") from exc
+    for attempt in (1, 2):      # un secondo tentativo: a volte il servizio risponde in ritardo
+        try:
+            with urllib.request.urlopen(req, timeout=timeout * attempt) as r:  # noqa: S310 (URL fissi, solo https)
+                return json.loads(r.read().decode("utf-8"))
+        except Exception as exc:  # rete assente, servizio fermo, risposta strana: si va avanti senza meteo
+            if attempt == 2:
+                raise WeatherUnavailable(f"previsioni non raggiungibili ({exc.__class__.__name__})") from exc
 
 
 _cache: dict[tuple, tuple[float, object]] = {}
