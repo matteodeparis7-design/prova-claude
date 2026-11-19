@@ -30,6 +30,7 @@ stesso): più negozi, ognuno con la sua identità, e un pacchetto ZIP pronto da 
 | Salvaspreco | Merce vicina alla scadenza in offerta lampo: blocco dei prodotti scaduti, sconto consigliato, storia/post/testi, cartellino «Salvami», chili e euro salvati, post del mese | `modules/rescue.py` |
 | Parola alla cassa | Una parola d'ordine per canale nei testi (mai un prodotto in offerta, nuove a ogni volantino), contatore +1 e foglio per la cassa, clienti per canale, consigli, nel report | `modules/till.py` |
 | Filiera vicina | Produttori del territorio con distanza vera (OpenStreetMap), riconoscimento nel volantino, produttore della settimana, mappa della filiera, etichette da scaffale | `modules/filiera.py` |
+| Spesa a budget | Momento del mese (scorta, spesa regolare, fine mese, tredicesima), giorno consigliato, cestino vero nel budget con totale al centesimo e risparmio, immagine e testo | `modules/budget.py` |
 | Copia di sicurezza | Backup ZIP, ripristino anche su un altro PC (percorsi riscritti), pacchetto assistenza, avviso nuova versione | `backup.py` |
 
 Tutti gli importi sono in centesimi interi. L'IA facoltativa è Claude (`claude-opus-5-5`, configurabile).

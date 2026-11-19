@@ -285,6 +285,8 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .fl-week img { width: 100%; border-radius: 12px; border: 1px solid var(--line); cursor: zoom-in; }
 .fl-week textarea { min-height: 200px; }
 @media (max-width: 720px) { .fl-week { grid-template-columns: 1fr; } .fl-item { grid-template-columns: 54px minmax(0, 1fr); } .fl-item > :last-child { grid-column: 1 / -1; } }
+.bd-moment { display: flex; gap: 12px; align-items: flex-start; border-radius: 14px; padding: 14px 16px; background: #f6f1e7; margin-bottom: 14px; }
+.bd-moment svg.i { width: 22px; height: 22px; color: #8a5a00; flex: none; margin-top: 2px; }
 /* negozi (agenzia) */
 .store-card { display: flex; flex-direction: column; gap: 12px; }
 .store-head { display: flex; gap: 12px; align-items: center; }
@@ -1409,6 +1411,7 @@ function stepPublish(el, f, content) {
         <button class="shop-item" data-print="locandina" data-size="A3"><span class="ic">${icon("i-image")}</span><b>Locandina grande (A3)</b><span>Per la porta d'ingresso o la bacheca</span></button>
         ${plan ? `<button class="shop-item" data-print="calendario"><span class="ic">${icon("i-calendar")}</span><b>Piano nel calendario</b><span>Aprilo sul telefono: un promemoria per ogni pubblicazione</span></button>` : ""}
       </div></div>
+    <div class="card" id="budgetCard"><div class="muted">Preparo la spesa a budget…</div></div>
     ${vids.length ? `<div class="card"><h2>${icon("i-video")} Video</h2><p class="sub">Guardali, poi approvali o scaricali.</p>
       ${S.refreshVideos === f.id ? `<div class="notice info" style="justify-content:space-between;align-items:center">${icon("i-spark")}<span style="flex:1">I video si aprono ancora con l'idea precedente.</span><button class="btn sm" id="refreshVideos">Aggiorna anche i video</button></div>` : ""}
       <div class="vids">${vids.map(c => `<div class="vid"><div class="ph" data-play="${c.file_url}" title="Guarda il video">${c.poster_url ? `<img data-src="${c.poster_url}" alt="">` : ""}<span class="play"><svg class="i" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></span></div>
@@ -1430,6 +1433,7 @@ function stepPublish(el, f, content) {
   const reload = () => go("flyers", {flyer: f.id, step: "publish"});
   const tc = $("#toCheck"); if (tc) tc.onclick = () => go("flyers", {flyer: f.id, step: "check"});
   const rvc = $("#reviewCard", el); if (rvc) reviewCard(rvc, f);
+  const bc = $("#budgetCard", el); if (bc) budgetCard(bc, f);
   $$("[data-print]", el).forEach(b => b.onclick = () => busy(b, async () => {
     const what = b.dataset.print, size = b.dataset.size || "A4";
     const names = {cartellini: "Cartellini_scaffale.pdf", locandina: `Locandina_vetrina_${size}.pdf`, calendario: "Piano_della_settimana.ics"};
@@ -1751,6 +1755,29 @@ VIEWS.till = async el => {
   $("#tillSheet").onclick = () => busy($("#tillSheet"), async () => { await download(`/api/stores/${S.storeId}/till-sheet`, "Parola_alla_cassa.pdf"); toast("Stampa il foglio e tienilo accanto alla cassa."); }, "Preparo…");
   $("#tillWa").onclick = async () => { const r = res.rows.find(x => x.channel === "whatsapp"); try { await navigator.clipboard.writeText(r.line); toast("Riga copiata: incollala nei messaggi WhatsApp ai clienti."); } catch (e) { toast("Copia non riuscita.", "err"); } };
 };
+
+async function budgetCard(box, f, amount = 0) {
+  let b;
+  try { b = await api(`/api/flyers/${f.id}/budget` + (amount ? `?amount=${amount}` : "")); }
+  catch (e) { box.remove(); return; }
+  const day = new Date(b.best_day + "T12:00:00").toLocaleDateString("it-IT", {weekday: "long", day: "numeric", month: "long"});
+  box.innerHTML = `<h2>${icon("i-bag")} La spesa a budget</h2>
+    <p class="sub">Un cestino vero con le offerte di questo volantino: il totale è calcolato al centesimo, con il risparmio rispetto ai prezzi senza offerta. Niente porzioni o promesse inventate.</p>
+    <div class="bd-moment">${icon("i-calendar")}<div><b>${esc(b.moment.title)}</b> <span class="muted">(oggi)</span><div style="margin-top:2px">${esc(b.moment.advice)}</div>
+      <div style="margin-top:6px"><b>Quando pubblicarla:</b> ${esc(day)}, ${esc(b.best_why)}.</div></div></div>
+    ${b.basket ? `<div class="seg" id="bdAmounts">${b.amounts.map(a => `<button data-a="${a}" class="${a === b.amount ? "on" : ""}">${a} €</button>`).join("")}</div>
+    <div class="fl-week" style="margin-top:14px"><img data-src="${b.image_url}" alt="La spesa a budget" id="bdImg">
+      <div><textarea class="in" readonly id="bdText">${esc(b.text)}</textarea>
+      <div class="toolbar" style="margin-top:10px"><button class="btn sm sec" id="bdCopy">${icon("i-copy")} Copia il testo</button><button class="btn sm sec" id="bdDl">${icon("i-download")} Scarica l'immagine</button>
+      <span class="muted">Totale ${esc(b.basket.total)}${b.basket.saving ? " · risparmio " + esc(b.basket.saving) : ""}</span></div></div></div>`
+      : notice("info", "Con le offerte di questo volantino non si compone una spesa di almeno 3 prodotti alimentari.")}`;
+  loadImages(box);
+  if (!b.basket) return;
+  $$("#bdAmounts button", box).forEach(x => x.onclick = () => budgetCard(box, f, Number(x.dataset.a)));
+  $("#bdCopy", box).onclick = async () => { try { await navigator.clipboard.writeText(b.text); toast("Testo copiato."); } catch (e) { toast("Copia non riuscita.", "err"); } };
+  $("#bdDl", box).onclick = () => download(b.image_url, `Spesa_a_${b.amount}_euro.jpg`);
+  $("#bdImg", box).onclick = () => lightbox(b.image_url);
+}
 
 // ---------- Filiera vicina
 function flForm(p = {}) {

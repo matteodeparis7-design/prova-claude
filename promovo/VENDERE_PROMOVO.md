@@ -21,6 +21,22 @@ vede il risultato e il report.
 
 ### Perché un supermercato dovrebbe pagare te e non usare «un'intelligenza artificiale qualsiasi»
 
+**La frase da dire:** «ChatGPT scrive. Promovo fa lavorare il negozio.» Quattro servizi che nessuna chat
+generica e nessun programma per i social dei supermercati offre (dettagli in `IDEE_VINCENTI.md`):
+
+1. **Salvaspreco** — la merce che sta per scadere diventa un'offerta lampo in 30 secondi (storia, post,
+   WhatsApp, cartellino «Salvami»), con il conto dei chili salvati e degli euro recuperati. **Ripaga
+   l'abbonamento da solo** e trasforma lo spreco in un vanto («A novembre abbiamo salvato 64 kg di cibo»).
+2. **Parola alla cassa** — ogni canale ha la sua parola d'ordine; alla cassa si contano i clienti. Per la
+   prima volta il titolare sa **quale canale porta gente in negozio**, non solo «mi piace». È la prova del
+   tuo lavoro da mostrare ogni settimana.
+3. **Filiera vicina** — i produttori del territorio con la distanza vera dal negozio: post «Conosci chi lo
+   produce?», mappa della filiera, etichette da scaffale. È l'unica arma che la grande catena non ha.
+4. **La spesa a budget e il calendario dei portafogli** — il cestino vero con il totale al centesimo,
+   pubblicato nel momento del mese in cui i clienti contano gli euro.
+
+Poi tutto il resto:
+
 - **Prezzi controllati due volte**: un errore di prezzo su un post è un problema legale e di immagine;
   Promovo rilegge ogni prezzo e segnala i dubbi. Una chat generica non lo fa.
 - **Dal volantino ai materiali in pochi minuti**: video in tre formati con musica originale, grafiche

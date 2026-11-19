@@ -203,6 +203,17 @@ Si contano solo numeri: nessun nome e nessun dato dei clienti.
 Promovo usa solo quello che scrivi: non inventa storie né qualità e non scrive «km 0» (in alcune regioni ha
 un significato di legge preciso): scrive la distanza calcolata.
 
+### La spesa a budget e il momento del mese
+
+Nel passo **3 · Approva e scarica** del volantino trovi **La spesa a budget**: un cestino vero composto con
+le offerte del volantino (10, 15, 20, 30 € e oltre), con il totale calcolato al centesimo e il risparmio
+rispetto ai prezzi senza offerta. Hai l'immagine pronta e il testo da copiare.
+
+Sopra, Promovo ti dice **in che momento del mese siamo** (inizio mese: si fa scorta; metà mese: spesa di
+tutti i giorni; fine mese: si contano gli euro; dicembre: tredicesima e feste) e **quando conviene
+pubblicare** la spesa a budget, dentro le date del volantino. Solo numeri veri: niente porzioni o «cene
+per 4» inventate.
+
 ## 6. Agenti aggiuntivi (gratuiti, sul tuo computer)
 
 Nella pagina **Impostazioni**, scheda **«Agenti aggiuntivi»**: modelli open source scelti per sicurezza e

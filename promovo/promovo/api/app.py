@@ -46,6 +46,7 @@ from ..modules.weather.service import weekly_weather
 from ..modules import rescue as rescuemod
 from ..modules import till as tillmod
 from ..modules import filiera as filieramod
+from ..modules import budget as budgetmod
 from .deps import (
     AppState, bearer_token, content_for, current_user, flyer_for, get_session, job_for, offer_for,
     require_owner, state, store_for,
@@ -1868,6 +1869,42 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         out = _render_tmp(state(request).settings, "etichette", ".pdf")
         filieramod.labels_pdf(store, ps, out)
         return FileResponse(out, media_type="application/pdf", filename="Etichette_filiera_vicina.pdf",
+                            background=StarletteTask(lambda: out.unlink(missing_ok=True)))
+
+    # -------------------------------------------------- spesa a budget e momento del mese
+
+    @app.get("/api/flyers/{flyer_id}/budget")
+    def flyer_budget(flyer_id: int, amount: int = 0, user: User = Depends(current_user),
+                     session: Session = Depends(get_session)):
+        """La spesa a budget con le offerte del volantino (totale al centesimo) e il momento del mese."""
+        f = flyer_for(session, user, flyer_id)
+        today = date.today()
+        offers = list(f.offers)
+        amounts = budgetmod.amounts_for(offers)
+        day, why = budgetmod.best_day(f, today)
+        out = {"moment": budgetmod.moment(today), "best_day": day.isoformat(), "best_why": why,
+               "best_moment": budgetmod.moment(day), "amounts": amounts, "amount": None, "basket": None, "text": ""}
+        if not amounts:
+            return out
+        amount = amount if amount in amounts else (20 if 20 in amounts else amounts[0])
+        b = budgetmod.make_basket(offers, amount * 100)
+        out.update(amount=amount, text=budgetmod.write_text(f.store, f, b),
+                   basket={"total": format_eur(b.total), "saving": format_eur(b.saving) if b.saving else "",
+                           "items": [{"id": o.id, "label": budgetmod._label(o), "price": format_eur(o.price_cents)}
+                                     for o in b.items]},
+                   image_url=f"/api/flyers/{f.id}/budget.jpg?amount={amount}")
+        return out
+
+    @app.get("/api/flyers/{flyer_id}/budget.jpg")
+    def flyer_budget_image(flyer_id: int, request: Request, amount: int = 20, user: User = Depends(current_user),
+                           session: Session = Depends(get_session)):
+        f = flyer_for(session, user, flyer_id)
+        b = budgetmod.make_basket(list(f.offers), amount * 100)
+        if b is None:
+            raise HTTPException(404, "Con questo budget non si compone una spesa di almeno 3 prodotti.")
+        out = _render_tmp(state(request).settings, "budget", ".jpg")
+        budgetmod.image(f.store, f, b).save(out, quality=92)
+        return FileResponse(out, media_type="image/jpeg", filename=f"Spesa_a_{amount}_euro.jpg",
                             background=StarletteTask(lambda: out.unlink(missing_ok=True)))
 
     return app
