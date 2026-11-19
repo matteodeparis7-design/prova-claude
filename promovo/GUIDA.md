@@ -26,9 +26,9 @@ tono dei testi, indirizzo e orari suoi: Promovo li usa in tutti i materiali.
 | **Lettore** | legge il volantino, anche quando è fatto solo di immagini o è una foto |
 | **Controllo** | rilegge ogni prezzo una seconda volta, ingrandito, per confermarlo |
 | **Stratega e copywriter** | sceglie l'idea della settimana e scrive i testi nel tono del negozio |
-| **Grafico** | copertina, storia e un'immagine per ogni offerta in evidenza |
+| **Grafico** | copertina, storia e un'immagine per ogni offerta in evidenza; scontorna i prodotti dalle foto del volantino |
 | **Montatore** | Reel 9:16, video per i post 1:1, video per gli schermi in negozio 16:9 |
-| **Regista dal banco** | trasforma un video girato col telefono in un Reel stabilizzato |
+| **Regista dal banco** | trasforma un video girato col telefono in un Reel stabilizzato, con i sottotitoli a tempo di parola |
 | **Analista prezzi** | trova i supermercati della zona e confronta i prezzi con i loro volantini |
 | **Meteorologo** | suggerisce cosa spingere nei giorni di caldo, freddo o pioggia |
 | **Pianificatore** | prepara il calendario di pubblicazione e cosa filmare al banco |
@@ -127,7 +127,21 @@ la frutta, la persona che ti serve.
 5. **Crea il Reel**: Promovo sceglie i momenti migliori, raddrizza in verticale, stabilizza, mette
    logo, sottotitoli, cartellino con il prezzo verificato, musica e la scena finale con il QR code.
 
-## 6. Impostazioni e potenziamenti facoltativi
+## 6. Agenti aggiuntivi (gratuiti, sul tuo computer)
+
+Nella pagina **Impostazioni**, scheda **«Agenti aggiuntivi»**: modelli open source scelti per sicurezza e
+qualità (licenza MIT, usabili anche per lavoro). Lavorano sul computer: foto e voce non escono mai, e ogni
+file viene controllato con la sua impronta digitale prima di essere usato.
+
+- **Scontorno dei prodotti** (già incluso): ritaglia il prodotto dalla foto del volantino, senza sfondo e
+  senza prezzi, per grafiche e Reel più puliti. Se in una foto restano attaccati prezzi o scritte del
+  cartellino, Promovo lo scarta da solo e usa la foto di prima. Se carichi una tua foto del prodotto,
+  vince sempre la tua.
+- **Sottotitoli automatici** (da scaricare una volta, circa 480 MB): nei Reel «Dal banco» con la voce, le
+  parole compaiono esattamente quando vengono dette. Se leggi il testo proposto, i sottotitoli riportano quel
+  testo esatto; se parli a braccio, scrive quello che dici (ricontrolla il testo del post prima di pubblicare).
+
+## 7. Impostazioni e potenziamenti facoltativi
 
 Promovo funziona completamente senza chiavi. Nella pagina **Impostazioni** puoi aggiungere,
 se vuoi, due servizi esterni a pagamento:
@@ -141,7 +155,7 @@ se vuoi, due servizi esterni a pagamento:
 
 Le chiavi restano solo sul tuo computer (cartella «Dati Promovo»): non mandarle a nessuno.
 
-## 7. Se qualcosa non va
+## 8. Se qualcosa non va
 
 - **Il browser dice "impossibile raggiungere la pagina"**: aspetta qualche secondo e ricarica;
   la finestra nera deve restare aperta.

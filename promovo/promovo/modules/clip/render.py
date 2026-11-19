@@ -50,6 +50,8 @@ class ClipText:
     cards: list[ProductCard | None] = field(default_factory=list)
     # Senza voce: un sottotitolo per tratto, mostrato mentre si vede quel tratto.
     segment_lines: list[str] = field(default_factory=list)
+    # Con la voce trascritta: (testo, inizio, fine) in secondi dall'inizio della voce, parola per parola.
+    timed: list[tuple[str, float, float]] = field(default_factory=list)
 
 
 @dataclass
@@ -342,8 +344,13 @@ class ClipOverlay:
         # sottotitoli: con la voce seguono il parlato, senza voce scorrono dopo il titolo
         start = voice_start if voice_len > 0 else (3.4 if self.hook else 0.8)
         end = voice_start + voice_len if voice_len > 0 else footage - 0.4
-        self.caps = [(_outlined(c, 60, stroke=5, lines=2), a, b)
-                     for c, a, b in caption_timing(t.captions, start, max(start + 1.0, min(end, footage - 0.2)))]
+        if t.timed and voice_len > 0:      # tempi veri, parola per parola
+            last = footage - 0.2
+            self.caps = [(_outlined(c, 60, stroke=5, lines=2), voice_start + a, min(voice_start + b, last))
+                         for c, a, b in t.timed if voice_start + a < last]
+        else:
+            self.caps = [(_outlined(c, 60, stroke=5, lines=2), a, b)
+                         for c, a, b in caption_timing(t.captions, start, max(start + 1.0, min(end, footage - 0.2)))]
         if not t.captions and t.segment_lines:
             hook_end = (min(3.2, footage * 0.45) + 0.35) if self.hook is not None else 0.4
             for line, (a, b) in zip(t.segment_lines, timeline(spec.segments, footage)):

@@ -23,6 +23,7 @@ class AppState:
     weather_fetch: object | None = None     # funzione che scarica le previsioni (nei test, una finta)
     nearby_fetch: object | None = None      # funzione che interroga la mappa (nei test, una finta)
     link_download: object | None = None     # funzione che scarica un volantino da un link (nei test, una finta)
+    extras_download: object | None = None   # funzione che scarica un agente aggiuntivo (nei test, una finta)
     key_test_client: object | None = None   # client finto per provare le chiavi (solo nei test)
     llm_client: object | None = None        # client Anthropic finto (solo nei test)
 

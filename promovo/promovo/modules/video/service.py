@@ -16,17 +16,50 @@ MAX_OFFERS = {"landscape": 40, "portrait": 6, "square": 6}
 FORMAT_LABEL = {"landscape": "Video schermo 16:9", "portrait": "Reel 9:16", "square": "Video post 1:1"}
 
 
-def offer_image(o: Offer) -> str | None:
-    """La foto migliore disponibile: prodotto scontornato, altrimenti il ritaglio del volantino."""
+def cut_image(o: Offer, make: bool = True) -> str | None:
+    """Il prodotto scontornato dall'agente (BiRefNet), salvato accanto al ritaglio e riusato le volte dopo.
+    make=False: solo se è già pronto (per i video lunghi, dove rifarli tutti richiederebbe troppo)."""
+    if not o.crop_path or not Path(o.crop_path).exists():
+        return None
+    crop = Path(o.crop_path)
+    done, no = crop.with_name(crop.stem + "_cut.png"), crop.with_name(crop.stem + "_cut.no")
+    if done.exists() and done.stat().st_mtime >= crop.stat().st_mtime:
+        return str(done)
+    if not make or no.exists():
+        return None
+    from ... import cutout
+    if not cutout.available():
+        return None
+    from PIL import Image
+    try:
+        with Image.open(crop) as im:
+            res = cutout.cut(im, " ".join(x for x in (o.brand, o.name, o.description) if x))
+    except Exception:            # lo scontorno è un di più: se non riesce si usa la foto di prima
+        res = None
+    if res is None:
+        no.touch()               # non affidabile per questa foto: non si riprova ogni volta
+        return None
+    res.save(done)
+    return str(done)
+
+
+def offer_image(o: Offer, cut: bool = True) -> str | None:
+    """La foto migliore disponibile: quella caricata da te, poi il prodotto scontornato dall'agente,
+    poi la foto ricavata dal volantino, infine il ritaglio del volantino."""
+    if o.photo_path and "manuale_" in o.photo_path and Path(o.photo_path).exists():
+        return o.photo_path
+    c = cut_image(o, make=cut)
+    if c:
+        return c
     for p in (o.photo_path, o.crop_path):
         if p and Path(p).exists():
             return p
     return None
 
 
-def to_video_offer(o: Offer) -> VideoOffer:
+def to_video_offer(o: Offer, cut: bool = True) -> VideoOffer:
     return VideoOffer(o.name, o.description, o.price_cents, o.old_price_cents, o.discount_percent, o.conditions,
-                      offer_image(o), brand=o.brand, unit_price_text=o.unit_price_text)
+                      offer_image(o, cut), brand=o.brand, unit_price_text=o.unit_price_text)
 
 
 def whatsapp_link(number: str) -> str:
@@ -89,7 +122,7 @@ def build_spec(store: Store, flyer: Flyer, fmt: str = "landscape", scale: float 
         idea_headline=headline != default,
         validity=validity_text(flyer),
         address=address,
-        offers=[to_video_offer(o) for o in offers],
+        offers=[to_video_offer(o, cut=fmt != "landscape") for o in offers],   # 40 offerte: solo quelle già pronte
         brand_color=store.brand_color,
         accent_color=store.accent_color,
         format=fmt,

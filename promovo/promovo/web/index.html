@@ -292,6 +292,7 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .agent .n { flex: none; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); }
 .agent > div { flex: 1; display: flex; flex-direction: column; gap: 2px; font-size: 14px; }
 .agent .chip { flex: none; }
+.agent .hint { display: block; margin-top: 4px; }
 .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .explain { display: flex; gap: 14px; padding: 16px; border-radius: 14px; background: var(--info-soft); color: #1b3a66; font-size: 14px; }
 .explain .legend { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
@@ -1386,13 +1387,15 @@ async function currentOffers() {
 
 VIEWS.clips = async el => {
   const st = currentStore();
-  const [{flyer, offers}, clips] = await Promise.all([currentOffers(), api(`/api/stores/${S.storeId}/clips`)]);
+  const [{flyer, offers}, clips, xlist] = await Promise.all([currentOffers(), api(`/api/stores/${S.storeId}/clips`), api("/api/extras").catch(() => [])]);
+  const subs = xlist.find(x => x.key === "subtitles");
   const aiVoice = st.voice_ready && st.voice_service;
   let videoFile = null, voiceMode = "none", rec = null;
   el.innerHTML = `
     <div class="card">
       <h2>${icon("i-camera")} Dal banco al Reel</h2>
       <p class="sub">Gira 15-60 secondi col telefono davanti al banco, come viene. Promovo sceglie i momenti migliori, raddrizza e stabilizza il video, aggiunge prezzo, sottotitoli, logo e musica. In un minuto hai un Reel vero del tuo negozio, non una pubblicità finta.</p>
+      ${subs && !subs.ready ? `<div class="notice info" style="align-items:center">${icon("i-msg")}<span style="flex:1">Con l'agente <b>Sottotitoli automatici</b> le parole compaiono esattamente quando vengono dette, anche se parli a braccio. Si scarica una volta sola (${subs.size_mb} MB) dalle Impostazioni.</span><button class="btn sm sec" id="goExtras">Vai alle Impostazioni</button></div>` : ""}
       <div class="clip-steps">
         <div class="clip-step"><span class="n">1</span><div><h3>Il video</h3>
           <div class="drop" id="vdrop" tabindex="0" role="button" aria-label="Carica un video"><div class="ic">${icon("i-camera")}</div>
@@ -1436,6 +1439,7 @@ VIEWS.clips = async el => {
     $("#vchange").onclick = () => $("#vfile").click();
     upd();
   };
+  const ge = $("#goExtras"); if (ge) ge.onclick = () => go("settings");
   const drop = $("#vdrop"), vf = $("#vfile");
   drop.onclick = () => vf.click();
   drop.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); vf.click(); } };
@@ -1601,8 +1605,41 @@ const AGENTS = [
   ["i-calendar", "Pianificatore", "Prepara il calendario di pubblicazione e cosa filmare al banco."],
 ];
 
+function extrasCard(list, owner) {
+  return `<div class="card" id="extrasCard"><h2>${icon("i-download")} Agenti aggiuntivi</h2>
+    <p class="sub">Modelli open source scelti per sicurezza e qualità: lavorano su questo computer, la voce e le foto non escono mai. Ogni file viene controllato con la sua impronta digitale prima dell'uso.</p>
+    <div class="agents">${list.map(x => `<div class="agent"><span class="n">${icon(x.key === "cutout" ? "i-image" : "i-msg")}</span>
+      <div><b>${esc(x.title)}</b><span class="muted">${esc(x.what)}</span><span class="hint">${esc(x.license)} · ${x.size_mb} MB</span>
+        ${x.downloading ? `<div class="progress det"><div style="width:${x.progress}%"></div></div><span class="hint">Scaricamento ${x.progress}%…</span>` : ""}
+        ${x.error && !x.ready && !x.downloading ? `<span class="hint" style="color:var(--err)">${esc(x.error)}</span>` : ""}</div>
+      ${x.ready ? `<span class="chip ok">${icon("i-check")} ${x.bundled ? "incluso" : "pronto"}</span>`
+        : x.downloading ? `<span class="chip info">in arrivo</span>`
+        : owner ? `<button class="btn sm" data-xdl="${x.key}">${icon("i-download")} Scarica</button>` : `<span class="chip grey">non installato</span>`}</div>`).join("")}</div></div>`;
+}
+async function bindExtras(el) {
+  $$("[data-xdl]", el).forEach(b => b.onclick = () => busy(b, async () => {
+    await api(`/api/extras/${b.dataset.xdl}/download`, {method: "POST"});
+    toast("Scaricamento avviato: puoi continuare a lavorare.");
+    pollExtras(el);
+  }, "Avvio…"));
+}
+async function pollExtras(el) {
+  for (;;) {
+    const box = $("#extrasCard", el);
+    if (!box || S.view !== "settings") return;
+    const list = await api("/api/extras");
+    box.outerHTML = extrasCard(list, S.me && S.me.role === "owner");
+    bindExtras(el);
+    if (!list.some(x => x.downloading)) {
+      if (list.every(x => x.ready)) toast("Agenti aggiuntivi pronti.");
+      return;
+    }
+    await sleep(2000);
+  }
+}
+
 VIEWS.settings = async el => {
-  const st = await api("/api/settings");
+  const [st, xlist] = await Promise.all([api("/api/settings"), api("/api/extras").catch(() => [])]);
   const owner = S.me && S.me.role === "owner";
   const keyCard = (svc, title, what, how, cost) => {
     const k = st[svc];
@@ -1623,6 +1660,7 @@ VIEWS.settings = async el => {
       <div class="agents">${AGENTS.map(([ic, t, d]) => `<div class="agent"><span class="n">${icon(ic)}</span><div><b>${t}</b><span class="muted">${d}</span></div><span class="chip ok">pronto</span></div>`).join("")}</div>
       ${st.agents.ocr ? "" : notice("warn", "La lettura dei volantini fatti di immagini non è disponibile su questa installazione: i volantini con il testo nel PDF si leggono comunque.")}
     </div>
+    ${xlist.length ? extrasCard(xlist, owner) : ""}
     <div class="card"><h2>${icon("i-settings")} Potenziamenti facoltativi</h2>
       <p class="sub">Promovo funziona benissimo senza. Se vuoi, puoi aggiungere due servizi esterni a pagamento: le chiavi restano solo su questo computer.</p>
       <div class="grid g2" style="margin-top:0">
@@ -1635,6 +1673,8 @@ VIEWS.settings = async el => {
       </div>
       ${st.ai_mode_off ? notice("info", "L'IA facoltativa è disattivata da chi ha installato Promovo (PROMOVO_AI=off).") : ""}
     </div>`;
+  bindExtras(el);
+  if (xlist.some(x => x.downloading)) pollExtras(el);
   $$("[data-ksave]", el).forEach(b => b.onclick = () => busy(b, async () => {
     const svc = b.dataset.ksave, input = $("#key-" + svc), box = $(`[data-kmsg="${svc}"]`);
     box.innerHTML = "";

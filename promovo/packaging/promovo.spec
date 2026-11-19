@@ -1,6 +1,6 @@
 # Ricetta di PyInstaller per costruire il programma Promovo (cartella con Promovo.exe).
 # Uso, dalla cartella "promovo":  pyinstaller packaging/promovo.spec --noconfirm
-from PyInstaller.utils.hooks import collect_data_files, collect_submodules
+from PyInstaller.utils.hooks import collect_data_files, collect_dynamic_libs, collect_submodules
 
 datas = []
 datas += collect_data_files("promovo")              # caratteri, pagina web
@@ -9,17 +9,20 @@ datas += collect_data_files("tzdata")               # fusi orari (Windows non li
 datas += collect_data_files("certifi")              # certificati per le connessioni sicure
 datas += collect_data_files("segno")
 datas += collect_data_files("rapidocr")             # lettura ottica: configurazione e modelli (scaricati prima)
+datas += collect_data_files("faster_whisper")       # sottotitoli: rilevatore della voce (VAD)
 
 hidden = []
 hidden += collect_submodules("promovo")             # alcuni moduli si caricano solo quando servono
 hidden += collect_submodules("uvicorn")
 hidden += collect_submodules("rapidocr")
+hidden += collect_submodules("faster_whisper")
+hidden += ["ctranslate2", "av", "tokenizers"]
 hidden += ["email_validator", "multipart", "python_multipart"]
 
 a = Analysis(
     ["promovo_app.py"],
     pathex=[".."],
-    binaries=[],
+    binaries=collect_dynamic_libs("ctranslate2"),
     datas=datas,
     hiddenimports=hidden,
     excludes=["tkinter", "matplotlib", "IPython", "pytest"],

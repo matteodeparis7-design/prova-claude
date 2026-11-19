@@ -397,7 +397,7 @@ def run_clip_job(app_state: AppState, job_id: int) -> None:
             job = s.get(Job, job_id)
             job.status = JobStatus.done
             job.result = {"content_id": piece.id, "warnings": piece.meta.get("warnings", []),
-                          "duration": piece.meta.get("duration")}
+                          "duration": piece.meta.get("duration"), "subtitles": piece.meta.get("subtitles", "")}
         except (ClipFailed, ClipError, voicemod.VoiceError) as exc:   # errori spiegabili al negoziante
             s.rollback()
             job = s.get(Job, job_id)
@@ -453,6 +453,8 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
     db = db or Database(settings.database_url)
     db.create_all()
     settings.ensure_dirs()
+    from .. import extras
+    extras.set_data_dir(settings.data_dir)
     keys.load_voice_key(settings)
     if llm is None and use_ai:
         llm = keys.make_llm(settings)
@@ -491,6 +493,34 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
     @app.get("/api/settings")
     def get_app_settings(request: Request, user: User = Depends(current_user)):
         return settings_out(request)
+
+    # -------------------------------------------------- agenti aggiuntivi (modelli open source sul computer)
+
+    @app.get("/api/extras")
+    def list_extras(user: User = Depends(current_user)):
+        return extras.status()
+
+    @app.post("/api/extras/{key}/download", status_code=202)
+    def download_extra(key: str, request: Request, user: User = Depends(require_owner)):
+        if key not in extras.EXTRAS:
+            raise HTTPException(404, "Agente sconosciuto.")
+        if not any(x["key"] == key and (x["ready"] or x["downloading"]) for x in extras.status()):
+            fetch = getattr(state(request), "extras_download", None) or extras.download
+            import threading
+
+            def run():
+                try:
+                    fetch(key)
+                except Exception as exc:          # l'errore resta visibile nello stato dell'agente
+                    log.warning("scaricamento %s non riuscito: %s", key, exc)
+            threading.Thread(target=run, daemon=True).start()
+        return next(x for x in extras.status() if x["key"] == key)
+
+    @app.delete("/api/extras/{key}", status_code=204)
+    def remove_extra(key: str, user: User = Depends(require_owner)):
+        if key not in extras.EXTRAS:
+            raise HTTPException(404, "Agente sconosciuto.")
+        extras.remove(key)
 
     @app.post("/api/settings/keys")
     def save_key(body: KeyIn, request: Request, user: User = Depends(require_owner)):

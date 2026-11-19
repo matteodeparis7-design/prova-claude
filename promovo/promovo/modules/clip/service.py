@@ -350,7 +350,26 @@ def make_reel(session: Session, store: Store, settings: Settings, llm: LLM | Non
         plan.warnings.append("Il video inquadrava più cose: ho tenuto solo la parte principale, dove c'è "
                              f"«{chosen.name}». Per mostrare più prodotti, carica un video per prodotto "
                              "oppure lascia che li riconosca l'IA.")
+    timed: list = []
+    if voice_path is not None:
+        from .transcribe import captions_for
+        known = plan.script if (voice_mode == "ai" or spoken_script.strip()) else ""
+        hint = ", ".join(o.name for o in plan.offers if o is not None)
+        # si ascolta la voce già pulita (senza silenzi iniziali), la stessa che finisce nel video
+        clean_wav = work / f"listen_{uuid.uuid4().hex}.wav"
+        try:
+            clean_voice(voice_path, clean_wav)
+            got = captions_for(clean_wav, script=known, hint=hint)
+        except Exception:
+            got = None
+        finally:
+            clean_wav.unlink(missing_ok=True)
+        if got is not None:
+            timed, said = got
+            if not known:                 # ha parlato a braccio: il testo del post è quello che ha detto
+                plan.script = said[:500]
     text = ClipText(hook=plan.hook, captions=caption_chunks(plan.script) if voice_path is not None else [],
+                    timed=timed,
                     segment_lines=plan.lines,
                     validity=validity_text(flyer) if flyer is not None and any(plan.offers) else "", cards=plan.cards)
     spec = ClipSpec(source=video, info=analysis.info, segments=analysis.segments, store_name=store.name, text=text,
@@ -373,6 +392,7 @@ def make_reel(session: Session, store: Store, settings: Settings, llm: LLM | Non
                          meta={"format": "clip", "duration": round(duration, 2), "music": spec.music,
                                "poster": str(post) if post else "", "source": plan.source, "hook": plan.hook,
                                "script": plan.script, "voice": voice_mode, "ai_voice": voice_is_ai,
+                               "subtitles": "a tempo di parola" if timed else ("stimati" if voice_path else ""),
                                "offers": [o.id if o else None for o in plan.offers],
                                "segments": [[round(s.start, 2), round(s.end, 2)] for s in analysis.segments],
                                "warnings": plan.warnings, "source_video": str(video)})

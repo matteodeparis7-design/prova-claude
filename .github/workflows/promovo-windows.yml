@@ -21,6 +21,11 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Scarica l'agente di scontorno (BiRefNet lite, MIT) da includere, con controllo dell'impronta
+        working-directory: promovo
+        run: |
+          python -c "import sys; sys.path.insert(0, '.'); from pathlib import Path; from promovo import extras; e = extras.EXTRAS['cutout']; d = extras.BUNDLED / e.folder; d.mkdir(parents=True, exist_ok=True); extras._data_dir[:] = [Path('tmp_models')]; f = extras.download('cutout'); import shutil; [shutil.move(str(p), str(d / p.name)) for p in f.iterdir()]; print('incluso:', extras.path('cutout'))"
+
       - name: Installa Promovo e gli strumenti
         working-directory: promovo
         run: |
@@ -102,6 +107,31 @@ jobs:
           Write-Host "Pilota automatico: $($a.result.offers) offerte lette dall'immagine, materiali: $($a.result.done -join ', ')"
           $cfg = Invoke-RestMethod "$base/api/settings" -Headers $hd
           if (-not $cfg.agents.ocr) { throw "Lettura ottica non disponibile nel programma" }
+          # Agenti aggiuntivi: lo scontorno e' incluso; i sottotitoli si scaricano (con controllo) e si provano davvero
+          $ex = Invoke-RestMethod "$base/api/extras" -Headers $hd
+          $cut = $ex | Where-Object { $_.key -eq "cutout" }
+          if (-not ($cut.ready -and $cut.bundled)) { $ex | ConvertTo-Json; throw "Scontorno non incluso nel programma" }
+          Invoke-RestMethod -Method Post "$base/api/extras/subtitles/download" -Headers $hd | Out-Null
+          for ($i = 0; $i -lt 200; $i++) {
+            $sub = (Invoke-RestMethod "$base/api/extras" -Headers $hd) | Where-Object { $_.key -eq "subtitles" }
+            if ($sub.ready -or ($sub.error -and -not $sub.downloading)) { break }
+            Start-Sleep -Seconds 3
+          }
+          if (-not $sub.ready) { $sub | ConvertTo-Json; throw "Agente dei sottotitoli non scaricato" }
+          Write-Host "Sottotitoli automatici scaricati e verificati"
+          python -c "import imageio_ffmpeg,subprocess;subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(),'-y','-v','error','-f','lavfi','-i','sine=f=220:d=5','-ar','48000','voce.wav'],check=True)"
+          $resp = curl.exe -s -X POST "$base/api/stores/$($store.id)/clips" -H "Authorization: Bearer $($login.token)" `
+                  -F "video=@banco.mp4;type=video/mp4" -F "offer_id=$offer" -F "voice_mode=recorded" `
+                  -F "voice=@voce.wav;type=audio/wav" -F "script=Buongiorno a tutti, oggi vi consiglio questo prodotto."
+          $clip2 = $resp | ConvertFrom-Json
+          for ($i = 0; $i -lt 300; $i++) {
+            $c2 = Invoke-RestMethod "$base/api/jobs/$($clip2.id)" -Headers $hd
+            if ($c2.status -in @("done", "failed")) { break }
+            Start-Sleep -Seconds 2
+          }
+          if ($c2.status -ne "done") { $c2 | ConvertTo-Json -Depth 5; throw "Reel con voce non creato" }
+          Write-Host "Reel con voce creato: sottotitoli $($c2.result.subtitles)"
+          if (Select-String -Path avvio.txt,errori.txt -Pattern "trascrizione non riuscita" -Quiet) { Get-Content errori.txt -Tail 30; throw "L'agente dei sottotitoli non funziona nel programma" }
           Stop-Process -Id $proc.Id -Force
           Get-Content avvio.txt -TotalCount 20
 

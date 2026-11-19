@@ -2,6 +2,9 @@
 from __future__ import annotations
 
 import itertools
+import os
+
+os.environ.setdefault("PROMOVO_CUTOUT", "off")       # lo scontorno con il modello ha test suoi (lento)
 from dataclasses import dataclass
 from datetime import date, timedelta
 from pathlib import Path

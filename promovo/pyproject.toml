@@ -19,6 +19,7 @@ dependencies = [
     "httpx>=0.27",      # chiamate al servizio della voce (ElevenLabs)
     "rapidocr==3.10.0", # lettura ottica dei volantini fatti di immagini (modelli PP-OCRv6, sul computer)
     "onnxruntime>=1.20",
+    "faster-whisper==1.2.1",   # sottotitoli a tempo di parola (Whisper, licenza MIT; il modello si scarica a parte)
 ]
 
 [project.optional-dependencies]
@@ -32,7 +33,7 @@ build-backend = "setuptools.build_meta"
 include = ["promovo*"]
 
 [tool.setuptools.package-data]
-promovo = ["assets/fonts/*.ttf", "web/*.html", "web/assets/*"]
+promovo = ["assets/fonts/*.ttf", "assets/models/*/*", "web/*.html", "web/assets/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
