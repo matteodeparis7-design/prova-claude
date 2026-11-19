@@ -1039,6 +1039,7 @@ function stepPublish(el, f, content) {
     ${yellow ? `<div class="card">${notice("warn", `${yellow} prezzi non sono ancora confermati: controllali prima di pubblicare. Se ne correggi uno, rifai i materiali con un clic.`)}<div class="toolbar" style="margin-top:10px"><button class="btn sec sm" id="toCheck">${icon("i-check")} Controlla i prezzi</button></div></div>` : ""}
     ${plan ? planCard(plan) : ""}
     ${vids.length ? `<div class="card"><h2>${icon("i-video")} Video</h2><p class="sub">Guardali, poi approvali o scaricali.</p>
+      ${S.refreshVideos === f.id ? `<div class="notice info" style="justify-content:space-between;align-items:center">${icon("i-spark")}<span style="flex:1">I video si aprono ancora con l'idea precedente.</span><button class="btn sm" id="refreshVideos">Aggiorna anche i video</button></div>` : ""}
       <div class="vids">${vids.map(c => `<div class="vid"><div class="ph" data-play="${c.file_url}" title="Guarda il video">${c.poster_url ? `<img data-src="${c.poster_url}" alt="">` : ""}<span class="play"><svg class="i" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></span></div>
         <div class="toolbar"><b style="flex:1">${esc(c.title)}</b><span class="muted">${c.meta.duration} s${c.meta.music ? " · musica" : ""}</span></div>
         <div class="toolbar"><button class="btn sm sec" data-dl="${c.file_url}" data-name="${esc(c.title)}.mp4">${icon("i-download")} Scarica</button><span style="flex:1"></span>${apBtn(c)}</div></div>`).join("")}</div></div>` : ""}
@@ -1076,7 +1077,18 @@ function stepPublish(el, f, content) {
     toast("Materiali pronti per tutti i negozi selezionati.");
   }, "Gli agenti sono al lavoro…");
   const an = $("#another");
-  if (an) an.onclick = () => busy(an, async () => { await api(`/api/flyers/${f.id}/content?another=true`, {method: "POST"}); toast("Nuova idea pronta: testi riscritti."); reload(); }, "Scrivo…");
+  if (an) an.onclick = () => busy(an, async () => { await api(`/api/flyers/${f.id}/content?another=true`, {method: "POST"}); forget("/api/content"); S.refreshVideos = f.id; toast("Nuova idea pronta: testi e grafica dell'idea rifatti."); reload(); }, "Scrivo…");
+  const rv = $("#refreshVideos");
+  if (rv) rv.onclick = () => busy(rv, async () => {
+    const items = [...new Set(vids.map(c => "video_" + c.meta.format))].filter(x => ["video_portrait", "video_square", "video_landscape"].includes(x));
+    const job = await api(`/api/flyers/${f.id}/kit`, {json: {items}});
+    let j = job;
+    while (["queued", "running"].includes(j.status)) { await sleep(2000); j = await api(`/api/jobs/${job.id}`); }
+    forget("/api/content"); S.refreshVideos = null;
+    if (j.status === "failed" || (j.result && (j.result.errors || []).length)) toast("Alcuni video non sono stati rifatti: riprova da «Crea i materiali».", "err");
+    else toast("Video aggiornati con la nuova idea.");
+    reload();
+  }, "Rifaccio i video…");
   const approve = async (ids, val = true) => { for (const id of ids) await api(`/api/content/${id}`, {method: "PATCH", json: {approved: val}}); };
   $$("[data-ap]", el).forEach(b => b.onclick = () => busy(b, async () => { const c = content.find(x => x.id === Number(b.dataset.ap)); await approve([c.id], !c.approved); reload(); }));
   $$("[data-play]", el).forEach(p => p.onclick = async () => { p.innerHTML = `<span class="spin" style="width:20px;height:20px;border:2px solid #fff;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite"></span>`; const url = await blobUrl(p.dataset.play); p.outerHTML = `<video controls autoplay playsinline src="${url}"></video>`; });

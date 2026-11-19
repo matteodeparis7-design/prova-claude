@@ -895,6 +895,11 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
             if st.settings.weather else None
         pack = generate_content(f.store, f, st.llm, weather=weather, another=another)
         pieces = save_content(session, f.store, f, pack)
+        has_images = session.scalar(select(func.count()).select_from(ContentPiece).where(
+            ContentPiece.flyer_id == f.id, ContentPiece.kind == "image"))
+        if another and has_images:
+            from ..modules.graphics.service import render_idea_image
+            render_idea_image(session, f.store, f, st.settings)      # la grafica segue la nuova idea
         return {"source": pack.source, "warnings": pack.warnings, "content": [content_out(p) for p in pieces]}
 
     @app.get("/api/stores/{store_id}/content")

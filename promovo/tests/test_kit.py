@@ -148,3 +148,17 @@ def test_demo_seed(tmp_settings):
         st = ses.get(Store, 1)
         assert st.logo_path and len(st.flyers[0].offers) == 12
         assert all(o.photo_path and o.price_verified for o in st.flyers[0].offers)
+
+
+def test_another_idea_redraws_only_the_idea_image(client, live_pdf):
+    h = register(client)
+    s = make_store(client, h)
+    f = upload(client, h, s["id"], live_pdf)
+    client.post(f"/api/flyers/{f['id']}/kit", headers=h, json={"items": ["texts", "images"]})
+    before = [c for c in client.get(f"/api/flyers/{f['id']}/content", headers=h).json() if c["kind"] == "image"]
+    for _ in range(4):
+        assert client.post(f"/api/flyers/{f['id']}/content?another=true", headers=h).status_code in (200, 201)
+    after = [c for c in client.get(f"/api/flyers/{f['id']}/content", headers=h).json() if c["kind"] == "image"]
+    fmts = lambda xs: sorted(c["meta"]["format"] for c in xs if c["meta"]["format"] != "idea")
+    assert fmts(after) == fmts(before)                                   # le altre grafiche restano
+    assert sum(c["meta"]["format"] == "idea" for c in after) <= 1        # mai doppioni dell'idea

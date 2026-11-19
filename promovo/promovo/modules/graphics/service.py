@@ -226,3 +226,26 @@ def render_flyer_images(session: Session, store: Store, flyer: Flyer, settings: 
 
 
 __all__ = ["render_flyer_images", "grid_image", "offer_image", "FORMATS", "PAPER", "mix", "pill"]
+
+
+def render_idea_image(session: Session, store: Store, flyer: Flyer, settings: Settings) -> ContentPiece | None:
+    """Rifà solo la grafica dell'idea della settimana (dopo «Un'altra idea»)."""
+    from ..video.service import week_idea
+    for old in session.scalars(select(ContentPiece).where(ContentPiece.flyer_id == flyer.id,
+                                                          ContentPiece.kind == "image")).all():
+        if (old.meta or {}).get("format") == "idea":
+            if old.file_path:
+                Path(old.file_path).unlink(missing_ok=True)
+            session.delete(old)
+    session.flush()
+    img = idea_image(store, flyer, week_idea(flyer))
+    if img is None:
+        return None
+    settings.ensure_dirs()
+    path = settings.data_dir / "renders" / f"flyer{flyer.id}_img_idea.jpg"
+    img.save(path, format="JPEG", quality=92, optimize=True)
+    piece = ContentPiece(store_id=store.id, flyer_id=flyer.id, kind="image", title=LABELS["idea"], file_path=str(path),
+                         meta={"format": "idea", "width": img.width, "height": img.height})
+    session.add(piece)
+    session.flush()
+    return piece
