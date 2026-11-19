@@ -18,10 +18,16 @@ stesso): più negozi, ognuno con la sua identità, e un pacchetto ZIP pronto da 
 | Grafico | Copertina, storia e un'immagine per ogni offerta in evidenza | `modules/graphics` |
 | Montatore | Video MP4 con musica originale, logo e QR code: schermo 16:9, Reel 9:16, post 1:1 | `modules/video` |
 | Regista dal banco | Dal video girato col telefono al Reel: momenti migliori, stabilizzazione, prezzi verificati, sottotitoli, voce | `modules/clip` |
-| Analista prezzi | Confronto con i volantini dei concorrenti (al kg/litro se i formati sono diversi) | `modules/radar` |
+| Analista prezzi | Supermercati veri della zona (OpenStreetMap), confronto con i loro volantini (al kg/litro), prezzi medi della zona | `modules/radar` |
 | Meteorologo | Previsioni MET Norway (gratuite anche per uso commerciale): cosa spingere nei giorni di caldo, freddo o pioggia | `modules/weather` |
 | Pianificatore | Calendario di pubblicazione e cosa filmare al banco | `modules/content/service.py` |
 | Pilota automatico | Dal caricamento del volantino a tutti i materiali, in un solo lavoro con l'avanzamento di ogni agente | `api/app.py` (`run_autopilot_job`) |
+| Omnibus | Prezzi barrati confrontati con il minimo dei 30 giorni prima (volantini del negozio), correzione proposta | `modules/omnibus.py` |
+| Revisore finale | Controllo di qualità prima della consegna: misure, durate, prezzi nei testi, materiali con prezzi vecchi | `modules/reviewer.py` |
+| Stampa | Cartellini promozionali da scaffale (A4), locandina A4/A3 con QR, piano nel calendario (.ics) | `modules/printables.py` |
+| Scontorno (aggiuntivo) | BiRefNet lite (MIT) sul computer: prodotto senza sfondo né prezzi, con controlli e lettura ottica | `cutout.py`, `extras.py` |
+| Sottotitoli (aggiuntivo) | Whisper small (MIT) sul computer: sottotitoli a tempo di parola nei Reel dal banco | `modules/clip/transcribe.py` |
+| Copia di sicurezza | Backup ZIP, ripristino anche su un altro PC (percorsi riscritti), pacchetto assistenza, avviso nuova versione | `backup.py` |
 
 Tutti gli importi sono in centesimi interi. L'IA facoltativa è Claude (`claude-opus-5-5`, configurabile).
 

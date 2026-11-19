@@ -125,11 +125,13 @@ def poster(store: Store, flyer: Flyer, size: str = "A4") -> Image.Image:
     brand, accent = hex_rgb(store.brand_color), hex_rgb(store.accent_color)
     img = soft_background(W, H, brand, u)
     d = ImageDraw.Draw(img)
-    head_h = int(H * 0.2)
-    img.alpha_composite(brand_background(W, head_h, brand, accent, u), (0, 0))
     fg = text_on(brand)
     x, y = int(56 * u), int(46 * u)
     logo = logo_image(store.logo_path or None, int(320 * u), int(100 * u), brand)
+    # la fascia colorata è alta quanto serve: logo, titolo e date restano dentro
+    need = y + (logo.height + int(18 * u) if logo is not None else 0) + int(76 * u * 1.2) + int(48 * u) + int(40 * u)
+    head_h = max(int(H * 0.18), need)
+    img.alpha_composite(brand_background(W, head_h, brand, accent, u), (0, 0))
     if logo is not None:
         img.alpha_composite(logo, (x, y))
         y += logo.height + int(18 * u)

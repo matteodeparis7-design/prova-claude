@@ -31,6 +31,15 @@ vede il risultato e il report.
 - **Radar dei concorrenti**: sai dove il negozio è più conveniente e lo metti in evidenza.
 - **Dal banco**: un video girato col telefono diventa un Reel vero, stabilizzato, con il prezzo giusto.
 - **Report PDF settimanale**: il cliente vede il lavoro fatto e i controlli di conformità.
+- **Agente Omnibus**: controlla da solo i prezzi barrati con i volantini dei 30 giorni prima (la regola che
+  porta multe dall'Antitrust) e propone la correzione. Pochi strumenti lo fanno; nessuna chat generica.
+- **Revisore finale**: prima della consegna ricontrolla tutto il materiale e segnala, per esempio, una grafica
+  rimasta con un prezzo vecchio.
+- **Anche per il negozio fisico**: cartellini promozionali per gli scaffali (con il prezzo al kg obbligatorio),
+  locandina per la vetrina e piano della settimana nel calendario del telefono. È lavoro che oggi il personale
+  fa a mano ogni settimana.
+- **Prezzi medi della zona**: con i volantini dei concorrenti caricati nel tempo, il negozio sa dove è sotto o
+  sopra la media del quartiere.
 
 ### Prezzi indicativi (da adattare)
 

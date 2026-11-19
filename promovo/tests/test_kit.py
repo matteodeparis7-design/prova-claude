@@ -116,7 +116,7 @@ def test_kit_and_zip(client, live_pdf):
     assert "Report della settimana" in text and "Offerte e controllo dei prezzi" in text and "Omnibus" in text
     # Solo i contenuti approvati.
     z2 = client.get(f"/api/flyers/{f['id']}/kit.zip?approved_only=true", headers=h)
-    assert [n for n in zipfile.ZipFile(io.BytesIO(z2.content)).namelist() if not n.endswith(("LEGGIMI.txt", "Piano_della_settimana.txt", "Report_della_settimana.pdf"))] == []
+    assert [n for n in zipfile.ZipFile(io.BytesIO(z2.content)).namelist() if not n.endswith(("LEGGIMI.txt", "Piano_della_settimana.txt", "Report_della_settimana.pdf", "Piano_nel_calendario.ics")) and "/Da stampare/" not in n] == []
     # Il file temporaneo dello ZIP viene cancellato dopo l'invio.
     renders = client.app.state.promovo.settings.data_dir / "renders"
     assert not list(renders.glob("pacchetto_*.zip"))
