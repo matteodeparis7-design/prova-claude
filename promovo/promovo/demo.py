@@ -54,6 +54,17 @@ def seed_demo(db: Database, settings: Settings) -> bool:
         settings.ensure_dirs()
         store.logo_path = str(load_logo(demo_logo(), settings.data_dir / "logos" / f"{store.id}_demo.png"))
         start, end = date.today() - timedelta(days=1), date.today() + timedelta(days=10)
+        # Il volantino di due settimane prima: serve all'agente Omnibus (prezzi barrati) e allo storico.
+        p0, e0 = start - timedelta(days=15), start - timedelta(days=5)
+        prev = build_sample_flyer(
+            [SampleProduct("Spaghetti di grano duro", "500 g", 69, None, (230, 190, 90)),
+             SampleProduct("Caffè macinato", "250 g", 269, None, (90, 60, 40)),
+             SampleProduct("Biscotti frollini", "350 g", 199, None, (210, 160, 90)),
+             SampleProduct("Detersivo lavatrice", "30 lavaggi", 650, None, (60, 120, 220)),
+             SampleProduct("Acqua naturale", "6 x 1,5 L", 249, None, (150, 200, 240)),
+             SampleProduct("Gelato vaniglia", "500 g", 399, None, (250, 240, 200))],
+            validity=f"Offerte valide dal {p0:%d/%m/%Y} al {e0:%d/%m/%Y}", banner="SUPERMERCATO DEMO")
+        ingest_flyer(s, store, prev, settings, None, title="Volantino precedente")
         pdf = build_sample_flyer(validity=f"Offerte valide dal {start:%d/%m/%Y} al {end:%d/%m/%Y}",
                                  banner="SUPERMERCATO DEMO", illustrated=True)
         ingest_flyer(s, store, pdf, settings, None, title="Volantino di prova")
@@ -67,6 +78,14 @@ def seed_demo(db: Database, settings: Settings) -> bool:
              SampleProduct("Salmone affumicato", "100 g", 329, None, (240, 140, 100))],
             validity=f"Offerte valide dal {start:%d/%m/%Y} al {end:%d/%m/%Y}", banner="CONCORRENTE")
         from .modules.flyer.service import create_flyer, process_flyer
+        rival_old = build_sample_flyer(
+            [SampleProduct("Spaghetti", "500 g", 85, None, (230, 190, 90)),
+             SampleProduct("Caffè macinato", "500 g", 469, None, (90, 60, 40)),
+             SampleProduct("Biscotti frollini", "350 g", 159, None, (210, 160, 90)),
+             SampleProduct("Salmone affumicato", "100 g", 359, None, (240, 140, 100))],
+            validity=f"Offerte valide dal {p0:%d/%m/%Y} al {e0:%d/%m/%Y}", banner="CONCORRENTE")
+        process_flyer(s, create_flyer(s, store, rival_old, settings, title="Volantino Market Esempio (precedente)",
+                                      competitor="Market Esempio (concorrente di prova)"), settings, None)
         process_flyer(s, create_flyer(s, store, rival, settings, title="Volantino Market Esempio",
                                       competitor="Market Esempio (concorrente di prova)"), settings, None)
     return True

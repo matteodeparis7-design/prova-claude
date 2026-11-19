@@ -22,6 +22,7 @@ from sqlalchemy.orm import Session
 from ...llm import AIRefused, AIUnavailable, LLM
 from ...models import ContentPiece, Flyer, Offer, Store
 from ...money import find_prices, format_eur
+from ..catalog import price_snapshot
 from .writer import (BANNED, CATEGORY_EMOJI, TONES, Facts, featured_offers, fmt_date, fmt_day, gather_facts,
                      hero_offer, product_name, review, saving, shoot_ideas, validity_text, week_dates, write_week)
 
@@ -61,8 +62,9 @@ class ContentPack:
 
 def weekly_plan(store: Store, flyer: Flyer, offers: list[Offer], today: date | None = None,
                 hero: Offer | None = None, weather: dict | None = None, facts: Facts | None = None,
-                angle=None) -> str:
-    """Cosa pubblicare, dove e quando, con i materiali che Promovo ha appena creato."""
+                angle=None, items_out: list | None = None) -> str:
+    """Cosa pubblicare, dove e quando, con i materiali che Promovo ha appena creato.
+    items_out: se c'è, ci finiscono gli appuntamenti (per il calendario del telefono)."""
     start, end = week_dates(flyer, today)
     span = (end - start).days
     hero = hero or (hero_offer(offers) if offers else None)
@@ -106,6 +108,10 @@ def weekly_plan(store: Store, flyer: Flyer, offers: list[Offer], today: date | N
     items.append((day(0), "per tutta la settimana", "Televisori in negozio · Video schermo 16:9",
                   "In loop alla cassa e all'ingresso: mostra tutte le offerte."))
     items.sort(key=lambda x: (x[0], x[1] == "per tutta la settimana", x[1]))
+    if items_out is not None:
+        for d, at, where, what in items:
+            hhmm = at.replace("ore ", "").strip() if at.startswith("ore ") else ""
+            items_out.append({"date": d.isoformat(), "time": hhmm, "where": where, "what": what})
     lines = []
     for d, at, where, what in items:
         when = f"Da {fmt_day(d)[0].lower()}{fmt_day(d)[1:]}, {at}" if at.startswith("per tutta") else f"{fmt_day(d)}, {at}"
@@ -161,9 +167,11 @@ def template_pack(store: Store, flyer: Flyer, offers: list[Offer], weather: dict
         w.texts["instagram"].setdefault("meta", {})["tried"] = sorted(avoid)
     texts = dict(w.texts)
     hero = (w.angle.featured[0] if w.angle and w.angle.featured else None)
+    plan_items: list = []
     texts["plan"] = {"title": "Piano della settimana",
                      "body": weekly_plan(store, flyer, offers, today=today, hero=hero, weather=weather,
-                                         facts=w.facts, angle=w.angle), "meta": {}}
+                                         facts=w.facts, angle=w.angle, items_out=plan_items),
+                     "meta": {"items": plan_items}}
     for t in texts.values():
         t.setdefault("meta", {})
     if w.issues:
@@ -265,7 +273,8 @@ def save_content(session: Session, store: Store, flyer: Flyer, pack: ContentPack
         if not t:
             continue
         piece = ContentPiece(store_id=store.id, flyer_id=flyer.id, kind=kind, title=t["title"], body=t["body"],
-                             meta={**t.get("meta", {}), "source": pack.source if kind != "plan" else "plan"})
+                             meta={**t.get("meta", {}), "source": pack.source if kind != "plan" else "plan",
+                                   "prices_at": price_snapshot(flyer)})
         session.add(piece)
         pieces.append(piece)
     session.flush()

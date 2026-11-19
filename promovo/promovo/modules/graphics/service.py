@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 
 from ...config import Settings
 from ...models import ContentPiece, Flyer, Store
+from ..catalog import price_snapshot
 from ..content.service import featured_offers, validity_text
 from ..video.render import (
     INK, PAPER, WHITE, Renderer, VideoOffer, brand_background, discount_burst, fit_text, hex_rgb,
@@ -217,8 +218,11 @@ def render_flyer_images(session: Session, store: Store, flyer: Flyer, settings: 
         path = out_dir / name
         img.save(path, format="JPEG", quality=92, optimize=True)
         title = LABELS[kind] + ("" if idx is None else f" {idx + 1}")
+        meta = {"format": kind, "width": img.width, "height": img.height, "prices_at": price_snapshot(flyer)}
+        if idx is not None:
+            meta["offer_id"] = featured_offers(flyer, 6)[idx].id       # per il Revisore: quale prezzo c'è scritto
         piece = ContentPiece(store_id=store.id, flyer_id=flyer.id, kind="image", title=title, file_path=str(path),
-                             meta={"format": kind, "width": img.width, "height": img.height})
+                             meta=meta)
         session.add(piece)
         pieces.append(piece)
     session.flush()
@@ -245,7 +249,8 @@ def render_idea_image(session: Session, store: Store, flyer: Flyer, settings: Se
     path = settings.data_dir / "renders" / f"flyer{flyer.id}_img_idea.jpg"
     img.save(path, format="JPEG", quality=92, optimize=True)
     piece = ContentPiece(store_id=store.id, flyer_id=flyer.id, kind="image", title=LABELS["idea"], file_path=str(path),
-                         meta={"format": "idea", "width": img.width, "height": img.height})
+                         meta={"format": "idea", "width": img.width, "height": img.height,
+                               "prices_at": price_snapshot(flyer)})
     session.add(piece)
     session.flush()
     return piece

@@ -103,6 +103,29 @@ def test_autopilot_reads_and_makes_everything(client, live_pdf, monkeypatch):
     assert kinds == {"instagram", "facebook", "reel", "plan", "image"}
 
 
+def test_autopilot_prepares_cutouts_and_checks_omnibus(client, live_pdf, monkeypatch, tmp_settings):
+    """Con l'agente di scontorno attivo, il pilota automatico scontorna in anticipo le offerte in evidenza."""
+    import numpy as np
+    from promovo import cutout
+    monkeypatch.setattr("promovo.api.app.AUTOPILOT_ITEMS", ["texts"])
+    monkeypatch.setattr(cutout, "available", lambda: True)
+    monkeypatch.setattr(cutout, "carries_offer_text", lambda img, text="": False)
+
+    def fake_mask(img):
+        m = np.zeros((img.height, img.width), np.float32)
+        m[img.height // 4: 3 * img.height // 4, img.width // 4: 3 * img.width // 4] = 1.0
+        return m
+    monkeypatch.setattr(cutout, "mask", fake_mask)
+    h = register(client)
+    store = make_store(client, h)
+    r = client.post(f"/api/stores/{store['id']}/flyers", headers=h, files={"file": ("v.pdf", live_pdf, "application/pdf")},
+                    data={"autopilot": "true"})
+    job = client.get(f"/api/jobs/{r.json()['autopilot_job']}", headers=h).json()
+    assert job["status"] == "done" and job["result"]["omnibus"] == 0, job
+    cuts = list((tmp_settings.data_dir / "crops" / str(r.json()["id"])).glob("*_cut.png"))
+    assert 1 <= len(cuts) <= 8
+
+
 def test_autopilot_reports_unreadable_flyer(client, monkeypatch):
     import pymupdf
     doc = pymupdf.open()

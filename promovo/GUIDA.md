@@ -31,7 +31,9 @@ tono dei testi, indirizzo e orari suoi: Promovo li usa in tutti i materiali.
 | **Regista dal banco** | trasforma un video girato col telefono in un Reel stabilizzato, con i sottotitoli a tempo di parola |
 | **Analista prezzi** | trova i supermercati della zona e confronta i prezzi con i loro volantini |
 | **Meteorologo** | suggerisce cosa spingere nei giorni di caldo, freddo o pioggia |
-| **Pianificatore** | prepara il calendario di pubblicazione e cosa filmare al banco |
+| **Pianificatore** | prepara il calendario di pubblicazione (anche per il calendario del telefono) e cosa filmare al banco |
+| **Omnibus** | controlla i prezzi barrati con i volantini dei 30 giorni prima e propone la correzione |
+| **Revisore finale** | prima della consegna ricontrolla grafiche, video e testi: misure, durate, prezzi, materiali rimasti col prezzo vecchio |
 
 ## 3. Il lavoro di ogni settimana
 
@@ -51,6 +53,11 @@ guardalo e premi **«È giusto»**, oppure **Correggi**. Il controllo non cambia
 
 Se hai corretto un prezzo dopo che i materiali erano già pronti, premi **Rifai i materiali**:
 gli agenti li rifanno con il prezzo giusto.
+
+**Agente Omnibus (prezzi barrati).** Per legge il prezzo «prima» deve essere il più basso praticato nei 30
+giorni precedenti lo sconto. Se in Promovo ci sono i volantini delle settimane prima, l'agente controlla da solo
+ogni prezzo barrato: se lo stesso prodotto costava meno, lo segnala con il prezzo giusto da indicare (o ti dice
+che non è uno sconto) e lo correggi con un clic. Per attivarlo carica anche i volantini passati.
 
 Qui puoi anche **evidenziare** un'offerta (stella: finisce per prima nel Reel e nelle grafiche) e
 aggiungere un'offerta mancante.
@@ -92,6 +99,14 @@ documento pronto da consegnare al negozio: offerte e prezzi controllati (con il 
 confermato ciascuno), l'idea della settimana, il piano, l'anteprima dei materiali, il confronto con i
 concorrenti e le note di conformità (prezzi barrati e regola Omnibus).
 
+**Il Revisore finale.** In cima al passo 3 trovi l'esito del controllo di qualità: «pronto da consegnare»
+oppure l'elenco di cosa guardare (per esempio una grafica fatta prima di correggere un prezzo).
+
+**Per il negozio.** Nel passo 3 e nello ZIP (cartella «Da stampare»): i **cartellini promozionali per gli
+scaffali** di tutte le offerte (8 per foglio A4, con prezzo al kg o al litro e linee di taglio), la
+**locandina per la vetrina** (A4 o A3, con QR code) e il **piano nel calendario** del telefono, con un
+promemoria all'ora di ogni pubblicazione. Stampa i PDF al 100%, senza «adatta alla pagina».
+
 **Catene di negozi.** Se gestisci più punti vendita, in fondo al passo 3 trovi **«Lo stesso volantino per
 altri punti vendita»**: scegli i negozi e gli agenti preparano i materiali di ognuno con il suo logo,
 colori, indirizzo, orari e tono, senza rileggere il volantino.
@@ -108,6 +123,9 @@ In fondo alla pagina **Volantini**, la scheda **«Concorrenti e loro volantini»
    **link** al PDF pubblicato sul sito dell'insegna.
 4. Promovo lo legge come i tuoi volantini e, nel passo 2, il **Radar** confronta i prezzi prodotto per prodotto
    (anche al kg o al litro quando i formati sono diversi).
+5. **Prezzi medi della zona**: sotto il radar, per ogni prodotto, la media, il minimo e il massimo dei prezzi
+   visti nei volantini dei concorrenti delle ultime 8 settimane. Più volantini carichi nel tempo, più la media
+   è affidabile.
 
 Perché i prezzi arrivano dai volantini e non da «internet»: è l'unico modo di avere prezzi veri, della
 settimana giusta e verificabili (il volantino resta come prova). I siti che raccolgono i volantini di
@@ -155,7 +173,19 @@ se vuoi, due servizi esterni a pagamento:
 
 Le chiavi restano solo sul tuo computer (cartella «Dati Promovo»): non mandarle a nessuno.
 
-## 8. Se qualcosa non va
+## 8. Copia di sicurezza e aggiornamenti
+
+In **Impostazioni → Copia di sicurezza e assistenza**:
+- **Copia di sicurezza** (completa o senza video): un file ZIP con negozi, volantini e materiali. Fanne una
+  ogni tanto e tienila su una chiavetta o nel cloud. Non contiene le chiavi dei servizi facoltativi.
+- **Ripristina da una copia**: la copia viene controllata; al riavvio di Promovo i dati di adesso vengono messi
+  da parte in una cartella «prima del ripristino» (non si cancella niente) e tornano quelli della copia.
+  Funziona anche su un altro computer.
+- **Pacchetto per l'assistenza**: il registro degli eventi da mandare se qualcosa non va (niente chiavi, niente foto).
+- Quando esce una nuova versione, la Panoramica lo dice con il pulsante **Scarica**: installala sopra quella di
+  adesso, i dati restano.
+
+## 9. Se qualcosa non va
 
 - **Il browser dice "impossibile raggiungere la pagina"**: aspetta qualche secondo e ricarica;
   la finestra nera deve restare aperta.

@@ -28,3 +28,9 @@ def active_offers(session: Session, store_id: int, today: date | None = None) ->
     for f in active_flyers(session, store_id, today):
         offers.extend(f.offers)
     return offers
+
+
+def price_snapshot(flyer) -> dict[str, list]:
+    """I prezzi di tutte le offerte nel momento in cui si crea un materiale (per scoprire materiali rimasti
+    con un prezzo vecchio dopo una correzione)."""
+    return {str(o.id): [o.price_cents, o.old_price_cents] for o in flyer.offers}

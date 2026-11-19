@@ -33,7 +33,7 @@ build-backend = "setuptools.build_meta"
 include = ["promovo*"]
 
 [tool.setuptools.package-data]
-promovo = ["assets/fonts/*.ttf", "assets/models/*/*", "web/*.html", "web/assets/*"]
+promovo = ["assets/fonts/*.ttf", "assets/models/*/*", "web/*.html", "web/assets/*", "build_info.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

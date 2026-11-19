@@ -1,15 +1,17 @@
 """API web di Promovo e cruscotto."""
 from __future__ import annotations
 
+import json
 import logging
 import re
 import secrets
+import tempfile
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import BackgroundTasks, Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from starlette.background import BackgroundTask as StarletteTask
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from sqlalchemy import func, select
@@ -351,10 +353,20 @@ def run_autopilot_job(app_state: AppState, job_id: int) -> None:
             job.finished_at = datetime.now(timezone.utc)
             s.commit()
             return
-        update(stage="checked", offers=len(flyer.offers),
-               unverified=sum(1 for o in flyer.offers if not o.price_verified))
-        # 2. Stratega, copywriter, grafico, montatore, pianificatore
         store = s.get(Store, job.store_id)
+        from ..modules import omnibus
+        omni = omnibus.check(s, store, flyer)
+        update(stage="checked", offers=len(flyer.offers),
+               unverified=sum(1 for o in flyer.offers if not o.price_verified), omnibus=len(omni))
+        # 1b. Grafico: scontorna in anticipo le foto delle offerte che finiranno in grafiche e Reel
+        from .. import cutout
+        if cutout.available():
+            from ..modules.video.service import cut_image, featured_offers
+            todo = featured_offers(flyer, 8)
+            for k, o in enumerate(todo):
+                update(stage="cutting", done=k, total=len(todo), current="Scontorno dei prodotti")
+                cut_image(o)
+        # 2. Stratega, copywriter, grafico, montatore, pianificatore
         items = job.params.get("items") or AUTOPILOT_ITEMS
 
         def progress(item: str, done: int, total: int) -> None:
@@ -450,6 +462,11 @@ def run_video_job(app_state: AppState, job_id: int) -> None:
 def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Database | None = None,
                use_ai: bool = True) -> FastAPI:
     settings = settings or get_settings()
+    from .. import backup as backupmod
+    from ..version import VERSION, build as build_info
+    restored = None
+    if db is None:                       # una copia di sicurezza da rimettere: prima di aprire il database
+        restored = backupmod.apply_pending_restore(settings.data_dir, settings.database_url)
     db = db or Database(settings.database_url)
     db.create_all()
     settings.ensure_dirs()
@@ -459,7 +476,7 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
     if llm is None and use_ai:
         llm = keys.make_llm(settings)
 
-    app = FastAPI(title="Promovo", version="0.1.0",
+    app = FastAPI(title="Promovo", version=VERSION,
                   description="Agenti che trasformano il volantino del supermercato in contenuti pronti per i social.")
     app.state.promovo = AppState(settings=settings, db=db, llm=llm)
 
@@ -495,6 +512,83 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         return settings_out(request)
 
     # -------------------------------------------------- agenti aggiuntivi (modelli open source sul computer)
+
+    # -------------------------------------------------- copia di sicurezza, assistenza, aggiornamenti
+
+    @app.get("/api/system")
+    def system_info(user: User = Depends(current_user)):
+        return {"version": VERSION, "build": build_info(), "restored": restored}
+
+    @app.get("/api/backup")
+    def download_backup(request: Request, videos: bool = True, user: User = Depends(require_owner)):
+        st = state(request)
+        out = Path(tempfile.mkstemp(suffix=".zip")[1])
+        try:
+            backupmod.make_backup(st.settings.data_dir, st.settings.database_url, out, include_videos=videos,
+                                  version=VERSION)
+        except backupmod.BackupError as exc:
+            out.unlink(missing_ok=True)
+            raise HTTPException(400, str(exc)) from exc
+        name = f"Promovo_copia_{datetime.now().strftime('%Y-%m-%d')}.zip"
+        return FileResponse(out, media_type="application/zip", filename=name,
+                            background=StarletteTask(lambda: out.unlink(missing_ok=True)))
+
+    @app.post("/api/restore")
+    async def restore_backup(request: Request, file: UploadFile = File(...), user: User = Depends(require_owner)):
+        st = state(request)
+        data = await file.read(4 * 1024 * 1024 * 1024)
+        try:
+            info = backupmod.stage_restore(data, st.settings.data_dir)
+        except backupmod.BackupError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        return {"ok": True, "info": info,
+                "message": "Copia controllata. Chiudi Promovo (la finestra nera) e riaprilo: il ripristino si "
+                           "completa all'avvio. I dati di adesso vengono messi da parte, non cancellati."}
+
+    @app.get("/api/diagnostics")
+    def diagnostics_pack(request: Request, user: User = Depends(require_owner), session: Session = Depends(get_session)):
+        st = state(request)
+        jobs = [{"tipo": j.kind, "stato": j.status.value, "errore": (j.error or "")[:500],
+                 "quando": j.created_at.isoformat() if j.created_at else ""}
+                for j in session.scalars(select(Job).order_by(Job.id.desc()).limit(30)).all()]
+        info = {"ia": st.llm is not None, "meteo": st.settings.weather, "versione": VERSION, "build": build_info()}
+        data = backupmod.diagnostics(st.settings.data_dir, info, extras.status(), jobs, VERSION)
+        name = f"Promovo_assistenza_{datetime.now().strftime('%Y-%m-%d_%H%M')}.zip"
+        return Response(data, media_type="application/zip",
+                        headers={"Content-Disposition": f'attachment; filename="{name}"'})
+
+    _update_cache: dict = {}
+
+    @app.get("/api/update")
+    def check_update(request: Request, user: User = Depends(current_user)):
+        """C'è una versione più nuova da scaricare? (una richiesta ogni 6 ore, senza dati personali)"""
+        import time as _t
+        from .. import version as _version
+        RELEASES_API, RELEASES_PAGE = _version.RELEASES_API, _version.RELEASES_PAGE
+        mine = _version.build()
+        if not mine.get("commit"):
+            return {"available": False, "reason": "versione di sviluppo"}
+        hit = _update_cache.get("v")
+        if hit and _t.time() - hit[0] < 6 * 3600:
+            rel = hit[1]
+        else:
+            fetch = getattr(state(request), "update_fetch", None)
+            try:
+                if fetch:
+                    rel = fetch()
+                else:
+                    import urllib.request
+                    req = urllib.request.Request(RELEASES_API, headers={"User-Agent": "Promovo",
+                                                                        "Accept": "application/vnd.github+json"})
+                    with urllib.request.urlopen(req, timeout=8) as r:  # noqa: S310 (indirizzo fisso)
+                        rel = json.loads(r.read().decode("utf-8"))
+            except Exception:
+                return {"available": False, "reason": "non raggiungibile"}
+            _update_cache["v"] = (_t.time(), rel)
+        latest = (rel or {}).get("target_commitish", "")
+        newer = bool(latest) and latest != mine["commit"] and (rel.get("published_at", "") > mine.get("date", ""))
+        return {"available": newer, "url": RELEASES_PAGE, "published": rel.get("published_at", ""),
+                "current": mine.get("date", "")}
 
     @app.get("/api/extras")
     def list_extras(user: User = Depends(current_user)):
@@ -882,6 +976,51 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
                 setattr(o, k, v)
         session.flush()
         return offer_out(o)
+
+    @app.get("/api/flyers/{flyer_id}/print/{what}")
+    def flyer_print(flyer_id: int, what: str, request: Request, size: str = "A4", user: User = Depends(current_user),
+                    session: Session = Depends(get_session)):
+        """Materiali per il negozio: cartellini per gli scaffali, locandina per la vetrina, piano nel calendario."""
+        from ..modules import printables
+        f = flyer_for(session, user, flyer_id)
+        if what == "calendario":
+            plan = session.scalars(select(ContentPiece).where(ContentPiece.flyer_id == f.id, ContentPiece.kind == "plan")
+                                   .order_by(ContentPiece.id.desc())).first()
+            if plan is None or not (plan.meta or {}).get("items"):
+                raise HTTPException(404, "Prima crea i testi e il piano della settimana (passo 2).")
+            return Response(printables.plan_ics(f.store, plan.meta["items"]), media_type="text/calendar",
+                            headers={"Content-Disposition": 'attachment; filename="Piano_della_settimana.ics"'})
+        if not f.offers:
+            raise HTTPException(400, "Il volantino non ha offerte.")
+        out = Path(tempfile.mkstemp(suffix=".pdf")[1])
+        if what == "cartellini":
+            printables.shelf_tags_pdf(f.store, f, out)
+            name = "Cartellini_scaffale.pdf"
+        elif what == "locandina":
+            size = "A3" if size.upper() == "A3" else "A4"
+            printables.poster_pdf(f.store, f, out, size)
+            name = f"Locandina_vetrina_{size}.pdf"
+        else:
+            out.unlink(missing_ok=True)
+            raise HTTPException(404, "Materiale sconosciuto.")
+        return FileResponse(out, media_type="application/pdf", filename=name,
+                            background=StarletteTask(lambda: out.unlink(missing_ok=True)))
+
+    @app.get("/api/flyers/{flyer_id}/review")
+    def flyer_review(flyer_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Revisore finale: controllo di qualità di tutti i materiali prima della consegna."""
+        from ..modules.reviewer import review
+        f = flyer_for(session, user, flyer_id)
+        return review(session, f.store, f)
+
+    @app.get("/api/flyers/{flyer_id}/omnibus")
+    def flyer_omnibus(flyer_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Agente Omnibus: prezzi barrati confrontati con il minimo dei 30 giorni prima (volantini già caricati)."""
+        from ..modules import omnibus
+        f = flyer_for(session, user, flyer_id)
+        if f.competitor:
+            raise HTTPException(400, "Il controllo Omnibus riguarda i volantini del negozio.")
+        return omnibus.summary(session, f.store, f)
 
     @app.get("/api/flyers/{flyer_id}/thumb")
     def flyer_thumb(flyer_id: int, request: Request, user: User = Depends(current_user),

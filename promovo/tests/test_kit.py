@@ -146,8 +146,14 @@ def test_demo_seed(tmp_settings):
     assert seed_demo(db, tmp_settings) is False          # una sola volta
     with db.session() as ses:
         st = ses.get(Store, 1)
-        assert st.logo_path and len(st.flyers[0].offers) == 12
-        assert all(o.photo_path and o.price_verified for o in st.flyers[0].offers)
+        cur = next(f for f in st.flyers if f.title == "Volantino di prova")
+        assert st.logo_path and len(cur.offers) == 12
+        assert all(o.photo_path and o.price_verified for o in cur.offers)
+        # il volantino precedente fa vedere subito l'agente Omnibus: spaghetti e caffè erano più bassi
+        from promovo.modules.omnibus import check
+        assert {x.offer.name for x in check(ses, st, cur)} == {"Spaghetti di grano duro", "Caffè macinato"}
+        from promovo.modules.radar.service import zone_prices
+        assert zone_prices(ses, st, cur)["flyers_used"] == 2
 
 
 def test_another_idea_redraws_only_the_idea_image(client, live_pdf):

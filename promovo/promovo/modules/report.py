@@ -216,16 +216,39 @@ def build_report(session: Session, store: Store, flyer: Flyer, out_path: Path) -
         doc.text(M + 364, doc.y, status, 8.5, color=(0.1, 0.5, 0.25) if o.price_verified else (0.75, 0.45, 0.0), width=150)
         doc.y += max(hgt, 13) + 5
         doc.page.draw_line((M, doc.y - 2), (A4.width - M, doc.y - 2), color=LINE, width=0.4)
+    # ---- revisore finale
+    from .reviewer import review as final_review
+    rv = final_review(session, store, flyer)
+    doc.need(120, "Controllo di qualità", store)
+    doc.heading("Controllo di qualità (Revisore finale)")
+    doc.para(f"{rv['counts']['ok']} controlli superati su {len(rv['checks'])}: misure di grafiche e video, durate, "
+             f"prezzi citati nei testi, materiali aggiornati agli ultimi prezzi. Esito: {rv['verdict']}.", 9.5, gap=4)
+    for c in [c for c in rv["checks"] if c["status"] != "ok"][:8]:
+        doc.para(f"   – {c['item']}: {c['message']}", 9, gap=3)
     # ---- conformità
     doc.need(200, "Note di conformità", store)
     doc.heading("Note di conformità")
     struck = [o for o in offers if o.old_price_cents]
     notes = []
     if struck:
-        notes.append(f"Prezzi barrati ({len(struck)} offerte): il prezzo «prima» deve essere il più basso praticato "
-                     "nei 30 giorni precedenti l'inizio dello sconto (art. 17-bis del Codice del Consumo, Direttiva "
-                     "Omnibus). Promovo usa i prezzi stampati sul volantino del negozio: la loro correttezza resta "
-                     "responsabilità del punto vendita.")
+        from .omnibus import check, previous_flyers
+        prev = previous_flyers(session, store, flyer)
+        found = check(session, store, flyer) if prev else []
+        base = (f"Prezzi barrati ({len(struck)} offerte): il prezzo «prima» deve essere il più basso praticato "
+                "nei 30 giorni precedenti l'inizio dello sconto (art. 17-bis del Codice del Consumo, Direttiva Omnibus). ")
+        if not prev:
+            notes.append(base + "Non ci sono volantini dei 30 giorni precedenti caricati in Promovo: i prezzi barrati "
+                         "sono quelli stampati sul volantino e la loro correttezza resta responsabilità del punto vendita.")
+        elif not found:
+            vol = "il volantino precedente" if len(prev) == 1 else f"{len(prev)} volantini precedenti"
+            notes.append(base + f"Controllo automatico con {vol} del negozio: nessun prezzo "
+                         "barrato più alto del minimo dei 30 giorni.")
+        else:
+            vol = "il volantino precedente" if len(prev) == 1 else f"{len(prev)} volantini precedenti"
+            notes.append(base + f"Controllo automatico con {vol} del negozio: {len(found)} prezzi barrati "
+                         "da rivedere prima della pubblicazione:")
+            for x in found:
+                notes.append("   – " + x.as_dict()["message"])
     notes.append("I testi citano solo prodotti e prezzi presenti nel volantino; nessuna affermazione sulla qualità o "
                  "sull'origine dei prodotti viene aggiunta dagli agenti.")
     notes.append("Le immagini dei prodotti provengono dal volantino del negozio; la musica dei video è originale, "
@@ -234,7 +257,7 @@ def build_report(session: Session, store: Store, flyer: Flyer, out_path: Path) -
         notes.append("Alcuni video usano una voce generata con IA: è dichiarata nel video, come richiede l'AI Act (art. 50).")
     notes.append("Il materiale va pubblicato dopo l'approvazione del negozio.")
     for n in notes:
-        doc.para("• " + n, 9.5, gap=5)
+        doc.para(n if n.startswith("   –") else "• " + n, 9.5, gap=5)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     doc.pdf.save(str(out_path), garbage=3, deflate=True)
     doc.pdf.close()

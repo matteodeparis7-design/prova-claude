@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from ...config import Settings
 from ...models import ContentPiece, Flyer, Offer, Store
+from ..catalog import price_snapshot
 from ..content.service import featured_offers, validity_text
 from .render import FORMATS, Renderer, RenderError, VideoOffer, VideoSpec, probe_duration, render_video
 
@@ -158,7 +159,8 @@ def render_flyer_video(session: Session, store: Store, flyer: Flyer, settings: S
     piece = ContentPiece(store_id=store.id, flyer_id=flyer.id, kind="video", title=FORMAT_LABEL[fmt],
                          file_path=str(out),
                          meta={"format": fmt, "duration": round(duration, 2), "offers": len(spec.offers),
-                               "music": spec.music, "poster": str(poster) if poster else ""})
+                               "music": spec.music, "poster": str(poster) if poster else "",
+                               "prices_at": price_snapshot(flyer)})
     session.add(piece)
     session.flush()
     return piece

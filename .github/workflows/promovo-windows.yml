@@ -26,6 +26,10 @@ jobs:
         run: |
           python -c "import sys; sys.path.insert(0, '.'); from pathlib import Path; from promovo import extras; e = extras.EXTRAS['cutout']; d = extras.BUNDLED / e.folder; d.mkdir(parents=True, exist_ok=True); extras._data_dir[:] = [Path('tmp_models')]; f = extras.download('cutout'); import shutil; [shutil.move(str(p), str(d / p.name)) for p in f.iterdir()]; print('incluso:', extras.path('cutout'))"
 
+      - name: Segna la versione (per l'avviso «nuova versione disponibile»)
+        working-directory: promovo
+        run: python -c "import json, os, datetime; json.dump({'commit': os.environ['GITHUB_SHA'], 'date': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}, open('promovo/build_info.json', 'w'))"
+
       - name: Installa Promovo e gli strumenti
         working-directory: promovo
         run: |

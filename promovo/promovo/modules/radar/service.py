@@ -225,7 +225,44 @@ def radar(session: Session, store: Store, flyer: Flyer) -> dict:
                     "same": len(worst) - len(wins) - len(losses)},
         "suggest_feature": [r["offer_id"] for r in wins[:4]],
         "wins": wins[:6], "losses": losses[:6],
+        "zone": zone_prices(session, store, flyer),
     }
+
+
+ZONE_DAYS = 56     # otto settimane di volantini dei concorrenti
+
+
+def zone_prices(session: Session, store: Store, flyer: Flyer, days: int = ZONE_DAYS) -> dict:
+    """Memoria dei prezzi della zona: per ogni prodotto del volantino, media, minimo e massimo dei prezzi
+    visti nei volantini dei concorrenti delle ultime settimane (tutti, non solo l'ultimo di ciascuno).
+    Si confronta il prezzo al kg / al litro / al pezzo, così formati diversi non falsano la media."""
+    ref = flyer.valid_from or (flyer.created_at.date() if flyer.created_at else date.today())
+    lo = ref - timedelta(days=days)
+    rows = session.scalars(select(Flyer).where(Flyer.store_id == store.id, Flyer.competitor != "",
+                                               Flyer.status == FlyerStatus.ready)).all()
+    used = [f for f in rows if (f.valid_to or f.valid_from or (f.created_at.date() if f.created_at else ref)) >= lo
+            and (f.valid_from or lo) <= (flyer.valid_to or ref + timedelta(days=14))]
+    # ogni volantino conta come una «osservazione» separata, anche dello stesso concorrente
+    others = [(f"{f.competitor}\u241f{f.id}", o) for f in used for o in f.offers]
+    by_offer: dict[int, list[Match]] = {}
+    for m in compare(list(flyer.offers), others):
+        by_offer.setdefault(m.own.id, []).append(m)
+    out = []
+    for oid, ms in by_offer.items():
+        units = [m.other_unit for m in ms]
+        own = ms[0]
+        avg = sum(units) / len(units)
+        comps = {m.competitor.split("\u241f")[0] for m in ms}
+        vs_avg = (avg - own.own_unit) / avg * 100 if avg else 0.0
+        out.append({"offer_id": oid, "offer": own.own.name, "description": own.own.description,
+                    "own_unit": _unit_text(own.own_unit, own.unit_label), "avg_unit": _unit_text(avg, own.unit_label),
+                    "min_unit": _unit_text(min(units), own.unit_label), "max_unit": _unit_text(max(units), own.unit_label),
+                    "observations": len(units), "competitors": len(comps), "vs_avg_pct": round(vs_avg, 1),
+                    "cheapest": own.own_unit <= min(units) + 0.5, "is_featured": own.own.is_featured})
+    out.sort(key=lambda r: -r["vs_avg_pct"])
+    return {"flyers_used": len(used), "competitors": len({f.competitor.lower() for f in used}), "weeks": days // 7,
+            "products": out, "below_avg": sum(1 for r in out if r["vs_avg_pct"] >= 2),
+            "above_avg": sum(1 for r in out if r["vs_avg_pct"] <= -2)}
 
 
 def stale_competitors(session: Session, store: Store, today: date | None = None) -> list[Flyer]:

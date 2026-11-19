@@ -218,6 +218,25 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .near .t { flex: 1; min-width: 200px; } .near .t b { display: block; font-size: 14.5px; } .near .t span { font-size: 13px; color: var(--muted); }
 .comp-add { margin-top: 18px; padding: 16px; border-radius: 16px; background: #faf7f1; border: 1px solid var(--line); }
 .comp-add h3 { margin: 0; }
+.omni { margin-top: 12px; border: 1px solid #f0c36d; background: #fffaf0; border-radius: 14px; padding: 14px; }
+.omni-head { display: flex; gap: 10px; color: var(--warn); } .omni-head span { display: block; color: var(--text); font-size: 13.5px; margin-top: 2px; }
+.omni-row { display: flex; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid #f4e3bd; flex-wrap: wrap; } .omni-row .t { flex: 1; min-width: 240px; font-size: 14px; }
+.zone { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+.zone h3 { margin: 0; font-size: 15.5px; }
+.zrow { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, .9fr) minmax(0, 1.3fr) 190px; gap: 12px; padding: 9px 4px; border-top: 1px solid var(--line-2); font-size: 14px; align-items: start; }
+.zrow .u { display: block; font-size: 12px; color: var(--muted); } .zrow .zv { text-align: right; }
+@media (max-width: 700px) { .zrow { grid-template-columns: 1fr 1fr; } .zrow .zp, .zrow .zv { grid-column: 1 / -1; text-align: left; } }
+.rev-head { margin-top: 12px; padding: 10px 14px; border-radius: 12px; font-weight: 600; font-size: 14.5px; }
+.rev-head.ok { background: var(--ok-soft); color: var(--ok); } .rev-head.warn { background: var(--warn-soft); color: var(--warn); } .rev-head.err { background: var(--err-soft); color: var(--err); }
+.rev-list { margin-top: 8px; } .rev-row { display: grid; grid-template-columns: 110px minmax(0, 220px) 1fr; gap: 10px; align-items: baseline; padding: 7px 2px; border-top: 1px solid var(--line-2); font-size: 13.5px; }
+.rev-row span:last-child { color: var(--muted); }
+.rev-all { margin-top: 10px; font-size: 13.5px; } .rev-all summary { cursor: pointer; color: var(--muted); font-weight: 600; }
+@media (max-width: 700px) { .rev-row { grid-template-columns: 1fr; gap: 2px; } }
+.shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.shop-item { text-align: left; border: 1px solid var(--line); background: #fcfbf8; border-radius: 14px; padding: 14px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; transition: border-color .15s, box-shadow .15s; }
+.shop-item:hover { border-color: #d3cab8; box-shadow: var(--shadow); }
+.shop-item .ic { width: 36px; height: 36px; border-radius: 10px; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; margin-bottom: 4px; }
+.shop-item b { font-size: 14.5px; } .shop-item > span:last-child { font-size: 13px; color: var(--muted); }
 /* negozi (agenzia) */
 .store-card { display: flex; flex-direction: column; gap: 12px; }
 .store-head { display: flex; gap: 12px; align-items: center; }
@@ -813,6 +832,12 @@ VIEWS.home = async el => {
     <div class="card"><h2>${icon("i-calendar")} Ogni settimana, in quattro passi</h2>
       <div class="howto">${[["Carica", "Il PDF o anche solo la foto del volantino."], ["Gli agenti preparano", "Testi, grafiche, Reel, video e il piano."], ["Controlla", "Solo i prezzi in giallo, un clic ciascuno."], ["Consegna", "Approva e scarica lo ZIP con il report."]].map(([t, d]) => `<div><b>${t}</b><span>${d}</span></div>`).join("")}</div></div>`;
   $("#heroCta").onclick = cta[2];
+  Promise.all([api("/api/update").catch(() => ({})), api("/api/system").catch(() => ({}))]).then(([u, sy]) => {
+    const host = $(".hero", el);
+    if (!host) return;
+    if (sy.restored) host.insertAdjacentHTML("afterend", notice("ok", sy.restored));
+    if (u.available) host.insertAdjacentHTML("afterend", `<div class="notice info" style="align-items:center">${icon("i-download")}<span style="flex:1"><b>È disponibile una nuova versione di Promovo.</b> Scaricala e installala sopra quella di adesso: i tuoi dati restano.</span><a class="btn sm" href="${esc(u.url)}" target="_blank" rel="noopener">Scarica</a></div>`);
+  });
   const nf = $("#newFlyer"); if (nf) nf.onclick = () => go("flyers");
   const fanEl = $(".fan", el); if (fanEl && f) fanEl.onclick = () => go("flyers", {flyer: f.id, step: "publish"});
   const add = $("#addStore"); if (add) add.onclick = () => go("store", {create: true});
@@ -964,6 +989,19 @@ async function weatherCard(box, f) {
   }));
 }
 
+function zoneBlock(z) {
+  if (!z || !z.products || !z.products.length) return "";
+  const pos = x => x.cheapest && x.competitors > 1 ? `<span class="chip ok">${icon("i-check")} il più basso della zona</span>`
+    : x.vs_avg_pct >= 2 ? `<span class="chip ok">${Math.round(x.vs_avg_pct)}% sotto la media</span>`
+    : x.vs_avg_pct <= -2 ? `<span class="chip warn">${Math.round(-x.vs_avg_pct)}% sopra la media</span>` : `<span class="chip grey">in media</span>`;
+  return `<div class="zone"><h3>Prezzi medi della zona <span class="muted" style="font-weight:500">· ${z.flyers_used} ${z.flyers_used === 1 ? "volantino" : "volantini"} di ${z.competitors} ${z.competitors === 1 ? "concorrente" : "concorrenti"}, ultime ${z.weeks} settimane</span></h3>
+    <p class="hint" style="margin:2px 0 8px">Più volantini dei concorrenti carichi nel tempo, più la media è affidabile. Si confronta il prezzo al kg, al litro o al pezzo.</p>
+    <div class="ztab">${z.products.slice(0, 10).map(x => `<div class="zrow"><div class="zp"><b>${esc(x.offer)}</b><span class="u">${esc(x.description || "")}</span></div>
+      <div><span class="u">Tu</span><b>${esc(x.own_unit)}</b></div>
+      <div><span class="u">Media zona${x.observations > 1 ? ` (${x.observations} prezzi)` : ""}</span><b>${esc(x.avg_unit)}</b>${x.observations > 1 ? `<span class="u">da ${esc(x.min_unit)} a ${esc(x.max_unit)}</span>` : ""}</div>
+      <div class="zv">${pos(x)}</div></div>`).join("")}</div></div>`;
+}
+
 async function radarCard(box, f) {
   let r;
   try { r = await api(`/api/flyers/${f.id}/radar`); } catch (e) { box.remove(); return; }
@@ -985,7 +1023,8 @@ async function radarCard(box, f) {
         <div class="rc"><span class="u">Tu</span><b>${esc(x.price)}</b><span class="u">${esc(x.own_unit)}</span></div>
         <div class="rc"><span class="u" title="${esc(x.competitor_offer)}">${esc(x.competitor)}</span><b>${esc(x.competitor_price)}</b><span class="u">${esc(x.competitor_unit)}</span></div>
         <div class="rv">${verdict(x.verdict)}${x.verdict !== "uguale" ? `<span class="u">${Math.abs(x.diff_pct).toFixed(0)}% ${x.diff_pct > 0 ? "in meno" : "in più"}</span>` : ""}${x.verdict === "più caro" && x.is_featured ? `<span class="u" style="color:#8a5a00">è in evidenza: valuta se spingerne un altro</span>` : ""}</div></div>`).join("")}
-    </div>` : `<p class="muted">Nessun prodotto in comune con i volantini dei concorrenti di questo periodo.</p>`}`;
+    </div>` : `<p class="muted">Nessun prodotto in comune con i volantini dei concorrenti di questo periodo.</p>`}
+    ${zoneBlock(r.zone)}`;
   const fb = $("#radarFeat", box);
   if (fb) fb.onclick = () => busy(fb, async () => { await api(`/api/flyers/${f.id}/feature`, {json: {offer_ids: todo}}); toast("Messi in evidenza: saranno i primi nel Reel e nelle grafiche."); go("flyers", {flyer: f.id, step: "make"}); });
 }
@@ -1037,10 +1076,13 @@ async function followAgents(box, fl) {
       if (k === "reading") return stage === "queued" || stage === "reading" ? "run" : "done";
       if (k === "checked") return stage === "queued" || stage === "reading" ? "wait" : "done";
       if (stage === "done") return (r.done || []).includes(k) ? "done" : ((r.errors || []).some(e => e) ? "err" : "done");
+      if (stage === "cutting") return k === "images" ? "run" : "wait";
       if (stage !== "making") return "wait";
       return i < making ? "done" : i === making ? "run" : "wait";
     };
-    const extra = k => k === "reading" && r.pages ? ` · pagina ${r.page} di ${r.pages}` : k === "checked" && r.offers ? ` · ${r.offers} offerte, ${r.unverified || 0} da controllare` : "";
+    const extra = k => k === "reading" && r.pages ? ` · pagina ${r.page} di ${r.pages}`
+      : k === "checked" && r.offers ? ` · ${r.offers} offerte, ${r.unverified || 0} da controllare${r.omnibus ? `, ${r.omnibus} prezzi barrati da rivedere (Omnibus)` : ""}`
+      : k === "images" && stage === "cutting" ? ` · scontorno dei prodotti ${(r.done || 0) + 1} di ${r.total}` : "";
     const secs = Math.round((Date.now() - t0) / 1000);
     box.innerHTML = `<div class="crew"><div class="crew-head"><b>${icon("i-spark")} Gli agenti stanno lavorando sul volantino</b><span class="muted">${secs} s · puoi lasciare aperta questa pagina</span></div>
       ${CREW.map(([k, ic, who, what]) => { const s = state(k); return `<div class="crew-row ${s}"><span class="n">${s === "done" ? icon("i-check") : s === "run" ? `<span class="spin dark"></span>` : icon(ic)}</span><div><b>${who}</b><span class="muted">${what}${extra(k)}</span></div><span class="chip ${s === "done" ? "ok" : s === "run" ? "info" : s === "err" ? "err" : "grey"}">${s === "done" ? "fatto" : s === "run" ? "al lavoro" : s === "err" ? "problema" : "in attesa"}</span></div>`; }).join("")}
@@ -1059,8 +1101,10 @@ async function followAgents(box, fl) {
     return go("flyers", {flyer: fl.id, step: "check"});
   }
   const r = j.result || {};
-  toast(r.unverified ? `Materiali pronti. Controlla ${r.unverified} prezzi segnati in giallo prima di pubblicare.` : "Tutto pronto: materiali creati e prezzi confermati.");
-  go("flyers", {flyer: fl.id, step: r.unverified ? "check" : "publish"});
+  const issues = (r.unverified || 0) + (r.omnibus || 0);
+  toast(r.omnibus ? `Materiali pronti. Rivedi ${r.omnibus} prezzi barrati: nei 30 giorni prima erano più bassi (regola Omnibus).`
+    : r.unverified ? `Materiali pronti. Controlla ${r.unverified} prezzi segnati in giallo prima di pubblicare.` : "Tutto pronto: materiali creati e prezzi confermati.");
+  go("flyers", {flyer: fl.id, step: issues ? "check" : "publish"});
 }
 
 // ---------- percorso del volantino
@@ -1102,6 +1146,30 @@ async function flyerView(el, id, step) {
   loadImages(el);
 }
 
+async function omnibusBox(box, f) {
+  let r;
+  try { r = await api(`/api/flyers/${f.id}/omnibus`); } catch (e) { return; }
+  const rule = "per legge (direttiva Omnibus) il prezzo «prima» deve essere il più basso praticato nei 30 giorni precedenti lo sconto";
+  if (!r.checked) {
+    box.innerHTML = `<div class="hint" style="margin-top:10px">Prezzi barrati: ${rule}. L'agente Omnibus li controlla da solo appena ci sono i volantini delle settimane precedenti: carica anche quelli passati per attivarlo.</div>`;
+    return;
+  }
+  if (!r.findings.length) {
+    box.innerHTML = notice("ok", `Agente Omnibus: ${r.barred} prezzi barrati confrontati con ${r.previous_flyers === 1 ? "il volantino" : `i ${r.previous_flyers} volantini`} dei 30 giorni prima. Tutti in regola.`);
+    return;
+  }
+  box.innerHTML = `<div class="omni"><div class="omni-head">${icon("i-alert")}<div><b>Agente Omnibus: ${r.findings.length === 1 ? "1 prezzo barrato da rivedere" : `${r.findings.length} prezzi barrati da rivedere`}</b>
+      <span>${rule[0].toUpperCase() + rule.slice(1)}. Nei volantini caricati questi prodotti costavano meno.</span></div></div>
+    ${r.findings.map(x => `<div class="omni-row"><div class="t">${esc(x.message)}</div>
+      <button class="btn sm" data-omni="${x.offer_id}" data-low="${x.true_discount ? euros(x.lowest_cents) : ""}">${x.true_discount ? `Usa ${esc(euros(x.lowest_cents))} €` : "Togli il prezzo barrato"}</button></div>`).join("")}
+    <div class="hint">Promovo vede solo i volantini caricati, non i prezzi di cassa: in caso di dubbio chiedi conferma al negozio.</div></div>`;
+  $$("[data-omni]", box).forEach(b => b.onclick = () => busy(b, async () => {
+    await api(`/api/offers/${b.dataset.omni}`, {method: "PATCH", json: {old_price: b.dataset.low}});
+    toast(b.dataset.low ? "Prezzo barrato corretto: lo sconto è stato ricalcolato." : "Prezzo barrato tolto.");
+    go("flyers", {flyer: f.id, step: "check"});
+  }));
+}
+
 function stepCheck(el, f, content = []) {
   const made = content.filter(c => c.kind !== "plan");
   const total = f.offers.length;
@@ -1114,7 +1182,7 @@ function stepCheck(el, f, content = []) {
         Promovo legge ogni prezzo e poi lo <b>ricontrolla da solo</b> sul volantino. I prezzi <b>verdi</b> sono già confermati. Quelli <b>gialli</b> non è riuscito a confermarli: guarda il ritaglio del volantino accanto e premi <b>«È giusto»</b>, oppure correggilo.
         <div class="legend"><span class="chip ok">${icon("i-check")} confermato</span><span class="chip warn">${icon("i-alert")} da controllare</span></div></div></div>
       ${(f.warnings || []).filter(w => !/da controllare a mano|non trovati nel testo|non confermati/.test(w)).map(w => notice("warn", w)).join("")}
-      ${f.offers.some(o => o.old_price_cents) ? `<div class="hint" style="margin-top:10px">Prezzi barrati: per legge (direttiva Omnibus) il prezzo «prima» deve essere il più basso praticato nei 30 giorni precedenti lo sconto. Promovo usa quello stampato sul volantino: se hai dubbi, chiedi conferma al negozio.</div>` : ""}
+      ${f.offers.some(o => o.old_price_cents) ? `<div id="omniBox"></div>` : ""}
       ${f.error ? notice("err", f.error) : ""}
       <div class="meter" style="margin-top:16px"><div class="bar"><div style="width:${total ? Math.round(okN / total * 100) : 0}%"></div></div><b>${okN} di ${total} prezzi confermati</b></div>
       <div class="toolbar" style="margin-top:16px">
@@ -1127,6 +1195,8 @@ function stepCheck(el, f, content = []) {
     <div class="sticky-bar"><span class="muted">${unverified.length ? `Ancora ${unverified.length} prezzi da controllare` : "Tutti i prezzi sono confermati"}</span>
       <div class="toolbar">${unverified.length ? `<button class="btn sec sm" id="confirmAll">Li ho controllati tutti</button>` : ""}${made.length ? `<button class="btn sec" id="remake">${icon("i-spark")} Rifai i materiali</button><button class="btn" id="toPub">Vai ai materiali ${icon("i-arrow")}</button>` : `<button class="btn" id="next" ${total ? "" : "disabled"}>Avanti: crea i materiali ${icon("i-arrow")}</button>`}</div></div>`;
   $$("[data-filter]", el).forEach(b => b.onclick = () => { S.offerFilter = b.dataset.filter; go("flyers", {flyer: f.id, step: "check"}); });
+  const ob = $("#omniBox", el);
+  if (ob) omnibusBox(ob, f);
   $$("[data-crop]", el).forEach(c => c.onclick = () => lightbox(c.dataset.crop));
   $$("[data-ok]", el).forEach(b => b.onclick = () => busy(b, async () => { await api(`/api/offers/${b.dataset.ok}`, {method: "PATCH", json: {confirm: true}}); go("flyers", {flyer: f.id, step: "check"}); }));
   $$("[data-edit]", el).forEach(b => b.onclick = () => editOffer(f.offers.find(o => o.id === Number(b.dataset.edit)), f.id));
@@ -1243,6 +1313,24 @@ function planCard(c) {
     <div class="toolbar" style="margin-top:12px"><button class="btn sm sec" data-copy-plan>${icon("i-copy")} Copia il piano</button></div></div>`;
 }
 
+async function reviewCard(box, f) {
+  let r;
+  try { r = await api(`/api/flyers/${f.id}/review`); } catch (e) { box.remove(); return; }
+  const bad = r.checks.filter(c => c.status !== "ok");
+  const tone = r.counts.err ? "err" : r.counts.warn ? "warn" : "ok";
+  const head = tone === "ok" ? `Tutto a posto: ${r.counts.ok} controlli superati. Pronto da consegnare.`
+    : `${r.counts.ok} controlli superati, ${bad.length} ${bad.length === 1 ? "cosa da guardare" : "cose da guardare"} prima di consegnare.`;
+  box.innerHTML = `<div class="toolbar"><div style="flex:1"><h2>${icon(tone === "ok" ? "i-check" : "i-alert")} Revisore finale</h2>
+      <p class="sub" style="margin:0">Ricontrolla da solo grafiche, video e testi: misure, durate, prezzi veri, materiali rimasti con un prezzo vecchio.</p></div>
+      <span class="chip ${tone === "ok" ? "ok" : tone === "warn" ? "warn" : "err"}">${esc(r.verdict)}</span></div>
+    <div class="rev-head ${tone}">${esc(head)}</div>
+    ${bad.length ? `<div class="rev-list">${bad.map(c => `<div class="rev-row"><span class="chip ${c.status === "err" ? "err" : "warn"}">${c.status === "err" ? "da sistemare" : "da guardare"}</span><b>${esc(c.item)}</b><span>${esc(c.message)}</span></div>`).join("")}</div>
+      ${bad.some(c => /Rifai i materiali/.test(c.message)) ? `<div class="toolbar" style="margin-top:10px"><button class="btn sm" id="revRemake">${icon("i-spark")} Rifai i materiali</button></div>` : ""}` : ""}
+    <details class="rev-all"><summary>Vedi tutti i ${r.checks.length} controlli</summary>${r.checks.map(c => `<div class="rev-row"><span class="chip ${c.status === "ok" ? "ok" : c.status === "err" ? "err" : "warn"}">${c.status === "ok" ? "ok" : c.status === "err" ? "da sistemare" : "da guardare"}</span><b>${esc(c.item)}</b><span>${esc(c.message)}</span></div>`).join("")}</details>`;
+  const rm = $("#revRemake", box);
+  if (rm) rm.onclick = () => go("flyers", {flyer: f.id, step: "make"});
+}
+
 function stepPublish(el, f, content) {
   const plan = content.find(c => c.kind === "plan");
   content = content.filter(c => c.kind !== "plan");
@@ -1254,8 +1342,17 @@ function stepPublish(el, f, content) {
   const apBtn = c => `<button class="btn sm ${c.approved ? "sec" : "okb"}" data-ap="${c.id}">${c.approved ? "Approvato ✓" : "Approva"}</button>`;
   const yellow = f.offers.filter(o => !o.price_verified).length;
   el.innerHTML = `
+    <div class="card" id="reviewCard"><div class="muted">Il Revisore sta ricontrollando i materiali…</div><div class="progress"><div></div></div></div>
     ${yellow ? `<div class="card">${notice("warn", `${yellow} prezzi non sono ancora confermati: controllali prima di pubblicare. Se ne correggi uno, rifai i materiali con un clic.`)}<div class="toolbar" style="margin-top:10px"><button class="btn sec sm" id="toCheck">${icon("i-check")} Controlla i prezzi</button></div></div>` : ""}
     ${plan ? planCard(plan) : ""}
+    <div class="card"><h2>${icon("i-store")} Per il negozio</h2>
+      <p class="sub">Dalla stessa lettura del volantino, i materiali da stampare e il piano nel calendario del telefono.</p>
+      <div class="shop-grid">
+        <button class="shop-item" data-print="cartellini"><span class="ic">${icon("i-flyer")}</span><b>Cartellini per gli scaffali</b><span>Tutte le offerte, 8 per foglio A4, con prezzo al kg e linee di taglio</span></button>
+        <button class="shop-item" data-print="locandina" data-size="A4"><span class="ic">${icon("i-image")}</span><b>Locandina per la vetrina</b><span>Formato A4 con le offerte in evidenza e il QR code</span></button>
+        <button class="shop-item" data-print="locandina" data-size="A3"><span class="ic">${icon("i-image")}</span><b>Locandina grande (A3)</b><span>Per la porta d'ingresso o la bacheca</span></button>
+        ${plan ? `<button class="shop-item" data-print="calendario"><span class="ic">${icon("i-calendar")}</span><b>Piano nel calendario</b><span>Aprilo sul telefono: un promemoria per ogni pubblicazione</span></button>` : ""}
+      </div></div>
     ${vids.length ? `<div class="card"><h2>${icon("i-video")} Video</h2><p class="sub">Guardali, poi approvali o scaricali.</p>
       ${S.refreshVideos === f.id ? `<div class="notice info" style="justify-content:space-between;align-items:center">${icon("i-spark")}<span style="flex:1">I video si aprono ancora con l'idea precedente.</span><button class="btn sm" id="refreshVideos">Aggiorna anche i video</button></div>` : ""}
       <div class="vids">${vids.map(c => `<div class="vid"><div class="ph" data-play="${c.file_url}" title="Guarda il video">${c.poster_url ? `<img data-src="${c.poster_url}" alt="">` : ""}<span class="play"><svg class="i" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></span></div>
@@ -1276,6 +1373,13 @@ function stepPublish(el, f, content) {
       <div class="toolbar">${approved < content.length ? `<button class="btn sec sm" id="apAll">Approva tutto</button>` : ""}<button class="btn sec" id="report">${icon("i-flyer")} Report per il cliente (PDF)</button><button class="btn" id="zip">${icon("i-download")} Scarica tutto (ZIP)</button></div></div>`;
   const reload = () => go("flyers", {flyer: f.id, step: "publish"});
   const tc = $("#toCheck"); if (tc) tc.onclick = () => go("flyers", {flyer: f.id, step: "check"});
+  const rvc = $("#reviewCard", el); if (rvc) reviewCard(rvc, f);
+  $$("[data-print]", el).forEach(b => b.onclick = () => busy(b, async () => {
+    const what = b.dataset.print, size = b.dataset.size || "A4";
+    const names = {cartellini: "Cartellini_scaffale.pdf", locandina: `Locandina_vetrina_${size}.pdf`, calendario: "Piano_della_settimana.ics"};
+    await download(`/api/flyers/${f.id}/print/${what}?size=${size}`, names[what]);
+    toast(what === "calendario" ? "Calendario scaricato: aprilo sul telefono per aggiungere i promemoria." : "PDF pronto da stampare (stampa al 100%, senza adattare alla pagina).");
+  }, "Preparo…"));
   const cg = $("#chainGo");
   if (cg) cg.onclick = () => busy(cg, async () => {
     const ids = $$("[data-chain]", el).filter(c => c.checked).map(c => Number(c.dataset.chain));
@@ -1661,6 +1765,17 @@ VIEWS.settings = async el => {
       ${st.agents.ocr ? "" : notice("warn", "La lettura dei volantini fatti di immagini non è disponibile su questa installazione: i volantini con il testo nel PDF si leggono comunque.")}
     </div>
     ${xlist.length ? extrasCard(xlist, owner) : ""}
+    <div class="card" id="safeCard"><h2>${icon("i-download")} Copia di sicurezza e assistenza</h2>
+      <p class="sub">Tutto quello che fai in Promovo resta su questo computer. Fai una copia di sicurezza ogni tanto (per esempio una volta al mese) e tienila su una chiavetta o nel cloud.</p>
+      ${owner ? `<div class="toolbar">
+        <button class="btn" id="bkFull">${icon("i-download")} Copia di sicurezza completa</button>
+        <button class="btn sec" id="bkLight">Copia senza video (più leggera)</button>
+        <button class="btn sec" id="bkRestore">${icon("i-upload")} Ripristina da una copia</button><input type="file" id="bkFile" accept=".zip,application/zip" class="hidden">
+      </div>
+      <div class="hint" style="margin-top:8px">La copia non contiene le chiavi dei servizi facoltativi. Il ripristino mette da parte i dati di adesso (non li cancella) e funziona anche su un altro computer.</div>
+      <div class="toolbar" style="margin-top:14px"><button class="btn ghost sm" id="diag">${icon("i-alert")} Pacchetto per l'assistenza</button><span class="muted" id="verLine"></span></div>
+      <div id="bkMsg"></div>` : `<p class="muted">Solo il titolare dell'account può fare copie e ripristini.</p>`}
+    </div>
     <div class="card"><h2>${icon("i-settings")} Potenziamenti facoltativi</h2>
       <p class="sub">Promovo funziona benissimo senza. Se vuoi, puoi aggiungere due servizi esterni a pagamento: le chiavi restano solo su questo computer.</p>
       <div class="grid g2" style="margin-top:0">
@@ -1675,6 +1790,28 @@ VIEWS.settings = async el => {
     </div>`;
   bindExtras(el);
   if (xlist.some(x => x.downloading)) pollExtras(el);
+  api("/api/system").then(sy => { const v = $("#verLine", el); if (v) v.textContent = `Promovo ${sy.version}${sy.build && sy.build.date ? " · build del " + itDate(sy.build.date) : ""}`; }).catch(() => {});
+  const bkGo = (btn, videos) => busy(btn, async () => {
+    await download(`/api/backup?videos=${videos}`, `Promovo_copia_${new Date().toISOString().slice(0, 10)}.zip`);
+    toast("Copia di sicurezza scaricata: conservala in un posto sicuro.");
+  }, "Preparo la copia…");
+  const bf = $("#bkFull", el); if (bf) bf.onclick = () => bkGo(bf, true);
+  const bl = $("#bkLight", el); if (bl) bl.onclick = () => bkGo(bl, false);
+  const br = $("#bkRestore", el), bfile = $("#bkFile", el);
+  if (br) br.onclick = async () => {
+    if (!(await confirmBox("Ripristinare una copia?", "I dati di adesso verranno messi da parte in una cartella e sostituiti da quelli della copia, al prossimo avvio di Promovo.", "Scegli la copia"))) return;
+    bfile.click();
+  };
+  if (bfile) bfile.onchange = () => busy(br, async () => {
+    const fd = new FormData(); fd.append("file", bfile.files[0]);
+    const r = await api("/api/restore", {body: fd});
+    $("#bkMsg", el).innerHTML = notice("ok", `Copia del ${esc((r.info.created || "").replace("T", " alle "))}: ${r.info.stores} negozi, ${r.info.flyers} volantini. ${esc(r.message)}`);
+  }, "Controllo la copia…");
+  const dg = $("#diag", el);
+  if (dg) dg.onclick = () => busy(dg, async () => {
+    await download("/api/diagnostics", `Promovo_assistenza_${new Date().toISOString().slice(0, 10)}.zip`);
+    toast("Pacchetto per l'assistenza scaricato: contiene il registro degli eventi, non le chiavi né i materiali.");
+  }, "Preparo…");
   $$("[data-ksave]", el).forEach(b => b.onclick = () => busy(b, async () => {
     const svc = b.dataset.ksave, input = $("#key-" + svc), box = $(`[data-kmsg="${svc}"]`);
     box.innerHTML = "";

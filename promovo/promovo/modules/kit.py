@@ -87,6 +87,8 @@ def build_zip(session: Session, store: Store, flyer: Flyer, out_path: Path, appr
                     "- Immagini: post e storie", "- Testi: da copiare insieme alle immagini o ai video",
                     "- Piano_della_settimana.txt: cosa pubblicare, dove e in che giorno",
                     "- Report_della_settimana.pdf: il riepilogo da consegnare al negozio",
+                    "- Da stampare: cartellini promozionali per gli scaffali e locandina per la vetrina",
+                    "- Piano_nel_calendario.ics: aprilo sul telefono per avere un promemoria a ogni pubblicazione",
                     "", "Ricorda: pubblica solo i contenuti che hai controllato."]
         z.writestr(f"{root}/LEGGIMI.txt", "\n".join(summary))
         try:   # il report per il cliente: se qualcosa va storto il pacchetto si scarica lo stesso
@@ -97,6 +99,22 @@ def build_zip(session: Session, store: Store, flyer: Flyer, out_path: Path, appr
         except Exception:  # noqa: BLE001
             import logging
             logging.getLogger("promovo.kit").exception("Report non creato")
+        try:   # materiali per il negozio fisico
+            from .printables import plan_ics, poster_pdf, shelf_tags_pdf
+            tmp = out_path.with_name(out_path.stem + "_stampa")
+            tmp.mkdir(exist_ok=True)
+            if flyer.offers:
+                z.write(shelf_tags_pdf(store, flyer, tmp / "c.pdf"), f"{root}/Da stampare/Cartellini_scaffale_A4.pdf")
+                z.write(poster_pdf(store, flyer, tmp / "l.pdf"), f"{root}/Da stampare/Locandina_vetrina_A4.pdf")
+            plan = next((p for p in pieces if p.kind == "plan" and (p.meta or {}).get("items")), None)
+            if plan is not None:
+                z.writestr(f"{root}/Piano_nel_calendario.ics", plan_ics(store, plan.meta["items"]))
+            for f in tmp.iterdir():
+                f.unlink()
+            tmp.rmdir()
+        except Exception:  # noqa: BLE001
+            import logging
+            logging.getLogger("promovo.kit").exception("Materiali da stampare non creati")
         for p in pieces:
             if p.kind in TEXT_FILES:
                 body = p.body
