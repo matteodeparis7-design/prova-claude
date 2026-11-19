@@ -6,7 +6,7 @@ l'anteprima dei materiali, il confronto con i concorrenti e i controlli di confo
 """
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 
 import pymupdf
@@ -225,6 +225,20 @@ def build_report(session: Session, store: Store, flyer: Flyer, out_path: Path) -
              f"prezzi citati nei testi, materiali aggiornati agli ultimi prezzi. Esito: {rv['verdict']}.", 9.5, gap=4)
     for c in [c for c in rv["checks"] if c["status"] != "ok"][:8]:
         doc.para(f"   – {c['item']}: {c['message']}", 9, gap=3)
+    # ---- Salvaspreco del mese
+    from . import rescue as rescuemod
+    ref = flyer.valid_from or date.today()
+    rst = rescuemod.month_stats(session, store, ref.year, ref.month)
+    if rst["products"]:
+        doc.need(110, "Salvaspreco", store)
+        doc.heading(f"Salvaspreco di {rst['label']}")
+        sold = (f"{rst['kg_saved']:.1f}".replace(".", ",") + " kg di cibo salvato dallo spreco") if rst["kg_saved"] >= 0.1 \
+            else f"{int(round(rst['pieces_sold']))} pezzi venduti invece di buttarli"
+        doc.para(f"{rst['products']} prodotti vicini alla scadenza messi in offerta lampo; {sold}; "
+                 f"{rst['revenue']} recuperati" + (f"; venduto il {rst['sell_through']}% di quanto messo in offerta"
+                                                   if rst["sell_through"] is not None else "") + ".", 9.5, gap=4)
+        if rst["open"]:
+            doc.para(f"   – {rst['open']} prodotti ancora da chiudere con i venduti.", 9, color=MUTED, gap=3)
     # ---- conformità
     doc.need(200, "Note di conformità", store)
     doc.heading("Note di conformità")

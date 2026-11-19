@@ -103,7 +103,7 @@ svg.i { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-widt
 .sub { color: var(--muted); font-size: 14px; margin: 0 0 16px; }
 .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
 .row > .f { flex: 1; min-width: 170px; }
-label.l { display: block; font-size: 13px; font-weight: 600; color: var(--ink-2); margin: 0 0 6px; }
+label.l, span.l { display: block; font-size: 13px; font-weight: 600; color: var(--ink-2); margin: 0 0 6px; }
 .hint { font-size: 12.5px; color: var(--muted); margin-top: 5px; }
 .in { width: 100%; padding: 11px 13px; border: 1px solid #e2dbcd; border-radius: 12px; background: #fff; outline: none; transition: border-color .15s, box-shadow .15s; box-shadow: 0 1px 2px rgba(18,24,41,.04); }
 .in:hover { border-color: #d3cab8; }
@@ -237,6 +237,27 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .shop-item:hover { border-color: #d3cab8; box-shadow: var(--shadow); }
 .shop-item .ic { width: 36px; height: 36px; border-radius: 10px; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; margin-bottom: 4px; }
 .shop-item b { font-size: 14.5px; } .shop-item > span:last-child { font-size: 13px; color: var(--muted); }
+.rs-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 22px; align-items: start; }
+@media (max-width: 980px) { .rs-grid { grid-template-columns: 1fr; } }
+.rs-field + .rs-field { margin-top: 16px; }
+.rs-field > .l { display: block; margin-bottom: 6px; }
+.rs-sug { border: 1px solid #cfe5d6; background: #f2faf4; border-radius: 14px; padding: 14px 16px; }
+.rs-sug.bad { border-color: #f2c9c3; background: #fdf3f1; }
+.rs-sug b.big { font-family: var(--display); font-size: 26px; letter-spacing: -.5px; }
+.rs-photo { display: flex; align-items: center; gap: 12px; }
+.rs-photo img { width: 64px; height: 64px; object-fit: cover; border-radius: 12px; border: 1px solid var(--line); }
+.rs-item { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line-2); }
+.rs-item:first-child { border-top: 0; }
+.rs-item img { width: 64px; height: 80px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); cursor: zoom-in; background: #f4f1ea; }
+.rs-item .p { font-family: var(--display); font-weight: 700; }
+.rs-item .p s { color: var(--muted); font-weight: 500; font-family: inherit; margin-left: 6px; }
+.rs-close { display: flex; gap: 6px; align-items: center; }
+.rs-close .in { width: 82px; padding: 7px 9px; }
+.rs-mats { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 18px; }
+@media (max-width: 720px) { .rs-mats { grid-template-columns: 1fr; } .rs-item { grid-template-columns: 54px minmax(0, 1fr); } .rs-item > :last-child { grid-column: 1 / -1; } }
+.rs-mats img { width: 100%; border-radius: 12px; border: 1px solid var(--line); cursor: zoom-in; }
+.rs-mats textarea { min-height: 170px; }
+.kpi.green .ic { background: #e6f4ea; color: #1c8046; }
 /* negozi (agenzia) */
 .store-card { display: flex; flex-direction: column; gap: 12px; }
 .store-head { display: flex; gap: 12px; align-items: center; }
@@ -398,6 +419,7 @@ tr:last-child td { border-bottom: 0; }
 .modal-bg { position: fixed; inset: 0; background: rgba(18,24,41,.55); backdrop-filter: blur(3px); display: grid; place-items: center; padding: 16px; z-index: 50; animation: fade .15s; }
 .modal { background: #fff; border-radius: 22px; animation: up .2s ease-out; width: 100%; max-width: 600px; max-height: 92vh; overflow: auto; padding: 24px; box-shadow: 0 30px 80px rgba(0,0,0,.25); }
 .modal.wide { max-width: 980px; padding: 14px; background: #111; }
+.modal.big { max-width: 920px; }
 .modal.wide img, .modal.wide video { width: 100%; max-height: 82vh; object-fit: contain; display: block; border-radius: 12px; }
 .modal h3 { margin: 0; font-size: 19px; }
 .modal-img { width: 100%; max-height: 230px; object-fit: contain; background: #faf8f3; border-radius: 12px; display: block; }
@@ -469,6 +491,7 @@ tr:last-child td { border-bottom: 0; }
   <symbol id="i-radar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><path d="M12 12l6-6"/><circle cx="12" cy="12" r="1.2"/></symbol>
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
   <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-14 15-15-1 10-7 15-15 15z"/><path d="M5 19c3-4 6-7 10-9"/></symbol>
   <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
 </svg>
 
@@ -543,7 +566,7 @@ tr:last-child td { border-bottom: 0; }
 <script>
 "use strict";
 const NAV = [
-  ["home", "Panoramica", "i-home", "Home"], ["flyers", "Volantini", "i-flyer"], ["clips", "Dal banco", "i-camera"],
+  ["home", "Panoramica", "i-home", "Home"], ["flyers", "Volantini", "i-flyer"], ["clips", "Dal banco", "i-camera"], ["rescue", "Salvaspreco", "i-leaf", "Spreco"],
   ["store", "Negozio", "i-store"], ["settings", "Impostazioni", "i-settings", "Opzioni"],
 ];
 const STATUS = {uploaded: "caricato", processing: "in lettura", ready: "pronto", failed: "errore"};
@@ -714,7 +737,7 @@ async function go(view, opts = {}) {
   const title = opts.create ? "Nuovo negozio" : (NAV.find(n => n[0] === view) || [0, "Promovo"])[1];
   $("#pageTitle").textContent = title;
   const sub = {home: new Date().toLocaleDateString("it-IT", {weekday: "long", day: "numeric", month: "long"}), flyers: currentStore() ? currentStore().name : "",
-    clips: "Un video girato col telefono diventa un Reel", store: currentStore() && !opts.create ? currentStore().name : "", settings: "Chiavi facoltative e informazioni"}[view] || "";
+    clips: "Un video girato col telefono diventa un Reel", rescue: "La merce in scadenza diventa un'offerta lampo", store: currentStore() && !opts.create ? currentStore().name : "", settings: "Chiavi facoltative e informazioni"}[view] || "";
   $("#pageSub").textContent = sub;
   document.title = title + " · Promovo";
   window.scrollTo(0, 0);
@@ -756,6 +779,7 @@ const TEAM = [
   ["i-radar", "Analista prezzi", "Trova i concorrenti della zona e confronta i prezzi"],
   ["i-sun", "Meteorologo", "Cosa spingere con caldo, freddo o pioggia"],
   ["i-calendar", "Pianificatore", "Calendario dei post e cosa filmare"],
+  ["i-leaf", "Salvaspreco", "La merce in scadenza diventa un'offerta lampo"],
 ];
 const IDEA_NAME = {occasion: "una ricorrenza", combo: "una cena completa", half: "il prodotto a metà prezzo", saving: "il risparmio", under_euro: "i prodotti sotto l'euro",
   fresh: "il reparto fresco", stock: "la scorta", weekend: "il fine settimana", basket: "la spesa completa", total: "il totale del carrello", hero: "il prodotto protagonista"};
@@ -1487,6 +1511,164 @@ async function currentOffers() {
   if (!cur) return {flyer: null, offers: []};
   const f = await api(`/api/flyers/${cur.id}`);
   return {flyer: f, offers: f.offers};
+}
+
+// ---------- Salvaspreco
+const RS_REASONS = [["scadenza", "Scade a breve"], ["maturo", "Molto maturo"], ["forno", "Forno di oggi"], ["confezione", "Confezione rovinata"], ["ultimi", "Ultimi pezzi"]];
+const RS_DATES = [["scadenza", "Da consumarsi entro"], ["tmc", "Preferibilmente entro"], ["", "Nessuna data"]];
+VIEWS.rescue = async el => {
+  const [{offers}, data] = await Promise.all([currentOffers(), api(`/api/stores/${S.storeId}/rescues`)]);
+  const today = data.today;
+  const open = data.items.filter(r => !r.closed), done = data.items.filter(r => r.closed);
+  const st = data.stats;
+  const f = {reason: "scadenza", date_kind: "scadenza", unit: "pezzi", offer: "", photo: null};
+  el.innerHTML = `
+    <div class="card">
+      <h2>${icon("i-leaf")} Salvaspreco</h2>
+      <p class="sub">I prodotti vicini alla scadenza, la frutta molto matura e il pane di fine giornata diventano un'offerta lampo: in 30 secondi hai la storia, il post, il testo per WhatsApp e il cartellino «Salvami». La sera segni quanti ne hai venduti e Promovo tiene il conto dello spreco evitato.</p>
+      <div class="rs-grid">
+        <div>
+          <div class="rs-field"><label class="l" for="rsOffer">Prodotto</label>
+            <select class="in" id="rsOffer"><option value="">Lo scrivo io</option>${offers.length ? `<optgroup label="Dal volantino (nome, prezzo e foto arrivano da soli)">${offers.map(o => `<option value="${o.id}">${esc((o.brand ? o.brand + " " : "") + o.name)}${o.description ? " " + esc(o.description) : ""} – ${esc(o.price)}</option>`).join("")}</optgroup>` : ""}</select></div>
+          <div class="rs-field row" id="rsManual"><div class="f"><label class="l" for="rsName">Nome</label><input class="in" id="rsName" maxlength="120" placeholder="es. Yogurt alla fragola"></div>
+            <div class="f"><label class="l" for="rsDesc">Formato <span class="muted">(facoltativo)</span></label><input class="in" id="rsDesc" maxlength="60" placeholder="es. 4 x 125 g"></div></div>
+          <div class="rs-field"><span class="l">Perché va salvato</span><div class="seg" id="rsReason">${RS_REASONS.map(([k, l]) => `<button data-v="${k}" class="${k === f.reason ? "on" : ""}">${l}</button>`).join("")}</div></div>
+          <div class="rs-field"><span class="l">La data stampata sulla confezione</span>
+            <div class="row"><div class="seg" id="rsDateKind">${RS_DATES.map(([k, l]) => `<button data-v="${k}" class="${k === f.date_kind ? "on" : ""}">${l}</button>`).join("")}</div>
+            <div class="f" style="min-width:150px;flex:0 0 170px" id="rsDateBox"><input class="in" id="rsExp" type="date" value="${today}"></div></div></div>
+          <div class="rs-field row">
+            <div class="f" style="flex:0 0 120px;min-width:110px"><label class="l" for="rsQty">Quanti</label><input class="in" id="rsQty" inputmode="decimal" value="1"></div>
+            <div class="f" style="flex:0 0 120px;min-width:110px"><label class="l" for="rsUnit">&nbsp;</label><select class="in" id="rsUnit"><option value="pezzi">pezzi</option><option value="kg">kg</option></select></div>
+            <div class="f"><label class="l" for="rsPrice">Prezzo normale (€)</label><input class="in" id="rsPrice" inputmode="decimal" placeholder="es. 2,19"></div></div>
+          <div class="rs-field"><span class="l">Foto <span class="muted">(facoltativa: dal telefono o dal computer)</span></span>
+            <div class="rs-photo"><button class="btn sm sec" id="rsPhotoBtn">${icon("i-camera")} Aggiungi una foto</button><span id="rsPhotoPrev" class="muted">Senza foto il prodotto appare con il suo nome.</span>
+            <input type="file" id="rsPhoto" accept="image/*" capture="environment" class="hidden"></div></div>
+        </div>
+        <div>
+          <div class="rs-sug" id="rsSug"><span class="muted">Scrivi il prezzo normale: Promovo ti consiglia lo sconto giusto.</span></div>
+          <div class="rs-field"><label class="l" for="rsRescue">Prezzo Salvaspreco (€)</label><input class="in" id="rsRescue" inputmode="decimal" placeholder="consigliato da Promovo">
+            <div class="hint">Puoi cambiarlo: deve essere più basso del prezzo normale.</div></div>
+          <button class="btn lg okb" id="rsGo" style="width:100%;margin-top:18px">${icon("i-leaf")} Prepara il Salvaspreco</button>
+          <div class="hint" style="margin-top:8px">Promovo blocca i prodotti con data di scadenza superata: per legge vanno tolti dalla vendita.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card"><div class="toolbar"><h2 style="flex:1">${icon("i-check")} In corso</h2>${open.length ? `<button class="btn sm sec" id="rsPrintAll">${icon("i-download")} Cartellini da stampare</button>` : ""}</div>
+      <p class="sub">A fine giornata scrivi quanti ne hai venduti e chiudi: serve per il conto dello spreco evitato.</p>
+      <div>${open.map(rsRow).join("") || empty("i-leaf", "Niente in corso", "Quando metti un prodotto in Salvaspreco lo trovi qui.")}</div></div>
+    <div class="card"><h2>${icon("i-chart")} Il conto di ${esc(st.label)}</h2>
+      <p class="sub">Quello che hai salvato dallo spreco. Gli euro recuperati restano a te: nel post del mese compaiono solo i chili e i prodotti.</p>
+      <div class="grid kpis">
+        <div class="card kpi green"><div class="ic">${icon("i-leaf")}</div><div><div class="v">${st.kg_saved ? String(st.kg_saved).replace(".", ",") : "0"}<small> kg</small></div><div class="k">cibo salvato</div></div></div>
+        <div class="card kpi green"><div class="ic">${icon("i-bag")}</div><div><div class="v">${esc(st.revenue.replace("€ ", ""))}<small> €</small></div><div class="k">recuperati invece di buttarli</div></div></div>
+        <div class="card kpi"><div class="ic">${icon("i-star")}</div><div><div class="v">${st.products}</div><div class="k">prodotti in Salvaspreco</div></div></div>
+        <div class="card kpi"><div class="ic">${icon("i-chart")}</div><div><div class="v">${st.sell_through == null ? "—" : st.sell_through + "<small>%</small>"}</div><div class="k">venduto di quello messo in offerta</div></div></div>
+      </div>
+      ${st.best ? `<p class="muted" style="margin:14px 0 0">Il più salvato: <b>${esc(st.best)}</b>.</p>` : ""}
+      ${data.impact_text ? `<div class="rs-mats" style="margin-top:16px"><img data-src="/api/stores/${S.storeId}/rescues-impact.jpg?month=${st.month}" alt="Post del mese" id="rsImpactImg">
+        <div><textarea class="in" readonly id="rsImpactText">${esc(data.impact_text)}</textarea>
+        <div class="toolbar" style="margin-top:10px"><button class="btn sm sec" id="rsImpactCopy">${icon("i-copy")} Copia il testo</button><button class="btn sm sec" id="rsImpactDl">${icon("i-download")} Scarica l'immagine</button></div></div></div>` : `<div style="margin-top:14px">${notice("info", "Quando chiudi i primi prodotti con i venduti, qui trovi il post del mese pronto: «Questo mese abbiamo salvato … dallo spreco».", "i-leaf")}</div>`}
+      ${done.length ? `<details style="margin-top:16px"><summary class="muted" style="cursor:pointer">Chiusi questo mese (${done.length})</summary><div style="margin-top:8px">${done.map(rsRow).join("")}</div></details>` : ""}
+    </div>`;
+
+  // --- modulo
+  const offerSel = $("#rsOffer");
+  const setSeg = (id, key) => $$(`#${id} button`).forEach(b => b.onclick = () => { f[key] = b.dataset.v; $$(`#${id} button`).forEach(x => x.classList.toggle("on", x === b)); sync(); suggest(); });
+  setSeg("rsReason", "reason"); setSeg("rsDateKind", "date_kind");
+  const sync = () => {
+    $("#rsDateBox").style.visibility = f.date_kind ? "visible" : "hidden";
+    $("#rsManual").style.display = offerSel.value ? "none" : "";
+  };
+  offerSel.onchange = () => {
+    const o = offers.find(x => String(x.id) === offerSel.value);
+    if (o) { $("#rsPrice").value = euros(o.price_cents); $("#rsName").value = o.name; $("#rsDesc").value = o.description || ""; }
+    sync(); suggest();
+  };
+  let tmr = null, lastSug = null, userPrice = false;
+  $("#rsRescue").oninput = () => { userPrice = !!$("#rsRescue").value.trim(); };
+  const suggest = () => { clearTimeout(tmr); tmr = setTimeout(async () => {
+    const q = new URLSearchParams({price: $("#rsPrice").value, reason: f.reason, date_kind: f.date_kind, expires_on: f.date_kind ? $("#rsExp").value : "", name: $("#rsName").value, description: $("#rsDesc").value});
+    try { lastSug = await api(`/api/stores/${S.storeId}/rescues/suggest?` + q); } catch (e) { return; }
+    const box = $("#rsSug");
+    box.classList.toggle("bad", !lastSug.ok);
+    if (!lastSug.ok) { box.innerHTML = `<b>Non si può mettere in vendita.</b><div style="margin-top:4px">${esc(lastSug.error)}</div>`; $("#rsGo").disabled = true; return; }
+    $("#rsGo").disabled = false;
+    box.innerHTML = (lastSug.price ? `<div class="muted" style="font-size:13px">Sconto consigliato</div><div><b class="big">${esc(lastSug.price)}</b> <span class="chip ok">-${lastSug.real_pct}%</span></div>
+      <div class="muted" style="font-size:13px;margin-top:4px">${f.date_kind ? "Più è vicina la data, più conviene scontare: meglio venderlo che buttarlo." : "Lo sconto tipico per questo motivo."}</div>`
+      : `<span class="muted">Sconto consigliato: <b>-${lastSug.pct}%</b>. Scrivi il prezzo normale per vedere il prezzo Salvaspreco.</span>`)
+      + lastSug.notes.map(n => `<div class="hint" style="margin-top:8px">${icon("i-alert")} ${esc(n)}</div>`).join("")
+      + ($("#rsUnit").value === "pezzi" && !lastSug.weight_g && !offerSel.value && $("#rsName").value ? `<div class="hint" style="margin-top:8px">Scrivi il formato (es. «500 g») per contare anche i chili salvati.</div>` : "");
+    if (lastSug.price && !userPrice) $("#rsRescue").value = euros(lastSug.price_cents);
+  }, 250); };
+  ["rsPrice", "rsExp", "rsName", "rsDesc"].forEach(id => $("#" + id).addEventListener("input", suggest));
+  $("#rsUnit").onchange = suggest;
+  $("#rsPhotoBtn").onclick = () => $("#rsPhoto").click();
+  $("#rsPhoto").onchange = () => { const p = $("#rsPhoto").files[0]; if (!p) return; f.photo = p; $("#rsPhotoPrev").innerHTML = `<img src="${URL.createObjectURL(p)}" alt=""> <span class="muted">${esc(p.name)}</span>`; };
+  sync(); suggest();
+  $("#rsGo").onclick = () => busy($("#rsGo"), async () => {
+    const fd = new FormData();
+    if (offerSel.value) fd.append("offer_id", offerSel.value); else if ($("#rsName").value.trim().length < 2) throw new Error("Scrivi il nome del prodotto o sceglilo dal volantino.");
+    fd.append("name", offerSel.value ? "" : $("#rsName").value.trim());
+    fd.append("description", offerSel.value ? "" : $("#rsDesc").value.trim());
+    fd.append("reason", f.reason); fd.append("date_kind", f.date_kind);
+    if (f.date_kind) fd.append("expires_on", $("#rsExp").value);
+    fd.append("qty", $("#rsQty").value || "1"); fd.append("unit", $("#rsUnit").value);
+    fd.append("price", $("#rsPrice").value); fd.append("rescue_price", $("#rsRescue").value);
+    if (f.photo) fd.append("photo", f.photo);
+    const r = await api(`/api/stores/${S.storeId}/rescues`, {body: fd});
+    toast("Salvaspreco pronto: pubblica la storia e stampa il cartellino.");
+    await go("rescue");
+    rsMaterials(r);
+  }, "Preparo…");
+
+  // --- elenco
+  const pa = $("#rsPrintAll");
+  if (pa) pa.onclick = () => busy(pa, async () => { await download(`/api/stores/${S.storeId}/rescues-print`, "Cartellini_Salvaspreco.pdf"); toast("Stampa al 100%: 4 cartellini per foglio."); }, "Preparo…");
+  $$("[data-rs-open]", el).forEach(b => b.onclick = () => rsMaterials(data.items.find(x => x.id === Number(b.dataset.rsOpen))));
+  $$("[data-rs-close]", el).forEach(b => b.onclick = () => busy(b, async () => {
+    const v = $(`#rsSold${b.dataset.rsClose}`).value;
+    if (v === "") throw new Error("Scrivi quanti ne hai venduti (anche 0).");
+    await api(`/api/rescues/${b.dataset.rsClose}/close`, {json: {sold: v}});
+    forget(`/api/stores/${S.storeId}/rescues-impact`);
+    toast("Chiuso: aggiornato il conto del mese."); go("rescue");
+  }));
+  $$("[data-rs-del]", el).forEach(b => b.onclick = async () => {
+    if (!await confirmBox("Eliminare questo Salvaspreco?", "Spariscono anche la storia, il post e il testo. Non conta più nel conto del mese.", "Elimina", true)) return;
+    try { await api(`/api/rescues/${b.dataset.rsDel}`, {method: "DELETE"}); toast("Eliminato."); go("rescue"); } catch (e) { toast(e.message, "err"); }
+  });
+  const ic = $("#rsImpactCopy");
+  if (ic) {
+    ic.onclick = async () => { try { await navigator.clipboard.writeText($("#rsImpactText").value); toast("Testo copiato."); } catch (e) { toast("Copia non riuscita: seleziona il testo a mano.", "err"); } };
+    $("#rsImpactDl").onclick = () => download(`/api/stores/${S.storeId}/rescues-impact.jpg?month=${st.month}`, `Salvaspreco_${st.month}.jpg`);
+    $("#rsImpactImg").onclick = () => lightbox(`/api/stores/${S.storeId}/rescues-impact.jpg?month=${st.month}`);
+  }
+};
+function rsRow(r) {
+  const state = r.closed ? `<span class="chip ok">${icon("i-check")} venduti ${esc(String(r.sold_qty).replace(".", ","))}${r.unit === "kg" ? " kg" : ""} su ${esc(r.qty_text)}${r.kg_saved ? " · " + esc(String(r.kg_saved).replace(".", ",")) + " kg salvati" : ""}</span>`
+    : `<div class="rs-close"><input class="in" id="rsSold${r.id}" inputmode="decimal" placeholder="venduti" aria-label="Venduti"><button class="btn sm okb" data-rs-close="${r.id}">Chiudi</button></div>`;
+  return `<div class="rs-item"><img data-src="${r.post_url}" alt="" data-rs-open="${r.id}">
+    <div style="min-width:0"><b>${esc(r.label)}</b> <span class="chip ${r.expired ? "warn" : "grey"}">${r.expired ? "da chiudere" : esc(r.until_text)}</span>
+      <div class="p">${esc(r.rescue_price)}<s>${esc(r.price)}</s> <span class="chip ok">-${r.discount_percent}%</span></div>
+      <div class="muted" style="font-size:13px">${esc(r.reason_label)}${r.date_line ? " · " + esc(r.date_line) : ""} · ${esc(r.qty_text)} · ${itDate(r.day)}</div></div>
+    <div class="toolbar" style="justify-content:flex-end">${state}<button class="btn sm sec" data-rs-open="${r.id}">Materiali</button><button class="btn sm ghost" data-rs-del="${r.id}" aria-label="Elimina">${icon("i-trash")}</button></div></div>`;
+}
+function rsMaterials(r) {
+  if (!r) return;
+  modal(`<div class="toolbar" style="margin-bottom:12px"><h3 style="flex:1;margin:0">${icon("i-leaf")} ${esc(r.label)} · ${esc(r.rescue_price)}</h3><button class="btn ghost sm" data-close>${icon("i-x")}</button></div>
+    ${(r.notes || []).map(n => notice("warn", n)).join("")}
+    <div class="rs-mats"><div><img data-src="${r.story_url}" alt="Storia" id="rsStory"><div class="toolbar" style="margin-top:8px"><button class="btn sm sec" data-dl="storia">${icon("i-download")} Storia</button><button class="btn sm sec" data-dl="post">${icon("i-download")} Post</button></div></div>
+      <div><label class="l">Post per Instagram e Facebook</label><textarea class="in" readonly id="rsText">${esc(r.text)}</textarea>
+        <div class="toolbar" style="margin:8px 0 14px"><button class="btn sm sec" data-cp="rsText">${icon("i-copy")} Copia</button></div>
+        <label class="l">Stato WhatsApp</label><textarea class="in" readonly id="rsShort" style="min-height:90px">${esc(r.short_text)}</textarea>
+        <div class="toolbar" style="margin-top:8px"><button class="btn sm sec" data-cp="rsShort">${icon("i-copy")} Copia</button><span style="flex:1"></span><button class="btn sm" data-tag>${icon("i-download")} Cartellino «Salvami»</button></div></div></div>`,
+    m => {
+      loadImages(m);
+      $("#rsStory", m).onclick = () => lightbox(r.story_url);
+      $$("[data-dl]", m).forEach(b => b.onclick = () => download(b.dataset.dl === "storia" ? r.story_url : r.post_url, `Salvaspreco_${b.dataset.dl}.jpg`));
+      $$("[data-cp]", m).forEach(b => b.onclick = async () => { try { await navigator.clipboard.writeText($("#" + b.dataset.cp, m).value); toast("Testo copiato."); } catch (e) { toast("Copia non riuscita: seleziona il testo a mano.", "err"); } });
+      const t = $("[data-tag]", m); t.onclick = () => busy(t, () => download(`/api/stores/${S.storeId}/rescues-print?ids=${r.id}`, "Cartellino_Salvaspreco.pdf"), "Preparo…");
+    });
+  const mm = $("#modalRoot .modal"); if (mm) mm.classList.add("big");
 }
 
 VIEWS.clips = async el => {

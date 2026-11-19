@@ -8,7 +8,7 @@ import logging
 import re
 import secrets
 import uuid
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from fastapi import BackgroundTasks, Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
@@ -23,7 +23,7 @@ from ..config import Settings, get_settings
 from ..db import Database
 from ..llm import AIRefused, AIUnavailable, LLM
 from .. import keys
-from ..models import ContentPiece, Flyer, FlyerStatus, Job, JobStatus, Offer, Organization, Role, Store, User
+from ..models import ContentPiece, Flyer, FlyerStatus, Job, JobStatus, Offer, Organization, Rescue, Role, Store, User
 from ..imaging import ImageError, load_logo, open_image, save_product_photo
 from ..money import discount_percent, format_eur, parse_price
 from ..security import hash_password, issue_token, revoke_token, verify_password
@@ -41,6 +41,7 @@ from .. import voice as voicemod
 from ..modules.radar.service import radar as radar_report
 from ..modules.radar import nearby as nearbymod
 from ..modules.weather.service import weekly_weather
+from ..modules import rescue as rescuemod
 from .deps import (
     AppState, bearer_token, content_for, current_user, flyer_for, get_session, job_for, offer_for,
     require_owner, state, store_for,
@@ -1442,5 +1443,193 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
     @app.exception_handler(IntegrityError)
     async def _integrity(_: Request, exc: IntegrityError):
         return JSONResponse(status_code=409, content={"detail": "Dato duplicato o in conflitto."})
+
+    # -------------------------------------------------- Salvaspreco
+
+    def rescue_for(session: Session, user: User, rescue_id: int) -> Rescue:
+        r = session.get(Rescue, rescue_id)
+        if r is None:
+            raise HTTPException(404, "Prodotto Salvaspreco non trovato.")
+        store_for(session, user, r.store_id)
+        return r
+
+    def rescue_out(r: Rescue, today: date) -> dict:
+        base = f"/api/rescues/{r.id}"
+        kg = rescuemod.saved_kg(r) if r.closed_at else None
+        return {"id": r.id, "day": r.day.isoformat(), "name": r.name, "description": r.description,
+                "label": rescuemod.product_label(r), "reason": r.reason, "reason_label": rescuemod.REASONS.get(r.reason, ""),
+                "date_kind": r.date_kind, "expires_on": r.expires_on.isoformat() if r.expires_on else None,
+                "date_line": rescuemod.date_line(r), "until": r.until.isoformat() if r.until else None,
+                "until_text": rescuemod.until_text(r, today), "qty": r.qty, "unit": r.unit,
+                "qty_text": rescuemod.qty_text(r.qty, r.unit), "unit_weight_g": r.unit_weight_g,
+                "price": format_eur(r.price_cents), "price_cents": r.price_cents,
+                "rescue_price": format_eur(r.rescue_price_cents), "rescue_price_cents": r.rescue_price_cents,
+                "discount_percent": rescuemod.discount_pct(r), "text": r.text, "short_text": r.short_text,
+                "story_url": f"{base}/storia", "post_url": f"{base}/post",
+                "photo_url": f"{base}/foto" if r.photo_path else None,
+                "sold_qty": r.sold_qty, "closed": r.closed_at is not None,
+                "expired": r.closed_at is None and (r.until or r.day) < today,
+                "kg_saved": round(kg, 2) if kg is not None else None}
+
+    def _month(month: str, today: date) -> tuple[int, int]:
+        if not month:
+            return today.year, today.month
+        m = re.fullmatch(r"(\d{4})-(\d{2})", month)
+        if not m or not 1 <= int(m.group(2)) <= 12:
+            raise HTTPException(422, "Mese non valido (usa AAAA-MM).")
+        return int(m.group(1)), int(m.group(2))
+
+    @app.get("/api/stores/{store_id}/rescues")
+    def list_rescues(store_id: int, month: str = "", user: User = Depends(current_user),
+                     session: Session = Depends(get_session)):
+        """I prodotti Salvaspreco del mese e il conto dello spreco evitato."""
+        store = store_for(session, user, store_id)
+        today = date.today()
+        y, m = _month(month, today)
+        items = rescuemod.month_rescues(session, store, y, m)
+        stats = rescuemod.month_stats(session, store, y, m)
+        return {"today": today.isoformat(), "items": [rescue_out(r, today) for r in items], "stats": stats,
+                "impact_text": rescuemod.impact_text(store, stats) if stats["closed"] else "",
+                "reasons": rescuemod.REASONS}
+
+    @app.get("/api/stores/{store_id}/rescues/suggest")
+    def suggest_rescue(store_id: int, price: str = "", reason: str = "scadenza", date_kind: str = "",
+                       expires_on: str = "", name: str = "", description: str = "", user: User = Depends(current_user),
+                       session: Session = Depends(get_session)):
+        """Mentre si compila: si può vendere? quale sconto conviene? quanto pesa un pezzo?"""
+        store_for(session, user, store_id)
+        today = date.today()
+        try:
+            exp = date.fromisoformat(expires_on) if expires_on else None
+        except ValueError:
+            raise HTTPException(422, "Data non valida.")
+        out: dict = {"ok": True, "notes": [], "weight_g": rescuemod.unit_weight_g(name, description)}
+        try:
+            out["notes"] = rescuemod.check_sellable(date_kind, exp, today)
+        except rescuemod.RescueError as exc:
+            out.update(ok=False, error=str(exc))
+        pct = rescuemod.suggest_discount(reason, date_kind, exp, today)
+        cents = parse_price(price) if price else None
+        out["pct"] = pct
+        if cents:
+            rp = rescuemod.rescue_price(cents, pct)
+            out.update(price_cents=rp, price=format_eur(rp), real_pct=round((cents - rp) * 100 / cents))
+        return out
+
+    @app.post("/api/stores/{store_id}/rescues", status_code=201)
+    async def create_rescue(store_id: int, request: Request, name: str = Form(default=""),
+                            description: str = Form(default=""), reason: str = Form(default="scadenza"),
+                            date_kind: str = Form(default=""), expires_on: str = Form(default=""),
+                            until: str = Form(default=""), qty: str = Form(default="1"), unit: str = Form(default="pezzi"),
+                            unit_weight_g: str = Form(default=""), price: str = Form(default=""),
+                            rescue_price: str = Form(default=""), offer_id: str = Form(default=""),
+                            photo: UploadFile | None = File(default=None),
+                            user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Mette un prodotto in Salvaspreco e prepara storia, post, testi (il cartellino si scarica a parte)."""
+        store = store_for(session, user, store_id)
+        today = date.today()
+        offer = None
+        if offer_id:
+            offer = offer_for(session, user, int(offer_id)) if offer_id.isdigit() else None
+            if offer is None or offer.flyer.store_id != store.id:
+                raise HTTPException(404, "Offerta non trovata.")
+        try:
+            data = rescuemod.RescueIn(
+                name=name or (offer.name if offer is not None else ""),
+                description=description or (offer.description if offer is not None and not name else ""),
+                reason=reason, date_kind=date_kind,
+                expires_on=date.fromisoformat(expires_on) if expires_on else None,
+                until=date.fromisoformat(until) if until else None,
+                qty=float(qty.replace(",", ".")), unit=unit,
+                unit_weight_g=int(unit_weight_g) if unit_weight_g.strip().isdigit() else None,
+                price_cents=parse_price(price) or (offer.price_cents if offer is not None else 0),
+                rescue_price_cents=parse_price(rescue_price) if rescue_price else None)
+        except ValueError:
+            raise HTTPException(422, "Controlla i campi: numeri e date non validi.")
+        img = None
+        if photo is not None and photo.filename:
+            raw = await photo.read(15 * 1024 * 1024 + 1)
+            if len(raw) > 15 * 1024 * 1024:
+                raise HTTPException(413, "La foto supera 15 MB.")
+            try:
+                img = open_image(raw)
+                from PIL import Image as _Image, ImageOps as _ImageOps
+                import io as _io
+                with _Image.open(_io.BytesIO(raw)) as raw_img:          # le foto del telefono arrivano ruotate
+                    if raw_img.getexif().get(0x0112, 1) != 1:
+                        img = _ImageOps.exif_transpose(raw_img).convert(img.mode)
+            except ImageError as exc:
+                raise HTTPException(400, str(exc)) from exc
+        try:
+            r, notes = rescuemod.create(session, store, data, state(request).settings.data_dir, today,
+                                        photo=img, offer=offer)
+        except rescuemod.RescueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        return {**rescue_out(r, today), "notes": notes}
+
+    @app.get("/api/rescues/{rescue_id}/{what}")
+    def rescue_file(rescue_id: int, what: str, user: User = Depends(current_user),
+                    session: Session = Depends(get_session)):
+        r = rescue_for(session, user, rescue_id)
+        path = {"storia": r.story_path, "post": r.post_path, "foto": r.photo_path}.get(what)
+        if not path or not Path(path).exists():
+            raise HTTPException(404, "File non disponibile.")
+        name = re.sub(r"[^\w]+", "_", f"Salvaspreco_{r.name}")[:50]
+        return FileResponse(path, media_type="image/png" if path.endswith(".png") else "image/jpeg",
+                            filename=f"{name}_{what}{Path(path).suffix}" if what != "foto" else None)
+
+    @app.post("/api/rescues/{rescue_id}/close")
+    def close_rescue(rescue_id: int, body: dict, user: User = Depends(current_user),
+                     session: Session = Depends(get_session)):
+        """Fine giornata: quanti pezzi (o chili) sono stati venduti."""
+        r = rescue_for(session, user, rescue_id)
+        try:
+            sold = float(str(body.get("sold", "")).replace(",", "."))
+            rescuemod.close(r, sold)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc) if isinstance(exc, rescuemod.RescueError)
+                                else "Scrivi quanti ne hai venduti (un numero).") from exc
+        session.flush()
+        return rescue_out(r, date.today())
+
+    @app.delete("/api/rescues/{rescue_id}", status_code=204)
+    def delete_rescue(rescue_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        r = rescue_for(session, user, rescue_id)
+        rescuemod.delete_files(r)
+        session.delete(r)
+
+    @app.get("/api/stores/{store_id}/rescues-print")
+    def rescue_tags(store_id: int, request: Request, ids: str = "", user: User = Depends(current_user),
+                    session: Session = Depends(get_session)):
+        """Cartellini «Salvami» da stampare: quelli indicati, oppure tutti quelli ancora aperti."""
+        store = store_for(session, user, store_id)
+        today = date.today()
+        q = select(Rescue).where(Rescue.store_id == store.id)
+        if ids:
+            wanted = [int(x) for x in ids.split(",") if x.strip().isdigit()]
+            q = q.where(Rescue.id.in_(wanted))
+        else:
+            q = q.where(Rescue.closed_at.is_(None), Rescue.day >= today - timedelta(days=7))
+        rows = [r for r in session.scalars(q.order_by(Rescue.id)) if ids or (r.until or r.day) >= today]
+        if not rows:
+            raise HTTPException(404, "Nessun prodotto in Salvaspreco da stampare.")
+        out = _render_tmp(state(request).settings, "salvami", ".pdf")
+        rescuemod.tags_pdf(store, rows, out, today)
+        return FileResponse(out, media_type="application/pdf", filename="Cartellini_Salvaspreco.pdf",
+                            background=StarletteTask(lambda: out.unlink(missing_ok=True)))
+
+    @app.get("/api/stores/{store_id}/rescues-impact.jpg")
+    def rescue_impact(store_id: int, request: Request, month: str = "", user: User = Depends(current_user),
+                      session: Session = Depends(get_session)):
+        """L'immagine «Questo mese abbiamo salvato … dallo spreco», pronta da pubblicare."""
+        store = store_for(session, user, store_id)
+        y, m = _month(month, date.today())
+        stats = rescuemod.month_stats(session, store, y, m)
+        if not stats["closed"] or (stats["kg_saved"] < 1 and stats["pieces_sold"] < 1):
+            raise HTTPException(404, "Prima segna i venduti di qualche prodotto Salvaspreco.")
+        out = _render_tmp(state(request).settings, "impatto", ".jpg")
+        rescuemod.impact_image(store, stats).save(out, quality=92)
+        return FileResponse(out, media_type="image/jpeg", filename=f"Salvaspreco_{stats['month']}.jpg",
+                            background=StarletteTask(lambda: out.unlink(missing_ok=True)))
 
     return app

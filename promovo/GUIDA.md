@@ -145,6 +145,31 @@ la frutta, la persona che ti serve.
 5. **Crea il Reel**: Promovo sceglie i momenti migliori, raddrizza in verticale, stabilizza, mette
    logo, sottotitoli, cartellino con il prezzo verificato, musica e la scena finale con il QR code.
 
+### Salvaspreco: la merce in scadenza diventa un'offerta lampo
+
+Ogni negozio butta via ogni giorno qualcosa: yogurt che scadono domani, frutta molto matura, pane
+della sera. Con **Salvaspreco** quella merce diventa un'offerta lampo e, a fine mese, un motivo di vanto.
+
+**La mattina (30 secondi):**
+1. Apri **Salvaspreco** e scegli il prodotto dal volantino (nome, prezzo e foto arrivano da soli)
+   oppure scrivilo tu e, se vuoi, scatta una foto.
+2. Indica il motivo (scade a breve, molto maturo, forno di oggi, confezione rovinata, ultimi pezzi),
+   la data stampata sulla confezione e quanti pezzi (o chili) ci sono.
+3. Promovo **consiglia lo sconto**: più è vicina la data, più conviene scontare. Il prezzo lo puoi cambiare.
+4. **Prepara il Salvaspreco**: hai la storia per Instagram/Facebook/WhatsApp, il post, i testi pronti da
+   copiare e il **cartellino «Salvami»** da stampare (4 per foglio A4) e mettere sul prodotto.
+
+**La sera (5 secondi):** in «In corso» scrivi quanti ne hai venduti e premi **Chiudi**.
+
+**A fine mese:** nel riquadro «Il conto del mese» trovi i chili di cibo salvato, gli euro recuperati e il
+**post del mese pronto** («A novembre abbiamo salvato 64 kg di cibo dallo spreco»). Gli euro restano a te:
+nel post compaiono solo i chili e i prodotti. Il conto compare anche nel report della settimana.
+
+**Le regole, già dentro Promovo:** un prodotto con la data di **scadenza** («da consumarsi entro») superata
+non si può vendere e Promovo lo blocca. Dopo il **termine minimo** («da consumarsi preferibilmente entro»)
+si può vendere se la confezione è integra e il prodotto ben conservato: Promovo lo permette e scrive la data
+nei testi, per trasparenza. Promovo non aggiunge mai qualità che non hai scritto tu.
+
 ## 6. Agenti aggiuntivi (gratuiti, sul tuo computer)
 
 Nella pagina **Impostazioni**, scheda **«Agenti aggiuntivi»**: modelli open source scelti per sicurezza e

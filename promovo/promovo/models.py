@@ -11,7 +11,7 @@ import enum
 from datetime import date, datetime, timezone
 
 from sqlalchemy import (
-    Boolean, Date, DateTime, Enum, ForeignKey, Integer, String, Text, JSON,
+    Boolean, Date, DateTime, Enum, Float, ForeignKey, Integer, String, Text, JSON,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -192,3 +192,31 @@ class Job(Base):
     error: Mapped[str] = mapped_column(Text, default="")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class Rescue(Base):
+    """Salvaspreco: un prodotto vicino alla scadenza (o molto maturo, o in confezione rovinata) messo in offerta lampo."""
+    __tablename__ = "rescues"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    store_id: Mapped[int] = mapped_column(ForeignKey("stores.id", ondelete="CASCADE"), index=True)
+    offer_id: Mapped[int | None] = mapped_column(Integer, nullable=True)     # se scelto dal volantino (solo riferimento)
+    day: Mapped[date] = mapped_column(Date, index=True)                       # giorno dell'offerta lampo
+    name: Mapped[str] = mapped_column(String(200))
+    description: Mapped[str] = mapped_column(String(200), default="")         # formato: "500 g", "al kg"
+    reason: Mapped[str] = mapped_column(String(20), default="scadenza")       # scadenza | maturo | forno | confezione | ultimi
+    date_kind: Mapped[str] = mapped_column(String(10), default="")            # scadenza | tmc | "" (nessuna data)
+    expires_on: Mapped[date | None] = mapped_column(Date, nullable=True)
+    until: Mapped[date | None] = mapped_column(Date, nullable=True)           # ultimo giorno dell'offerta lampo
+    qty: Mapped[float] = mapped_column(Float, default=1)
+    unit: Mapped[str] = mapped_column(String(12), default="pezzi")            # pezzi | kg
+    unit_weight_g: Mapped[int | None] = mapped_column(Integer, nullable=True) # peso di un pezzo, per i kg salvati
+    price_cents: Mapped[int] = mapped_column(Integer)                         # prezzo normale
+    rescue_price_cents: Mapped[int] = mapped_column(Integer)                  # prezzo salvaspreco
+    photo_path: Mapped[str] = mapped_column(String(500), default="")
+    story_path: Mapped[str] = mapped_column(String(500), default="")
+    post_path: Mapped[str] = mapped_column(String(500), default="")
+    text: Mapped[str] = mapped_column(Text, default="")                       # post Instagram/Facebook
+    short_text: Mapped[str] = mapped_column(Text, default="")                 # stato WhatsApp
+    sold_qty: Mapped[float | None] = mapped_column(Float, nullable=True)      # segnato a fine giornata
+    closed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
