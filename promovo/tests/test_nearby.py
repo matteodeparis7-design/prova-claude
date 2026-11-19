@@ -23,7 +23,7 @@ def fake_map(calls=None):
             return [{"lat": str(HERE[0]), "lon": str(HERE[1])}]
         if url == nb.GEO_URL:
             return {"results": [{"latitude": 41.73, "longitude": 13.0}]}
-        assert url == nb.OVERPASS_URL and "around:" in params["data"]
+        assert url == nb.OVERPASS_URL and "around:" in params["data"]   # il primo server risponde
         return {"elements": [
             {"type": "node", "lat": 41.7291, "lon": 13.0041, "tags": {"shop": "supermarket", "name": "Superstore Colleferro"}},
             {"type": "node", "lat": 41.7330, "lon": 13.0100, "tags": {"shop": "supermarket", "name": "Market Uno", "brand": "Market Uno",
@@ -99,3 +99,20 @@ def test_api_nearby_and_link(tmp_settings, live_pdf):
         nb._cache.clear()
         r = c.get(f"/api/stores/{st['id']}/nearby", headers=h).json()
         assert r["ok"] is False and "mappa" in r["reason"]
+
+
+def test_nearby_falls_back_to_another_map_server():
+    nb._cache.clear()
+    tried = []
+    base = fake_map()
+
+    def flaky(url, params):
+        tried.append(url)
+        if url == nb.OVERPASS_URL:
+            raise nb.NearbyUnavailable("mappa non raggiungibile (URLError)")
+        if url in nb.OVERPASS_URLS:
+            return base(nb.OVERPASS_URL, params)
+        return base(url, params)
+    res = nb.nearby(Store(name="Superstore Colleferro", address="Via Roma 1", city="Colleferro"), fetch=flaky)
+    assert [p["name"] for p in res["places"]][0] == "Alimentari Bianchi"
+    assert tried[-2:] == list(nb.OVERPASS_URLS[:2])

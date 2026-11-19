@@ -28,6 +28,9 @@ from ...models import Store
 NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
 GEO_URL = "https://geocoding-api.open-meteo.com/v1/search"
 OVERPASS_URL = "https://overpass-api.de/api/interpreter"
+# Server pubblici della stessa mappa: se uno è fermo o non raggiungibile si prova il successivo.
+OVERPASS_URLS = (OVERPASS_URL, "https://overpass.private.coffee/api/interpreter",
+                 "https://overpass.kumi.systems/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter")
 USER_AGENT = "Promovo/1.0 (programma per la comunicazione dei negozi)"
 ATTRIBUTION = "Dati della mappa © OpenStreetMap contributors (ODbL)"
 
@@ -150,7 +153,15 @@ def nearby(store: Store, radius_m: int = 3000, fetch: Fetch = http_json, limit: 
              f'(around:{radius_m},{lat:.6f},{lon:.6f}););out center tags 200;')
 
     def go():
-        return fetch(OVERPASS_URL, {"data": query})
+        last: Exception | None = None
+        for url in OVERPASS_URLS:
+            try:
+                data = fetch(url, {"data": query})
+                if isinstance(data, dict) and "elements" in data:
+                    return data
+            except NearbyUnavailable as exc:
+                last = exc
+        raise last or NearbyUnavailable("mappa non raggiungibile")
     data = _cached(("ovp", round(lat, 4), round(lon, 4), radius_m), 7 * 86400, go)
     places: dict[tuple, Place] = {}
     for el in (data or {}).get("elements", []):
