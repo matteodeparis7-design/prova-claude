@@ -277,6 +277,14 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .till-table th:first-child, .till-table td:first-child { text-align: left; }
 .till-table input { width: 46px; padding: 5px; text-align: center; border: 1px solid #e2dbcd; border-radius: 8px; }
 .till-scroll { overflow-x: auto; }
+.fl-item { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line-2); }
+.fl-item:first-child { border-top: 0; }
+.fl-item .ph { width: 64px; height: 64px; border-radius: 14px; object-fit: cover; background: #efe6da; display: grid; place-items: center; color: #7a5428; border: 1px solid var(--line); }
+.fl-km { font-family: var(--display); font-weight: 750; color: #7a5428; }
+.fl-week { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 18px; }
+.fl-week img { width: 100%; border-radius: 12px; border: 1px solid var(--line); cursor: zoom-in; }
+.fl-week textarea { min-height: 200px; }
+@media (max-width: 720px) { .fl-week { grid-template-columns: 1fr; } .fl-item { grid-template-columns: 54px minmax(0, 1fr); } .fl-item > :last-child { grid-column: 1 / -1; } }
 /* negozi (agenzia) */
 .store-card { display: flex; flex-direction: column; gap: 12px; }
 .store-head { display: flex; gap: 12px; align-items: center; }
@@ -454,8 +462,9 @@ tr:last-child td { border-bottom: 0; }
   .top { padding: 12px 16px; gap: 10px; } .top h1 { font-size: 18px; }
   .store-pick select { max-width: 120px; }
   .content { padding: 16px 14px 110px; }
-  .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: var(--ink); padding: 6px 2px calc(6px + env(safe-area-inset-bottom)); z-index: 20; justify-content: space-around; }
-  .mobile-nav button { background: transparent; border: 0; color: #9aa4bb; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 10.5px; font-weight: 600; padding: 6px 2px; min-width: 46px; cursor: pointer; }
+  .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: var(--ink); padding: 6px 2px calc(6px + env(safe-area-inset-bottom)); z-index: 20; justify-content: flex-start; overflow-x: auto; scrollbar-width: none; }
+  .mobile-nav::-webkit-scrollbar { display: none; }
+  .mobile-nav button { background: transparent; border: 0; color: #9aa4bb; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 10.5px; font-weight: 600; padding: 6px 2px; min-width: 56px; flex: 1 0 56px; cursor: pointer; }
   .mobile-nav button.on { color: #fff; } .mobile-nav button.on svg { color: var(--brand); }
   .card { padding: 16px; }
   .g2 { grid-template-columns: 1fr; }
@@ -512,6 +521,7 @@ tr:last-child td { border-bottom: 0; }
   <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
   <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-14 15-15-1 10-7 15-15 15z"/><path d="M5 19c3-4 6-7 10-9"/></symbol>
   <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4.5"/><path d="M11.2 11.8 20 3M16 7l3 3M14 9l2 2"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.6"/></symbol>
   <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
 </svg>
 
@@ -586,7 +596,7 @@ tr:last-child td { border-bottom: 0; }
 <script>
 "use strict";
 const NAV = [
-  ["home", "Panoramica", "i-home", "Home"], ["flyers", "Volantini", "i-flyer"], ["clips", "Dal banco", "i-camera"], ["rescue", "Salvaspreco", "i-leaf", "Spreco"], ["till", "Alla cassa", "i-key", "Cassa"],
+  ["home", "Panoramica", "i-home", "Home"], ["flyers", "Volantini", "i-flyer"], ["clips", "Dal banco", "i-camera"], ["rescue", "Salvaspreco", "i-leaf", "Spreco"], ["till", "Alla cassa", "i-key", "Cassa"], ["filiera", "Filiera vicina", "i-pin", "Filiera"],
   ["store", "Negozio", "i-store"], ["settings", "Impostazioni", "i-settings", "Opzioni"],
 ];
 const STATUS = {uploaded: "caricato", processing: "in lettura", ready: "pronto", failed: "errore"};
@@ -757,7 +767,7 @@ async function go(view, opts = {}) {
   const title = opts.create ? "Nuovo negozio" : (NAV.find(n => n[0] === view) || [0, "Promovo"])[1];
   $("#pageTitle").textContent = title;
   const sub = {home: new Date().toLocaleDateString("it-IT", {weekday: "long", day: "numeric", month: "long"}), flyers: currentStore() ? currentStore().name : "",
-    clips: "Un video girato col telefono diventa un Reel", rescue: "La merce in scadenza diventa un'offerta lampo", till: "Quali canali portano clienti in negozio", store: currentStore() && !opts.create ? currentStore().name : "", settings: "Chiavi facoltative e informazioni"}[view] || "";
+    clips: "Un video girato col telefono diventa un Reel", rescue: "La merce in scadenza diventa un'offerta lampo", till: "Quali canali portano clienti in negozio", filiera: "I produttori del territorio, con la distanza vera", store: currentStore() && !opts.create ? currentStore().name : "", settings: "Chiavi facoltative e informazioni"}[view] || "";
   $("#pageSub").textContent = sub;
   document.title = title + " · Promovo";
   window.scrollTo(0, 0);
@@ -801,6 +811,7 @@ const TEAM = [
   ["i-calendar", "Pianificatore", "Calendario dei post e cosa filmare"],
   ["i-leaf", "Salvaspreco", "La merce in scadenza diventa un'offerta lampo"],
   ["i-key", "Parola alla cassa", "Conta i clienti portati da ogni canale"],
+  ["i-pin", "Filiera vicina", "Racconta i produttori del territorio"],
 ];
 const IDEA_NAME = {occasion: "una ricorrenza", combo: "una cena completa", half: "il prodotto a metà prezzo", saving: "il risparmio", under_euro: "i prodotti sotto l'euro",
   fresh: "il reparto fresco", stock: "la scorta", weekend: "il fine settimana", basket: "la spesa completa", total: "il totale del carrello", hero: "il prodotto protagonista"};
@@ -1739,6 +1750,91 @@ VIEWS.till = async el => {
   });
   $("#tillSheet").onclick = () => busy($("#tillSheet"), async () => { await download(`/api/stores/${S.storeId}/till-sheet`, "Parola_alla_cassa.pdf"); toast("Stampa il foglio e tienilo accanto alla cassa."); }, "Preparo…");
   $("#tillWa").onclick = async () => { const r = res.rows.find(x => x.channel === "whatsapp"); try { await navigator.clipboard.writeText(r.line); toast("Riga copiata: incollala nei messaggi WhatsApp ai clienti."); } catch (e) { toast("Copia non riuscita.", "err"); } };
+};
+
+// ---------- Filiera vicina
+function flForm(p = {}) {
+  return `<div class="row"><div class="f"><label class="l" for="flName">Produttore *</label><input class="in" id="flName" maxlength="120" value="${esc(p.name || "")}" placeholder="es. Caseificio Rossi"></div>
+      <div class="f"><label class="l" for="flTown">Comune *</label><input class="in" id="flTown" maxlength="120" value="${esc(p.town || "")}" placeholder="es. Paliano"></div></div>
+    <div class="row" style="margin-top:12px"><div class="f"><label class="l" for="flWhat">Cosa produce *</label><input class="in" id="flWhat" maxlength="120" value="${esc(p.what || "")}" placeholder="es. mozzarella e ricotta"></div>
+      <div class="f"><label class="l" for="flKeys">Parole per riconoscerlo nel volantino</label><input class="in" id="flKeys" maxlength="200" value="${esc(p.keywords || "")}" placeholder="es. mozzarella, ricotta"></div></div>
+    <div style="margin-top:12px"><label class="l" for="flStory">Una frase vera su di loro <span class="muted">(facoltativa)</span></label><input class="in" id="flStory" maxlength="300" value="${esc(p.story || "")}" placeholder="es. Lavorano il latte delle loro mucche dal 1962">
+      <div class="hint">Solo cose che sai: Promovo non inventa storie né qualità. La distanza la calcola Promovo dal comune.</div></div>
+    <div class="rs-photo" style="margin-top:12px"><button class="btn sm sec" id="flPhotoBtn" type="button">${icon("i-camera")} ${p.photo_url ? "Cambia foto" : "Foto del produttore o dei prodotti"}</button><span class="muted" id="flPhotoName">${p.photo_url ? "foto presente" : "facoltativa"}</span><input type="file" id="flPhoto" accept="image/*" class="hidden"></div>`;
+}
+function flData(root) {
+  const fd = new FormData();
+  for (const [id, k] of [["flName", "name"], ["flTown", "town"], ["flWhat", "what"], ["flStory", "story"], ["flKeys", "keywords"]]) fd.append(k, $("#" + id, root).value.trim());
+  const ph = $("#flPhoto", root).files[0]; if (ph) fd.append("photo", ph);
+  return fd;
+}
+function flBindPhoto(root) {
+  $("#flPhotoBtn", root).onclick = () => $("#flPhoto", root).click();
+  $("#flPhoto", root).onchange = () => { const f = $("#flPhoto", root).files[0]; if (f) $("#flPhotoName", root).textContent = f.name; };
+}
+VIEWS.filiera = async el => {
+  const data = await api(`/api/stores/${S.storeId}/producers`);
+  const items = data.items, week = items.find(p => p.id === data.week);
+  el.innerHTML = `
+    <div class="card"><h2>${icon("i-pin")} Filiera vicina</h2>
+      <p class="sub">Il legame con il territorio è quello che la grande catena non ha. Inserisci una volta i produttori da cui compri: Promovo calcola quanto sono vicini, riconosce i loro prodotti nel volantino e prepara il post «Conosci chi lo produce?» (uno diverso ogni settimana), la mappa della filiera e le etichette da scaffale.</p>
+      <div id="flNew">${flForm()}</div>
+      <div class="toolbar" style="margin-top:14px"><button class="btn" id="flAdd">${icon("i-plus")} Aggiungi produttore</button></div>
+    </div>
+    ${week ? `<div class="card"><h2>${icon("i-star")} Il produttore della settimana</h2>
+      <p class="sub">${week.offers.length ? "Scelto perché i suoi prodotti sono nel volantino in corso." : "A turno, ogni settimana un produttore diverso."}</p>
+      <div class="fl-week"><img data-src="${week.post_url}" alt="Post" id="flWeekImg">
+        <div><textarea class="in" readonly id="flWeekText">${esc(week.text)}</textarea>
+        <div class="toolbar" style="margin-top:10px"><button class="btn sm sec" id="flWeekCopy">${icon("i-copy")} Copia il testo</button><button class="btn sm sec" id="flWeekDl">${icon("i-download")} Scarica l'immagine</button></div></div></div></div>` : ""}
+    <div class="card"><div class="toolbar"><h2 style="flex:1">${icon("i-users")} I tuoi produttori</h2>
+        ${data.located ? `<button class="btn sm sec" id="flMap">${icon("i-image")} Mappa della filiera</button>` : ""}${items.length ? `<button class="btn sm sec" id="flLabels">${icon("i-download")} Etichette da scaffale</button>` : ""}</div>
+      <p class="sub">Dal più vicino. Distanze in linea d'aria dal comune del produttore (${esc(data.attribution)}).</p>
+      <div>${items.map(p => `<div class="fl-item">${p.photo_url ? `<img class="ph" data-src="${p.photo_url}" alt="">` : `<div class="ph">${icon("i-pin")}</div>`}
+        <div style="min-width:0"><b>${esc(p.name)}</b> <span class="muted">· ${esc(p.what)}</span>
+          <div>${p.km != null ? `<span class="fl-km">${esc(p.town)} · ${p.km >= 1 ? Math.round(p.km) + " km" : "meno di 1 km"}</span>` : `<span class="chip warn">${icon("i-alert")} ${esc(p.geo_error || "distanza non calcolata")}</span>`}
+          ${p.offers.map(o => `<span class="chip ok" style="margin-left:6px">nel volantino: ${esc(o.name)}</span>`).join("")}</div></div>
+        <div class="toolbar" style="justify-content:flex-end"><button class="btn sm sec" data-fl-post="${p.id}">Post</button><button class="btn sm sec" data-fl-edit="${p.id}">${icon("i-edit")} Modifica</button><button class="btn sm ghost" data-fl-del="${p.id}" aria-label="Elimina">${icon("i-trash")}</button></div></div>`).join("")
+        || empty("i-pin", "Nessun produttore ancora", "Aggiungi il primo qui sopra: bastano nome, comune e cosa produce.")}</div></div>`;
+  flBindPhoto($("#flNew"));
+  $("#flAdd").onclick = () => busy($("#flAdd"), async () => {
+    const r = await api(`/api/stores/${S.storeId}/producers`, {body: flData($("#flNew"))});
+    toast(r.km != null ? `${r.name}: ${r.km_text}.` : `Salvato, ma la distanza non è stata calcolata: ${r.geo_error}.`, r.km != null ? "ok" : "err");
+    go("filiera");
+  }, "Calcolo la distanza…");
+  if (week) {
+    $("#flWeekCopy").onclick = async () => { try { await navigator.clipboard.writeText(week.text); toast("Testo copiato."); } catch (e) { toast("Copia non riuscita.", "err"); } };
+    $("#flWeekDl").onclick = () => download(week.post_url, `Filiera_${week.name}.jpg`);
+    $("#flWeekImg").onclick = () => lightbox(week.post_url);
+  }
+  const mp = $("#flMap"); if (mp) mp.onclick = () => busy(mp, async () => { forget(`/api/stores/${S.storeId}/producers-map`); await lightbox(`/api/stores/${S.storeId}/producers-map.jpg`); }, "Disegno…");
+  const lb = $("#flLabels"); if (lb) lb.onclick = () => busy(lb, async () => { await download(`/api/stores/${S.storeId}/producers-labels`, "Etichette_filiera_vicina.pdf"); toast("Stampa al 100%: 8 etichette per foglio."); }, "Preparo…");
+  $$("[data-fl-post]", el).forEach(b => b.onclick = () => {
+    const p = items.find(x => x.id === Number(b.dataset.flPost));
+    modal(`<div class="toolbar" style="margin-bottom:12px"><h3 style="flex:1;margin:0">${icon("i-pin")} ${esc(p.name)}</h3><button class="btn ghost sm" data-close>${icon("i-x")}</button></div>
+      <div class="fl-week"><img data-src="${p.post_url}" alt="Post"><div><textarea class="in" readonly id="flPT">${esc(p.text)}</textarea>
+      <div class="toolbar" style="margin-top:10px"><button class="btn sm sec" id="flPC">${icon("i-copy")} Copia</button><button class="btn sm sec" id="flPD">${icon("i-download")} Immagine</button><button class="btn sm sec" id="flPL">${icon("i-download")} Etichetta</button></div></div></div>`, m => {
+      loadImages(m);
+      $("#flPC", m).onclick = async () => { try { await navigator.clipboard.writeText(p.text); toast("Testo copiato."); } catch (e) { toast("Copia non riuscita.", "err"); } };
+      $("#flPD", m).onclick = () => download(p.post_url, `Filiera_${p.name}.jpg`);
+      $("#flPL", m).onclick = () => download(`/api/stores/${S.storeId}/producers-labels?ids=${p.id}`, "Etichetta_filiera.pdf");
+    });
+    const mm = $("#modalRoot .modal"); if (mm) mm.classList.add("big");
+  });
+  $$("[data-fl-edit]", el).forEach(b => b.onclick = () => {
+    const p = items.find(x => x.id === Number(b.dataset.flEdit));
+    modal(`<h3>Modifica il produttore</h3><div style="margin-top:14px">${flForm(p)}</div>
+      <div class="toolbar" style="justify-content:flex-end;margin-top:18px"><button class="btn sec" data-close>Annulla</button><button class="btn" id="flSave">Salva</button></div>`, (m, close) => {
+      flBindPhoto(m);
+      $("#flSave", m).onclick = () => busy($("#flSave", m), async () => {
+        await api(`/api/producers/${p.id}`, {method: "PUT", body: flData(m)});
+        forget(`/api/producers/${p.id}`); close(); toast("Produttore aggiornato."); go("filiera");
+      }, "Salvo…");
+    });
+  });
+  $$("[data-fl-del]", el).forEach(b => b.onclick = async () => {
+    if (!await confirmBox("Togliere questo produttore?", "Sparisce dalla filiera, dalla mappa e dalle etichette.", "Togli", true)) return;
+    try { await api(`/api/producers/${b.dataset.flDel}`, {method: "DELETE"}); toast("Tolto."); go("filiera"); } catch (e) { toast(e.message, "err"); }
+  });
 };
 
 VIEWS.clips = async el => {

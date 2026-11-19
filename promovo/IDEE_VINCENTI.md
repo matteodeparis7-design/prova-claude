@@ -140,5 +140,5 @@ Queste richiedono che Promovo abbia anche una parte su internet (oggi il program
 |---|---|---|
 | 1 | Salvaspreco | **fatto** (beta) |
 | 2 | Parola alla cassa | **fatto** (beta) |
-| 3 | Filiera vicina | da fare |
+| 3 | Filiera vicina | **fatto** (beta) |
 | 4 | Calendario dei portafogli + spesa a budget | da fare |

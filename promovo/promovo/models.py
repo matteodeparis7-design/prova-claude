@@ -243,3 +243,21 @@ class TillHit(Base):
     code_id: Mapped[int] = mapped_column(ForeignKey("till_codes.id", ondelete="CASCADE"), index=True)
     day: Mapped[date] = mapped_column(Date)
     count: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class Producer(Base):
+    """Filiera vicina: un produttore del territorio da cui il negozio compra (dati scritti dal negozio)."""
+    __tablename__ = "producers"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    store_id: Mapped[int] = mapped_column(ForeignKey("stores.id", ondelete="CASCADE"), index=True)
+    name: Mapped[str] = mapped_column(String(120))                       # «Caseificio Rossi»
+    town: Mapped[str] = mapped_column(String(120))                       # comune
+    what: Mapped[str] = mapped_column(String(120))                       # «mozzarella e ricotta»
+    story: Mapped[str] = mapped_column(String(300), default="")          # una frase vera, facoltativa
+    keywords: Mapped[str] = mapped_column(String(200), default="")       # parole per riconoscere i prodotti nel volantino
+    photo_path: Mapped[str] = mapped_column(String(500), default="")
+    lat: Mapped[float | None] = mapped_column(Float, nullable=True)
+    lon: Mapped[float | None] = mapped_column(Float, nullable=True)
+    km: Mapped[float | None] = mapped_column(Float, nullable=True)       # in linea d'aria dal negozio
+    geo_error: Mapped[str] = mapped_column(String(200), default="")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)

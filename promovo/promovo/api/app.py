@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 
+import io
 import json
 import logging
 import re
@@ -14,6 +15,7 @@ from pathlib import Path
 from fastapi import BackgroundTasks, Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from starlette.background import BackgroundTask as StarletteTask
+from PIL import Image, ImageOps
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
@@ -23,7 +25,7 @@ from ..config import Settings, get_settings
 from ..db import Database
 from ..llm import AIRefused, AIUnavailable, LLM
 from .. import keys
-from ..models import ContentPiece, Flyer, FlyerStatus, Job, JobStatus, Offer, Organization, Rescue, Role, Store, TillCode, User
+from ..models import ContentPiece, Flyer, FlyerStatus, Job, JobStatus, Offer, Organization, Producer, Rescue, Role, Store, TillCode, User
 from ..imaging import ImageError, load_logo, open_image, save_product_photo
 from ..money import discount_percent, format_eur, parse_price
 from ..security import hash_password, issue_token, revoke_token, verify_password
@@ -43,6 +45,7 @@ from ..modules.radar import nearby as nearbymod
 from ..modules.weather.service import weekly_weather
 from ..modules import rescue as rescuemod
 from ..modules import till as tillmod
+from ..modules import filiera as filieramod
 from .deps import (
     AppState, bearer_token, content_for, current_user, flyer_for, get_session, job_for, offer_for,
     require_owner, state, store_for,
@@ -1710,6 +1713,161 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         out = _render_tmp(state(request).settings, "cassa", ".pdf")
         tillmod.sheet_pdf(store, flyers[0], res, out)
         return FileResponse(out, media_type="application/pdf", filename="Parola_alla_cassa.pdf",
+                            background=StarletteTask(lambda: out.unlink(missing_ok=True)))
+
+    # -------------------------------------------------- Filiera vicina
+
+    def producer_for(session: Session, user: User, producer_id: int) -> Producer:
+        p = session.get(Producer, producer_id)
+        if p is None:
+            raise HTTPException(404, "Produttore non trovato.")
+        store_for(session, user, p.store_id)
+        return p
+
+    def producer_out(p: Producer, offers: list[Offer], store: Store) -> dict:
+        base = f"/api/producers/{p.id}"
+        return {"id": p.id, "name": p.name, "town": p.town, "what": p.what, "story": p.story, "keywords": p.keywords,
+                "km": p.km, "km_text": filieramod.km_text(p.km), "geo_error": p.geo_error,
+                "photo_url": f"{base}/foto" if p.photo_path and Path(p.photo_path).exists() else None,
+                "post_url": f"{base}/post", "offers": [{"id": o.id, "name": o.name, "price": format_eur(o.price_cents)}
+                                                       for o in offers],
+                "text": filieramod.write_text(store, p, offers)}
+
+    async def _producer_photo(photo: UploadFile | None) -> Image.Image | None:
+        if photo is None or not photo.filename:
+            return None
+        raw = await photo.read(15 * 1024 * 1024 + 1)
+        if len(raw) > 15 * 1024 * 1024:
+            raise HTTPException(413, "La foto supera 15 MB.")
+        try:
+            img = open_image(raw)
+            with Image.open(io.BytesIO(raw)) as raw_img:            # le foto del telefono arrivano ruotate
+                if raw_img.getexif().get(0x0112, 1) != 1:
+                    img = ImageOps.exif_transpose(raw_img).convert(img.mode)
+            return img
+        except ImageError as exc:
+            raise HTTPException(400, str(exc)) from exc
+
+    def _save_producer_photo(p: Producer, img: Image.Image, settings: Settings) -> None:
+        folder = settings.data_dir / "producers"
+        folder.mkdir(parents=True, exist_ok=True)
+        if p.photo_path:
+            Path(p.photo_path).unlink(missing_ok=True)
+        out = folder / f"{p.id}_{secrets.token_hex(4)}.jpg"
+        img.convert("RGB").save(out, quality=90)
+        p.photo_path = str(out)
+
+    @app.get("/api/stores/{store_id}/producers")
+    def list_producers(store_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """I produttori del territorio, le offerte del volantino che vengono da loro e il produttore della settimana."""
+        store = store_for(session, user, store_id)
+        ps = filieramod.store_producers(session, store)
+        offers = active_offers(session, store.id)
+        m = filieramod.matches(ps, offers)
+        week = filieramod.of_the_week(ps, offers, date.today())
+        return {"items": [producer_out(p, m.get(p.id, []), store) for p in ps],
+                "week": week.id if week is not None else None,
+                "located": sum(1 for p in ps if p.km is not None), "attribution": nearbymod.ATTRIBUTION}
+
+    def _fetch(request: Request):
+        st = state(request)
+        return st.nearby_fetch or nearbymod.http_json
+
+    @app.post("/api/stores/{store_id}/producers", status_code=201)
+    async def create_producer(store_id: int, request: Request, name: str = Form(default=""), town: str = Form(default=""),
+                              what: str = Form(default=""), story: str = Form(default=""),
+                              keywords: str = Form(default=""), photo: UploadFile | None = File(default=None),
+                              user: User = Depends(current_user), session: Session = Depends(get_session)):
+        store = store_for(session, user, store_id)
+        try:
+            data = filieramod.clean({"name": name, "town": town, "what": what, "story": story, "keywords": keywords})
+        except filieramod.FilieraError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        img = await _producer_photo(photo)
+        p = Producer(store_id=store.id, **data)
+        session.add(p)
+        session.flush()
+        if img is not None:
+            _save_producer_photo(p, img, state(request).settings)
+        filieramod.locate(session, store, p, _fetch(request))
+        return producer_out(p, filieramod.matches([p], active_offers(session, store.id)).get(p.id, []), store)
+
+    @app.put("/api/producers/{producer_id}")
+    async def update_producer(producer_id: int, request: Request, name: str = Form(default=""),
+                              town: str = Form(default=""), what: str = Form(default=""), story: str = Form(default=""),
+                              keywords: str = Form(default=""), photo: UploadFile | None = File(default=None),
+                              user: User = Depends(current_user), session: Session = Depends(get_session)):
+        p = producer_for(session, user, producer_id)
+        store = session.get(Store, p.store_id)
+        try:
+            data = filieramod.clean({"name": name, "town": town, "what": what, "story": story, "keywords": keywords})
+        except filieramod.FilieraError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        moved = data["town"] != p.town
+        for k, v in data.items():
+            setattr(p, k, v)
+        img = await _producer_photo(photo)
+        if img is not None:
+            _save_producer_photo(p, img, state(request).settings)
+        if moved or p.km is None:
+            filieramod.locate(session, store, p, _fetch(request))
+        session.flush()
+        return producer_out(p, filieramod.matches([p], active_offers(session, store.id)).get(p.id, []), store)
+
+    @app.delete("/api/producers/{producer_id}", status_code=204)
+    def delete_producer(producer_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        p = producer_for(session, user, producer_id)
+        if p.photo_path:
+            Path(p.photo_path).unlink(missing_ok=True)
+        session.delete(p)
+
+    @app.get("/api/producers/{producer_id}/{what}")
+    def producer_file(producer_id: int, what: str, request: Request, user: User = Depends(current_user),
+                      session: Session = Depends(get_session)):
+        p = producer_for(session, user, producer_id)
+        if what == "foto":
+            if not p.photo_path or not Path(p.photo_path).exists():
+                raise HTTPException(404, "Foto non disponibile.")
+            return FileResponse(p.photo_path, media_type="image/jpeg")
+        if what != "post":
+            raise HTTPException(404, "File non disponibile.")
+        out = _render_tmp(state(request).settings, "produttore", ".jpg")
+        filieramod.post_image(session.get(Store, p.store_id), p).save(out, quality=92)
+        name = re.sub(r"[^\w]+", "_", f"Filiera_{p.name}")[:50]
+        return FileResponse(out, media_type="image/jpeg", filename=f"{name}.jpg",
+                            background=StarletteTask(lambda: out.unlink(missing_ok=True)))
+
+    @app.get("/api/stores/{store_id}/producers-map.jpg")
+    def producers_map(store_id: int, request: Request, user: User = Depends(current_user),
+                      session: Session = Depends(get_session)):
+        """La mappa della filiera da pubblicare: il negozio al centro, i produttori nella loro direzione vera."""
+        store = store_for(session, user, store_id)
+        ps = [p for p in filieramod.store_producers(session, store) if p.km is not None]
+        if not ps:
+            raise HTTPException(404, "Aggiungi almeno un produttore con il comune trovato sulla mappa.")
+        try:
+            lat, lon, _ = nearbymod.locate(store, _fetch(request))
+        except nearbymod.NearbyUnavailable as exc:
+            raise HTTPException(503, f"Mappa non disponibile: {exc}.") from exc
+        out = _render_tmp(state(request).settings, "filiera", ".jpg")
+        filieramod.map_image(store, ps, (lat, lon)).save(out, quality=92)
+        return FileResponse(out, media_type="image/jpeg", filename="Mappa_della_filiera.jpg",
+                            background=StarletteTask(lambda: out.unlink(missing_ok=True)))
+
+    @app.get("/api/stores/{store_id}/producers-labels")
+    def producers_labels(store_id: int, request: Request, ids: str = "", user: User = Depends(current_user),
+                         session: Session = Depends(get_session)):
+        """Etichette da scaffale «Filiera vicina», 8 per foglio A4."""
+        store = store_for(session, user, store_id)
+        ps = filieramod.store_producers(session, store)
+        if ids:
+            wanted = {int(x) for x in ids.split(",") if x.strip().isdigit()}
+            ps = [p for p in ps if p.id in wanted]
+        if not ps:
+            raise HTTPException(404, "Nessun produttore da stampare.")
+        out = _render_tmp(state(request).settings, "etichette", ".pdf")
+        filieramod.labels_pdf(store, ps, out)
+        return FileResponse(out, media_type="application/pdf", filename="Etichette_filiera_vicina.pdf",
                             background=StarletteTask(lambda: out.unlink(missing_ok=True)))
 
     return app

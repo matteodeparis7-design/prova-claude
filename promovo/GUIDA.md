@@ -187,6 +187,22 @@ I «mi piace» non dicono se un post ha portato gente in negozio. La **Parola al
 
 Si contano solo numeri: nessun nome e nessun dato dei clienti.
 
+### Filiera vicina: i produttori del territorio
+
+1. Apri **Filiera vicina** e aggiungi i produttori da cui compri: nome, **comune**, cosa producono e,
+   se vuoi, una foto e una frase vera su di loro. Nelle «parole per riconoscerlo» scrivi come compaiono i
+   loro prodotti nel volantino (per esempio «mozzarella, ricotta»).
+2. Promovo calcola la distanza dal negozio (in linea d'aria, dal comune del produttore, con la mappa
+   di OpenStreetMap) e riconosce i loro prodotti nel volantino in corso.
+3. **Il produttore della settimana**: ogni settimana un post «Conosci chi lo produce?» pronto, con
+   immagine e testo (prima quelli con prodotti in offerta).
+4. **Mappa della filiera**: un'immagine da pubblicare con il negozio al centro e i produttori nella loro
+   direzione vera («I nostri 6 produttori, tutti entro 20 km da qui»).
+5. **Etichette da scaffale**: «Filiera vicina · 9 km · Caseificio Rossi», 8 per foglio A4.
+
+Promovo usa solo quello che scrivi: non inventa storie né qualità e non scrive «km 0» (in alcune regioni ha
+un significato di legge preciso): scrive la distanza calcolata.
+
 ## 6. Agenti aggiuntivi (gratuiti, sul tuo computer)
 
 Nella pagina **Impostazioni**, scheda **«Agenti aggiuntivi»**: modelli open source scelti per sicurezza e
