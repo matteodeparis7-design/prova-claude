@@ -21,6 +21,7 @@ import unicodedata
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Callable
 
 from ...models import Store
@@ -45,7 +46,7 @@ class NearbyUnavailable(RuntimeError):
 Fetch = Callable[[str, dict], dict]
 
 
-def http_json(url: str, params: dict, timeout: float = 25.0) -> dict:
+def http_json(url: str, params: dict, timeout: float = 20.0) -> dict:
     full = url + "?" + urllib.parse.urlencode(params)
     req = urllib.request.Request(full, headers={"User-Agent": USER_AGENT, "Accept-Language": "it"})
     try:
@@ -145,24 +146,49 @@ def _is_self(store: Store, name: str, brand: str, dist: float) -> bool:
     return bool(own) and own <= theirs and dist < 150
 
 
-def nearby(store: Store, radius_m: int = 3000, fetch: Fetch = http_json, limit: int = 30) -> dict:
-    """Supermercati e minimarket entro il raggio, dal più vicino. Senza rete: NearbyUnavailable."""
+def _ask_map(query: str, fetch: Fetch, pause: float) -> dict:
+    """Chiede ai server pubblici della mappa, uno dopo l'altro; un secondo giro sui primi due se sono occupati."""
+    last: Exception | None = None
+    for attempt, url in enumerate(list(OVERPASS_URLS) + list(OVERPASS_URLS[:2])):
+        if attempt == len(OVERPASS_URLS) and pause:
+            time.sleep(pause)
+        try:
+            data = fetch(url, {"data": query})
+            if isinstance(data, dict) and "elements" in data:
+                return data
+        except NearbyUnavailable as exc:
+            last = exc
+    raise last or NearbyUnavailable("mappa non raggiungibile")
+
+
+def nearby(store: Store, radius_m: int = 3000, fetch: Fetch = http_json, limit: int = 30,
+           cache_dir: Path | None = None, pause: float = 3.0) -> dict:
+    """Supermercati e minimarket entro il raggio, dal più vicino. Senza rete: NearbyUnavailable.
+
+    Con cache_dir l'elenco trovato resta salvato sul computer (30 giorni): i negozi di un quartiere cambiano
+    di rado, e se la mappa è occupata si usa l'ultimo elenco salvato."""
     radius_m = max(500, min(int(radius_m), 15000))
     lat, lon, precision = locate(store, fetch)
     query = (f'[out:json][timeout:25];(nwr["shop"~"^(supermarket|convenience)$"]'
              f'(around:{radius_m},{lat:.6f},{lon:.6f}););out center tags 200;')
-
-    def go():
-        last: Exception | None = None
-        for url in OVERPASS_URLS:
-            try:
-                data = fetch(url, {"data": query})
-                if isinstance(data, dict) and "elements" in data:
-                    return data
-            except NearbyUnavailable as exc:
-                last = exc
-        raise last or NearbyUnavailable("mappa non raggiungibile")
-    data = _cached(("ovp", round(lat, 4), round(lon, 4), radius_m), 7 * 86400, go)
+    saved = cache_dir / f"{lat:.4f}_{lon:.4f}_{radius_m}.json" if cache_dir else None
+    saved_at = None
+    data = None
+    if saved and saved.exists() and time.time() - saved.stat().st_mtime < 30 * 86400:
+        data = json.loads(saved.read_text(encoding="utf-8"))
+        saved_at = saved.stat().st_mtime
+    if data is None:
+        try:
+            data = _cached(("ovp", round(lat, 4), round(lon, 4), radius_m), 7 * 86400,
+                           lambda: _ask_map(query, fetch, pause))
+            if saved:
+                saved.parent.mkdir(parents=True, exist_ok=True)
+                saved.write_text(json.dumps(data), encoding="utf-8")
+        except NearbyUnavailable:
+            if not (saved and saved.exists()):
+                raise
+            data = json.loads(saved.read_text(encoding="utf-8"))      # meglio l'elenco di ieri che niente
+            saved_at = saved.stat().st_mtime
     places: dict[tuple, Place] = {}
     for el in (data or {}).get("elements", []):
         tags = el.get("tags") or {}
@@ -187,7 +213,8 @@ def nearby(store: Store, radius_m: int = 3000, fetch: Fetch = http_json, limit: 
     out = sorted(places.values(), key=lambda p: (p.kind != "supermercato", p.distance_m))[:limit]
     out.sort(key=lambda p: p.distance_m)
     return {"center": {"lat": lat, "lon": lon, "precision": precision}, "radius_m": radius_m,
-            "places": [p.as_dict() for p in out], "attribution": ATTRIBUTION}
+            "places": [p.as_dict() for p in out], "attribution": ATTRIBUTION,
+            "saved_at": time.strftime("%d/%m/%Y", time.localtime(saved_at)) if saved_at else None}
 
 
 # ---------------------------------------------------------------- volantino da un link

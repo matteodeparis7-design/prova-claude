@@ -756,7 +756,9 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         store = store_for(session, user, store_id)
         st = state(request)
         try:
-            return {"ok": True, **nearbymod.nearby(store, radius, fetch=st.nearby_fetch or nearbymod.http_json)}
+            return {"ok": True, **nearbymod.nearby(store, radius, fetch=st.nearby_fetch or nearbymod.http_json,
+                                                   cache_dir=st.settings.data_dir / "nearby",
+                                                   pause=0 if st.nearby_fetch else 3.0)}
         except nearbymod.NearbyUnavailable as exc:
             return {"ok": False, "reason": str(exc), "places": [], "attribution": nearbymod.ATTRIBUTION}
 

@@ -116,3 +116,22 @@ def test_nearby_falls_back_to_another_map_server():
     res = nb.nearby(Store(name="Superstore Colleferro", address="Via Roma 1", city="Colleferro"), fetch=flaky)
     assert [p["name"] for p in res["places"]][0] == "Alimentari Bianchi"
     assert tried[-2:] == list(nb.OVERPASS_URLS[:2])
+
+
+def test_nearby_keeps_the_last_list_when_the_map_is_busy(tmp_path):
+    nb._cache.clear()
+    store = Store(name="Superstore Colleferro", address="Via Roma 1", city="Colleferro")
+    first = nb.nearby(store, fetch=fake_map(), cache_dir=tmp_path, pause=0)
+    assert first["saved_at"] is None and list(tmp_path.glob("*.json"))
+    nb._cache.clear()
+    base = fake_map()
+
+    def busy(url, params):
+        if url in nb.OVERPASS_URLS:
+            raise nb.NearbyUnavailable("mappa non raggiungibile (HTTPError)")
+        return base(url, params)
+    again = nb.nearby(store, fetch=busy, cache_dir=tmp_path, pause=0)
+    assert [p["name"] for p in again["places"]] == [p["name"] for p in first["places"]] and again["saved_at"]
+    nb._cache.clear()
+    with pytest.raises(nb.NearbyUnavailable):
+        nb.nearby(store, fetch=busy, cache_dir=tmp_path / "vuota", pause=0)

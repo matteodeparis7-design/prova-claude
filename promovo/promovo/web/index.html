@@ -926,13 +926,13 @@ async function competitorsCard(el) {
     let r;
     try { r = await api(`/api/stores/${S.storeId}/nearby?radius=${S.radius || 3000}`); }
     catch (e) { r = {ok: false, reason: e.message, places: []}; }
-    if (!r.ok) { list.innerHTML = notice("warn", `Non riesco a vedere la mappa ora: ${r.reason}. Puoi comunque aggiungere un concorrente qui sotto.`); return; }
+    if (!r.ok) { list.innerHTML = notice("warn", `Non riesco a vedere la mappa ora: ${r.reason}. I server pubblici della mappa a volte sono occupati: riprova tra poco. Intanto puoi aggiungere un concorrente qui sotto.`) + `<div><button class="btn sec sm" id="nearRetry">${icon("i-arrow")} Riprova</button></div>`; $("#nearRetry", list).onclick = nearList; return; }
     if (!r.places.length) { list.innerHTML = `<div class="muted">Nessun supermercato segnato sulla mappa entro ${(S.radius || 3000) / 1000} km. Prova un raggio più ampio o aggiungilo a mano qui sotto.</div>`; return; }
     list.innerHTML = r.places.slice(0, 12).map((p, i) => `<div class="near">
         <div class="pin"><span>${i + 1}</span></div>
         <div class="t"><b>${esc(p.label)}</b><span>${esc(p.kind)} · ${meters(p.distance_m)}${p.address ? ` · ${esc(p.address)}` : ""}</span></div>
         ${inRadar(p) ? `<span class="chip ok">${icon("i-check")} nel radar</span>` : `<a class="btn ghost sm" href="${esc(p.search)}" target="_blank" rel="noopener">Trova il volantino ${icon("i-arrow")}</a><button class="btn sec sm" data-pick="${esc(p.label)}">${icon("i-plus")} Aggiungi</button>`}
-      </div>`).join("") + `<div class="hint" style="margin-top:8px">${esc(r.attribution)} · posizione del negozio ricavata ${r.center.precision === "indirizzo" ? "dall'indirizzo" : "dal centro della città (aggiungi l'indirizzo nella pagina Negozio per più precisione)"}.</div>`;
+      </div>`).join("") + `<div class="hint" style="margin-top:8px">${esc(r.attribution)}${r.saved_at ? ` · elenco salvato il ${esc(r.saved_at)}` : ""} · posizione del negozio ricavata ${r.center.precision === "indirizzo" ? "dall'indirizzo" : "dal centro della città (aggiungi l'indirizzo nella pagina Negozio per più precisione)"}.</div>`;
     $$("[data-pick]", list).forEach(b => b.onclick = () => { nameIn.value = b.dataset.pick; $("#compAdd", box).scrollIntoView({behavior: "smooth", block: "center"}); $("#compUrl", box).focus(); toast("Ora carica il suo volantino: file, foto o link."); });
   }
   nearList();
