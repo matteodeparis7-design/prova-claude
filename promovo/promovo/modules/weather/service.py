@@ -1,7 +1,9 @@
 """Il meteo che vende: le previsioni della zona del negozio diventano consigli su cosa mettere in evidenza.
 
-Fonte: Open-Meteo (gratuito, senza chiave, senza registrazione). Se la rete non c'è, Promovo lo dice
-e va avanti senza: il meteo è un consiglio, mai un blocco.
+Fonti, gratuite anche per uso commerciale e senza chiave:
+- previsioni: MET Norway (Istituto meteorologico norvegese, api.met.no, dati CC BY 4.0), copre tutta l'Italia;
+- posizione della città: Nominatim (OpenStreetMap), una richiesta per città, poi ricordata per 30 giorni.
+Se la rete non c'è, Promovo lo dice e va avanti senza: il meteo è un consiglio, mai un blocco.
 
 Regole semplici e spiegabili (il negoziante deve capire perché):
 - caldo (massima >= 28 °C): bevande, acqua, birra, gelati, angurie e meloni, insalate, mozzarelle;
@@ -26,8 +28,28 @@ from ...models import Flyer, Offer, Store
 
 log = logging.getLogger("promovo.weather")
 
-GEO_URL = "https://geocoding-api.open-meteo.com/v1/search"
-FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
+GEO_URL = "https://nominatim.openstreetmap.org/search"
+FORECAST_URL = "https://api.met.no/weatherapi/locationforecast/2.0/complete"
+# MET Norway e Nominatim chiedono che il programma si presenti (niente User-Agent generico).
+USER_AGENT = "Promovo/1.0 (programma per la comunicazione dei negozi)"
+ATTRIBUTION = "Previsioni: MET Norway (CC BY 4.0)"
+ROME = None
+
+
+def _rome():
+    global ROME
+    if ROME is None:
+        from zoneinfo import ZoneInfo
+        ROME = ZoneInfo("Europe/Rome")
+    return ROME
+
+
+# Simboli di MET Norway -> codici WMO (per usare le stesse parole semplici)
+MET_SYMBOL = {"clearsky": 0, "fair": 1, "partlycloudy": 2, "cloudy": 3, "fog": 45, "lightrain": 61, "rain": 63,
+              "heavyrain": 65, "lightrainshowers": 80, "rainshowers": 81, "heavyrainshowers": 82, "lightsleet": 66,
+              "sleet": 66, "heavysleet": 67, "lightsleetshowers": 66, "sleetshowers": 66, "heavysleetshowers": 67,
+              "lightsnow": 71, "snow": 73, "heavysnow": 75, "lightsnowshowers": 85, "snowshowers": 85,
+              "heavysnowshowers": 86}
 _GIORNI = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"]
 _MESI = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"]
 
@@ -101,9 +123,12 @@ class WeatherUnavailable(RuntimeError):
 Fetch = Callable[[str, dict], dict]
 
 
-def http_json(url: str, params: dict, timeout: float = 6.0) -> dict:
+def http_json(url: str, params: dict, timeout: float = 8.0) -> dict:
+    if url == GEO_URL:              # regola di Nominatim: una richiesta al secondo, condivisa con la mappa
+        from ..radar.nearby import nominatim_turn
+        nominatim_turn()
     full = url + "?" + urllib.parse.urlencode(params)
-    req = urllib.request.Request(full, headers={"User-Agent": "Promovo"})
+    req = urllib.request.Request(full, headers={"User-Agent": USER_AGENT, "Accept-Language": "it"})
     for attempt in (1, 2):      # un secondo tentativo: a volte il servizio risponde in ritardo
         try:
             with urllib.request.urlopen(req, timeout=timeout * attempt) as r:  # noqa: S310 (URL fissi, solo https)
@@ -135,32 +160,78 @@ def geocode(city: str, fetch: Fetch = http_json) -> tuple[float, float, str]:
         raise WeatherUnavailable("manca la città del negozio")
 
     def go():
-        data = fetch(GEO_URL, {"name": city, "count": 1, "language": "it", "countryCode": "IT"})
-        res = (data or {}).get("results") or []
-        if not res:
-            raise WeatherUnavailable(f"città «{city}» non trovata")
-        r = res[0]
-        return float(r["latitude"]), float(r["longitude"]), r.get("name", city)
+        for params in ({"city": city, "country": "Italia"}, {"q": f"{city}, Italia"}):   # il comune, non la provincia
+            res = fetch(GEO_URL, {**params, "format": "jsonv2", "limit": 1, "countrycodes": "it"})
+            if isinstance(res, list) and res:
+                r = res[0]
+                return float(r["lat"]), float(r["lon"]), (r.get("name") or city)
+        raise WeatherUnavailable(f"città «{city}» non trovata: controlla il nome nella pagina Negozio")
     return _cached(("geo", city.lower()), 30 * 86400, go)
+
+
+def _symbol_code(sym: str) -> int:
+    base = (sym or "").split("_")[0]
+    if "thunder" in base:
+        return 95
+    return MET_SYMBOL.get(base, 2)
+
+
+def parse_met(data: dict) -> list[Day]:
+    """Dalle previsioni orarie/sesorarie di MET Norway ai giorni (ora italiana): massima, minima, pioggia, cielo."""
+    from datetime import datetime
+    series = ((data or {}).get("properties") or {}).get("timeseries") or []
+    if not series:
+        raise WeatherUnavailable("nessuna previsione disponibile")
+    tz = _rome()
+    days: dict[date, dict] = {}
+    parsed = []
+    for e in series:
+        try:
+            t = datetime.fromisoformat(e["time"].replace("Z", "+00:00")).astimezone(tz)
+        except (KeyError, ValueError):
+            continue
+        parsed.append((t, e.get("data") or {}))
+    for i, (t, d) in enumerate(parsed):
+        nxt = parsed[i + 1][0] if i + 1 < len(parsed) else None
+        step = (nxt - t).total_seconds() / 3600 if nxt else 6
+        g = days.setdefault(t.date(), {"temps": [], "rain": 0.0, "prob": 0, "sym": None, "sym_gap": 99, "n": 0})
+        g["n"] += 1
+        inst = ((d.get("instant") or {}).get("details") or {})
+        if "air_temperature" in inst:
+            g["temps"].append(float(inst["air_temperature"]))
+        p1, p6 = d.get("next_1_hours") or {}, d.get("next_6_hours") or {}
+        d6 = p6.get("details") or {}
+        for k in ("air_temperature_max", "air_temperature_min"):
+            if k in d6:
+                g["temps"].append(float(d6[k]))
+        period = p1 if step <= 1.5 and p1 else p6           # ogni ora conta una volta sola
+        pd = period.get("details") or {}
+        g["rain"] += float(pd.get("precipitation_amount") or 0)
+        for per in (p1, p6):
+            pr = (per.get("details") or {}).get("probability_of_precipitation")
+            if pr is not None:
+                g["prob"] = max(g["prob"], int(round(float(pr))))
+        sym = ((p6 or p1).get("summary") or {}).get("symbol_code")
+        if sym and abs(t.hour - 12) < g["sym_gap"]:
+            g["sym"], g["sym_gap"] = sym, abs(t.hour - 12)
+    out = []
+    for day in sorted(days):
+        g = days[day]
+        if not g["temps"] or (g["n"] < 2 and day != min(days)):
+            continue                                           # giornata troppo poco coperta (l'ultima)
+        prob = g["prob"] or (80 if g["rain"] >= 3 else 50 if g["rain"] >= 1 else 0)
+        out.append(Day(day, max(g["temps"]), min(g["temps"]), round(g["rain"], 1), prob, _symbol_code(g["sym"])))
+    if not out:
+        raise WeatherUnavailable("nessuna previsione disponibile")
+    return out
 
 
 def forecast(lat: float, lon: float, fetch: Fetch = http_json) -> list[Day]:
     def go():
-        data = fetch(FORECAST_URL, {"latitude": f"{lat:.3f}", "longitude": f"{lon:.3f}", "timezone": "Europe/Rome",
-                                    "forecast_days": 7,
-                                    "daily": "weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,"
-                                             "precipitation_probability_max"})
-        d = (data or {}).get("daily") or {}
         try:
-            days = [Day(date.fromisoformat(t), float(hi), float(lo), float(mm or 0), int(pp or 0), int(code or 0))
-                    for t, hi, lo, mm, pp, code in zip(d["time"], d["temperature_2m_max"], d["temperature_2m_min"],
-                                                       d["precipitation_sum"], d["precipitation_probability_max"],
-                                                       d["weather_code"])]
-        except (KeyError, TypeError, ValueError) as exc:
+            return parse_met(fetch(FORECAST_URL, {"lat": f"{lat:.3f}", "lon": f"{lon:.3f}"}))[:8]
+        except (KeyError, TypeError, ValueError, AttributeError) as exc:
             raise WeatherUnavailable("risposta delle previsioni non valida") from exc
-        if not days:
-            raise WeatherUnavailable("nessuna previsione disponibile")
-        return days
     return _cached(("fc", round(lat, 2), round(lon, 2), date.today().isoformat()), 3 * 3600, go)
 
 
@@ -204,7 +275,7 @@ def weekly_weather(store: Store, flyer: Flyer | None, fetch: Fetch | None = None
     offers = list(flyer.offers) if flyer is not None else []
     adv = advice(days, offers, start, end)
     return {
-        "available": True, "place": place,
+        "available": True, "place": place, "source": ATTRIBUTION,
         "days": [{"date": d.day.isoformat(), "label": d.label, "tmax": round(d.tmax), "tmin": round(d.tmin),
                   "rain_prob": d.rain_prob, "rain_mm": round(d.rain_mm, 1), "sky": d.sky, "signals": d.signals}
                  for d in days if start <= d.day <= end],

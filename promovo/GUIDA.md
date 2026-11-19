@@ -62,7 +62,8 @@ Se non hai usato il pilota automatico, qui scegli cosa creare. Sopra trovi due a
   vedi su quali prodotti sei più conveniente; con un clic li metti in evidenza. I nomi dei concorrenti
   restano solo per te: non finiscono mai nei post.
 - **Il meteo della settimana**: le previsioni della città del negozio nei giorni del volantino e i
-  prodotti da spingere. Serve internet (servizio gratuito Open-Meteo).
+  prodotti da spingere. Serve internet: le previsioni vengono da MET Norway, l'istituto meteorologico
+  norvegese (gratuito anche per uso commerciale, copre tutta l'Italia).
 
 ### Passo 3: Approva e scarica
 
@@ -100,7 +101,8 @@ colori, indirizzo, orari e tono, senza rileggere il volantino.
 In fondo alla pagina **Volantini**, la scheda **«Concorrenti e loro volantini»**:
 
 1. **Nella zona di…**: Promovo mostra i supermercati e i minimarket veri intorno all'indirizzo del negozio
-   (dalla mappa libera OpenStreetMap), dal più vicino, con la distanza. Puoi scegliere 1, 3 o 5 km.
+   (dalla mappa libera OpenStreetMap), dal più vicino, con la distanza, in qualunque comune d'Italia.
+   Puoi scegliere 1, 3, 5 o 10 km (nei paesi piccoli conviene 10 km). L'elenco resta salvato sul computer.
 2. Su un concorrente premi **«Trova il volantino»**: si apre la ricerca del suo volantino della settimana.
 3. Premi **«Aggiungi»** e carica il volantino: come **file** (PDF), come **foto**, oppure incollando il
    **link** al PDF pubblicato sul sito dell'insegna.

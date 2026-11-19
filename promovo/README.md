@@ -19,7 +19,7 @@ stesso): più negozi, ognuno con la sua identità, e un pacchetto ZIP pronto da 
 | Montatore | Video MP4 con musica originale, logo e QR code: schermo 16:9, Reel 9:16, post 1:1 | `modules/video` |
 | Regista dal banco | Dal video girato col telefono al Reel: momenti migliori, stabilizzazione, prezzi verificati, sottotitoli, voce | `modules/clip` |
 | Analista prezzi | Confronto con i volantini dei concorrenti (al kg/litro se i formati sono diversi) | `modules/radar` |
-| Meteorologo | Previsioni Open-Meteo: cosa spingere nei giorni di caldo, freddo o pioggia | `modules/weather` |
+| Meteorologo | Previsioni MET Norway (gratuite anche per uso commerciale): cosa spingere nei giorni di caldo, freddo o pioggia | `modules/weather` |
 | Pianificatore | Calendario di pubblicazione e cosa filmare al banco | `modules/content/service.py` |
 | Pilota automatico | Dal caricamento del volantino a tutti i materiali, in un solo lavoro con l'avanzamento di ogni agente | `api/app.py` (`run_autopilot_job`) |
 
@@ -48,7 +48,7 @@ Variabili d'ambiente:
 | `PROMOVO_AI` | `claude` | `off` per impedire l'IA facoltativa |
 | `PROMOVO_MAX_UPLOAD_MB` | `40` | Dimensione massima dei volantini |
 | `PROMOVO_MAX_VIDEO_MB` | `400` | Dimensione massima dei video "dal banco" |
-| `PROMOVO_WEATHER` | `on` | `off` per non chiedere le previsioni a Open-Meteo |
+| `PROMOVO_WEATHER` | `on` | `off` per non chiedere le previsioni a MET Norway |
 
 Le chiavi facoltative si inseriscono dalla pagina Impostazioni (vengono provate prima di essere salvate);
 valgono anche `ANTHROPIC_API_KEY` ed `ELEVENLABS_API_KEY` all'avvio.

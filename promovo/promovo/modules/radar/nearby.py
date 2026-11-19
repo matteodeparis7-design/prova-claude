@@ -1,8 +1,9 @@
 """I supermercati veri intorno al negozio, per sapere quali volantini confrontare.
 
 Fonti gratuite e senza chiave:
-- posizione del negozio: Nominatim (OpenStreetMap) sull'indirizzo, oppure Open-Meteo sulla sola città;
-- negozi della zona: Overpass (OpenStreetMap), cioè i supermercati e i minimarket segnati sulla mappa.
+- posizione del negozio: Nominatim (OpenStreetMap) sull'indirizzo, oppure sulla sola città;
+- negozi della zona: Overpass (OpenStreetMap), cioè i supermercati e i minimarket segnati sulla mappa;
+  se i server Overpass sono occupati, la ricerca dei negozi passa da Nominatim (stessa mappa, altro servizio).
 I dati © OpenStreetMap contributors (licenza ODbL): Promovo lo scrive sotto l'elenco.
 
 Promovo non legge i prezzi dei concorrenti da siti di terzi: i prezzi arrivano solo dai volantini che
@@ -27,7 +28,6 @@ from typing import Callable
 from ...models import Store
 
 NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
-GEO_URL = "https://geocoding-api.open-meteo.com/v1/search"
 OVERPASS_URL = "https://overpass-api.de/api/interpreter"
 # Server pubblici della stessa mappa: se uno è fermo o non raggiungibile si prova il successivo.
 OVERPASS_URLS = (OVERPASS_URL, "https://overpass.private.coffee/api/interpreter",
@@ -46,14 +46,33 @@ class NearbyUnavailable(RuntimeError):
 Fetch = Callable[[str, dict], dict]
 
 
+_nominatim_last = [0.0]
+
+
+def nominatim_turn() -> None:
+    """Regola di Nominatim: al massimo una richiesta al secondo per tutto il programma (mappa e meteo)."""
+    with _lock:
+        wait = _nominatim_last[0] + 1.1 - time.monotonic()
+        if wait > 0:
+            time.sleep(wait)
+        _nominatim_last[0] = time.monotonic()
+
+
 def http_json(url: str, params: dict, timeout: float = 20.0) -> dict:
     full = url + "?" + urllib.parse.urlencode(params)
     req = urllib.request.Request(full, headers={"User-Agent": USER_AGENT, "Accept-Language": "it"})
-    try:
-        with urllib.request.urlopen(req, timeout=timeout) as r:  # noqa: S310 (URL fissi, solo https)
-            return json.loads(r.read().decode("utf-8"))
-    except Exception as exc:
-        raise NearbyUnavailable(f"mappa non raggiungibile ({exc.__class__.__name__})") from exc
+    tries = 2 if url == NOMINATIM_URL else 1     # Nominatim: un secondo tentativo se l'errore è momentaneo
+    for attempt in range(tries):
+        if url == NOMINATIM_URL:
+            nominatim_turn()
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as r:  # noqa: S310 (URL fissi, solo https)
+                return json.loads(r.read().decode("utf-8"))
+        except Exception as exc:
+            if attempt + 1 >= tries:
+                raise NearbyUnavailable(f"mappa non raggiungibile ({exc.__class__.__name__})") from exc
+            time.sleep(2)
+    raise NearbyUnavailable("mappa non raggiungibile")
 
 
 _cache: dict[tuple, tuple[float, object]] = {}
@@ -85,27 +104,43 @@ def distance_m(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     return 2 * r * math.asin(math.sqrt(a))
 
 
+def city_center(city: str, fetch: Fetch = http_json) -> tuple[float, float, str] | None:
+    """Centro del comune (non della provincia): ricerca strutturata per città, poi ricerca libera."""
+    for params in ({"city": city, "country": "Italia"}, {"q": f"{city}, Italia"}):
+        res = fetch(NOMINATIM_URL, {**params, "format": "jsonv2", "limit": 1, "countrycodes": "it"})
+        if isinstance(res, list) and res:
+            return float(res[0]["lat"]), float(res[0]["lon"]), res[0].get("name") or city
+    return None
+
+
 def locate(store: Store, fetch: Fetch = http_json) -> tuple[float, float, str]:
-    """Coordinate del negozio: prima dall'indirizzo completo, altrimenti dal centro della città."""
+    """Coordinate del negozio: dall'indirizzo, se è davvero in quel comune; altrimenti dal centro del comune."""
     city = (store.city or "").strip()
     address = (store.address or "").strip()
     if not city and not address:
         raise NearbyUnavailable("indica la città del negozio (pagina Negozio)")
 
     def go():
-        if address and city:
-            try:
-                res = fetch(NOMINATIM_URL, {"q": f"{address}, {city}, Italia", "format": "jsonv2", "limit": 1,
-                                            "countrycodes": "it"})
-                if isinstance(res, list) and res:
-                    return float(res[0]["lat"]), float(res[0]["lon"]), "indirizzo"
-            except NearbyUnavailable:
-                pass
-        data = fetch(GEO_URL, {"name": city or address, "count": 1, "language": "it", "countryCode": "IT"})
-        hit = (data or {}).get("results") or []
-        if not hit:
+        center = city_center(city or address, fetch)
+        if center is None:
             raise NearbyUnavailable(f"non trovo «{city or address}» sulla mappa: controlla la città nella pagina Negozio")
-        return float(hit[0]["latitude"]), float(hit[0]["longitude"]), "città"
+        if address and city:
+            want = _norm(city)
+            for params in ({"street": address, "city": city, "country": "Italia"}, {"q": f"{address}, {city}, Italia"}):
+                try:
+                    res = fetch(NOMINATIM_URL, {**params, "format": "jsonv2", "limit": 3, "countrycodes": "it",
+                                                "addressdetails": 1})
+                except NearbyUnavailable:
+                    res = None
+                for r in res if isinstance(res, list) else []:
+                    a = r.get("address") or {}
+                    towns = {_norm(a.get(k, "")) for k in ("city", "town", "village", "municipality", "hamlet")} - {""}
+                    lat_, lon_ = float(r["lat"]), float(r["lon"])
+                    # una via con lo stesso nome in un altro comune non va bene
+                    same_town = want in towns if towns else distance_m(center[0], center[1], lat_, lon_) < 8000
+                    if same_town and distance_m(center[0], center[1], lat_, lon_) < 25000:
+                        return lat_, lon_, "indirizzo"
+        return center[0], center[1], "città"
     return _cached(("loc", _norm(address), _norm(city)), 30 * 86400, go)
 
 
@@ -147,18 +182,41 @@ def _is_self(store: Store, name: str, brand: str, dist: float) -> bool:
 
 
 def _ask_map(query: str, fetch: Fetch, pause: float) -> dict:
-    """Chiede ai server pubblici della mappa, uno dopo l'altro; un secondo giro sui primi due se sono occupati."""
+    """Chiede ai server pubblici Overpass, uno dopo l'altro, finché uno risponde."""
     last: Exception | None = None
-    for attempt, url in enumerate(list(OVERPASS_URLS) + list(OVERPASS_URLS[:2])):
-        if attempt == len(OVERPASS_URLS) and pause:
-            time.sleep(pause)
+    for attempt, url in enumerate(OVERPASS_URLS):
+        if attempt and pause:
+            time.sleep(min(pause, 1.0))
         try:
-            data = fetch(url, {"data": query})
+            data = fetch(url, {"data": query}) if fetch is not http_json else http_json(url, {"data": query}, timeout=12)
             if isinstance(data, dict) and "elements" in data:
                 return data
         except NearbyUnavailable as exc:
             last = exc
     raise last or NearbyUnavailable("mappa non raggiungibile")
+
+
+NOMINATIM_SHOPS = (("supermarket", "supermarket"), ("minimarket", "convenience"))
+
+
+def _ask_nominatim(lat: float, lon: float, radius_m: int, fetch: Fetch) -> dict:
+    """Seconda strada: i negozi della zona cercati con Nominatim, nello stesso formato di Overpass."""
+    dlat = radius_m / 111_000
+    dlon = radius_m / (111_000 * max(0.2, math.cos(math.radians(lat))))
+    box = f"{lon - dlon:.5f},{lat + dlat:.5f},{lon + dlon:.5f},{lat - dlat:.5f}"
+    elements = []
+    for q, shop in NOMINATIM_SHOPS:
+        res = fetch(NOMINATIM_URL, {"q": q, "format": "jsonv2", "limit": 50, "addressdetails": 1, "bounded": 1,
+                                    "viewbox": box, "countrycodes": "it"})
+        for r in res if isinstance(res, list) else []:
+            if r.get("category") != "shop" or r.get("type") not in ("supermarket", "convenience"):
+                continue
+            a = r.get("address") or {}
+            elements.append({"lat": float(r["lat"]), "lon": float(r["lon"]), "tags": {
+                "shop": r.get("type") or shop, "name": r.get("name") or "",
+                "addr:street": a.get("road") or "", "addr:housenumber": a.get("house_number") or "",
+                "addr:city": a.get("town") or a.get("city") or a.get("village") or ""}})
+    return {"elements": elements}
 
 
 def nearby(store: Store, radius_m: int = 3000, fetch: Fetch = http_json, limit: int = 30,
@@ -179,8 +237,16 @@ def nearby(store: Store, radius_m: int = 3000, fetch: Fetch = http_json, limit: 
         saved_at = saved.stat().st_mtime
     if data is None:
         try:
-            data = _cached(("ovp", round(lat, 4), round(lon, 4), radius_m), 7 * 86400,
-                           lambda: _ask_map(query, fetch, pause))
+            def ask():
+                # Prima Nominatim (veloce e stabile), poi i server Overpass se Nominatim non trova niente.
+                try:
+                    found = _ask_nominatim(lat, lon, radius_m, fetch)
+                    if found["elements"]:
+                        return found
+                except NearbyUnavailable:
+                    pass
+                return _ask_map(query, fetch, pause)
+            data = _cached(("ovp", round(lat, 4), round(lon, 4), radius_m), 7 * 86400, ask)
             if saved:
                 saved.parent.mkdir(parents=True, exist_ok=True)
                 saved.write_text(json.dumps(data), encoding="utf-8")
@@ -200,7 +266,7 @@ def nearby(store: Store, radius_m: int = 3000, fetch: Fetch = http_json, limit: 
         if plat is None or plon is None:
             continue
         dist = distance_m(lat, lon, float(plat), float(plon))
-        if _is_self(store, name, brand, dist):
+        if dist > radius_m * 1.05 or _is_self(store, name, brand, dist):
             continue
         street = " ".join(x for x in (tags.get("addr:street"), tags.get("addr:housenumber")) if x)
         town = tags.get("addr:city") or ""

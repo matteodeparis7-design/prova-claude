@@ -15,14 +15,21 @@ from conftest import FakeLLM, make_store, register
 HERE = (41.7290, 13.0040)
 
 
-def fake_map(calls=None):
+def fake_map(calls=None, shops_search=False):
     def fetch(url, params):
         if calls is not None:
             calls.append(url)
+        if url == nb.NOMINATIM_URL and "viewbox" in params:            # ricerca dei negozi con Nominatim
+            if not shops_search:
+                return []
+            if params["q"] == "supermarket":
+                return [{"lat": "41.7330", "lon": "13.0100", "category": "shop", "type": "supermarket", "name": "Market Uno",
+                         "address": {"road": "Via Latina", "house_number": "12", "town": "Colleferro"}},
+                        {"lat": "41.7300", "lon": "13.0050", "category": "amenity", "type": "parking", "name": "Parcheggio"}]
+            return [{"lat": "41.7295", "lon": "13.0060", "category": "shop", "type": "convenience", "name": "Alimentari Bianchi",
+                     "address": {"road": "Corso Turati", "town": "Colleferro"}}]
         if url == nb.NOMINATIM_URL:
             return [{"lat": str(HERE[0]), "lon": str(HERE[1])}]
-        if url == nb.GEO_URL:
-            return {"results": [{"latitude": 41.73, "longitude": 13.0}]}
         assert url == nb.OVERPASS_URL and "around:" in params["data"]   # il primo server risponde
         return {"elements": [
             {"type": "node", "lat": 41.7291, "lon": 13.0041, "tags": {"shop": "supermarket", "name": "Superstore Colleferro"}},
@@ -133,5 +140,41 @@ def test_nearby_keeps_the_last_list_when_the_map_is_busy(tmp_path):
     again = nb.nearby(store, fetch=busy, cache_dir=tmp_path, pause=0)
     assert [p["name"] for p in again["places"]] == [p["name"] for p in first["places"]] and again["saved_at"]
     nb._cache.clear()
+    def all_down(url, params):
+        if url in nb.OVERPASS_URLS or "viewbox" in params:
+            raise nb.NearbyUnavailable("mappa non raggiungibile (HTTPError)")
+        return base(url, params)
     with pytest.raises(nb.NearbyUnavailable):
-        nb.nearby(store, fetch=busy, cache_dir=tmp_path / "vuota", pause=0)
+        nb.nearby(store, fetch=all_down, cache_dir=tmp_path / "vuota", pause=0)
+
+
+def test_nearby_uses_nominatim_first_and_overpass_only_if_needed():
+    nb._cache.clear()
+    base = fake_map(shops_search=True)
+
+    def overpass_down(url, params):
+        if url in nb.OVERPASS_URLS:
+            raise nb.NearbyUnavailable("mappa non raggiungibile (HTTPError)")
+        return base(url, params)
+    res = nb.nearby(Store(name="Superstore Colleferro", address="Via Roma 1", city="Colleferro"), fetch=overpass_down, pause=0)
+    assert [p["name"] for p in res["places"]] == ["Alimentari Bianchi", "Market Uno"]     # niente parcheggi
+    assert res["places"][1]["label"] == "Market Uno Via Latina 12"
+
+
+def test_nearby_prefers_the_fast_search():
+    nb._cache.clear()
+    calls = []
+    res = nb.nearby(Store(name="X", address="Via Roma 1", city="Colleferro"), fetch=fake_map(calls, shops_search=True), pause=0)
+    assert res["places"] and not any(u in nb.OVERPASS_URLS for u in calls)       # Overpass non serve
+
+
+def test_address_in_another_town_falls_back_to_the_town_center():
+    """«Via Roma 3» esiste in molti comuni: se la mappa trova quella di un altro paese si usa il centro del comune."""
+    nb._cache.clear()
+
+    def fetch(url, params):
+        if "street" in params or (params.get("q", "").startswith("Via Roma")):
+            return [{"lat": "41.60", "lon": "13.30"}]               # 25 km più in là: un altro comune
+        return [{"lat": "41.806", "lon": "13.058", "name": "Paliano"}]
+    lat, lon, how = nb.locate(Store(name="X", address="Via Roma 3", city="Paliano"), fetch)
+    assert (round(lat, 3), round(lon, 3), how) == (41.806, 13.058, "città")

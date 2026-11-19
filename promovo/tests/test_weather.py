@@ -16,16 +16,34 @@ from promovo.modules.weather import service as w
 from conftest import TODAY, FakeLLM, make_store, register, upload
 
 
+WMO_TO_MET = {0: "clearsky_day", 1: "fair_day", 2: "partlycloudy_day", 3: "cloudy", 61: "lightrain", 63: "rain"}
+
+
+def met_payload(days: list[tuple]) -> dict:
+    """Risposta come quella di MET Norway: per ogni giorno una voce a mezzanotte e una a mezzogiorno (ora italiana)."""
+    from datetime import datetime, timezone, timedelta as td
+    series = []
+    for d, hi, lo, mm, pp, code in days:
+        for hour, temp, rain in ((0, lo, 0.0), (12, hi, mm)):
+            t = datetime(d.year, d.month, d.day, hour, tzinfo=timezone.utc) - td(hours=1)     # CET = UTC+1
+            series.append({"time": t.strftime("%Y-%m-%dT%H:%M:%SZ"), "data": {
+                "instant": {"details": {"air_temperature": temp}},
+                "next_6_hours": {"summary": {"symbol_code": WMO_TO_MET.get(code, "partlycloudy_day")},
+                                 "details": {"air_temperature_max": temp, "air_temperature_min": temp,
+                                             "precipitation_amount": rain,
+                                             "probability_of_precipitation": pp if hour == 12 else 0}}}})
+    return {"properties": {"timeseries": series}}
+
+
 def fake_fetch(days: list[tuple], calls: list | None = None):
-    """Risposte come quelle di Open-Meteo. days: (data, max, min, mm, probabilità, codice)."""
+    """Nominatim per la città, MET Norway per le previsioni. days: (data, max, min, mm, probabilità, codice)."""
     def fetch(url, params):
         if calls is not None:
             calls.append(url)
-        if "geocoding" in url:
-            return {"results": [{"latitude": 41.73, "longitude": 13.02, "name": params["name"]}]}
-        return {"daily": {"time": [d[0].isoformat() for d in days], "temperature_2m_max": [d[1] for d in days],
-                          "temperature_2m_min": [d[2] for d in days], "precipitation_sum": [d[3] for d in days],
-                          "precipitation_probability_max": [d[4] for d in days], "weather_code": [d[5] for d in days]}}
+        if url == w.GEO_URL:
+            return [{"lat": "41.73", "lon": "13.02", "name": params.get("city") or params["q"].split(",")[0]}]
+        assert url == w.FORECAST_URL
+        return met_payload(days)
     return fetch
 
 

@@ -882,7 +882,7 @@ async function competitorsCard(el) {
   box.innerHTML = `<h2>${icon("i-radar")} Concorrenti e loro volantini</h2>
     <p class="sub">Promovo trova i supermercati veri intorno al negozio. I loro prezzi li legge dai loro volantini: carichi il file, una foto o il link al PDF dal sito dell'insegna. Così il confronto è vero, prodotto per prodotto. I nomi dei concorrenti restano solo tuoi: non compaiono mai nei contenuti pubblicati.</p>
     <div class="near-head"><h3 style="margin:0">Nella zona${city ? ` di ${esc(city)}` : ""}</h3>
-      <div class="seg" id="radius">${[1000, 3000, 5000].map(r => `<button data-r="${r}" class="${(S.radius || 3000) === r ? "on" : ""}">${r / 1000} km</button>`).join("")}</div></div>
+      <div class="seg" id="radius">${[1000, 3000, 5000, 10000].map(r => `<button data-r="${r}" class="${(S.radius || 3000) === r ? "on" : ""}">${r / 1000} km</button>`).join("")}</div></div>
     <div id="nearList" class="near-list"><div class="muted">Cerco i supermercati sulla mappa…</div><div class="progress"><div></div></div></div>
     <div class="comp-add" id="compAdd">
       <h3>Aggiungi un volantino al radar</h3>
@@ -927,7 +927,7 @@ async function competitorsCard(el) {
     try { r = await api(`/api/stores/${S.storeId}/nearby?radius=${S.radius || 3000}`); }
     catch (e) { r = {ok: false, reason: e.message, places: []}; }
     if (!r.ok) { list.innerHTML = notice("warn", `Non riesco a vedere la mappa ora: ${r.reason}. I server pubblici della mappa a volte sono occupati: riprova tra poco. Intanto puoi aggiungere un concorrente qui sotto.`) + `<div><button class="btn sec sm" id="nearRetry">${icon("i-arrow")} Riprova</button></div>`; $("#nearRetry", list).onclick = nearList; return; }
-    if (!r.places.length) { list.innerHTML = `<div class="muted">Nessun supermercato segnato sulla mappa entro ${(S.radius || 3000) / 1000} km. Prova un raggio più ampio o aggiungilo a mano qui sotto.</div>`; return; }
+    if (!r.places.length) { list.innerHTML = `<div class="muted">Nessun supermercato segnato sulla mappa entro ${(S.radius || 3000) / 1000} km.${(S.radius || 3000) < 10000 ? " Nei paesi piccoli prova 10 km." : ""} Puoi anche aggiungerlo a mano qui sotto.</div>`; return; }
     list.innerHTML = r.places.slice(0, 12).map((p, i) => `<div class="near">
         <div class="pin"><span>${i + 1}</span></div>
         <div class="t"><b>${esc(p.label)}</b><span>${esc(p.kind)} · ${meters(p.distance_m)}${p.address ? ` · ${esc(p.address)}` : ""}</span></div>
@@ -947,7 +947,7 @@ async function weatherCard(box, f) {
   }
   const cls = d => d.signals.includes("caldo") ? "hot" : d.signals.includes("freddo") ? "cold" : d.signals.includes("pioggia") ? "wet" : "";
   const what = a => a.signal === "caldo" ? `caldo, ${a.tmax}°` : a.signal === "freddo" ? `freddo, ${a.tmax}° di massima` : "pioggia";
-  box.innerHTML = `<h2>${icon("i-sun")} Il meteo della settimana</h2><p class="sub">Previsioni per ${esc(w.place)} nei giorni del volantino. Il tempo cambia quello che la gente compra: Promovo te lo dice prima.</p>
+  box.innerHTML = `<h2>${icon("i-sun")} Il meteo della settimana</h2><p class="sub">Previsioni per ${esc(w.place)} nei giorni del volantino. Il tempo cambia quello che la gente compra: Promovo te lo dice prima.${w.source ? ` <span class="hint">${esc(w.source)}</span>` : ""}</p>
     <div class="wdays">${w.days.map(d => `<div class="wday ${cls(d)}"><span class="muted">${esc(d.label)}</span><b>${d.tmax}°</b><span>${esc(d.sky)}${d.rain_prob >= 40 ? " · " + d.rain_prob + "%" : ""}</span></div>`).join("")}</div>
     ${w.advice.length ? `<div style="margin-top:10px">${w.advice.map((a, i) => {
       const todo = a.offers.filter(o => !o.is_featured);
