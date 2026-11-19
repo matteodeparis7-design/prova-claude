@@ -95,8 +95,17 @@ def test_update_check(tmp_settings, monkeypatch):
     app = create_app(tmp_settings, llm=FakeLLM())
     with TestClient(app) as c:
         h = register(c)
+        monkeypatch.setattr(v, "build", lambda: {})
         assert c.get("/api/update", headers=h).json()["available"] is False      # dai sorgenti: niente avvisi
-        monkeypatch.setattr(v, "build", lambda: {"commit": "aaa", "date": "2026-11-19T10:00:00Z"})
-        app.state.promovo.update_fetch = lambda: {"target_commitish": "bbb", "published_at": "2026-11-20T09:00:00Z"}
+        monkeypatch.setattr(v, "build", lambda: {"commit": "aaaaaaa1", "date": "2026-11-19T10:00:00Z"})
+        # come su GitHub: la pagina è nata il 18, i file nuovi sono stati caricati il 20
+        app.state.promovo.update_fetch = lambda: {"target_commitish": "bbbbbbb2", "published_at": "2026-11-18T09:00:00Z",
+                                                  "assets": [{"updated_at": "2026-11-20T09:00:00Z"}]}
         r = c.get("/api/update", headers=h).json()
         assert r["available"] is True and r["url"].startswith("https://github.com/")
+    # chi ha già l'ultima versione non riceve l'avviso
+    app2 = create_app(tmp_settings, llm=FakeLLM())
+    app2.state.promovo.update_fetch = lambda: {"target_commitish": "aaaaaaa1", "published_at": "2026-11-18T09:00:00Z",
+                                               "assets": [{"updated_at": "2026-11-20T09:00:00Z"}]}
+    with TestClient(app2) as c:
+        assert c.get("/api/update", headers=register(c, email="seconda@test.it", org="Seconda agenzia")).json()["available"] is False

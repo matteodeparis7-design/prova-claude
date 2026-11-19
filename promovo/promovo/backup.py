@@ -19,6 +19,7 @@ import sqlite3
 import sys
 import tempfile
 import zipfile
+from contextlib import closing, contextmanager
 from datetime import datetime
 from pathlib import Path
 
@@ -34,6 +35,14 @@ class BackupError(ValueError):
     pass
 
 
+@contextmanager
+def _db(path: Path):
+    """Connessione SQLite che salva e poi si chiude davvero (su Windows un file aperto non si sposta né si cancella)."""
+    with closing(sqlite3.connect(str(path))) as conn:
+        with conn:
+            yield conn
+
+
 def db_path(database_url: str) -> Path | None:
     if database_url.startswith("sqlite:///"):
         return Path(database_url[len("sqlite:///"):])
@@ -42,7 +51,7 @@ def db_path(database_url: str) -> Path | None:
 
 def _copy_db(src: Path, dst: Path) -> None:
     """Copia coerente del database anche con Promovo acceso (API di backup di SQLite)."""
-    with sqlite3.connect(str(src)) as a, sqlite3.connect(str(dst)) as b:
+    with _db(src) as a, _db(dst) as b:
         a.backup(b)
 
 
@@ -62,7 +71,8 @@ def make_backup(data_dir: Path, database_url: str, out: Path, include_videos: bo
             z.write(copy, "promovo.db")
             for p in sorted(data_dir.rglob("*")):
                 rel = p.relative_to(data_dir)
-                if p.is_dir() or rel.parts[0] in SKIP_DIRS or p.name in SKIP_FILES or p.resolve() == db.resolve():
+                if (p.is_dir() or rel.parts[0] in SKIP_DIRS or p.name in SKIP_FILES or p.resolve() == db.resolve()
+                        or p.resolve() == Path(out).resolve()):
                     continue
                 if p.suffix.lower() in (".part", ".tmp", ".db-journal", ".db-wal", ".db-shm"):
                     continue
@@ -92,7 +102,7 @@ def check_backup(data: bytes) -> dict:
         p = Path(tmp) / "c.db"
         p.write_bytes(z.read("promovo.db"))
         try:
-            with sqlite3.connect(str(p)) as c:
+            with _db(p) as c:
                 stores = c.execute("select count(*) from stores").fetchone()[0]
                 flyers = c.execute("select count(*) from flyers").fetchone()[0]
         except sqlite3.DatabaseError as exc:
@@ -114,7 +124,7 @@ def _rewrite_paths(db: Path, old: str, new: str) -> int:
     pairs = [(old, new), (old.replace("\\", "\\\\"), new.replace("\\", "\\\\")),     # anche dentro i JSON
              (old.replace("\\", "/"), new.replace("\\", "/"))]
     changed = 0
-    with sqlite3.connect(str(db)) as c:
+    with _db(db) as c:
         tables = [r[0] for r in c.execute("select name from sqlite_master where type='table'")]
         for t in tables:
             cols = [r[1] for r in c.execute(f'pragma table_info("{t}")') if (r[2] or "").upper() in

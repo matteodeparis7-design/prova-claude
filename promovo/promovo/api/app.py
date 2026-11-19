@@ -1,11 +1,12 @@
 """API web di Promovo e cruscotto."""
 from __future__ import annotations
 
+from contextlib import asynccontextmanager
+
 import json
 import logging
 import re
 import secrets
-import tempfile
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -73,6 +74,14 @@ class UserIn(BaseModel):
 
 _HEX = r"^#[0-9A-Fa-f]{6}$"
 _TONES = r"^(familiare|elegante|giovane|essenziale)$"
+
+
+def _render_tmp(settings: Settings, label: str, suffix: str) -> Path:
+    """File temporaneo da scaricare (non lascia file aperti: su Windows si cancella). Sta in «tmp», che la copia
+    di sicurezza salta: la copia non deve mai contenere sé stessa."""
+    d = settings.data_dir / "tmp"
+    d.mkdir(parents=True, exist_ok=True)
+    return d / f"{label}_{secrets.token_hex(6)}{suffix}"
 
 
 def _clean_hashtags(tags: list[str]) -> list[str]:
@@ -476,7 +485,12 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
     if llm is None and use_ai:
         llm = keys.make_llm(settings)
 
-    app = FastAPI(title="Promovo", version=VERSION,
+    @asynccontextmanager
+    async def lifespan(_app):
+        yield
+        db.engine.dispose()                # chiude il database allo spegnimento (su Windows libera il file)
+
+    app = FastAPI(title="Promovo", version=VERSION, lifespan=lifespan,
                   description="Agenti che trasformano il volantino del supermercato in contenuti pronti per i social.")
     app.state.promovo = AppState(settings=settings, db=db, llm=llm)
 
@@ -522,7 +536,7 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
     @app.get("/api/backup")
     def download_backup(request: Request, videos: bool = True, user: User = Depends(require_owner)):
         st = state(request)
-        out = Path(tempfile.mkstemp(suffix=".zip")[1])
+        out = _render_tmp(st.settings, "copia", ".zip")
         try:
             backupmod.make_backup(st.settings.data_dir, st.settings.database_url, out, include_videos=videos,
                                   version=VERSION)
@@ -585,9 +599,13 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
             except Exception:
                 return {"available": False, "reason": "non raggiungibile"}
             _update_cache["v"] = (_t.time(), rel)
-        latest = (rel or {}).get("target_commitish", "")
-        newer = bool(latest) and latest != mine["commit"] and (rel.get("published_at", "") > mine.get("date", ""))
-        return {"available": newer, "url": RELEASES_PAGE, "published": rel.get("published_at", ""),
+        rel = rel or {}
+        latest = rel.get("target_commitish", "")
+        # la pagina dei download si aggiorna a ogni build: «published_at» resta quello della prima pubblicazione,
+        # quindi conta il commit pubblicato e, come data, l'ultimo caricamento dei file
+        published = max([a.get("updated_at", "") for a in rel.get("assets") or []] + [rel.get("published_at", "")])
+        newer = len(latest) >= 7 and latest != mine["commit"] and published > mine.get("date", "")
+        return {"available": newer, "url": RELEASES_PAGE, "published": published,
                 "current": mine.get("date", "")}
 
     @app.get("/api/extras")
@@ -992,7 +1010,7 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
                             headers={"Content-Disposition": 'attachment; filename="Piano_della_settimana.ics"'})
         if not f.offers:
             raise HTTPException(400, "Il volantino non ha offerte.")
-        out = Path(tempfile.mkstemp(suffix=".pdf")[1])
+        out = _render_tmp(state(request).settings, what, ".pdf")
         if what == "cartellini":
             printables.shelf_tags_pdf(f.store, f, out)
             name = "Cartellini_scaffale.pdf"
