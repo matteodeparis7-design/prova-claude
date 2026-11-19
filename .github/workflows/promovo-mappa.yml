@@ -1,10 +1,8 @@
 # Prova dal vivo (con internet vero) della mappa dei concorrenti e del meteo: registro breve da leggere.
 name: Promovo - prova mappa dal vivo
 
+# Solo a mano (Actions > Run workflow): i server pubblici della mappa a volte non rispondono ai server di GitHub.
 on:
-  push:
-    branches: ["claude/**", "main"]
-    paths: ["promovo/promovo/modules/radar/**", "promovo/tools/check_nearby.py", ".github/workflows/promovo-mappa.yml"]
   workflow_dispatch:
 
 jobs:
