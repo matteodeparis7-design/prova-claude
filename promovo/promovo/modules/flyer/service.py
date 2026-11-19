@@ -102,6 +102,7 @@ def delete_flyer_files(flyer: Flyer, settings: Settings) -> None:
         for f in crops_dir.iterdir():
             f.unlink(missing_ok=True)
         crops_dir.rmdir()
+    (settings.data_dir / "thumbs" / f"{flyer.id}.jpg").unlink(missing_ok=True)
     # Video e grafiche generati per questo volantino.
     renders = settings.data_dir / "renders"
     if renders.exists():

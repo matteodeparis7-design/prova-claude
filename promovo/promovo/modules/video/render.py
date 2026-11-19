@@ -112,10 +112,14 @@ def readable_on_paper(color: tuple[int, int, int]) -> tuple[int, int, int]:
     return c
 
 
-@lru_cache(maxsize=96)
-def font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
-    name = "DejaVuSans-Bold.ttf" if bold else "DejaVuSans.ttf"
-    return ImageFont.truetype(str(FONT_DIR / name), max(8, int(size)))
+# Caratteri professionali (SIL Open Font License): Inter per nomi e testi, Bricolage Grotesque per titoli e prezzi.
+FONT_FILES = {False: "Inter-Medium.ttf", True: "Inter-Bold.ttf", "display": "BricolageGrotesque-ExtraBold.ttf"}
+
+
+@lru_cache(maxsize=128)
+def font(size: int, bold: bool | str = False) -> ImageFont.FreeTypeFont:
+    """bold=False testo, True grassetto, "display" per titoli e prezzi."""
+    return ImageFont.truetype(str(FONT_DIR / FONT_FILES[bold]), max(8, int(size)))
 
 
 def wrap(text: str, fnt: ImageFont.FreeTypeFont, max_width: int, max_lines: int) -> list[str]:
@@ -147,8 +151,10 @@ def wrap(text: str, fnt: ImageFont.FreeTypeFont, max_width: int, max_lines: int)
     return lines
 
 
-def fit_text(text: str, max_width: int, max_height: int, start: int, bold: bool, max_lines: int,
+def fit_text(text: str, max_width: int, max_height: int, start: int, bold: bool | str, max_lines: int,
              min_size: int = 14) -> tuple[ImageFont.FreeTypeFont, list[str]]:
+    if bold == "display":
+        text = text.replace("'", "’")      # apostrofo tipografico nei titoli
     size = start
     while size >= min_size:
         f = font(size, bold)
@@ -272,8 +278,8 @@ def brand_background(w: int, h: int, brand: tuple[int, int, int], accent: tuple[
 def price_block(cents: int, height: int, color: tuple[int, int, int]) -> Image.Image:
     """Cartellino del prezzo: euro grandi, centesimi in alto e simbolo € sotto i centesimi."""
     euros, dec = price_parts(cents)
-    big = font(int(height * 0.62), True)
-    small = font(int(height * 0.27), True)
+    big = font(int(height * 0.66), "display")
+    small = font(int(height * 0.29), "display")
     probe = ImageDraw.Draw(Image.new("RGBA", (1, 1)))
     eb = probe.textbbox((0, 0), euros, font=big, anchor="ls")
     db = probe.textbbox((0, 0), f",{dec}", font=small, anchor="lt")
@@ -309,9 +315,9 @@ def discount_burst(pct: int, size: int, color: tuple[int, int, int]) -> Image.Im
     d.polygon(pts, fill=color + (255,))
     fg = text_on(color)
     label = f"-{pct}%"
-    f = font(int(size * 0.27), True)
+    f = font(int(size * 0.29), "display")
     while f.getlength(label) > size * 0.66 and f.size > 8:
-        f = font(f.size - 2, True)
+        f = font(f.size - 2, "display")
     d.text((c, c), label, font=f, fill=fg, anchor="mm")
     return img.rotate(-10, resample=Image.BICUBIC)
 
@@ -535,9 +541,9 @@ class Renderer:
         if self.spec.idea_headline:
             # l'idea della settimana in grande, il negozio piccolo sopra (il logo c'è già)
             fs, ls = fit_text(self.spec.store_name, maxw, int(H * 0.08), int(46 * u), False, 1)
-            fh, lh = fit_text(self.spec.headline, maxw, int(H * 0.3), int(128 * u), True, 3, min_size=int(48 * u))
+            fh, lh = fit_text(self.spec.headline, maxw, int(H * 0.3), int(132 * u), "display", 3, min_size=int(48 * u))
         else:
-            fs, ls = fit_text(self.spec.store_name, maxw, int(H * 0.22), int(118 * u), True, 2)
+            fs, ls = fit_text(self.spec.store_name, maxw, int(H * 0.22), int(122 * u), "display", 2)
             fh, lh = fit_text(self.spec.headline, maxw, int(H * 0.16), int(58 * u), False, 2)
         name = text_layer(ls, fs, fg, "center")
         head = text_layer(lh, fh, fg, "center")
@@ -694,7 +700,7 @@ class Renderer:
         fg = text_on(self.brand)
         maxw = int(W * 0.84)
         logo = logo_image(self.spec.logo_path, int(W * 0.34), int(H * 0.12), self.brand)
-        f1, l1 = fit_text("Ti aspettiamo!", maxw, int(H * 0.16), int(104 * u), True, 1)
+        f1, l1 = fit_text("Ti aspettiamo!", maxw, int(H * 0.16), int(108 * u), "display", 1)
         title = text_layer(l1, f1, fg, "center")
         lines = [self.spec.store_name] + ([self.spec.address] if self.spec.address else [])
         f2, l2 = fit_text(" · ".join(lines), maxw, int(H * 0.14), int(44 * u), False, 2)

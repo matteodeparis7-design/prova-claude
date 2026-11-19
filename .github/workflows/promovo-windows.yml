@@ -31,6 +31,11 @@ jobs:
         working-directory: promovo
         run: python -c "from promovo.sample_flyer import build_sample_flyer, make_image_only; from promovo.modules.flyer.pdf import open_pdf; from promovo.modules.flyer import ocr; d = open_pdf(make_image_only(build_sample_flyer())); r = ocr.read_page(d[0], 1); print(len(r.offers), 'offerte lette'); assert len(r.offers) >= 5"
 
+      - name: Prova dal vivo la mappa dei concorrenti e il meteo (Colleferro)
+        working-directory: promovo
+        continue-on-error: true
+        run: python tools/check_nearby.py "Via Roma 1" Colleferro
+
       - name: Tutti i test, su Windows
         working-directory: promovo
         env:

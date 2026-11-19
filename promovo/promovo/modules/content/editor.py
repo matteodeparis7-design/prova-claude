@@ -161,8 +161,10 @@ def choose(f: Facts, history: list[dict], rng: random.Random, avoid: set[str] | 
                 s -= weight
             if idea.hero and past.get("hero") == idea.hero:
                 s -= weight * 1.2
-        if idea.kind in avoid or f"{idea.kind}:{idea.hero}" in avoid:
+        if f"{idea.kind}:{idea.hero}" in avoid:
             s -= 10
+        elif any(a.split(":")[0] == idea.kind for a in avoid):
+            s -= 6          # «Un'altra idea»: prima tutte le idee di tipo diverso, poi le varianti
         scored.append((s, k, idea))
     scored.sort(key=lambda t: (-t[0], t[1]))
     return [i for _, _, i in scored]
@@ -499,8 +501,13 @@ def headline(f: Facts, d: Draft) -> tuple[str, str]:
         return f"Tre prodotti, {format_eur(tot)}", "Tutti in offerta questa settimana"
     if k == "total":
         return f"Risparmi {format_eur(f.total_saving)}", "Con le offerte della settimana"
-    if o is not None and len(product_name(o, False)) <= 22:
+    if k == "saving" and o is not None and o.old_price_cents and pct(o) >= 10 and len(product_name(o, False)) <= 26:
+        # il risparmio detto con i numeri: prodotto e sconto nel titolo, prima e dopo nel sottotitolo
+        return f"{product_name(o, False)} -{pct(o)}%", f"da {format_eur(o.old_price_cents)} a {_p(o)}"
+    if o is not None and len(product_name(o, False)) <= 26:
         return product_name(o, False), f"a {_po(o)}"
+    if o is not None:
+        return "Il prezzo della settimana", f"{product_name(o, False)} a {_p(o)}"
     return "Le offerte della settimana", sub
 
 

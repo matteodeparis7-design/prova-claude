@@ -30,6 +30,17 @@ def _hex(c: str) -> tuple[float, float, float]:
     return tuple(int(c[i:i + 2], 16) / 255 for i in (0, 2, 4))  # type: ignore[return-value]
 
 
+
+# Gli stessi caratteri di grafiche e video: Inter per il testo, Bricolage Grotesque per i titoli.
+FONT_FILES = {"pr": "Inter-Medium.ttf", "pb": "Inter-Bold.ttf", "pd": "BricolageGrotesque-ExtraBold.ttf"}
+_FONTS: dict[str, pymupdf.Font] = {}
+
+
+def _font(name: str) -> pymupdf.Font:
+    if name not in _FONTS:
+        _FONTS[name] = pymupdf.Font(fontfile=str(FONTS / FONT_FILES[name]))
+    return _FONTS[name]
+
 class Doc:
     def __init__(self, brand: tuple[float, float, float]):
         self.pdf = pymupdf.open()
@@ -40,26 +51,26 @@ class Doc:
 
     def new_page(self, title: str, store: Store) -> None:
         self.page = self.pdf.new_page(width=A4.width, height=A4.height)
-        self.page.insert_font(fontname="dv", fontfile=str(FONTS / "DejaVuSans.ttf"))
-        self.page.insert_font(fontname="dvb", fontfile=str(FONTS / "DejaVuSans-Bold.ttf"))
+        for name, file in FONT_FILES.items():
+            self.page.insert_font(fontname=name, fontfile=str(FONTS / file))
         self.n += 1
         self.page.draw_rect(pymupdf.Rect(0, 0, A4.width, 8), color=None, fill=self.brand)
         self.text(M, 30, store.name.upper(), 8.5, bold=True, color=MUTED)
         self.text(A4.width - M - 160, 30, f"Promovo · pagina {self.n}", 8.5, color=MUTED, width=160, align=2)
         self.y = 58
         if title:
-            self.text(M, self.y, title, 20, bold=True)
+            self.text(M, self.y, title, 21, bold="display")
             self.y += 34
 
-    def text(self, x: float, y: float, s: str, size: float = 10, bold: bool = False, color=INK,
+    def text(self, x: float, y: float, s: str, size: float = 10, bold: bool | str = False, color=INK,
              width: float | None = None, align: int = 0) -> float:
         """Scrive un blocco di testo a capo automatico; restituisce l'altezza usata."""
         width = width or (A4.width - M - x)
         rect = pymupdf.Rect(x, y, x + width, y + 2000)
-        font = "dvb" if bold else "dv"
+        font = "pd" if bold == "display" else "pb" if bold else "pr"
         lh = size * 1.32
         # misura le righe con la larghezza dei caratteri
-        f = pymupdf.Font(fontfile=str(FONTS / ("DejaVuSans-Bold.ttf" if bold else "DejaVuSans.ttf")))
+        f = _font(font)
         lines = []
         for para in s.split("\n"):
             cur = ""
@@ -118,7 +129,7 @@ def build_report(session: Session, store: Store, flyer: Flyer, out_path: Path) -
     for i, (v, k) in enumerate(kpis):
         x = M + i * (w + 10)
         doc.page.draw_rect(pymupdf.Rect(x, doc.y, x + w, doc.y + 62), color=LINE, fill=(0.98, 0.97, 0.95), width=0.8)
-        doc.text(x + 10, doc.y + 10, v, 18, bold=True, color=doc.brand, width=w - 20)
+        doc.text(x + 10, doc.y + 10, v, 19, bold="display", color=doc.brand, width=w - 20)
         doc.text(x + 10, doc.y + 38, k, 8.5, color=MUTED, width=w - 20)
     doc.y += 82
     ig = (by_kind.get("instagram") or [None])[0]

@@ -36,6 +36,7 @@ from ..modules.clip.analyze import ClipError
 from ..modules.clip.service import AUDIO_EXT, VIDEO_EXT, VOICE_MODES, ClipFailed, delete_clip_files, make_reel, script_for
 from .. import voice as voicemod
 from ..modules.radar.service import radar as radar_report
+from ..modules.radar import nearby as nearbymod
 from ..modules.weather.service import weekly_weather
 from .deps import (
     AppState, bearer_token, content_for, current_user, flyer_for, get_session, job_for, offer_for,
@@ -104,6 +105,11 @@ class StoreIn(BaseModel):
 class KeyIn(BaseModel):
     service: str = Field(pattern="^(ai|voice)$")
     key: str = Field(max_length=400)
+
+
+class CompetitorLinkIn(BaseModel):
+    url: str = Field(min_length=8, max_length=2000)
+    competitor: str = Field(min_length=2, max_length=120)
 
 
 class ReplicateIn(BaseModel):
@@ -513,6 +519,16 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
     def dashboard():
         return HTMLResponse((WEB_DIR / "index.html").read_text(encoding="utf-8"))
 
+    WEB_TYPES = {".woff2": "font/woff2", ".jpg": "image/jpeg", ".png": "image/png", ".svg": "image/svg+xml"}
+
+    @app.get("/assets/{name}")
+    def web_asset(name: str):
+        """Caratteri e immagini dell'interfaccia: inclusi nel programma, funzionano anche senza internet."""
+        path = WEB_DIR / "assets" / name
+        if "/" in name or "\\" in name or path.suffix not in WEB_TYPES or not path.is_file():
+            raise HTTPException(404, "File non trovato.")
+        return FileResponse(path, media_type=WEB_TYPES[path.suffix], headers={"Cache-Control": "public, max-age=86400"})
+
     # -------------------------------------------------- accesso
 
     @app.post("/api/auth/register", status_code=201)
@@ -716,6 +732,34 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         background.add_task(run_flyer_job, st, flyer.id)
         return flyer_out(flyer)
 
+    @app.post("/api/stores/{store_id}/competitors/link", status_code=202)
+    def competitor_from_link(store_id: int, body: CompetitorLinkIn, request: Request, background: BackgroundTasks,
+                             user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Volantino del concorrente da un link (il PDF pubblicato sul sito dell'insegna)."""
+        store = store_for(session, user, store_id)
+        st = state(request)
+        get = st.link_download or nearbymod.download_flyer
+        try:
+            data = get(body.url, st.settings.max_upload_mb * 1024 * 1024)
+            flyer = create_flyer(session, store, data, st.settings, title=f"Volantino {body.competitor.strip()}"[:300],
+                                 competitor=body.competitor.strip())
+        except (nearbymod.LinkError, InvalidPDF) as exc:
+            raise HTTPException(400, str(exc)) from exc
+        session.commit()
+        background.add_task(run_flyer_job, st, flyer.id)
+        return flyer_out(flyer)
+
+    @app.get("/api/stores/{store_id}/nearby")
+    def stores_nearby(store_id: int, request: Request, radius: int = 3000, user: User = Depends(current_user),
+                      session: Session = Depends(get_session)):
+        """I supermercati veri intorno al negozio (OpenStreetMap): i concorrenti da mettere nel radar."""
+        store = store_for(session, user, store_id)
+        st = state(request)
+        try:
+            return {"ok": True, **nearbymod.nearby(store, radius, fetch=st.nearby_fetch or nearbymod.http_json)}
+        except nearbymod.NearbyUnavailable as exc:
+            return {"ok": False, "reason": str(exc), "places": [], "attribution": nearbymod.ATTRIBUTION}
+
     @app.get("/api/stores/{store_id}/competitors")
     def list_competitors(store_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
         store = store_for(session, user, store_id)
@@ -806,6 +850,25 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
                 setattr(o, k, v)
         session.flush()
         return offer_out(o)
+
+    @app.get("/api/flyers/{flyer_id}/thumb")
+    def flyer_thumb(flyer_id: int, request: Request, user: User = Depends(current_user),
+                    session: Session = Depends(get_session)):
+        """La prima pagina del volantino in piccolo, per riconoscerlo a colpo d'occhio."""
+        f = flyer_for(session, user, flyer_id)
+        out = state(request).settings.data_dir / "thumbs" / f"{f.id}.jpg"
+        src = Path(f.pdf_path)
+        if not src.exists():
+            raise HTTPException(404, "Volantino non disponibile.")
+        if not out.exists() or out.stat().st_mtime < src.stat().st_mtime:
+            import pymupdf
+            out.parent.mkdir(parents=True, exist_ok=True)
+            with pymupdf.open(src) as doc:
+                page = doc[0]
+                zoom = 420 / max(page.rect.width, page.rect.height)
+                pix = page.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom), alpha=False)
+                pix.save(str(out), jpg_quality=82)
+        return FileResponse(out, media_type="image/jpeg")
 
     @app.get("/api/offers/{offer_id}/image")
     def offer_image(offer_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):

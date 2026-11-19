@@ -314,7 +314,7 @@ class ClipOverlay:
         # titolo d'apertura in un riquadro del colore del negozio
         self.hook = None
         if t.hook:
-            f, ln = fit_text(t.hook, W - 220, 230, 76, True, 2, min_size=44)
+            f, ln = fit_text(t.hook, W - 220, 230, 80, "display", 2, min_size=44)
             lh = int(f.size * 1.16)
             tw = max(int(f.getlength(x)) for x in ln)
             box = Image.new("RGBA", (tw + 80, lh * len(ln) + 56), (0, 0, 0, 0))

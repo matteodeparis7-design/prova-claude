@@ -83,3 +83,19 @@ def test_another_idea_changes_the_angle(session, store, tmp_settings, sample_pdf
         key = (nxt.texts["instagram"]["meta"]["angle"], nxt.texts["instagram"]["meta"]["hero"])
         assert key not in seen
         seen.add(key)
+
+
+def test_another_idea_tries_every_kind_first(session, store, tmp_settings, sample_pdf):
+    """«Un'altra idea» propone prima idee di tipo diverso, poi le varianti; i titoli sono sempre concreti."""
+    from promovo.modules.content.service import save_content
+    from promovo.modules.video.service import week_idea
+    from promovo.modules.flyer.service import ingest_flyer
+    f = ingest_flyer(session, store, sample_pdf, tmp_settings, None, today=date(2026, 11, 15))
+    save_content(session, store, f, generate_content(store, f, None, today=date(2026, 11, 15)))
+    kinds = [week_idea(f)["angle"]]
+    for _ in range(4):
+        save_content(session, store, f, generate_content(store, f, None, today=date(2026, 11, 15), another=True))
+        idea = week_idea(f)
+        kinds.append(idea["angle"])
+        assert idea["headline"] and idea["headline"] != "Le offerte della settimana", idea
+    assert len(set(kinds)) == len(kinds), kinds

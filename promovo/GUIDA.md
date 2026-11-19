@@ -13,6 +13,9 @@ Tu controlli e approvi: niente esce senza il tuo ok.
 4. Per chiudere Promovo chiudi la finestra nera.
 
 Trovi già un negozio di prova («Supermercato Demo») con logo e un volantino caricato.
+La **Panoramica** ti dice in una frase cosa fare adesso (controllare i prezzi, creare o approvare i materiali),
+quanti giorni restano al volantino e mostra le grafiche della settimana; sotto c'è la tua squadra di agenti
+con l'ultimo lavoro di ciascuno.
 Per i tuoi negozi: menu in alto a destra → **+ Nuovo negozio**. Ogni negozio ha logo, colori,
 tono dei testi, indirizzo e orari suoi: Promovo li usa in tutti i materiali.
 
@@ -26,7 +29,7 @@ tono dei testi, indirizzo e orari suoi: Promovo li usa in tutti i materiali.
 | **Grafico** | copertina, storia e un'immagine per ogni offerta in evidenza |
 | **Montatore** | Reel 9:16, video per i post 1:1, video per gli schermi in negozio 16:9 |
 | **Regista dal banco** | trasforma un video girato col telefono in un Reel stabilizzato |
-| **Analista prezzi** | confronta il volantino con quelli dei concorrenti |
+| **Analista prezzi** | trova i supermercati della zona e confronta i prezzi con i loro volantini |
 | **Meteorologo** | suggerisce cosa spingere nei giorni di caldo, freddo o pioggia |
 | **Pianificatore** | prepara il calendario di pubblicazione e cosa filmare al banco |
 
@@ -92,7 +95,23 @@ concorrenti e le note di conformità (prezzi barrati e regola Omnibus).
 altri punti vendita»**: scegli i negozi e gli agenti preparano i materiali di ognuno con il suo logo,
 colori, indirizzo, orari e tono, senza rileggere il volantino.
 
-## 4. Dal banco al Reel
+## 4. I concorrenti della zona
+
+In fondo alla pagina **Volantini**, la scheda **«Concorrenti e loro volantini»**:
+
+1. **Nella zona di…**: Promovo mostra i supermercati e i minimarket veri intorno all'indirizzo del negozio
+   (dalla mappa libera OpenStreetMap), dal più vicino, con la distanza. Puoi scegliere 1, 3 o 5 km.
+2. Su un concorrente premi **«Trova il volantino»**: si apre la ricerca del suo volantino della settimana.
+3. Premi **«Aggiungi»** e carica il volantino: come **file** (PDF), come **foto**, oppure incollando il
+   **link** al PDF pubblicato sul sito dell'insegna.
+4. Promovo lo legge come i tuoi volantini e, nel passo 2, il **Radar** confronta i prezzi prodotto per prodotto
+   (anche al kg o al litro quando i formati sono diversi).
+
+Perché i prezzi arrivano dai volantini e non da «internet»: è l'unico modo di avere prezzi veri, della
+settimana giusta e verificabili (il volantino resta come prova). I siti che raccolgono i volantini di
+tutte le insegne non permettono di copiarne i dati in automatico. Serve internet solo per vedere la mappa.
+
+## 5. Dal banco al Reel
 
 Il contenuto che funziona di più per un negozio di quartiere è quello **vero**: il banco del pesce,
 la frutta, la persona che ti serve.
@@ -106,7 +125,7 @@ la frutta, la persona che ti serve.
 5. **Crea il Reel**: Promovo sceglie i momenti migliori, raddrizza in verticale, stabilizza, mette
    logo, sottotitoli, cartellino con il prezzo verificato, musica e la scena finale con il QR code.
 
-## 5. Impostazioni e potenziamenti facoltativi
+## 6. Impostazioni e potenziamenti facoltativi
 
 Promovo funziona completamente senza chiavi. Nella pagina **Impostazioni** puoi aggiungere,
 se vuoi, due servizi esterni a pagamento:
@@ -120,7 +139,7 @@ se vuoi, due servizi esterni a pagamento:
 
 Le chiavi restano solo sul tuo computer (cartella «Dati Promovo»): non mandarle a nessuno.
 
-## 6. Se qualcosa non va
+## 7. Se qualcosa non va
 
 - **Il browser dice "impossibile raggiungere la pagina"**: aspetta qualche secondo e ricarica;
   la finestra nera deve restare aperta.

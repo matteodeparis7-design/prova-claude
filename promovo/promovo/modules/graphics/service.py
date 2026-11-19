@@ -91,7 +91,7 @@ def grid_image(store: Store, flyer: Flyer, kind: str) -> Image.Image:
         img.alpha_composite(logo, (x, y))
         y += logo.height + int(18 * u)
     title = "Le offerte della settimana"
-    ft, lt = fit_text(title, W - 2 * x, int(80 * u), int(64 * u), True, 1)
+    ft, lt = fit_text(title, W - 2 * x, int(80 * u), int(66 * u), "display", 1)
     d.text((x, y), lt[0], font=ft, fill=fg)
     y += int(ft.size * 1.2)
     sub = store.name + (f" · {validity_text(flyer)}" if validity_text(flyer) else "")
@@ -147,7 +147,7 @@ def idea_image(store: Store, flyer: Flyer, idea: dict) -> Image.Image | None:
     fe, le = fit_text("QUESTA SETTIMANA", W - 2 * pad, int(40 * u), int(30 * u), True, 1)
     d.text((pad, y), le[0], font=fe, fill=readable_on_paper(brand))
     y += int(52 * u)
-    fh, lh = fit_text(idea["headline"], W - 2 * pad, int(260 * u), int(112 * u), True, 2, min_size=int(60 * u))
+    fh, lh = fit_text(idea["headline"], W - 2 * pad, int(260 * u), int(118 * u), "display", 2, min_size=int(60 * u))
     for ln in lh:
         d.text((pad, y), ln, font=fh, fill=INK)
         y += int(fh.size * 1.12)
@@ -161,7 +161,7 @@ def idea_image(store: Store, flyer: Flyer, idea: dict) -> Image.Image | None:
     n = len(items)
     cols, rows = (n, 1) if n <= 3 else (2, 2)
     cw = (W - 2 * pad - gap * (cols - 1)) // cols
-    ch = min((bottom - top - gap * (rows - 1)) // rows, int(cw * (1.45 if rows == 1 else 1.12)))
+    ch = min((bottom - top - gap * (rows - 1)) // rows, int(cw * ((1.8 if n == 3 else 1.45) if rows == 1 else 1.12)))
     grid_h = rows * ch + (rows - 1) * gap
     top += max(0, (bottom - top - grid_h) // 2)
     for i, o in enumerate(items):

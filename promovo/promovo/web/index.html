@@ -5,19 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#141b2d">
 <title>Promovo</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23e5482f'/%3E%3Cpath d='M20 46V18h14a10 10 0 0 1 0 20h-8v8z' fill='white'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23e4462c'/%3E%3Cpath d='M21 48V16h14.5a11.5 11.5 0 0 1 0 23H28v9z' fill='white'/%3E%3Ccircle cx='35' cy='27.5' r='4.2' fill='%23e4462c'/%3E%3C/svg%3E">
+<link rel="preload" href="/assets/inter.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/bricolage.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+@font-face { font-family: "Inter Promovo"; src: url("/assets/inter.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: "Bricolage Promovo"; src: url("/assets/bricolage.woff2") format("woff2"); font-weight: 200 800; font-display: swap; }
 :root {
-  --ink: #141b2d; --ink-2: #2a3350; --text: #1f2637; --muted: #667085; --line: #e7e2d8; --line-2: #f0ece4;
-  --bg: #f6f4ef; --card: #ffffff; --brand: #e5482f; --brand-dark: #c23720; --brand-soft: #fdebe7;
-  --gold: #f5b83d; --gold-soft: #fff4dc; --ok: #16794a; --ok-soft: #e3f4ea; --warn: #9a5a00; --warn-soft: #fff1d6;
-  --err: #b42318; --err-soft: #fde8e6; --info: #1d4f91; --info-soft: #e6eefb;
-  --radius: 16px; --shadow: 0 1px 2px rgba(20,27,45,.06), 0 8px 24px rgba(20,27,45,.06);
-  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --ink: #121829; --ink-2: #2b3452; --text: #1c2231; --muted: #6b6860; --line: #e8e2d6; --line-2: #f3efe7;
+  --bg: #f6f3ed; --card: #ffffff; --brand: #e4462c; --brand-dark: #c2351c; --brand-soft: #fdece7;
+  --gold: #f2b33d; --gold-soft: #fff4dc; --ok: #147a4b; --ok-soft: #e2f3e9; --warn: #925400; --warn-soft: #fff1d6;
+  --err: #b42318; --err-soft: #fde8e6; --info: #1d4f91; --info-soft: #e8effa;
+  --radius: 18px;
+  --shadow: 0 1px 0 rgba(18,24,41,.03), 0 1px 3px rgba(18,24,41,.05), 0 12px 32px -14px rgba(18,24,41,.14);
+  --shadow-lg: 0 2px 6px rgba(18,24,41,.06), 0 24px 48px -18px rgba(18,24,41,.28);
+  --font: "Inter Promovo", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --display: "Bricolage Promovo", "Inter Promovo", system-ui, "Segoe UI", sans-serif;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; }
-body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; font-feature-settings: "cv11", "ss03"; }
+h1, h2, h3, .display { font-family: var(--display); font-weight: 650; }
+::selection { background: #fbd3c8; }
+:focus-visible { outline: 3px solid rgba(228,70,44,.35); outline-offset: 2px; }
 button, input, select, textarea { font: inherit; color: inherit; }
 a { color: var(--brand-dark); }
 .hidden { display: none !important; }
@@ -25,71 +35,95 @@ svg.i { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-widt
 
 /* ---------- accesso ---------- */
 .auth { min-height: 100%; display: grid; grid-template-columns: 1.1fr 1fr; }
-.auth-hero { background: radial-gradient(1200px 600px at -10% -10%, #ef6a4f 0, transparent 60%), linear-gradient(160deg, #1b2440, #141b2d 60%); color: #fff; padding: 56px; display: flex; flex-direction: column; justify-content: space-between; }
-.auth-hero h1 { font-size: 44px; line-height: 1.08; letter-spacing: -1px; margin: 24px 0 16px; max-width: 520px; }
+.auth-hero { background: radial-gradient(900px 520px at -15% -20%, rgba(239,106,79,.55) 0, transparent 62%), radial-gradient(700px 500px at 120% 110%, rgba(242,179,61,.18) 0, transparent 60%), linear-gradient(160deg, #1b2440, #121829 62%); color: #fff; padding: 52px 56px; display: flex; flex-direction: column; justify-content: space-between; gap: 28px; position: relative; overflow: hidden; }
+.auth-hero h1 { font-size: 42px; line-height: 1.04; letter-spacing: -1.4px; margin: 0 0 16px; max-width: 540px; font-weight: 700; }
+.auth-hero h1 em { font-style: normal; color: #ffb59f; }
+.auth-main { display: grid; grid-template-columns: minmax(0, 1fr) 190px; gap: 64px; align-items: center; }
+.showcase { position: relative; height: 400px; }
+.showcase .phone { position: absolute; right: 0; top: 0; width: 190px; aspect-ratio: 9/19; border-radius: 30px; background: #0b0f1a; padding: 8px; box-shadow: 0 30px 60px -20px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.08); transform: rotate(4deg); }
+.showcase .phone img { width: 100%; height: 100%; object-fit: cover; border-radius: 23px; display: block; }
+.showcase .post { position: absolute; left: -34px; bottom: -4px; width: 140px; border-radius: 14px; overflow: hidden; box-shadow: 0 20px 40px -14px rgba(0,0,0,.6); transform: rotate(-6deg); border: 4px solid #fff; background: #fff; }
+.showcase .post img { width: 100%; display: block; }
+.showcase .badge { position: absolute; right: -18px; top: -16px; z-index: 2; white-space: nowrap; background: #fff; color: var(--ink); border-radius: 12px; padding: 8px 12px; font-size: 12.5px; font-weight: 700; display: flex; gap: 8px; align-items: center; box-shadow: 0 12px 30px -10px rgba(0,0,0,.5); }
+.showcase .badge svg { color: var(--ok); }
 .auth-hero p { color: #c8cfe0; font-size: 17px; max-width: 480px; }
 .auth-points { display: grid; gap: 14px; margin-top: 32px; }
 .auth-points div { display: flex; gap: 12px; align-items: center; color: #e4e8f2; }
 .auth-points svg { color: var(--gold); }
 .auth-form { display: flex; align-items: center; justify-content: center; padding: 32px 20px; }
 .auth-card { width: 100%; max-width: 400px; }
-.auth-card h2 { font-size: 26px; margin: 0 0 6px; letter-spacing: -.4px; }
-.logo { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: .3px; font-size: 19px; }
-.logo-mark { width: 34px; height: 34px; border-radius: 10px; background: var(--brand); display: grid; place-items: center; color: #fff; font-weight: 900; flex: none; }
+.auth-card h2 { font-size: 30px; margin: 0 0 6px; letter-spacing: -.6px; }
+.logo { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 700; letter-spacing: -.2px; font-size: 21px; }
+.logo-mark { width: 34px; height: 34px; flex: none; display: block; }
 
 /* ---------- struttura ---------- */
 .shell { display: grid; grid-template-columns: 248px 1fr; min-height: 100%; }
-.side { background: var(--ink); color: #c9d0e0; padding: 22px 14px; display: flex; flex-direction: column; gap: 4px; position: sticky; top: 0; height: 100vh; }
-.side .logo { color: #fff; padding: 0 10px 18px; }
-.nav-btn { display: flex; align-items: center; gap: 12px; width: 100%; border: 0; background: transparent; color: inherit; padding: 11px 12px; border-radius: 12px; cursor: pointer; text-align: left; font-weight: 600; }
+.side { background: radial-gradient(420px 260px at -10% -5%, rgba(228,70,44,.22), transparent 70%), var(--ink); color: #b9c1d4; padding: 22px 14px; display: flex; flex-direction: column; gap: 3px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+.side .logo { color: #fff; padding: 0 10px 20px; }
+.side-store { display: flex; gap: 10px; align-items: center; padding: 10px; margin: 0 0 14px; border-radius: 14px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.07); cursor: pointer; text-align: left; color: inherit; width: 100%; }
+.side-store:hover { background: rgba(255,255,255,.09); }
+.side-store .store-logo { width: 42px; min-width: 42px; max-width: 42px; height: 42px; border-radius: 11px; font-size: 14px; }
+.store-logo img { min-width: 0; }
+.side-store .store-logo img { padding: 3px; }
+.side-store b { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; color: #fff; font-size: 14px; line-height: 1.25; overflow: hidden; }
+.side-store span { font-size: 12px; color: #8f98ad; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.side-store > div { min-width: 0; flex: 1; }
+.side-label { font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: #6f7891; font-weight: 700; padding: 6px 12px 6px; }
+.nav-btn { display: flex; align-items: center; gap: 12px; width: 100%; border: 0; background: transparent; color: inherit; padding: 10px 12px; border-radius: 12px; cursor: pointer; text-align: left; font-weight: 600; position: relative; transition: background .15s, color .15s; }
 .nav-btn:hover { background: rgba(255,255,255,.06); color: #fff; }
-.nav-btn.on { background: rgba(229,72,47,.16); color: #fff; }
-.nav-btn.on svg { color: var(--brand); }
+.nav-btn.on { background: rgba(255,255,255,.08); color: #fff; }
+.nav-btn.on::before { content: ""; position: absolute; left: -14px; top: 9px; bottom: 9px; width: 4px; border-radius: 0 4px 4px 0; background: var(--brand); }
+.nav-btn.on svg { color: #ff7a5c; }
 .nav-btn .count { margin-left: auto; background: var(--brand); color: #fff; font-size: 11.5px; padding: 1px 8px; border-radius: 20px; }
 .side-foot { margin-top: auto; padding: 12px; border-top: 1px solid rgba(255,255,255,.08); font-size: 13px; }
 .side-foot b { color: #fff; display: block; }
 .ai-state { display: flex; align-items: center; gap: 8px; font-size: 12.5px; margin: 8px 0 4px; }
 .dot { width: 8px; height: 8px; border-radius: 50%; background: #8b93a7; flex: none; } .dot.on { background: #34d399; }
 .main { min-width: 0; display: flex; flex-direction: column; }
-.top { display: flex; align-items: center; gap: 14px; padding: 16px 32px; border-bottom: 1px solid var(--line); background: rgba(246,244,239,.92); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 5; }
-.top h1 { font-size: 21px; margin: 0; letter-spacing: -.3px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.top { display: flex; align-items: center; gap: 14px; padding: 14px 32px; border-bottom: 1px solid var(--line); background: rgba(246,243,237,.88); backdrop-filter: saturate(1.4) blur(10px); position: sticky; top: 0; z-index: 5; }
+.top h1 { font-size: 23px; margin: 0; letter-spacing: -.5px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.15; }
+.top .tt { min-width: 0; display: flex; flex-direction: column; }
+.top .tt small { color: var(--muted); font-size: 12.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .top .sp { flex: 1; }
 .store-pick { display: flex; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 4px 4px 4px 12px; min-width: 0; }
 .store-pick select { border: 0; background: transparent; padding: 6px 4px; font-weight: 600; max-width: 220px; min-width: 0; }
-.content { padding: 26px 32px 110px; max-width: 1240px; width: 100%; }
+.content { padding: 28px 32px 110px; max-width: 1240px; width: 100%; animation: rise .25s ease-out; }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } }
 .mobile-nav { display: none; }
 #stepBody { margin-top: 18px; }
 
 /* ---------- componenti ---------- */
-.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); min-width: 0; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); min-width: 0; }
 .card + .card, .stack > * + * { margin-top: 18px; }
 .stack.tight > * + * { margin-top: 10px; }
 .grid > .card, .grid > * { margin-top: 0; }
-.card h2 { font-size: 17px; margin: 0 0 4px; letter-spacing: -.2px; }
-.card h3 { font-size: 15px; margin: 0 0 4px; }
+.card h2 { font-size: 19px; margin: 0 0 4px; letter-spacing: -.35px; display: flex; align-items: center; gap: 10px; line-height: 1.25; }
+.card h2 > svg.i { width: 32px; height: 32px; padding: 6px; border-radius: 10px; background: var(--brand-soft); color: var(--brand); stroke-width: 2; }
+.card h3 { font-size: 16px; margin: 0 0 4px; letter-spacing: -.2px; }
 .sub { color: var(--muted); font-size: 14px; margin: 0 0 16px; }
 .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
 .row > .f { flex: 1; min-width: 170px; }
 label.l { display: block; font-size: 13px; font-weight: 600; color: var(--ink-2); margin: 0 0 6px; }
 .hint { font-size: 12.5px; color: var(--muted); margin-top: 5px; }
-.in { width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 11px; background: #fff; outline: none; transition: border-color .15s, box-shadow .15s; }
+.in { width: 100%; padding: 11px 13px; border: 1px solid #e2dbcd; border-radius: 12px; background: #fff; outline: none; transition: border-color .15s, box-shadow .15s; box-shadow: 0 1px 2px rgba(18,24,41,.04); }
+.in:hover { border-color: #d3cab8; }
 .in:focus { border-color: var(--brand); box-shadow: 0 0 0 4px var(--brand-soft); }
 textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid transparent; border-radius: 11px; padding: 10px 16px; font-weight: 700; cursor: pointer; background: var(--brand); color: #fff; transition: background .15s, transform .05s; white-space: nowrap; text-decoration: none; }
-.btn:hover { background: var(--brand-dark); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid transparent; border-radius: 12px; padding: 10px 16px; font-weight: 650; cursor: pointer; background: linear-gradient(180deg, #ec5a3d, #dc3f24); color: #fff; transition: filter .15s, transform .05s, box-shadow .15s, background .15s; white-space: nowrap; text-decoration: none; box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 1px 2px rgba(194,53,28,.3), 0 6px 14px -8px rgba(194,53,28,.6); }
+.btn:hover { filter: brightness(.95); }
 .btn:active { transform: translateY(1px); }
-.btn.sec { background: #fff; color: var(--ink); border-color: var(--line); }
-.btn.sec:hover { background: var(--line-2); }
-.btn.ghost { background: transparent; color: var(--ink-2); padding: 8px 10px; }
+.btn.sec { background: #fff; color: var(--ink); border-color: #e2dbcd; box-shadow: 0 1px 2px rgba(18,24,41,.05); }
+.btn.sec:hover { background: #faf8f4; border-color: #d3cab8; filter: none; }
+.btn.ghost { background: transparent; color: var(--ink-2); padding: 8px 10px; box-shadow: none; }
 .btn.ghost:hover { background: var(--line-2); }
-.btn.dark { background: var(--ink); } .btn.dark:hover { background: var(--ink-2); }
-.btn.okb { background: var(--ok); } .btn.okb:hover { background: #10603a; }
+.btn.dark { background: var(--ink); box-shadow: none; } .btn.dark:hover { background: var(--ink-2); }
+.btn.okb { background: linear-gradient(180deg, #1a8a57, #137346); box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(19,115,70,.3); }
 .btn.sm { padding: 7px 11px; font-size: 13px; border-radius: 9px; }
 .btn.lg { padding: 14px 22px; font-size: 16px; border-radius: 13px; }
 .btn[disabled] { opacity: .6; cursor: not-allowed; }
 .btn .spin { width: 16px; height: 16px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+.chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 650; padding: 3px 10px; border-radius: 20px; white-space: nowrap; letter-spacing: .1px; }
 .chip svg.i { width: 13px; height: 13px; }
 .chip.ok { background: var(--ok-soft); color: var(--ok); } .chip.warn { background: var(--warn-soft); color: var(--warn); }
 .chip.err { background: var(--err-soft); color: var(--err); } .chip.info { background: var(--info-soft); color: var(--info); }
@@ -99,13 +133,15 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .g4 { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
 .g3 { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
 .g2 { grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); }
-.kpi { display: flex; gap: 14px; align-items: center; padding: 18px; }
-.kpi .ic { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); flex: none; }
-.kpi .v { font-size: 26px; font-weight: 800; letter-spacing: -.5px; line-height: 1.1; }
+.kpi { display: flex; gap: 14px; align-items: center; padding: 18px 20px; }
+.kpi .ic { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); flex: none; }
+.kpi .v { font-family: var(--display); font-size: 30px; font-weight: 700; letter-spacing: -.8px; line-height: 1.05; }
+.kpi .v small { font-size: 15px; color: var(--muted); font-weight: 600; letter-spacing: 0; }
 .kpi .k { color: var(--muted); font-size: 13px; font-weight: 600; }
 .empty { text-align: center; padding: 34px 16px; color: var(--muted); }
-.empty .ic { width: 64px; height: 64px; border-radius: 20px; background: var(--line-2); display: grid; place-items: center; margin: 0 auto 14px; color: var(--ink-2); }
-.empty b { display: block; color: var(--text); font-size: 16px; margin-bottom: 4px; }
+.empty .ic { width: 72px; height: 72px; border-radius: 50%; background: radial-gradient(circle at 30% 25%, #fff, var(--brand-soft) 70%); box-shadow: 0 0 0 10px rgba(253,236,231,.5); display: grid; place-items: center; margin: 6px auto 18px; color: var(--brand); }
+.empty .ic svg.i { width: 28px; height: 28px; }
+.empty b { display: block; color: var(--text); font-size: 18px; margin-bottom: 4px; font-family: var(--display); font-weight: 650; }
 .notice { display: flex; gap: 10px; padding: 12px 14px; border-radius: 12px; font-size: 14px; margin-top: 10px; align-items: flex-start; }
 .notice.info { background: var(--info-soft); color: var(--info); } .notice.warn { background: var(--warn-soft); color: var(--warn); }
 .notice.err { background: var(--err-soft); color: var(--err); } .notice.ok { background: var(--ok-soft); color: var(--ok); }
@@ -114,7 +150,7 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .progress.det div { animation: none; transition: width .4s; background: var(--ok); }
 @keyframes indet { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
 .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-.seg { display: inline-flex; background: var(--line-2); border-radius: 11px; padding: 3px; flex-wrap: wrap; }
+.seg { display: inline-flex; background: #efeae0; border-radius: 12px; padding: 4px; flex-wrap: wrap; }
 .seg button { border: 0; background: transparent; padding: 7px 12px; border-radius: 9px; font-weight: 600; cursor: pointer; color: var(--muted); }
 .seg button.on { background: #fff; color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
 .switch { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; font-size: 14px; }
@@ -128,15 +164,64 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .step .t { flex: 1; min-width: 0; } .step .t b { display: block; } .step.done .t b { color: var(--muted); }
 
 /* caricamento */
-.drop { border: 2px dashed #d9d2c3; border-radius: var(--radius); padding: 30px 20px; text-align: center; background: #fffdf8; cursor: pointer; transition: border-color .15s, background .15s; }
+.drop { border: 2px dashed #ddd4c2; border-radius: var(--radius); padding: 38px 20px; text-align: center; background: repeating-linear-gradient(135deg, #fffdf9 0 14px, #fdf9f2 14px 28px); cursor: pointer; transition: border-color .15s, background .15s, transform .15s; }
+.drop.over { transform: scale(1.01); }
 .drop:hover, .drop.over, .drop:focus { border-color: var(--brand); background: var(--brand-soft); outline: none; }
-.drop .ic { width: 54px; height: 54px; border-radius: 16px; background: var(--brand); color: #fff; display: grid; place-items: center; margin: 0 auto 12px; }
-.drop b { font-size: 16px; }
+.drop .ic { width: 60px; height: 60px; border-radius: 18px; background: linear-gradient(180deg, #ef6243, #dc3f24); color: #fff; display: grid; place-items: center; margin: 0 auto 14px; box-shadow: 0 12px 24px -10px rgba(194,53,28,.7); }
+.drop b { font-size: 18px; font-family: var(--display); font-weight: 650; display: block; margin-bottom: 2px; }
 
+/* panoramica */
+.hero { position: relative; overflow: hidden; border: 0; color: #fff; padding: 30px 32px; background: radial-gradient(520px 320px at 105% -20%, rgba(242,179,61,.28), transparent 65%), radial-gradient(600px 380px at -10% 120%, rgba(228,70,44,.45), transparent 60%), linear-gradient(135deg, #1d2644, #121829); box-shadow: var(--shadow-lg); }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 28px; align-items: center; }
+.hero .eyebrow { display: inline-flex; gap: 8px; align-items: center; font-size: 12.5px; font-weight: 650; letter-spacing: .3px; color: #ffcab9; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.1); padding: 5px 11px; border-radius: 20px; }
+.hero h2 { color: #fff; font-size: 32px; letter-spacing: -.9px; line-height: 1.08; margin: 14px 0 10px; font-weight: 700; }
+.hero p { color: #c7cee0; margin: 0 0 20px; font-size: 15.5px; max-width: 520px; }
+.hero p b { color: #fff; }
+.hero .toolbar .btn.sec { background: rgba(255,255,255,.08); color: #fff; border-color: rgba(255,255,255,.16); box-shadow: none; }
+.hero .toolbar .btn.sec:hover { background: rgba(255,255,255,.14); }
+.validity { margin-top: 22px; max-width: 460px; }
+.validity .bar { height: 6px; border-radius: 6px; background: rgba(255,255,255,.12); overflow: hidden; margin-top: 8px; }
+.validity .bar div { height: 100%; border-radius: 6px; background: linear-gradient(90deg, #f2b33d, #ef6243); }
+.validity .lab { display: flex; justify-content: space-between; font-size: 12.5px; color: #aab3c8; }
+.validity .lab b { color: #fff; font-weight: 650; }
+.fan { position: relative; height: 270px; }
+.fan .tile { position: absolute; top: 50%; left: 50%; width: 170px; border-radius: 14px; overflow: hidden; background: #fff; border: 4px solid #fff; box-shadow: 0 24px 40px -16px rgba(0,0,0,.6); transition: transform .3s; }
+.fan .tile img { width: 100%; display: block; aspect-ratio: 4/5; object-fit: cover; }
+.fan .tile.t0 { transform: translate(-115%, -48%) rotate(-8deg); }
+.fan .tile.t1 { transform: translate(-50%, -54%) rotate(0deg); z-index: 2; width: 186px; }
+.fan .tile.t2 { transform: translate(15%, -46%) rotate(7deg); }
+.fan:hover .tile.t0 { transform: translate(-125%, -50%) rotate(-11deg); } .fan:hover .tile.t2 { transform: translate(25%, -48%) rotate(10deg); }
+.fan-empty { height: 240px; border-radius: 18px; border: 1.5px dashed rgba(255,255,255,.2); display: grid; place-items: center; text-align: center; color: #aab3c8; padding: 20px; font-size: 14px; }
+.fan-empty svg.i { width: 34px; height: 34px; color: #ffb59f; margin-bottom: 8px; }
+.crewgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; margin-top: 14px; }
+.mate { display: flex; gap: 12px; align-items: flex-start; padding: 13px 14px; border: 1px solid var(--line); border-radius: 14px; background: #fcfbf8; }
+.mate .av { flex: none; width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; color: #fff; background: linear-gradient(180deg, #2b3452, #121829); position: relative; }
+.mate .av::after { content: ""; position: absolute; right: -2px; bottom: -2px; width: 11px; height: 11px; border-radius: 50%; background: #34d399; border: 2px solid #fcfbf8; }
+.mate .av.idle::after { background: #c9c2b3; }
+.mate .av svg.i { width: 18px; height: 18px; }
+.mate b { display: block; font-size: 14px; } .mate span { font-size: 13px; color: var(--muted); display: block; line-height: 1.4; }
+.mate .did { color: var(--text); font-weight: 600; }
+.howto { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin-top: 16px; counter-reset: st; }
+.howto > div { position: relative; padding: 0 16px 0 0; }
+.howto > div::before { counter-increment: st; content: counter(st); display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); font-weight: 750; font-family: var(--display); margin-bottom: 10px; position: relative; z-index: 1; }
+.howto > div:not(:last-child)::after { content: ""; position: absolute; top: 17px; left: 40px; right: 6px; border-top: 2px dashed #eadfd3; }
+.howto b { display: block; font-size: 15px; } .howto span { color: var(--muted); font-size: 13.5px; }
+@media (max-width: 920px) { .hero { padding: 22px 18px; } .hero-grid { grid-template-columns: 1fr; } .hero h2 { font-size: 25px; } .fan { height: 220px; } .fan .tile { width: 130px; } .fan .tile.t1 { width: 144px; } .howto { grid-template-columns: 1fr 1fr; gap: 18px; } .howto > div::after { display: none; } .auth-main { grid-template-columns: 1fr; } .showcase { display: none; } }
+
+.kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 920px) { .kpis { grid-template-columns: 1fr 1fr; } }
+.near-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.near-list { margin-top: 10px; display: grid; gap: 6px; }
+.near { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 14px; background: #fcfbf8; flex-wrap: wrap; }
+.near .pin { flex: none; width: 30px; height: 30px; border-radius: 50% 50% 50% 4px; transform: rotate(-45deg); background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; font-weight: 750; font-size: 12.5px; font-family: var(--display); }
+.near .pin span { transform: rotate(45deg); }
+.near .t { flex: 1; min-width: 200px; } .near .t b { display: block; font-size: 14.5px; } .near .t span { font-size: 13px; color: var(--muted); }
+.comp-add { margin-top: 18px; padding: 16px; border-radius: 16px; background: #faf7f1; border: 1px solid var(--line); }
+.comp-add h3 { margin: 0; }
 /* negozi (agenzia) */
 .store-card { display: flex; flex-direction: column; gap: 12px; }
 .store-head { display: flex; gap: 12px; align-items: center; }
-.store-logo { width: 52px; height: 52px; border-radius: 14px; background: var(--line-2); display: grid; place-items: center; overflow: hidden; flex: none; font-weight: 800; color: #fff; font-size: 20px; }
+.store-logo { width: 52px; height: 52px; grid-template-columns: minmax(0, 1fr); border-radius: 14px; background: var(--line-2); display: grid; place-items: center; overflow: hidden; flex: none; font-weight: 800; color: #fff; font-size: 20px; }
 .store-logo img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
 .store-head .t { flex: 1; min-width: 0; } .store-head .t b { display: block; font-size: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .week { background: var(--line-2); border-radius: 12px; padding: 12px; font-size: 14px; }
@@ -146,15 +231,18 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .flyer-item { display: flex; align-items: center; gap: 14px; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: #fff; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
 .flyer-item:hover, .flyer-item:focus { border-color: #d6cfbf; box-shadow: var(--shadow); outline: none; }
 .flyer-item .ic { width: 46px; height: 46px; border-radius: 12px; background: var(--gold-soft); color: #8a5a00; display: grid; place-items: center; flex: none; }
+.flyer-item .thumb { width: 56px; height: 72px; border-radius: 8px; background: var(--line-2); flex: none; overflow: hidden; box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 4px 10px -4px rgba(18,24,41,.3); border: 1px solid var(--line); }
+.flyer-item .thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
 .flyer-item .t { flex: 1; min-width: 0; } .flyer-item .t b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .flyer-item .chips { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
 
 /* percorso del volantino */
-.wizard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 18px; }
-.wstep { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: #fff; cursor: pointer; text-align: left; min-width: 0; }
+.wizard { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+.wstep { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fcfbf8; cursor: pointer; text-align: left; min-width: 0; transition: border-color .15s, background .15s; }
+.wstep:hover { border-color: #d3cab8; background: #fff; }
 .wstep .n { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 13px; background: var(--line-2); color: var(--ink-2); flex: none; }
 .wstep .t { min-width: 0; } .wstep .t b { display: block; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .wstep .t span { font-size: 12px; color: var(--muted); }
-.wstep.on { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+.wstep.on { border-color: var(--brand); background: #fff; box-shadow: 0 0 0 3px var(--brand-soft); }
 .wstep.on .n { background: var(--brand); color: #fff; }
 .wstep.done .n { background: var(--ok); color: #fff; }
 .vid.v916 .ph { aspect-ratio: 9/16; }
@@ -238,11 +326,13 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .jl.wait { color: var(--muted); }
 
 .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
-.gal { position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: #faf8f3; cursor: zoom-in; }
+.gal { position: relative; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); background: #faf8f3; cursor: zoom-in; transition: transform .15s, box-shadow .15s; }
+.gal:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
 .gal img { width: 100%; display: block; aspect-ratio: 1; object-fit: contain; }
 .gal .lab { position: absolute; left: 6px; bottom: 6px; right: 6px; display: flex; justify-content: space-between; gap: 6px; }
 .vids { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
-.vid { border: 1px solid var(--line); border-radius: 14px; padding: 12px; background: #fff; display: flex; flex-direction: column; gap: 10px; }
+.vid { border: 1px solid var(--line); border-radius: 16px; padding: 12px; background: #fff; display: flex; flex-direction: column; gap: 10px; transition: box-shadow .15s; }
+.vid:hover { box-shadow: var(--shadow-lg); }
 .vid .ph { background: var(--ink); border-radius: 10px; aspect-ratio: 16/10; display: grid; place-items: center; color: #fff; cursor: pointer; position: relative; overflow: hidden; }
 .vid .ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #0d1220; }
 .vid .ph .play { position: relative; width: 58px; height: 58px; border-radius: 50%; background: rgba(229,72,47,.92); display: grid; place-items: center; box-shadow: 0 6px 20px rgba(0,0,0,.35); }
@@ -255,7 +345,7 @@ video { width: 100%; max-height: 460px; border-radius: 10px; background: #000; d
 .ic-instagram { background: linear-gradient(45deg, #f09433, #dc2743 50%, #bc1888); } .ic-facebook { background: #1877f2; } .ic-reel { background: #111827; }
 .ic-whatsapp, .ic-whatsapp_personal { background: #25a244; } .ic-newsletter { background: var(--ink-2); }
 .tags-line { color: var(--info); font-size: 13px; word-break: break-word; }
-.sticky-bar { position: sticky; bottom: 12px; z-index: 4; margin-top: 18px; display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; background: var(--ink); color: #fff; padding: 12px 14px; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
+.sticky-bar { position: sticky; bottom: 14px; z-index: 4; margin-top: 18px; display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; background: rgba(18,24,41,.94); backdrop-filter: blur(8px); color: #fff; padding: 12px 14px 12px 18px; border-radius: 16px; box-shadow: 0 18px 40px -12px rgba(18,24,41,.55); }
 .sticky-bar .muted { color: #c9d0e0; }
 
 .chat { height: 400px; overflow: auto; padding: 16px; background: #faf8f3; border-radius: 14px; border: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
@@ -280,12 +370,13 @@ tr:last-child td { border-bottom: 0; }
 .logo-prev { width: 120px; height: 72px; border-radius: 12px; border: 1px dashed var(--line); display: grid; place-items: center; background: #fff; overflow: hidden; color: var(--muted); font-size: 12px; text-align: center; }
 .logo-prev img { max-width: 100%; max-height: 100%; }
 .tones { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
-.tone { border: 1px solid var(--line); border-radius: 12px; padding: 12px; cursor: pointer; background: #fff; }
+.tone { border: 1px solid var(--line); border-radius: 14px; padding: 13px 14px; cursor: pointer; background: #fff; transition: border-color .15s; }
+.tone:hover { border-color: #d3cab8; }
 .tone.on { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
 .tone b { display: block; } .tone span { font-size: 12.5px; color: var(--muted); }
 
-.modal-bg { position: fixed; inset: 0; background: rgba(20,27,45,.5); display: grid; place-items: center; padding: 16px; z-index: 50; animation: fade .15s; }
-.modal { background: #fff; border-radius: 20px; width: 100%; max-width: 600px; max-height: 92vh; overflow: auto; padding: 24px; box-shadow: 0 30px 80px rgba(0,0,0,.25); }
+.modal-bg { position: fixed; inset: 0; background: rgba(18,24,41,.55); backdrop-filter: blur(3px); display: grid; place-items: center; padding: 16px; z-index: 50; animation: fade .15s; }
+.modal { background: #fff; border-radius: 22px; animation: up .2s ease-out; width: 100%; max-width: 600px; max-height: 92vh; overflow: auto; padding: 24px; box-shadow: 0 30px 80px rgba(0,0,0,.25); }
 .modal.wide { max-width: 980px; padding: 14px; background: #111; }
 .modal.wide img, .modal.wide video { width: 100%; max-height: 82vh; object-fit: contain; display: block; border-radius: 12px; }
 .modal h3 { margin: 0; font-size: 19px; }
@@ -326,6 +417,8 @@ tr:last-child td { border-bottom: 0; }
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs><linearGradient id="lg-brand" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f26a48"/><stop offset="1" stop-color="#d4361c"/></linearGradient></defs>
+  <symbol id="i-logo" viewBox="0 0 64 64"><rect width="64" height="64" rx="18" fill="url(#lg-brand)"/><path d="M21 48V16h14.5a11.5 11.5 0 0 1 0 23H28v9z" fill="#fff"/><circle cx="35" cy="27.5" r="4.2" fill="#e04a2c"/></symbol>
   <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></symbol>
   <symbol id="i-flyer" viewBox="0 0 24 24"><path d="M6 3h9l4 4v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5M8.5 13h7M8.5 17h5"/></symbol>
   <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></symbol>
@@ -361,17 +454,24 @@ tr:last-child td { border-bottom: 0; }
 
 <div id="authView" class="auth hidden">
   <section class="auth-hero">
-    <div class="logo"><span class="logo-mark">P</span> PROMOVO</div>
-    <div>
-      <h1>Il tuo volantino diventa comunicazione digitale. Da solo.</h1>
-      <p>Carica il volantino: gli agenti IA leggono le offerte, controllano i prezzi e preparano video, grafiche e testi pronti da pubblicare.</p>
-      <div class="auth-points">
-        <div><svg class="i"><use href="#i-check"/></svg> Prezzi controllati uno per uno</div>
-        <div><svg class="i"><use href="#i-video"/></svg> Reel, video per gli schermi e grafiche</div>
-        <div><svg class="i"><use href="#i-download"/></svg> Tutto il materiale della settimana in un clic</div>
+    <div class="logo"><svg class="logo-mark" aria-hidden="true"><use href="#i-logo"/></svg> Promovo</div>
+    <div class="auth-main">
+      <div>
+        <h1>Il volantino della settimana diventa <em>Reel, post e grafiche.</em> In pochi minuti.</h1>
+        <p>Carichi il volantino: gli agenti di Promovo leggono le offerte, ricontrollano ogni prezzo e preparano video, grafiche, testi e il piano della settimana, con il logo e i colori del negozio.</p>
+        <div class="auth-points">
+          <div><svg class="i"><use href="#i-check"/></svg> Ogni prezzo letto due volte, i dubbi segnalati</div>
+          <div><svg class="i"><use href="#i-spark"/></svg> Ogni settimana un'idea nuova, mai la stessa</div>
+          <div><svg class="i"><use href="#i-download"/></svg> Tutto pronto da consegnare, con il report per il cliente</div>
+        </div>
+      </div>
+      <div class="showcase" aria-hidden="true">
+        <div class="phone"><img src="/assets/showcase_reel.jpg" alt=""></div>
+        <div class="post"><img src="/assets/showcase_post.jpg" alt=""></div>
+        <div class="badge"><svg class="i"><use href="#i-check"/></svg> 12 prezzi confermati</div>
       </div>
     </div>
-    <div class="muted" style="color:#9aa4bb">© Promovo</div>
+    <div class="muted" style="color:#8f98ad">Funziona sul tuo computer · i dati restano tuoi</div>
   </section>
   <section class="auth-form">
     <div class="auth-card">
@@ -395,7 +495,9 @@ tr:last-child td { border-bottom: 0; }
 
 <div id="appView" class="shell hidden">
   <aside class="side">
-    <div class="logo"><span class="logo-mark">P</span> PROMOVO</div>
+    <div class="logo"><svg class="logo-mark" aria-hidden="true"><use href="#i-logo"/></svg> Promovo</div>
+    <button class="side-store" id="sideStore" title="Impostazioni del negozio"></button>
+    <div class="side-label">Lavoro</div>
     <nav id="sideNav"></nav>
     <div class="side-foot">
       <b id="whoName"></b><span id="whoOrg"></span>
@@ -405,8 +507,8 @@ tr:last-child td { border-bottom: 0; }
   </aside>
   <div class="main">
     <header class="top">
-      <span class="logo-mark">P</span>
-      <h1 id="pageTitle">Panoramica</h1>
+      <svg class="logo-mark" aria-hidden="true"><use href="#i-logo"/></svg>
+      <div class="tt"><h1 id="pageTitle">Panoramica</h1><small id="pageSub"></small></div>
       <span class="sp"></span>
       <div class="store-pick"><svg class="i" style="color:var(--muted)"><use href="#i-store"/></svg><select id="storeSel" aria-label="Negozio"></select></div>
     </header>
@@ -574,7 +676,14 @@ function logout() {
 }
 
 // ======================= navigazione =======================
+function storeBadge(s, cls = "") {
+  const initials = (s.name || "?").split(/\s+/).map(w => w[0]).join("").slice(0, 2).toUpperCase();
+  return `<div class="store-logo ${cls}" style="background:${esc(s.brand_color || "#e4462c")}">${s.logo_url ? `<img data-src="${s.logo_url}" alt="">` : esc(initials)}</div>`;
+}
 function renderNav() {
+  const cs = currentStore(), ss = $("#sideStore");
+  ss.classList.toggle("hidden", !cs);
+  if (cs) { ss.innerHTML = `${storeBadge(cs)}<div><b>${esc(cs.name)}</b><span>${esc(cs.city || cs.address || "Negozio")}</span></div>`; ss.onclick = () => go("store"); loadImages(ss); }
   $("#sideNav").innerHTML = NAV.map(([k, label, ic]) => `<button class="nav-btn ${S.view === k ? "on" : ""}" data-nav="${k}">${icon(ic)}<span>${label}</span></button>`).join("");
   $("#mobileNav").innerHTML = NAV.map(([k, label, ic, short]) => `<button class="${S.view === k ? "on" : ""}" data-nav="${k}" aria-label="${label}">${icon(ic)}${short || label}</button>`).join("");
   $$("[data-nav]").forEach(b => b.onclick = () => go(b.dataset.nav));
@@ -584,6 +693,9 @@ async function go(view, opts = {}) {
   renderNav();
   const title = opts.create ? "Nuovo negozio" : (NAV.find(n => n[0] === view) || [0, "Promovo"])[1];
   $("#pageTitle").textContent = title;
+  const sub = {home: new Date().toLocaleDateString("it-IT", {weekday: "long", day: "numeric", month: "long"}), flyers: currentStore() ? currentStore().name : "",
+    clips: "Un video girato col telefono diventa un Reel", store: currentStore() && !opts.create ? currentStore().name : "", settings: "Chiavi facoltative e informazioni"}[view] || "";
+  $("#pageSub").textContent = sub;
   document.title = title + " · Promovo";
   window.scrollTo(0, 0);
   const el = $("#view");
@@ -605,40 +717,105 @@ async function loadStores() {
 $("#storeSel").onchange = () => {
   const v = $("#storeSel").value;
   if (v === "new") { $("#storeSel").value = S.storeId ? String(S.storeId) : "new"; go("store", {create: true}); return; }
-  S.storeId = Number(v); save(); go(S.view === "home" || S.view === "store" ? S.view : "flyers");
+  S.storeId = Number(v); save(); renderNav(); go(S.view === "home" || S.view === "store" ? S.view : "flyers");
 };
 const currentStore = () => S.stores.find(s => s.id === S.storeId);
-function selectStore(id) { S.storeId = id; $("#storeSel").value = String(id); save(); }
+function selectStore(id) { S.storeId = id; $("#storeSel").value = String(id); save(); renderNav(); }
 
 // ======================= viste =======================
 const VIEWS = {};
 
 // ---------- panoramica
+const TEAM = [
+  ["i-flyer", "Lettore", "Legge il volantino, anche se è una foto"],
+  ["i-check", "Controllo", "Rilegge ogni prezzo ingrandito"],
+  ["i-spark", "Stratega e copywriter", "Sceglie l'idea della settimana e scrive i testi"],
+  ["i-image", "Grafico", "Copertina, storia, idea e post delle offerte"],
+  ["i-video", "Montatore", "Reel 9:16, video 1:1 e per gli schermi 16:9"],
+  ["i-camera", "Regista dal banco", "Dal video del telefono a un Reel vero"],
+  ["i-radar", "Analista prezzi", "Trova i concorrenti della zona e confronta i prezzi"],
+  ["i-sun", "Meteorologo", "Cosa spingere con caldo, freddo o pioggia"],
+  ["i-calendar", "Pianificatore", "Calendario dei post e cosa filmare"],
+];
+const IDEA_NAME = {occasion: "una ricorrenza", combo: "una cena completa", half: "il prodotto a metà prezzo", saving: "il risparmio", under_euro: "i prodotti sotto l'euro",
+  fresh: "il reparto fresco", stock: "la scorta", weekend: "il fine settimana", basket: "la spesa completa", total: "il totale del carrello", hero: "il prodotto protagonista"};
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+const daysBetween = (a, b) => Math.round((new Date(b + "T12:00:00") - new Date(a + "T12:00:00")) / 864e5);
+const todayIso = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
+
 VIEWS.home = async el => {
   if (!S.stores.length) { el.innerHTML = noStore(); bindNoStore(); return; }
   const ov = await api("/api/agency/overview");
   const many = ov.length > 1 || (S.me && S.me.organization.kind === "agency");
-  const todo = ov.reduce((n, x) => n + (x.last_flyer ? x.last_flyer.unverified_count : 0), 0);
-  const toApprove = ov.reduce((n, x) => n + (x.content_total - x.content_approved), 0);
+  const mine = ov.find(x => x.store.id === S.storeId) || ov[0];
+  const f = mine.last_flyer;
+  const [content, comps] = await Promise.all([
+    f ? api(`/api/flyers/${f.id}/content`).catch(() => []) : [],
+    api(`/api/stores/${mine.store.id}/competitors`).catch(() => []),
+  ]);
+  const imgs = content.filter(c => c.kind === "image");
+  const order = ["idea", "cover", "story"];
+  imgs.sort((a, b) => ((order.indexOf(a.meta.format) + 1) || 9) - ((order.indexOf(b.meta.format) + 1) || 9));
+  const vids = content.filter(c => c.kind === "video");
+  const ig = content.find(c => c.kind === "instagram");
+  const plan = content.find(c => c.kind === "plan");
+  const first = (S.me && S.me.name ? S.me.name.split(" ")[0] : "");
+
+  // la prossima cosa da fare, in una frase e in un pulsante
+  let say, cta;
+  if (!f) { say = `Carica il primo volantino di <b>${esc(mine.store.name)}</b>: gli agenti preparano il resto.`; cta = ["Carica il volantino", "i-upload", () => go("flyers")]; }
+  else if (f.status === "processing") { say = "Gli agenti stanno leggendo il volantino."; cta = ["Segui il lavoro", "i-arrow", () => go("flyers", {flyer: f.id})]; }
+  else if (f.status === "failed") { say = "Il volantino non è stato letto: prova a caricarlo di nuovo."; cta = ["Apri il volantino", "i-arrow", () => go("flyers", {flyer: f.id})]; }
+  else if (f.unverified_count) { say = `${f.unverified_count === 1 ? "Manca" : "Mancano"} <b>${plural(f.unverified_count, "prezzo", "prezzi")}</b> da guardare: un clic ciascuno e si parte.`; cta = ["Controlla i prezzi", "i-check", () => go("flyers", {flyer: f.id, step: "check"})]; }
+  else if (!mine.content_total) { say = `Le <b>${f.offer_count} offerte</b> sono controllate. Gli agenti sono pronti a creare i materiali.`; cta = ["Crea i materiali", "i-spark", () => go("flyers", {flyer: f.id, step: "make"})]; }
+  else if (mine.content_approved < mine.content_total) { say = `<b>${plural(mine.content_total - mine.content_approved, "materiale", "materiali")}</b> da guardare e approvare${ig && ig.meta.angle ? `. L'idea della settimana: <b>${esc(IDEA_NAME[ig.meta.angle] || "le offerte")}</b>` : ""}.`; cta = ["Guarda e approva", "i-arrow", () => go("flyers", {flyer: f.id, step: "publish"})]; }
+  else { say = "Tutto approvato. Scarica il pacchetto o carica il prossimo volantino."; cta = ["Apri il pacchetto", "i-download", () => go("flyers", {flyer: f.id, step: "publish"})]; }
+
+  let validity = "";
+  if (f && f.valid_from && f.valid_to) {
+    const tot = Math.max(1, daysBetween(f.valid_from, f.valid_to) + 1), left = daysBetween(todayIso(), f.valid_to);
+    const pct = Math.min(100, Math.max(0, (tot - Math.max(0, left)) / tot * 100));
+    const lab = left < 0 ? "volantino scaduto" : left === 0 ? "ultimo giorno" : left === 1 ? "manca 1 giorno" : `mancano ${left} giorni`;
+    validity = `<div class="validity"><div class="lab"><span>${esc(f.title || "Volantino")} · dal ${itDate(f.valid_from)} al ${itDate(f.valid_to)}</span><b>${lab}</b></div><div class="bar"><div style="width:${pct}%"></div></div></div>`;
+  }
+  const tiles = (imgs.length ? imgs : []).slice(0, 3);
+  const fan = tiles.length ? `<div class="fan" title="Apri i materiali">${tiles.map((c, i) => `<div class="tile t${tiles.length === 1 ? 1 : i}"><img data-src="${c.file_url}" alt="${esc(c.title)}"></div>`).join("")}</div>`
+    : `<div class="fan-empty"><div>${icon("i-image")}<div>Qui vedrai le grafiche della settimana appena gli agenti le preparano.</div></div></div>`;
+
+  const verified = f ? f.offer_count - f.unverified_count : 0;
+  const kpis = f ? [["i-flyer", "Offerte lette", f.offer_count, ""], ["i-check", "Prezzi confermati", verified, f.offer_count ? `/${f.offer_count}` : ""],
+    ["i-spark", "Materiali pronti", mine.content_total, ""], ["i-radar", "Concorrenti nel radar", comps.length, ""]] : [];
+  const did = {
+    "Lettore": f ? plural(f.offer_count, "offerta letta", "offerte lette") : "", "Controllo": f ? plural(verified, "prezzo confermato", "prezzi confermati") : "",
+    "Stratega e copywriter": ig && ig.meta.angle ? `Idea: ${IDEA_NAME[ig.meta.angle] || "le offerte"}` : "",
+    "Grafico": imgs.length ? plural(imgs.length, "grafica pronta", "grafiche pronte") : "", "Montatore": vids.length ? plural(vids.length, "video pronto", "video pronti") : "",
+    "Analista prezzi": comps.length ? plural(comps.length, "concorrente nel radar", "concorrenti nel radar") : "", "Meteorologo": mine.store.city ? `Previsioni per ${mine.store.city}` : "",
+    "Pianificatore": plan ? "Piano della settimana pronto" : "",
+  };
   el.innerHTML = `
-    <div class="card" style="background:linear-gradient(135deg,#1b2440,#141b2d);color:#fff;border:0">
-      <div class="row" style="align-items:center">
-        <div class="f" style="min-width:240px"><h2 style="font-size:22px;color:#fff">Ciao${S.me && S.me.name ? " " + esc(S.me.name.split(" ")[0]) : ""}! 👋</h2>
-          <p style="margin:6px 0 0;color:#c9d0e0">${todo || toApprove ? `Hai <b style="color:#fff">${todo}</b> prezzi da controllare e <b style="color:#fff">${toApprove}</b> materiali da approvare.` : "È tutto in ordine. Carica il prossimo volantino quando è pronto."}</p></div>
-        <button class="btn lg" id="newFlyer">${icon("i-upload")} Carica un volantino</button>
+    <div class="card hero"><div class="hero-grid">
+      <div>
+        <span class="eyebrow">${icon("i-store")} ${esc(mine.store.name)}</span>
+        <h2>${first ? `Ciao ${esc(first)}, ` : ""}ecco la tua settimana.</h2>
+        <p>${say}</p>
+        <div class="toolbar"><button class="btn lg" id="heroCta">${icon(cta[1])} ${cta[0]}</button>${f ? `<button class="btn sec lg" id="newFlyer">${icon("i-upload")} Nuovo volantino</button>` : ""}</div>
+        ${validity}
       </div>
-    </div>
-    <div class="grid g3" style="margin-top:18px">
-      ${[["i-store", "Negozi", ov.length], ["i-alert", "Prezzi da controllare", todo], ["i-spark", "Da approvare", toApprove]].map(([ic, k, v]) => `<div class="card kpi"><div class="ic">${icon(ic)}</div><div><div class="v">${v}</div><div class="k">${k}</div></div></div>`).join("")}
-    </div>
-    <div class="card"><div class="toolbar"><div style="flex:1"><h2>${many ? "I tuoi negozi" : "Questa settimana"}</h2><p class="sub" style="margin:0">Lo stato dell'ultimo volantino di ogni negozio.</p></div>
-      ${many ? `<button class="btn sec" id="addStore">${icon("i-plus")} Aggiungi negozio</button>` : ""}</div>
-      <div class="grid g3" style="margin-top:16px">${ov.map(storeCard).join("")}</div></div>
-    <div class="card"><h2>Come funziona, ogni settimana</h2><p class="sub">Quattro passaggi, pochi minuti per negozio: il lavoro lo fanno gli agenti.</p>
-      <div class="grid g4">${[["i-upload", "1. Carica", "Il PDF o anche solo la foto del volantino."], ["i-spark", "2. Gli agenti preparano", "Testi, immagini, Reel, video e il piano della settimana."], ["i-check", "3. Controlla", "Solo i prezzi in giallo, con un clic ciascuno."], ["i-download", "4. Consegna", "Approva e scarica tutto in un file ZIP."]].map(([ic, t, d]) => `<div class="step" style="flex-direction:column;align-items:flex-start"><span class="n" style="background:var(--brand-soft);color:var(--brand)">${icon(ic)}</span><div class="t"><b>${t}</b><span class="muted">${d}</span></div></div>`).join("")}</div></div>`;
-  $("#newFlyer").onclick = () => go("flyers");
+      <div>${fan}</div>
+    </div></div>
+    ${kpis.length ? `<div class="grid kpis" style="margin-top:18px">${kpis.map(([ic, k, v, of]) => `<div class="card kpi"><div class="ic">${icon(ic)}</div><div><div class="v">${v}<small>${of}</small></div><div class="k">${k}</div></div></div>`).join("")}</div>` : ""}
+    ${many ? `<div class="card"><div class="toolbar"><div style="flex:1"><h2>${icon("i-store")} I tuoi negozi</h2><p class="sub" style="margin:0">Lo stato dell'ultimo volantino di ogni negozio.</p></div>
+      <button class="btn sec" id="addStore">${icon("i-plus")} Aggiungi negozio</button></div>
+      <div class="grid g3" style="margin-top:16px">${ov.map(storeCard).join("")}</div></div>` : ""}
+    <div class="card"><h2>${icon("i-spark")} La tua squadra</h2><p class="sub" style="margin:0">Nove agenti che lavorano sul tuo computer, senza abbonamenti esterni. Tu controlli e approvi.</p>
+      <div class="crewgrid">${TEAM.map(([ic, name, role]) => `<div class="mate"><div class="av ${did[name] ? "" : "idle"}">${icon(ic)}</div><div><b>${name}</b><span>${did[name] ? `<span class="did">${esc(did[name])}</span>` : role}</span></div></div>`).join("")}</div></div>
+    <div class="card"><h2>${icon("i-calendar")} Ogni settimana, in quattro passi</h2>
+      <div class="howto">${[["Carica", "Il PDF o anche solo la foto del volantino."], ["Gli agenti preparano", "Testi, grafiche, Reel, video e il piano."], ["Controlla", "Solo i prezzi in giallo, un clic ciascuno."], ["Consegna", "Approva e scarica lo ZIP con il report."]].map(([t, d]) => `<div><b>${t}</b><span>${d}</span></div>`).join("")}</div></div>`;
+  $("#heroCta").onclick = cta[2];
+  const nf = $("#newFlyer"); if (nf) nf.onclick = () => go("flyers");
+  const fanEl = $(".fan", el); if (fanEl && f) fanEl.onclick = () => go("flyers", {flyer: f.id, step: "publish"});
   const add = $("#addStore"); if (add) add.onclick = () => go("store", {create: true});
-  $$("[data-open-store]", el).forEach(b => b.onclick = () => { selectStore(Number(b.dataset.openStore)); const f = b.dataset.flyer; go("flyers", f ? {flyer: Number(f)} : {}); });
+  $$("[data-open-store]", el).forEach(b => b.onclick = () => { selectStore(Number(b.dataset.openStore)); const fl = b.dataset.flyer; go("flyers", fl ? {flyer: Number(fl)} : {}); });
 };
 function storeCard(x) {
   const s = x.store, f = x.last_flyer;
@@ -660,7 +837,7 @@ function storeCard(x) {
 
 // ---------- volantini
 const flyerItem = f => `<div class="flyer-item" data-flyer="${f.id}" tabindex="0" role="button">
-  <div class="ic">${icon("i-flyer")}</div>
+  ${f.status === "ready" || f.status === "processing" ? `<div class="thumb"><img data-src="/api/flyers/${f.id}/thumb" alt=""></div>` : `<div class="ic">${icon("i-flyer")}</div>`}
   <div class="t"><b>${esc(f.title || "Volantino " + f.id)}</b><span class="muted">${f.valid_from ? `dal ${itDate(f.valid_from)} al ${itDate(f.valid_to)}` : "Date non indicate"} · ${f.offer_count} offerte · caricato il ${itDate(f.created_at)}</span></div>
   <div class="chips">${f.status !== "ready" ? `<span class="chip ${f.status === "failed" ? "err" : "info"}">${esc(STATUS[f.status] || f.status)}</span>` : f.unverified_count ? `<span class="chip warn">${f.unverified_count} da controllare</span>` : `<span class="chip ok">${icon("i-check")} prezzi ok</span>`}</div></div>`;
 function bindFlyerItems(root) {
@@ -672,7 +849,7 @@ VIEWS.flyers = async (el, opts) => {
   const flyers = await api(`/api/stores/${S.storeId}/flyers`);
   el.innerHTML = `
     <div class="card">
-      <h2>Nuovo volantino per ${esc(currentStore().name)}</h2><p class="sub">Carica il PDF o una foto del volantino: gli agenti leggono ogni offerta e, se vuoi, preparano subito testi, grafiche e video.</p>
+      <h2>${icon("i-upload")} Nuovo volantino per ${esc(currentStore().name)}</h2><p class="sub">Carica il PDF o una foto del volantino: gli agenti leggono ogni offerta e, se vuoi, preparano subito testi, grafiche e video.</p>
       <div class="drop" id="drop" tabindex="0" role="button" aria-label="Carica un volantino">
         <div class="ic">${icon("i-upload")}</div>
         <b>Trascina qui il volantino</b><div class="muted">oppure tocca per sceglierlo · PDF, JPG, PNG o WEBP fino a 40 MB</div>
@@ -681,7 +858,7 @@ VIEWS.flyers = async (el, opts) => {
       <label class="switch" style="margin-top:12px"><input type="checkbox" id="autoPilot" ${S.autopilot !== false ? "checked" : ""}> <span><b>Pilota automatico:</b> gli agenti preparano tutto da soli (testi, immagini, Reel, video per i post e per gli schermi, piano della settimana)</span></label>
       <div id="uploadState"></div>
     </div>
-    <div class="card"><h2>Volantini di ${esc(currentStore().name)}</h2>
+    <div class="card"><h2>${icon("i-flyer")} Volantini di ${esc(currentStore().name)}</h2>
       <div class="stack tight" style="margin-top:14px">${flyers.map(flyerItem).join("") || empty("i-flyer", "Ancora nessun volantino", "Caricane uno qui sopra.")}</div></div>`;
   const drop = $("#drop"), file = $("#file");
   drop.onclick = () => file.click();
@@ -695,30 +872,70 @@ VIEWS.flyers = async (el, opts) => {
   competitorsCard(el);
 };
 
+const meters = m => m < 1000 ? `${Math.round(m / 10) * 10} m` : `${(m / 1000).toFixed(1).replace(".", ",")} km`;
 async function competitorsCard(el) {
   const box = document.createElement("div");
   box.className = "card"; box.id = "compCard";
   el.appendChild(box);
   const comps = await api(`/api/stores/${S.storeId}/competitors`);
-  box.innerHTML = `<h2>${icon("i-radar")} Volantini dei concorrenti</h2>
-    <p class="sub">Carica i volantini dei supermercati vicini: Promovo li legge e ti dice su quali prodotti sei più conveniente, così li metti in evidenza. Restano solo tuoi: i nomi dei concorrenti non compaiono mai nei contenuti pubblicati.</p>
-    <div class="row" style="align-items:flex-end"><div class="f"><label class="l" for="compName">Concorrente</label><input class="in" id="compName" placeholder="es. Conad via Roma"></div>
-      <div><button class="btn sec" id="compBtn">${icon("i-upload")} Carica il suo volantino</button><input type="file" id="compFile" accept="application/pdf,image/jpeg,image/png,image/webp" class="hidden"></div></div>
-    <div id="compState"></div>
-    <div class="stack tight" style="margin-top:14px">${comps.map(c => `<div class="flyer-item" style="cursor:default"><div class="ic">${icon("i-radar")}</div>
+  const city = (currentStore() || {}).city || "";
+  box.innerHTML = `<h2>${icon("i-radar")} Concorrenti e loro volantini</h2>
+    <p class="sub">Promovo trova i supermercati veri intorno al negozio. I loro prezzi li legge dai loro volantini: carichi il file, una foto o il link al PDF dal sito dell'insegna. Così il confronto è vero, prodotto per prodotto. I nomi dei concorrenti restano solo tuoi: non compaiono mai nei contenuti pubblicati.</p>
+    <div class="near-head"><h3 style="margin:0">Nella zona${city ? ` di ${esc(city)}` : ""}</h3>
+      <div class="seg" id="radius">${[1000, 3000, 5000].map(r => `<button data-r="${r}" class="${(S.radius || 3000) === r ? "on" : ""}">${r / 1000} km</button>`).join("")}</div></div>
+    <div id="nearList" class="near-list"><div class="muted">Cerco i supermercati sulla mappa…</div><div class="progress"><div></div></div></div>
+    <div class="comp-add" id="compAdd">
+      <h3>Aggiungi un volantino al radar</h3>
+      <div class="row" style="align-items:flex-end;margin-top:10px">
+        <div class="f"><label class="l" for="compName">Concorrente</label><input class="in" id="compName" placeholder="es. Market Uno via Latina"></div>
+        <div><button class="btn sec" id="compBtn">${icon("i-upload")} Carica file o foto</button><input type="file" id="compFile" accept="application/pdf,image/jpeg,image/png,image/webp" class="hidden"></div>
+      </div>
+      <div class="row" style="align-items:flex-end;margin-top:10px">
+        <div class="f"><label class="l" for="compUrl">oppure il link al volantino (PDF o immagine)</label><input class="in" id="compUrl" placeholder="https://… /volantino.pdf" inputmode="url"></div>
+        <div><button class="btn sec" id="compLinkBtn">${icon("i-download")} Scarica dal link</button></div>
+      </div>
+      <div id="compState"></div>
+    </div>
+    <div class="stack tight" style="margin-top:14px">${comps.map(c => `<div class="flyer-item" style="cursor:default">${c.status === "ready" ? `<div class="thumb"><img data-src="/api/flyers/${c.id}/thumb" alt=""></div>` : `<div class="ic">${icon("i-radar")}</div>`}
       <div class="t"><b>${esc(c.competitor)}</b><span class="muted">${c.status === "processing" ? "in lettura…" : c.status === "failed" ? "lettura non riuscita" : `${c.valid_from ? `dal ${itDate(c.valid_from)} al ${itDate(c.valid_to)} · ` : ""}${c.offer_count} offerte lette`}</span></div>
-      <button class="btn ghost sm" data-cdelf="${c.id}" aria-label="Elimina">${icon("i-trash")}</button></div>`).join("") || `<div class="muted">Nessun volantino dei concorrenti ancora.</div>`}</div>`;
-  const btn = $("#compBtn", box), fileIn = $("#compFile", box);
-  btn.onclick = () => { if ($("#compName", box).value.trim().length < 2) { toast("Scrivi prima il nome del concorrente.", "err"); $("#compName", box).focus(); return; } fileIn.click(); };
-  fileIn.onchange = () => busy(btn, async () => {
-    const fd = new FormData(); fd.append("file", fileIn.files[0]); fd.append("competitor", $("#compName", box).value.trim());
-    let f = await api(`/api/stores/${S.storeId}/competitors`, {body: fd});
+      <span class="chip ok">${icon("i-radar")} nel radar</span>
+      <button class="btn ghost sm" data-cdelf="${c.id}" aria-label="Elimina">${icon("i-trash")}</button></div>`).join("") || `<div class="muted">Nessun volantino dei concorrenti ancora: scegline uno dalla zona qui sopra.</div>`}</div>`;
+  loadImages(box);
+  const nameIn = $("#compName", box), fileIn = $("#compFile", box), btn = $("#compBtn", box), linkBtn = $("#compLinkBtn", box);
+  const needName = () => { if (nameIn.value.trim().length < 2) { toast("Scrivi prima il nome del concorrente.", "err"); nameIn.focus(); return true; } return false; };
+  const follow = async f => {
     while (f.status === "processing") { $("#compState", box).innerHTML = notice("info", "Lettura del volantino del concorrente…", "i-radar"); await sleep(2500); f = await api(`/api/flyers/${f.id}`); }
     if (f.status === "failed") throw new Error("Lettura non riuscita: " + f.error);
-    toast(`${f.offers.length} offerte lette dal volantino del concorrente.`);
+    toast(`${f.offers.length} offerte lette dal volantino di ${f.competitor}.`);
     box.remove(); competitorsCard(el);
+  };
+  btn.onclick = () => { if (!needName()) fileIn.click(); };
+  fileIn.onchange = () => busy(btn, async () => {
+    const fd = new FormData(); fd.append("file", fileIn.files[0]); fd.append("competitor", nameIn.value.trim());
+    await follow(await api(`/api/stores/${S.storeId}/competitors`, {body: fd}));
   }, "Lettura…");
+  linkBtn.onclick = () => { if (needName()) return; const url = $("#compUrl", box).value.trim();
+    if (!/^https?:\/\//i.test(url)) { toast("Incolla un link completo che inizia con https://", "err"); return; }
+    busy(linkBtn, async () => follow(await api(`/api/stores/${S.storeId}/competitors/link`, {json: {url, competitor: nameIn.value.trim()}})), "Scarico…"); };
   $$("[data-cdelf]", box).forEach(b => b.onclick = async () => { if (await confirmBox("Eliminare questo volantino?", "Non verrà più usato per i confronti.", "Elimina", true)) busy(b, async () => { await api(`/api/flyers/${b.dataset.cdelf}`, {method: "DELETE"}); box.remove(); competitorsCard(el); }); });
+  $$("#radius button", box).forEach(b => b.onclick = () => { S.radius = Number(b.dataset.r); $$("#radius button", box).forEach(x => x.classList.toggle("on", x === b)); nearList(); });
+  const inRadar = p => { const k = (p.brand || p.name).toLowerCase(); return comps.some(c => c.competitor.toLowerCase().includes(k)); };
+  async function nearList() {
+    const list = $("#nearList", box);
+    list.innerHTML = `<div class="muted">Cerco i supermercati sulla mappa…</div><div class="progress"><div></div></div>`;
+    let r;
+    try { r = await api(`/api/stores/${S.storeId}/nearby?radius=${S.radius || 3000}`); }
+    catch (e) { r = {ok: false, reason: e.message, places: []}; }
+    if (!r.ok) { list.innerHTML = notice("warn", `Non riesco a vedere la mappa ora: ${r.reason}. Puoi comunque aggiungere un concorrente qui sotto.`); return; }
+    if (!r.places.length) { list.innerHTML = `<div class="muted">Nessun supermercato segnato sulla mappa entro ${(S.radius || 3000) / 1000} km. Prova un raggio più ampio o aggiungilo a mano qui sotto.</div>`; return; }
+    list.innerHTML = r.places.slice(0, 12).map((p, i) => `<div class="near">
+        <div class="pin"><span>${i + 1}</span></div>
+        <div class="t"><b>${esc(p.label)}</b><span>${esc(p.kind)} · ${meters(p.distance_m)}${p.address ? ` · ${esc(p.address)}` : ""}</span></div>
+        ${inRadar(p) ? `<span class="chip ok">${icon("i-check")} nel radar</span>` : `<a class="btn ghost sm" href="${esc(p.search)}" target="_blank" rel="noopener">Trova il volantino ${icon("i-arrow")}</a><button class="btn sec sm" data-pick="${esc(p.label)}">${icon("i-plus")} Aggiungi</button>`}
+      </div>`).join("") + `<div class="hint" style="margin-top:8px">${esc(r.attribution)} · posizione del negozio ricavata ${r.center.precision === "indirizzo" ? "dall'indirizzo" : "dal centro della città (aggiungi l'indirizzo nella pagina Negozio per più precisione)"}.</div>`;
+    $$("[data-pick]", list).forEach(b => b.onclick = () => { nameIn.value = b.dataset.pick; $("#compAdd", box).scrollIntoView({behavior: "smooth", block: "center"}); $("#compUrl", box).focus(); toast("Ora carica il suo volantino: file, foto o link."); });
+  }
+  nearList();
 }
 
 async function weatherCard(box, f) {
@@ -1379,7 +1596,7 @@ const AGENTS = [
   ["i-image", "Grafico", "Prepara copertina, storie e un'immagine per ogni offerta, con i colori e il logo del negozio."],
   ["i-video", "Montatore", "Monta Reel, video per i post e per gli schermi in negozio, con musica originale."],
   ["i-camera", "Regista dal banco", "Trasforma un video girato col telefono in un Reel stabilizzato, con titoli e prezzi."],
-  ["i-radar", "Analista prezzi", "Confronta il volantino con quelli dei concorrenti e indica dove sei più conveniente."],
+  ["i-radar", "Analista prezzi", "Trova i supermercati della zona sulla mappa, legge i loro volantini e indica dove sei più conveniente."],
   ["i-sun", "Meteorologo", "Guarda le previsioni della settimana e suggerisce cosa spingere nei giorni di caldo, freddo o pioggia."],
   ["i-calendar", "Pianificatore", "Prepara il calendario di pubblicazione e cosa filmare al banco."],
 ];
