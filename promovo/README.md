@@ -33,6 +33,7 @@ stesso): più negozi, ognuno con la sua identità, e un pacchetto ZIP pronto da 
 | Spesa a budget | Momento del mese (scorta, spesa regolare, fine mese, tredicesima), giorno consigliato, cestino vero nel budget con totale al centesimo e risparmio, immagine e testo | `modules/budget.py` |
 | Correttore del volantino | Controlla la bozza prima della stampa: prezzo al kg mancante o sbagliato, sconto stampato incoerente, barrato basso o non Omnibus, refusi rispetto allo storico, doppioni, formati, date; rapporto PDF per il grafico | `modules/proof.py` |
 | Volantino accessibile | Testo da ascoltare (prezzi e misure in parole), audio MP3 con la voce italiana di Windows o la voce del negozio, PDF A4 a caratteri grandi | `modules/accessible.py` |
+| Banco e allergeni | 14 allergeni proposti dagli ingredienti (con i dubbi), confermati da una persona; cartellini, registro e cartello; ricontrollo se gli ingredienti cambiano | `modules/allergens.py` |
 | Copia di sicurezza | Backup ZIP, ripristino anche su un altro PC (percorsi riscritti), pacchetto assistenza, avviso nuova versione | `backup.py` |
 
 Tutti gli importi sono in centesimi interi. L'IA facoltativa è Claude (`claude-opus-5-5`, configurabile).

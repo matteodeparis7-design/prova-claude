@@ -261,3 +261,18 @@ class Producer(Base):
     km: Mapped[float | None] = mapped_column(Float, nullable=True)       # in linea d'aria dal negozio
     geo_error: Mapped[str] = mapped_column(String(200), default="")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class CounterItem(Base):
+    """Banco e allergeni: un prodotto venduto sfuso al banco (gastronomia, forno...) con ingredienti e allergeni."""
+    __tablename__ = "counter_items"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    store_id: Mapped[int] = mapped_column(ForeignKey("stores.id", ondelete="CASCADE"), index=True)
+    counter: Mapped[str] = mapped_column(String(30), default="gastronomia")
+    name: Mapped[str] = mapped_column(String(160))
+    ingredients: Mapped[str] = mapped_column(Text, default="")
+    allergens: Mapped[list] = mapped_column(JSON, default=list)          # codici confermati dalla persona
+    may_contain: Mapped[list] = mapped_column(JSON, default=list)        # «può contenere tracce di» (dichiarato)
+    checked_by: Mapped[str] = mapped_column(String(80), default="")      # chi ha controllato
+    checked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)

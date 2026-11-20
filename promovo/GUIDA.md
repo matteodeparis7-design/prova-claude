@@ -167,6 +167,26 @@ Per i clienti che leggono a fatica, nel passo 3 del volantino trovi:
 - **Il volantino a caratteri grandi** (in «Per il negozio»): un A4 ad alto contrasto, 5 offerte per pagina,
   da tenere alla cassa e da consegnare.
 
+### La pagina «Servizi»
+
+Nel menu, **Servizi** raccoglie gli strumenti per il punto vendita: Banco e allergeni, Salvaspreco, Parola alla
+cassa, Filiera vicina (e i prossimi che arriveranno).
+
+### Banco e allergeni (cartellini e registro obbligatori)
+
+Per i prodotti venduti sfusi (gastronomia, forno, salumeria, pescheria, piatti pronti) l'informazione sui 14
+allergeni è obbligatoria e va data per iscritto (Reg. UE 1169/2011, D.Lgs. 231/2017).
+1. **Servizi → Banco e allergeni → Aggiungi un prodotto**: nome, banco e ingredienti (dalla ricetta o dalla scheda
+   del fornitore).
+2. Promovo **spunta gli allergeni che riconosce** e segnala i **dubbi** («farina» senza dire di cosa, brodo e
+   dado che spesso contengono sedano, vino e aceto con i solfiti...). **Controlla e conferma tu**: la
+   responsabilità resta dell'operatore alimentare.
+3. Scrivi **chi ha controllato**: nome e data finiscono nel registro.
+4. Scarica il **registro degli allergeni** (A4 orizzontale, un prodotto per riga), i **cartellini per il banco**
+   (8 per foglio, con gli allergeni in evidenza negli ingredienti) e il **cartello informativo** da esporre.
+
+Se cambi gli ingredienti e compare un allergene non segnato, Promovo te lo fa ricontrollare.
+
 ### Salvaspreco: la merce in scadenza diventa un'offerta lampo
 
 Ogni negozio butta via ogni giorno qualcosa: yogurt che scadono domani, frutta molto matura, pane

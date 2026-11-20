@@ -25,7 +25,7 @@ from ..config import Settings, get_settings
 from ..db import Database
 from ..llm import AIRefused, AIUnavailable, LLM
 from .. import keys
-from ..models import ContentPiece, Flyer, FlyerStatus, Job, JobStatus, Offer, Organization, Producer, Rescue, Role, Store, TillCode, User
+from ..models import ContentPiece, CounterItem, Flyer, FlyerStatus, Job, JobStatus, Offer, Organization, Producer, Rescue, Role, Store, TillCode, User
 from ..imaging import ImageError, load_logo, open_image, save_product_photo
 from ..money import discount_percent, format_eur, parse_price
 from ..security import hash_password, issue_token, revoke_token, verify_password
@@ -49,6 +49,7 @@ from ..modules import filiera as filieramod
 from ..modules import budget as budgetmod
 from ..modules import proof as proofmod
 from ..modules import accessible as accessmod
+from ..modules import allergens as allergmod
 from .deps import (
     AppState, bearer_token, content_for, current_user, flyer_for, get_session, job_for, offer_for,
     require_owner, state, store_for,
@@ -1953,6 +1954,94 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
             out.unlink(missing_ok=True)
             raise HTTPException(400, str(exc)) from exc
         return FileResponse(out, media_type="audio/mpeg", filename="Volantino_da_ascoltare.mp3",
+                            background=StarletteTask(lambda: out.unlink(missing_ok=True)))
+
+    # -------------------------------------------------- banco e allergeni
+
+    def counter_item_for(session: Session, user: User, item_id: int) -> CounterItem:
+        it = session.get(CounterItem, item_id)
+        if it is None:
+            raise HTTPException(404, "Prodotto del banco non trovato.")
+        store_for(session, user, it.store_id)
+        return it
+
+    def counter_out(it: CounterItem) -> dict:
+        return {"id": it.id, "counter": it.counter, "counter_label": allergmod.COUNTERS.get(it.counter, ""),
+                "name": it.name, "ingredients": it.ingredients, "allergens": it.allergens or [],
+                "may_contain": it.may_contain or [], "checked_by": it.checked_by,
+                "checked_at": it.checked_at.isoformat() if it.checked_at else None,
+                "to_recheck": allergmod.missing(it)}
+
+    @app.get("/api/stores/{store_id}/counter-items")
+    def list_counter_items(store_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        store = store_for(session, user, store_id)
+        rows = session.scalars(select(CounterItem).where(CounterItem.store_id == store.id)
+                               .order_by(CounterItem.counter, CounterItem.name)).all()
+        return {"items": [counter_out(r) for r in rows], "counters": allergmod.COUNTERS,
+                "allergens": [{"code": c, "label": allergmod.LABEL[c], "short": allergmod.SHORT[c]} for c in allergmod.CODES]}
+
+    @app.post("/api/allergens/detect")
+    def detect_allergens(body: dict, user: User = Depends(current_user)):
+        """Allergeni proposti dagli ingredienti, con i dubbi da verificare (li conferma sempre una persona)."""
+        return allergmod.detect(str(body.get("ingredients") or "")[:2000])
+
+    @app.post("/api/stores/{store_id}/counter-items", status_code=201)
+    def create_counter_item(store_id: int, body: dict, user: User = Depends(current_user),
+                            session: Session = Depends(get_session)):
+        store = store_for(session, user, store_id)
+        it = CounterItem(store_id=store.id, name="")
+        try:
+            allergmod.apply(it, body)
+        except allergmod.AllergenError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        session.add(it)
+        session.flush()
+        return counter_out(it)
+
+    @app.put("/api/counter-items/{item_id}")
+    def update_counter_item(item_id: int, body: dict, user: User = Depends(current_user),
+                            session: Session = Depends(get_session)):
+        it = counter_item_for(session, user, item_id)
+        try:
+            allergmod.apply(it, body)
+        except allergmod.AllergenError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        session.flush()
+        return counter_out(it)
+
+    @app.delete("/api/counter-items/{item_id}", status_code=204)
+    def delete_counter_item(item_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        session.delete(counter_item_for(session, user, item_id))
+
+    @app.get("/api/stores/{store_id}/allergens/{what}.pdf")
+    def allergens_pdf(store_id: int, what: str, request: Request, counter: str = "", ids: str = "",
+                      user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Registro degli allergeni, cartellini per il banco, cartello informativo."""
+        store = store_for(session, user, store_id)
+        q = select(CounterItem).where(CounterItem.store_id == store.id)
+        if counter:
+            q = q.where(CounterItem.counter == counter)
+        rows = list(session.scalars(q.order_by(CounterItem.counter, CounterItem.name)))
+        if ids:
+            wanted = {int(x) for x in ids.split(",") if x.strip().isdigit()}
+            rows = [r for r in rows if r.id in wanted]
+        out = _render_tmp(state(request).settings, "allergeni", ".pdf")
+        try:
+            if what == "registro":
+                allergmod.register_pdf(store, rows, out)
+                name = "Registro_allergeni.pdf"
+            elif what == "cartellini":
+                allergmod.labels_pdf(store, rows, out)
+                name = "Cartellini_allergeni.pdf"
+            elif what == "cartello":
+                allergmod.notice_pdf(store, out)
+                name = "Cartello_allergeni.pdf"
+            else:
+                raise HTTPException(404, "Documento sconosciuto.")
+        except allergmod.AllergenError as exc:
+            out.unlink(missing_ok=True)
+            raise HTTPException(404, str(exc)) from exc
+        return FileResponse(out, media_type="application/pdf", filename=name,
                             background=StarletteTask(lambda: out.unlink(missing_ok=True)))
 
     return app

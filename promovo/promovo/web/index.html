@@ -294,6 +294,19 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .proof-row { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 12px; align-items: start; padding: 10px 0; border-top: 1px solid var(--line-2); }
 .proof-row img { width: 54px; height: 54px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); cursor: zoom-in; background: #fff; }
 .proof-row .t { font-size: 14px; } .proof-row .fx { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.crumb { margin: -4px 0 10px; }
+.svc-group h3 { margin: 22px 0 10px; font-size: 13px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); }
+.svc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.svc { text-align: left; border: 1px solid var(--line); background: var(--card); border-radius: 18px; padding: 18px; cursor: pointer; display: flex; flex-direction: column; gap: 6px; box-shadow: var(--shadow); transition: border-color .15s, transform .1s; }
+.svc:hover { border-color: #d3cab8; transform: translateY(-1px); }
+.svc .ic { width: 42px; height: 42px; border-radius: 12px; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; margin-bottom: 4px; }
+.svc b { font-size: 16px; } .svc span { font-size: 13.5px; color: var(--muted); }
+.al-checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 6px 12px; }
+.al-checks label { display: flex; gap: 8px; align-items: center; font-size: 14px; padding: 6px 8px; border-radius: 10px; border: 1px solid var(--line); cursor: pointer; }
+.al-checks label.sug { border-color: #f0c36d; background: #fffaf0; }
+.al-checks label.on { border-color: #cfe5d6; background: #f2faf4; }
+.al-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line-2); }
+.al-item:first-child { border-top: 0; }
 /* negozi (agenzia) */
 .store-card { display: flex; flex-direction: column; gap: 12px; }
 .store-head { display: flex; gap: 12px; align-items: center; }
@@ -531,6 +544,8 @@ tr:last-child td { border-bottom: 0; }
   <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-14 15-15-1 10-7 15-15 15z"/><path d="M5 19c3-4 6-7 10-9"/></symbol>
   <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4.5"/><path d="M11.2 11.8 20 3M16 7l3 3M14 9l2 2"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.6"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></symbol>
   <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
 </svg>
 
@@ -605,9 +620,21 @@ tr:last-child td { border-bottom: 0; }
 <script>
 "use strict";
 const NAV = [
-  ["home", "Panoramica", "i-home", "Home"], ["flyers", "Volantini", "i-flyer"], ["clips", "Dal banco", "i-camera"], ["rescue", "Salvaspreco", "i-leaf", "Spreco"], ["till", "Alla cassa", "i-key", "Cassa"], ["filiera", "Filiera vicina", "i-pin", "Filiera"],
+  ["home", "Panoramica", "i-home", "Home"], ["flyers", "Volantini", "i-flyer"], ["clips", "Dal banco", "i-camera"], ["servizi", "Servizi", "i-grid"],
   ["store", "Negozio", "i-store"], ["settings", "Impostazioni", "i-settings", "Opzioni"],
 ];
+// I servizi del negozio: raccolti in una pagina, ognuno con la sua schermata.
+const SERVICES = {
+  allergeni: {group: "Sicurezza e obblighi di legge", title: "Banco e allergeni", icon: "i-shield", sub: "Cartellini e registro degli allergeni dei prodotti sfusi",
+    text: "Per gastronomia, forno e banchi: scrivi gli ingredienti, Promovo propone i 14 allergeni, tu confermi. Cartellini, registro e cartello pronti da stampare."},
+  rescue: {group: "Il negozio fisico", title: "Salvaspreco", icon: "i-leaf", sub: "La merce in scadenza diventa un'offerta lampo",
+    text: "I prodotti vicini alla scadenza diventano storia, post e cartellino in 30 secondi, con il conto del cibo salvato."},
+  till: {group: "I canali del negozio", title: "Parola alla cassa", icon: "i-key", sub: "Quali canali portano clienti in negozio",
+    text: "Una parola d'ordine per ogni canale nei post; alla cassa si conta chi la dice. Sai quale canale porta gente vera."},
+  filiera: {group: "I canali del negozio", title: "Filiera vicina", icon: "i-pin", sub: "I produttori del territorio, con la distanza vera",
+    text: "I tuoi produttori con la distanza calcolata, il post «Conosci chi lo produce?», la mappa e le etichette."},
+};
+const navKey = v => SERVICES[v] ? "servizi" : v;
 const STATUS = {uploaded: "caricato", processing: "in lettura", ready: "pronto", failed: "errore"};
 const KIND = {instagram: "Instagram", facebook: "Facebook", reel: "Reel e TikTok (didascalia)", video: "Video", image: "Immagine"};
 const CATEGORIES = ["frutta e verdura","carne","pesce","salumi e formaggi","latte e latticini","uova","pane e forno","pasta e riso","dispensa","surgelati","dolci e snack","colazione","bevande","vino e alcolici","igiene casa","cura persona","infanzia","animali","altro"];
@@ -766,24 +793,28 @@ function renderNav() {
   const cs = currentStore(), ss = $("#sideStore");
   ss.classList.toggle("hidden", !cs);
   if (cs) { ss.innerHTML = `${storeBadge(cs)}<div><b>${esc(cs.name)}</b><span>${esc(cs.city || cs.address || "Negozio")}</span></div>`; ss.onclick = () => go("store"); loadImages(ss); }
-  $("#sideNav").innerHTML = NAV.map(([k, label, ic]) => `<button class="nav-btn ${S.view === k ? "on" : ""}" data-nav="${k}">${icon(ic)}<span>${label}</span></button>`).join("");
-  $("#mobileNav").innerHTML = NAV.map(([k, label, ic, short]) => `<button class="${S.view === k ? "on" : ""}" data-nav="${k}" aria-label="${label}">${icon(ic)}${short || label}</button>`).join("");
+  $("#sideNav").innerHTML = NAV.map(([k, label, ic]) => `<button class="nav-btn ${navKey(S.view) === k ? "on" : ""}" data-nav="${k}">${icon(ic)}<span>${label}</span></button>`).join("");
+  $("#mobileNav").innerHTML = NAV.map(([k, label, ic, short]) => `<button class="${navKey(S.view) === k ? "on" : ""}" data-nav="${k}" aria-label="${label}">${icon(ic)}${short || label}</button>`).join("");
   $$("[data-nav]").forEach(b => b.onclick = () => go(b.dataset.nav));
 }
 async function go(view, opts = {}) {
   S.view = view; S.opts = opts;
   renderNav();
-  const title = opts.create ? "Nuovo negozio" : (NAV.find(n => n[0] === view) || [0, "Promovo"])[1];
+  const title = opts.create ? "Nuovo negozio" : SERVICES[view] ? SERVICES[view].title : (NAV.find(n => n[0] === view) || [0, "Promovo"])[1];
   $("#pageTitle").textContent = title;
   const sub = {home: new Date().toLocaleDateString("it-IT", {weekday: "long", day: "numeric", month: "long"}), flyers: currentStore() ? currentStore().name : "",
-    clips: "Un video girato col telefono diventa un Reel", rescue: "La merce in scadenza diventa un'offerta lampo", till: "Quali canali portano clienti in negozio", filiera: "I produttori del territorio, con la distanza vera", store: currentStore() && !opts.create ? currentStore().name : "", settings: "Chiavi facoltative e informazioni"}[view] || "";
+    clips: "Un video girato col telefono diventa un Reel", rescue: "La merce in scadenza diventa un'offerta lampo", till: "Quali canali portano clienti in negozio", filiera: "I produttori del territorio, con la distanza vera", store: currentStore() && !opts.create ? currentStore().name : "", settings: "Chiavi facoltative e informazioni",
+    servizi: "Gli strumenti in più per il punto vendita"}[view] || (SERVICES[view] ? SERVICES[view].sub : "");
   $("#pageSub").textContent = sub;
   document.title = title + " · Promovo";
   window.scrollTo(0, 0);
   const el = $("#view");
   if (!S.storeId && !["store", "home", "settings"].includes(view)) { el.innerHTML = noStore(); bindNoStore(); return; }
   el.innerHTML = `<div class="card"><div class="muted">Caricamento…</div><div class="progress"><div></div></div></div>`;
-  try { await VIEWS[view](el, opts); loadImages(el); }
+  try {
+    await VIEWS[view](el, opts); loadImages(el);
+    if (SERVICES[view]) { el.insertAdjacentHTML("afterbegin", `<button class="btn ghost sm crumb" data-nav="servizi">${icon("i-back")} Tutti i servizi</button>`); $(".crumb", el).onclick = () => go("servizi"); }
+  }
   catch (e) { el.innerHTML = `<div class="card">${empty("i-alert", "Qualcosa non ha funzionato", e.message, `<button class="btn sec" id="retry">Riprova</button>`)}</div>`; $("#retry").onclick = () => go(view, opts); }
 }
 const noStore = () => `<div class="card">${empty("i-store", "Nessun negozio ancora", "Crea il primo negozio per iniziare: servono solo nome e indirizzo.", `<button class="btn" id="goStore">${icon("i-plus")} Crea negozio</button>`)}</div>`;
@@ -1561,6 +1592,89 @@ async function currentOffers() {
   const f = await api(`/api/flyers/${cur.id}`);
   return {flyer: f, offers: f.offers};
 }
+
+// ---------- pagina Servizi
+VIEWS.servizi = async el => {
+  const groups = {};
+  for (const [k, v] of Object.entries(SERVICES)) (groups[v.group] = groups[v.group] || []).push([k, v]);
+  const order = ["Sicurezza e obblighi di legge", "Il negozio fisico", "I canali del negozio"];
+  el.innerHTML = `<div class="card"><h2>${icon("i-grid")} Servizi del punto vendita</h2>
+      <p class="sub">Oltre ai contenuti del volantino, gli strumenti per il negozio: obblighi di legge, comunicazione in negozio e canali locali. Usano solo i dati del tuo negozio.</p>
+      ${order.filter(g => groups[g]).map(g => `<div class="svc-group"><h3>${esc(g)}</h3><div class="svc-grid">${groups[g].map(([k, v]) => `<button class="svc" data-svc="${k}"><span class="ic">${icon(v.icon)}</span><b>${esc(v.title)}</b><span>${esc(v.text)}</span></button>`).join("")}</div></div>`).join("")}
+    </div>`;
+  $$("[data-svc]", el).forEach(b => b.onclick = () => go(b.dataset.svc));
+};
+
+// ---------- Banco e allergeni
+VIEWS.allergeni = async el => {
+  const data = await api(`/api/stores/${S.storeId}/counter-items`);
+  const AL = data.allergens, COUNTERS = data.counters;
+  const short = Object.fromEntries(AL.map(a => [a.code, a.short]));
+  const byCounter = {};
+  data.items.forEach(i => (byCounter[i.counter] = byCounter[i.counter] || []).push(i));
+  const recheck = data.items.filter(i => i.to_recheck.length);
+  el.innerHTML = `
+    <div class="card"><h2>${icon("i-shield")} Banco e allergeni</h2>
+      <p class="sub">Per i prodotti venduti sfusi (gastronomia, forno, salumeria, pescheria) l'informazione sui 14 allergeni è obbligatoria e va data per iscritto (Reg. UE 1169/2011, D.Lgs. 231/2017). Scrivi gli ingredienti: Promovo propone gli allergeni e segnala i dubbi, ma <b>li conferma sempre una persona</b>, che firma il registro.</p>
+      <div class="toolbar"><button class="btn" id="alNew">${icon("i-plus")} Aggiungi un prodotto</button><span style="flex:1"></span>
+        ${data.items.length ? `<button class="btn sm sec" id="alReg">${icon("i-download")} Registro allergeni</button><button class="btn sm sec" id="alLab">${icon("i-download")} Cartellini per il banco</button>` : ""}
+        <button class="btn sm sec" id="alSign">${icon("i-download")} Cartello informativo</button></div>
+      ${recheck.length ? `<div style="margin-top:12px">${notice("warn", `${recheck.length} prodotti hanno negli ingredienti allergeni non segnati: ricontrollali (sono evidenziati qui sotto).`)}</div>` : ""}
+    </div>
+    ${Object.keys(COUNTERS).filter(c => byCounter[c]).map(c => `<div class="card"><h2>${esc(COUNTERS[c])} <span class="muted" style="font-weight:500;font-size:14px">${byCounter[c].length} prodotti</span></h2>
+      ${byCounter[c].map(i => `<div class="al-item"><div style="min-width:0"><b>${esc(i.name)}</b>
+        <div style="margin-top:4px">${i.allergens.map(a => `<span class="chip warn" style="margin:0 4px 4px 0">${esc(short[a])}</span>`).join("") || `<span class="chip grey">nessuno dei 14 allergeni</span>`}${i.may_contain.length ? `<span class="muted" style="font-size:13px">tracce: ${esc(i.may_contain.map(a => short[a]).join(", "))}</span>` : ""}</div>
+        ${i.to_recheck.length ? `<div class="hint" style="color:var(--warn)">${icon("i-alert")} Negli ingredienti c'è anche: ${esc(i.to_recheck.map(a => short[a]).join(", "))}. Ricontrolla.</div>` : ""}
+        <div class="muted" style="font-size:12.5px;margin-top:2px">Controllato da ${esc(i.checked_by)}${i.checked_at ? " il " + new Date(i.checked_at).toLocaleDateString("it-IT") : ""}</div></div>
+        <div class="toolbar"><button class="btn sm sec" data-al-edit="${i.id}">${icon("i-edit")} Modifica</button><button class="btn sm ghost" data-al-del="${i.id}" aria-label="Elimina">${icon("i-trash")}</button></div></div>`).join("")}</div>`).join("")
+      || `<div class="card">${empty("i-shield", "Nessun prodotto del banco", "Aggiungi i prodotti che vendi sfusi: bastano nome e ingredienti.")}</div>`}`;
+  const edit = item => {
+    const it = item || {counter: "gastronomia", name: "", ingredients: "", allergens: [], may_contain: [], checked_by: ""};
+    modal(`<h3>${item ? "Modifica il prodotto" : "Nuovo prodotto del banco"}</h3>
+      <div class="row" style="margin-top:14px"><div class="f"><label class="l" for="alName">Prodotto</label><input class="in" id="alName" maxlength="160" value="${esc(it.name)}" placeholder="es. Lasagne alla bolognese"></div>
+        <div class="f" style="flex:0 0 220px"><label class="l" for="alCounter">Banco</label><select class="in" id="alCounter">${Object.entries(COUNTERS).map(([k, l]) => `<option value="${k}" ${k === it.counter ? "selected" : ""}>${esc(l)}</option>`).join("")}</select></div></div>
+      <div style="margin-top:12px"><label class="l" for="alIng">Ingredienti (come sulla ricetta o sulla scheda del fornitore)</label><textarea class="in" id="alIng" style="min-height:90px" placeholder="es. pasta all'uovo, ragù di carne, besciamella (latte, burro, farina di grano), parmigiano">${esc(it.ingredients)}</textarea></div>
+      <div id="alDoubts" style="margin-top:8px"></div>
+      <label class="l" style="margin-top:12px">Contiene <span class="muted">(in giallo i suggerimenti di Promovo: confermali tu)</span></label>
+      <div class="al-checks" id="alChecks">${AL.map(a => `<label data-code="${a.code}"><input type="checkbox" value="${a.code}" ${it.allergens.includes(a.code) ? "checked" : ""}> ${esc(a.label)}</label>`).join("")}</div>
+      <label class="l" style="margin-top:12px">Può contenere tracce di <span class="muted">(solo se lo sai: dal laboratorio o dal fornitore)</span></label>
+      <div class="al-checks" id="alMay">${AL.map(a => `<label><input type="checkbox" value="${a.code}" ${it.may_contain.includes(a.code) ? "checked" : ""}> ${esc(a.short)}</label>`).join("")}</div>
+      <div class="row" style="margin-top:12px"><div class="f"><label class="l" for="alWho">Controllato da</label><input class="in" id="alWho" maxlength="80" value="${esc(it.checked_by)}" placeholder="nome di chi ha controllato"></div></div>
+      <div class="toolbar" style="justify-content:flex-end;margin-top:18px"><button class="btn sec" data-close>Annulla</button><button class="btn" id="alSave">Salva nel registro</button></div>`, (m, close) => {
+      const sync = () => $$("#alChecks label", m).forEach(l => l.classList.toggle("on", $("input", l).checked));
+      $$("#alChecks input", m).forEach(i => i.onchange = sync); sync();
+      let tmr = null;
+      const detect = () => { clearTimeout(tmr); tmr = setTimeout(async () => {
+        const d = await api("/api/allergens/detect", {json: {ingredients: $("#alIng", m).value}});
+        $$("#alChecks label", m).forEach(l => {
+          const sug = d.allergens.includes(l.dataset.code);
+          l.classList.toggle("sug", sug && !$("input", l).checked);
+          if (sug && !item) $("input", l).checked = true;
+        });
+        sync();
+        $("#alDoubts", m).innerHTML = d.doubts.length ? `<div class="notice warn">${icon("i-alert")}<span>Da verificare: ${esc(d.doubts.map(x => x.why).join("; "))}.</span></div>` : "";
+      }, 300); };
+      $("#alIng", m).addEventListener("input", detect);
+      if ($("#alIng", m).value) detect();
+      $("#alSave", m).onclick = () => busy($("#alSave", m), async () => {
+        const body = {name: $("#alName", m).value, counter: $("#alCounter", m).value, ingredients: $("#alIng", m).value, checked_by: $("#alWho", m).value,
+          allergens: $$("#alChecks input:checked", m).map(i => i.value), may_contain: $$("#alMay input:checked", m).map(i => i.value)};
+        if (item) await api(`/api/counter-items/${item.id}`, {method: "PUT", json: body});
+        else await api(`/api/stores/${S.storeId}/counter-items`, {json: body});
+        close(); toast("Salvato nel registro degli allergeni."); go("allergeni");
+      }, "Salvo…");
+    });
+    const mm = $("#modalRoot .modal"); if (mm) mm.classList.add("big");
+  };
+  $("#alNew").onclick = () => edit(null);
+  $$("[data-al-edit]", el).forEach(b => b.onclick = () => edit(data.items.find(i => i.id === Number(b.dataset.alEdit))));
+  $$("[data-al-del]", el).forEach(b => b.onclick = async () => {
+    if (!await confirmBox("Togliere questo prodotto?", "Sparisce dal registro e dai cartellini.", "Togli", true)) return;
+    try { await api(`/api/counter-items/${b.dataset.alDel}`, {method: "DELETE"}); toast("Tolto."); go("allergeni"); } catch (e) { toast(e.message, "err"); }
+  });
+  const dl = (id, what, name) => { const b = $(id); if (b) b.onclick = () => busy(b, () => download(`/api/stores/${S.storeId}/allergens/${what}.pdf`, name), "Preparo…"); };
+  dl("#alReg", "registro", "Registro_allergeni.pdf"); dl("#alLab", "cartellini", "Cartellini_allergeni.pdf"); dl("#alSign", "cartello", "Cartello_allergeni.pdf");
+};
 
 // ---------- Salvaspreco
 const RS_REASONS = [["scadenza", "Scade a breve"], ["maturo", "Molto maturo"], ["forno", "Forno di oggi"], ["confezione", "Confezione rovinata"], ["ultimi", "Ultimi pezzi"]];
