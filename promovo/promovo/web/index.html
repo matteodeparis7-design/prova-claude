@@ -307,6 +307,11 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .al-checks label.on { border-color: #cfe5d6; background: #f2faf4; }
 .al-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line-2); }
 .al-item:first-child { border-top: 0; }
+.nt-up { display: flex; gap: 8px; flex-wrap: wrap; }
+.nt-item { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 16px; padding: 14px 0; border-top: 1px solid var(--line-2); }
+.nt-item:first-child { border-top: 0; }
+.nt-item img { width: 150px; border-radius: 12px; border: 1px solid var(--line); cursor: zoom-in; }
+@media (max-width: 640px) { .nt-item { grid-template-columns: 1fr; } .nt-item img { width: 100%; } }
 /* negozi (agenzia) */
 .store-card { display: flex; flex-direction: column; gap: 12px; }
 .store-head { display: flex; gap: 12px; align-items: center; }
@@ -627,6 +632,8 @@ const NAV = [
 const SERVICES = {
   allergeni: {group: "Sicurezza e obblighi di legge", title: "Banco e allergeni", icon: "i-shield", sub: "Cartellini e registro degli allergeni dei prodotti sfusi",
     text: "Per gastronomia, forno e banchi: scrivi gli ingredienti, Promovo propone i 14 allergeni, tu confermi. Cartellini, registro e cartello pronti da stampare."},
+  avvisi: {group: "Il negozio fisico", title: "Avvisi di servizio", icon: "i-calendar", sub: "Orari festivi e chiusure, pronti per ogni canale",
+    text: "Orari delle feste, chiusure, lavori: li scrivi una volta e hai cartello per la porta, post, storia, stato WhatsApp, schermo e testo per Google."},
   rescue: {group: "Il negozio fisico", title: "Salvaspreco", icon: "i-leaf", sub: "La merce in scadenza diventa un'offerta lampo",
     text: "I prodotti vicini alla scadenza diventano storia, post e cartellino in 30 secondi, con il conto del cibo salvato."},
   till: {group: "I canali del negozio", title: "Parola alla cassa", icon: "i-key", sub: "Quali canali portano clienti in negozio",
@@ -1674,6 +1681,65 @@ VIEWS.allergeni = async el => {
   });
   const dl = (id, what, name) => { const b = $(id); if (b) b.onclick = () => busy(b, () => download(`/api/stores/${S.storeId}/allergens/${what}.pdf`, name), "Preparo…"); };
   dl("#alReg", "registro", "Registro_allergeni.pdf"); dl("#alLab", "cartellini", "Cartellini_allergeni.pdf"); dl("#alSign", "cartello", "Cartello_allergeni.pdf");
+};
+
+// ---------- Avvisi di servizio
+VIEWS.avvisi = async el => {
+  const data = await api(`/api/stores/${S.storeId}/notices`);
+  const today = new Date().toISOString().slice(0, 10);
+  el.innerHTML = `
+    <div class="card"><h2>${icon("i-calendar")} Avvisi di servizio</h2>
+      <p class="sub">Orari delle feste, chiusure, nuovi orari, lavori: scrivi l'avviso una volta e Promovo prepara il cartello per la porta, il post, la storia, lo stato WhatsApp, la schermata per gli schermi e gli orari speciali per la scheda Google.</p>
+      ${data.upcoming.length ? `<label class="l">Le prossime feste</label><div class="nt-up">${data.upcoming.map(u => `<button class="btn sm sec" data-up="${u.date}" data-title="${esc(u.title)}">${icon("i-plus")} ${esc(u.name)} · ${esc(u.label)}</button>`).join("")}</div>` : ""}
+      <div class="row" style="margin-top:16px">
+        <div class="f" style="flex:0 0 200px"><label class="l" for="ntKind">Tipo</label><select class="in" id="ntKind">${Object.entries(data.kinds).map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join("")}</select></div>
+        <div class="f"><label class="l" for="ntTitle">Titolo</label><input class="in" id="ntTitle" maxlength="120" placeholder="es. Orari di Natale"></div></div>
+      <div class="row" style="margin-top:12px">
+        <div class="f" style="flex:0 0 180px"><label class="l" for="ntFrom">Dal</label><input class="in" type="date" id="ntFrom" value="${today}" min="${today}"></div>
+        <div class="f" style="flex:0 0 180px"><label class="l" for="ntTo">Al</label><input class="in" type="date" id="ntTo" value="${today}" min="${today}"></div>
+        <div class="f"><label class="l" for="ntHours">Orari</label><input class="in" id="ntHours" maxlength="80" placeholder="es. 8:00 – 13:00"></div>
+        <div style="flex:0 0 auto;padding-bottom:10px"><label class="switch"><input type="checkbox" id="ntClosed"> <span>Chiuso</span></label></div></div>
+      <div style="margin-top:12px"><label class="l" for="ntMsg">Messaggio <span class="muted">(facoltativo)</span></label><input class="in" id="ntMsg" maxlength="300" placeholder="es. Il banco del pesce resta chiuso."></div>
+      ${data.stores_in_org > 1 ? `<label class="switch" style="margin-top:12px"><input type="checkbox" id="ntAll"> <span><b>Manda a tutti i ${data.stores_in_org} punti vendita</b> — ognuno riceve l'avviso con il suo nome e indirizzo</span></label>` : ""}
+      <div class="toolbar" style="margin-top:16px"><button class="btn" id="ntGo">${icon("i-spark")} Prepara l'avviso</button></div>
+    </div>
+    <div class="card"><h2>Avvisi in corso e in arrivo</h2>
+      <div>${data.items.map(n => `<div class="nt-item"><img data-src="${n.image_url}" alt="" data-zoom="${n.image_url}">
+        <div style="min-width:0"><span class="chip info">${esc(n.kind_label)}</span> <b>${esc(n.title)}</b>
+          <div class="muted" style="margin:4px 0 8px">${esc(n.when)} · ${n.closed ? "chiuso" : esc(n.hours || "")}</div>
+          <div class="toolbar">
+            <button class="btn sm" data-dl="${n.poster_url}" data-name="Avviso_porta.pdf">${icon("i-download")} Cartello per la porta</button>
+            <button class="btn sm sec" data-dl="${n.image_url}" data-name="Avviso_post.jpg">Post</button>
+            <button class="btn sm sec" data-dl="${n.story_url}" data-name="Avviso_storia.jpg">Storia</button>
+            <button class="btn sm sec" data-dl="${n.screen_url}" data-name="Avviso_schermo.jpg">Schermo</button></div>
+          <div class="toolbar" style="margin-top:8px">
+            <button class="btn sm ghost" data-copy-n="${n.id}" data-k="post">${icon("i-copy")} Testo del post</button>
+            <button class="btn sm ghost" data-copy-n="${n.id}" data-k="status">${icon("i-copy")} Stato WhatsApp</button>
+            <button class="btn sm ghost" data-copy-n="${n.id}" data-k="google">${icon("i-copy")} Orari per Google</button>
+            <span style="flex:1"></span><button class="btn sm ghost" data-del-n="${n.id}" aria-label="Elimina">${icon("i-trash")}</button></div></div></div>`).join("")
+        || empty("i-calendar", "Nessun avviso", "Quando prepari un avviso lo trovi qui, con tutti i materiali.")}</div></div>`;
+  $$("[data-up]", el).forEach(b => b.onclick = () => {
+    $("#ntKind").value = "festivo"; $("#ntTitle").value = b.dataset.title;
+    $("#ntFrom").value = b.dataset.up; $("#ntTo").value = b.dataset.up; $("#ntHours").focus();
+  });
+  $("#ntClosed").onchange = () => { $("#ntHours").disabled = $("#ntClosed").checked; };
+  $("#ntFrom").onchange = () => { if ($("#ntTo").value < $("#ntFrom").value) $("#ntTo").value = $("#ntFrom").value; };
+  $("#ntGo").onclick = () => busy($("#ntGo"), async () => {
+    const r = await api(`/api/stores/${S.storeId}/notices`, {json: {kind: $("#ntKind").value, title: $("#ntTitle").value, date_from: $("#ntFrom").value,
+      date_to: $("#ntTo").value, hours: $("#ntHours").value, closed: $("#ntClosed").checked, message: $("#ntMsg").value, all_stores: !!($("#ntAll") && $("#ntAll").checked)}});
+    toast(r.created_for > 1 ? `Avviso pronto per ${r.created_for} punti vendita.` : "Avviso pronto: scarica il cartello e pubblica.");
+    go("avvisi");
+  }, "Preparo…");
+  $$("[data-dl]", el).forEach(b => b.onclick = () => busy(b, () => download(b.dataset.dl, b.dataset.name)));
+  $$("[data-zoom]", el).forEach(i => i.onclick = () => lightbox(i.dataset.zoom));
+  $$("[data-copy-n]", el).forEach(b => b.onclick = async () => {
+    const n = data.items.find(x => x.id === Number(b.dataset.copyN));
+    try { await navigator.clipboard.writeText(n[b.dataset.k]); toast("Copiato."); } catch (e) { toast("Copia non riuscita.", "err"); }
+  });
+  $$("[data-del-n]", el).forEach(b => b.onclick = async () => {
+    if (!await confirmBox("Eliminare l'avviso?", "Spariscono anche i materiali preparati.", "Elimina", true)) return;
+    try { await api(`/api/notices/${b.dataset.delN}`, {method: "DELETE"}); go("avvisi"); } catch (e) { toast(e.message, "err"); }
+  });
 };
 
 // ---------- Salvaspreco

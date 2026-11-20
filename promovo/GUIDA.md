@@ -187,6 +187,18 @@ allergeni è obbligatoria e va data per iscritto (Reg. UE 1169/2011, D.Lgs. 231/
 
 Se cambi gli ingredienti e compare un allergene non segnato, Promovo te lo fa ricontrollare.
 
+### Avvisi di servizio (orari festivi, chiusure, lavori)
+
+**Servizi → Avvisi di servizio.** Promovo ti propone le prossime feste (c'è già tutto il calendario nazionale,
+compreso il 4 ottobre, San Francesco, festa nazionale dal 2026). Scegli la festa (o scrivi un avviso tuo), metti gli
+orari oppure «chiuso» e un messaggio facoltativo. Hai subito:
+- il **cartello A4 per la porta** e la cassa (fondo chiaro, si legge da lontano);
+- il **post** e la **storia**, la **schermata per gli schermi** del negozio;
+- il testo per lo **stato WhatsApp** e gli **orari speciali da inserire nella scheda Google**, giorno per giorno.
+
+Se l'account ha più punti vendita, il titolare può **mandare l'avviso a tutti**: ognuno lo riceve con il suo nome e
+indirizzo. La festa del patrono del comune la aggiungi tu come avviso.
+
 ### Salvaspreco: la merce in scadenza diventa un'offerta lampo
 
 Ogni negozio butta via ogni giorno qualcosa: yogurt che scadono domani, frutta molto matura, pane

@@ -276,3 +276,18 @@ class CounterItem(Base):
     checked_by: Mapped[str] = mapped_column(String(80), default="")      # chi ha controllato
     checked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class Notice(Base):
+    """Avviso di servizio del punto vendita: orari festivi, chiusure, lavori. Scritto una volta, pronto per ogni canale."""
+    __tablename__ = "notices"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    store_id: Mapped[int] = mapped_column(ForeignKey("stores.id", ondelete="CASCADE"), index=True)
+    kind: Mapped[str] = mapped_column(String(20), default="festivo")      # festivo | chiusura | orari | lavori | altro
+    title: Mapped[str] = mapped_column(String(120))
+    date_from: Mapped[date] = mapped_column(Date)
+    date_to: Mapped[date] = mapped_column(Date)
+    hours: Mapped[str] = mapped_column(String(80), default="")            # «8:00 – 13:00» oppure vuoto se chiuso
+    closed: Mapped[bool] = mapped_column(Boolean, default=False)
+    message: Mapped[str] = mapped_column(String(300), default="")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)

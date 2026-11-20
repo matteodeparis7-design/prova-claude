@@ -25,7 +25,7 @@ from ..config import Settings, get_settings
 from ..db import Database
 from ..llm import AIRefused, AIUnavailable, LLM
 from .. import keys
-from ..models import ContentPiece, CounterItem, Flyer, FlyerStatus, Job, JobStatus, Offer, Organization, Producer, Rescue, Role, Store, TillCode, User
+from ..models import ContentPiece, CounterItem, Flyer, FlyerStatus, Job, JobStatus, Notice, Offer, Organization, Producer, Rescue, Role, Store, TillCode, User
 from ..imaging import ImageError, load_logo, open_image, save_product_photo
 from ..money import discount_percent, format_eur, parse_price
 from ..security import hash_password, issue_token, revoke_token, verify_password
@@ -50,6 +50,7 @@ from ..modules import budget as budgetmod
 from ..modules import proof as proofmod
 from ..modules import accessible as accessmod
 from ..modules import allergens as allergmod
+from ..modules import notices as noticemod
 from .deps import (
     AppState, bearer_token, content_for, current_user, flyer_for, get_session, job_for, offer_for,
     require_owner, state, store_for,
@@ -2042,6 +2043,89 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
             out.unlink(missing_ok=True)
             raise HTTPException(404, str(exc)) from exc
         return FileResponse(out, media_type="application/pdf", filename=name,
+                            background=StarletteTask(lambda: out.unlink(missing_ok=True)))
+
+    # -------------------------------------------------- avvisi di servizio
+
+    def notice_for(session: Session, user: User, notice_id: int) -> Notice:
+        n = session.get(Notice, notice_id)
+        if n is None:
+            raise HTTPException(404, "Avviso non trovato.")
+        store_for(session, user, n.store_id)
+        return n
+
+    def notice_out(n: Notice) -> dict:
+        return {"id": n.id, "store_id": n.store_id, "kind": n.kind, "kind_label": noticemod.KINDS[n.kind],
+                "title": n.title, "date_from": n.date_from.isoformat(), "date_to": n.date_to.isoformat(),
+                "when": noticemod.when(n), "hours": n.hours, "closed": n.closed, "message": n.message,
+                "image_url": f"/api/notices/{n.id}/post.jpg", "story_url": f"/api/notices/{n.id}/storia.jpg",
+                "screen_url": f"/api/notices/{n.id}/schermo.jpg", "poster_url": f"/api/notices/{n.id}/cartello.pdf"}
+
+    @app.get("/api/stores/{store_id}/notices")
+    def list_notices(store_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Gli avvisi in corso e futuri del punto vendita, con le festività dei prossimi 45 giorni."""
+        store = store_for(session, user, store_id)
+        today = date.today()
+        rows = session.scalars(select(Notice).where(Notice.store_id == store.id, Notice.date_to >= today)
+                               .order_by(Notice.date_from)).all()
+        others = session.scalar(select(func.count()).select_from(Store)
+                                .where(Store.organization_id == store.organization_id)) or 1
+        return {"items": [{**notice_out(n), **noticemod.texts(store, n)} for n in rows],
+                "upcoming": noticemod.upcoming(today), "kinds": noticemod.KINDS, "stores_in_org": others}
+
+    @app.post("/api/stores/{store_id}/notices", status_code=201)
+    def create_notice(store_id: int, body: dict, user: User = Depends(current_user),
+                      session: Session = Depends(get_session)):
+        """Crea l'avviso; con all_stores=true lo crea uguale per tutti i punti vendita (la sede scrive una volta)."""
+        store = store_for(session, user, store_id)
+        try:
+            data = noticemod.validate(noticemod.NoticeIn(
+                kind=str(body.get("kind") or "festivo"), title=str(body.get("title") or ""),
+                date_from=date.fromisoformat(str(body.get("date_from"))),
+                date_to=date.fromisoformat(str(body.get("date_to") or body.get("date_from"))),
+                hours=str(body.get("hours") or ""), closed=bool(body.get("closed")),
+                message=str(body.get("message") or "")), date.today())
+        except (ValueError, TypeError) as exc:
+            raise HTTPException(400, str(exc) if isinstance(exc, noticemod.NoticeError)
+                                else "Controlla le date.") from exc
+        targets = [store]
+        if body.get("all_stores"):
+            if user.role != Role.owner:
+                raise HTTPException(403, "Solo il titolare dell'account può mandare un avviso a tutti i punti vendita.")
+            targets = list(session.scalars(select(Store).where(Store.organization_id == store.organization_id)))
+        made = []
+        for t in targets:
+            n = Notice(store_id=t.id, kind=data.kind, title=data.title, date_from=data.date_from, date_to=data.date_to,
+                       hours=data.hours, closed=data.closed, message=data.message)
+            session.add(n)
+            made.append(n)
+        session.flush()
+        mine = next(n for n in made if n.store_id == store.id)
+        return {**notice_out(mine), **noticemod.texts(store, mine), "created_for": len(made)}
+
+    @app.delete("/api/notices/{notice_id}", status_code=204)
+    def delete_notice(notice_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        session.delete(notice_for(session, user, notice_id))
+
+    @app.get("/api/notices/{notice_id}/{what}")
+    def notice_file(notice_id: int, what: str, request: Request, user: User = Depends(current_user),
+                    session: Session = Depends(get_session)):
+        n = notice_for(session, user, notice_id)
+        store = session.get(Store, n.store_id)
+        st = state(request)
+        if what == "cartello.pdf":
+            out = _render_tmp(st.settings, "avviso", ".pdf")
+            noticemod.poster_pdf(store, n, out)
+            return FileResponse(out, media_type="application/pdf", filename="Avviso_per_la_porta.pdf",
+                                background=StarletteTask(lambda: out.unlink(missing_ok=True)))
+        makers = {"post.jpg": lambda: noticemod.social_image(store, n, 1080, 1350),
+                  "storia.jpg": lambda: noticemod.social_image(store, n, 1080, 1920),
+                  "schermo.jpg": lambda: noticemod.screen_image(store, n)}
+        if what not in makers:
+            raise HTTPException(404, "File sconosciuto.")
+        out = _render_tmp(st.settings, "avviso", ".jpg")
+        makers[what]().save(out, quality=92)
+        return FileResponse(out, media_type="image/jpeg", filename=f"Avviso_{what}",
                             background=StarletteTask(lambda: out.unlink(missing_ok=True)))
 
     return app
