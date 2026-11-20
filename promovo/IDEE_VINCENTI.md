@@ -173,6 +173,54 @@ offerta con il prezzo, il prezzo al kg, le condizioni e le caselle «cartellino 
 personale lo spunta dal telefono o sulla carta; gli errori restano registrati e la sede riceve il rapporto di tutta la
 rete. Lo scopo è evitare il prezzo diverso tra scaffale e cassa, che costa reclami e sanzioni.
 
+## 2-ter. Quarta tornata: sedici servizi, tutti legali al 100%
+
+**Il criterio, definitivo.** Servizi della piattaforma, utili alla **sede delle catene**, ai **punti vendita** e ai
+**negozi indipendenti**. Usano **solo i dati del negozio stesso** (il suo volantino, i suoi prodotti, le sue
+informazioni) oppure **fonti pubbliche ufficiali**. **Mai dati di altri supermercati.** Prezzi e promozioni li
+decide il retailer.
+
+### Sicurezza e obblighi di legge (i servizi che fanno risparmiare multe)
+
+| # | Servizio | Da dove arriva | Perché serve |
+|---|---|---|---|
+| 1 | **Richiami alimentari: allerta e cartello pronto** | I sistemi di richiamo di aerei e automobili | Il Ministero della Salute pubblica i richiami (marca, prodotto, lotto, scadenza). Promovo li confronta con i prodotti del negozio e del volantino, avvisa subito, prepara il **cartello da esporre** e il messaggio per i clienti, e **toglie il prodotto da tutti i contenuti**. Per le catene: tutti i punti vendita avvisati insieme. |
+| 2 | **Cartelli e registro allergeni del banco** | I menù con gli allergeni dei ristoranti | Per gastronomia, forno e banco pronti, l'informazione sui 14 allergeni è obbligatoria (Reg. UE 1169/2011, D.Lgs. 231/2017). Il negozio scrive gli ingredienti, Promovo riconosce gli allergeni e prepara cartelli e registro, sempre aggiornati. |
+| 3 | **Archivio di conformità** | La conservazione obbligatoria dei documenti nella finanza | Ogni contenuto pubblicato resta archiviato con data, prezzi e canali: la prova pronta in caso di contestazione di un cliente o di un controllo. |
+| 4 | **Correttore del volantino** | Il controllo prima della stampa | **Fatto.** |
+
+### Il negozio fisico
+
+| # | Servizio | Da dove arriva | Perché serve |
+|---|---|---|---|
+| 5 | **Radio del punto vendita** | La radio delle grandi catene | Un audio in loop ogni settimana: annunci delle offerte del negozio, orari, «chiudiamo tra 15 minuti», con musica originale creata da Promovo. |
+| 6 | **Palinsesto degli schermi per fascia oraria** | I palinsesti della televisione | La mattina colazione e forno, a mezzogiorno pranzo veloce, la sera la cena: lo stesso schermo cambia contenuti da solo. |
+| 7 | **«Esaurito»** | Gli annunci online che si fermano quando il prodotto finisce | Il prodotto finito sparisce dai contenuti di quel negozio; la sede vede dove le promo finiscono prima. |
+| 8 | **Avvisi di servizio su tutti i canali** | Gli avvisi dei trasporti pubblici | Orari festivi, chiusure, lavori: si scrivono una volta, Promovo prepara il cartello per la porta, il post, lo stato WhatsApp, la slide per lo schermo e il testo per la scheda Google. Il calendario delle festività è già dentro. |
+| 9 | **Volantino accessibile** | Gli audiolibri | **Fatto.** |
+
+### Le persone del negozio
+
+| # | Servizio | Da dove arriva | Perché serve |
+|---|---|---|---|
+| 10 | **Kit «Lavora con noi»** | L'employer branding delle grandi aziende | La GDO fatica a trovare personale. Per ogni punto vendita: annuncio di lavoro, post, storia e locandina con QR, nello stile del negozio. |
+| 11 | **Le persone del negozio** | Le storie del personale di compagnie aeree e hotel | Tre domande al banconista (con il suo consenso scritto), e Promovo prepara post e storia. È il contenuto che piace di più ed è impossibile da copiare. |
+| 12 | **Briefing del personale** | Il briefing prima del servizio della ristorazione | Una pagina (e un audio) a settimana per cassieri e banconisti: cosa è in offerta, le condizioni, le domande dei clienti. |
+| 13 | **Pronto-promo** | Le checklist dell'aviazione | Il giro di controllo per reparto prima che parta il volantino: cartellino esposto, prezzo in cassa giusto. |
+
+### I canali del punto vendita
+
+| # | Servizio | Da dove arriva | Perché serve |
+|---|---|---|---|
+| 14 | **Scheda Google del punto vendita** | La gestione delle schede multi-sede | Post settimanali e orari sempre giusti sulla scheda di Google Maps, dove le persone cercano «supermercato vicino». |
+| 15 | **Kit WhatsApp Business** | Le risposte pronte dell'assistenza clienti | Risposte rapide della settimana («/offerte», «/orari», «/consegna») da inserire in WhatsApp Business. |
+| 16 | **Banca immagini della rete** | Le banche immagini dei grandi marchi | Ogni foto scontornata da un volantino resta disponibile per tutti i negozi della catena: niente foto rifatte due volte. |
+
+**Sui concorrenti.** Leggere un volantino cartaceo ricevuto, per uso interno, di per sé non è vietato; scaricare
+dati in automatico da siti che lo vietano nelle loro condizioni, oppure pubblicare confronti, sì può creare problemi
+(la pubblicità comparativa ha regole precise). Per stare tranquilli al 100%, il «Radar del quartiere» e i «prezzi
+medi della zona» si possono **spegnere** o togliere del tutto.
+
 ## 3. Le regole che non cambiano
 
 - Gli agenti **non inventano** caratteristiche dei prodotti: usano solo i dati del negozio.
