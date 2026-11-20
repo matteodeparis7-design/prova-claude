@@ -2,7 +2,7 @@
 import copy
 import io
 
-import pymupdf
+from promovo import pdfdoc
 import pytest
 from PIL import Image
 
@@ -90,13 +90,17 @@ def test_image_uploads_become_pdf(fmt):
 
 
 def _encrypted_pdf() -> bytes:
-    doc = pymupdf.open()
-    doc.new_page()
-    return doc.tobytes(encryption=pymupdf.PDF_ENCRYPT_AES_256, user_pw="segreto", owner_pw="segreto")
+    import io
+    from reportlab.pdfgen import canvas
+    buf = io.BytesIO()
+    c = canvas.Canvas(buf, encrypt="segreto")
+    c.drawString(50, 700, "Volantino riservato")
+    c.save()
+    return buf.getvalue()
 
 
 def _too_many_pages() -> bytes:
-    doc = pymupdf.open()
+    doc = pdfdoc.open()
     for _ in range(MAX_PAGES + 1):
         doc.new_page(width=100, height=100)
     return doc.tobytes()
@@ -133,7 +137,7 @@ def test_image_flyer_ingest_without_ai(session, store, tmp_settings):
 
 
 def test_flyer_without_offers_or_dates(session, store, tmp_settings):
-    doc = pymupdf.open()
+    doc = pdfdoc.open()
     doc.new_page().insert_text((50, 100), "Auguri di buone feste da tutto lo staff!", fontsize=20)
     flyer = ingest_flyer(session, store, doc.tobytes(), tmp_settings, None, today=TODAY)
     assert flyer.status == FlyerStatus.ready and flyer.offers == []

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from datetime import date
 
-import pymupdf
+from promovo import pdfdoc
 from fastapi.testclient import TestClient
 
 from promovo.api import create_app
@@ -88,7 +88,7 @@ def test_api_and_pdf(tmp_settings, live_pdf):
         assert rep["offers"] == 12 and rep["counts"]["err"] >= 1 and rep["findings"]
         pdf = c.get(f"/api/flyers/{f['id']}/proof.pdf", headers=h)
         assert pdf.status_code == 200 and pdf.content[:4] == b"%PDF"
-        text = "".join(p.get_text() for p in pymupdf.open(stream=pdf.content, filetype="pdf"))
+        text = "".join(p.get_text() for p in pdfdoc.open(stream=pdf.content, filetype="pdf"))
         assert "Rapporto di correzione" in text and "al kg" in text
         h2 = register(c, email="altro@test.it", org="Altra")
         assert c.get(f"/api/flyers/{f['id']}/proof", headers=h2).status_code == 404

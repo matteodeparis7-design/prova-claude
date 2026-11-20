@@ -11,7 +11,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 
-import pymupdf
+from ... import pdfdoc
 from pydantic import BaseModel, Field
 
 from ...llm import AIRefused, AIUnavailable, LLM, image_block
@@ -35,12 +35,12 @@ def ocr_available() -> bool:
     return ocr.available()
 
 
-def ocr_crop_prices(page: pymupdf.Page, bbox: list[float]) -> list[OcrPrice]:
+def ocr_crop_prices(page: pdfdoc.Page, bbox: list[float]) -> list[OcrPrice]:
     """I prezzi stampati nel ritaglio di un'offerta, con posizione e altezza (coordinate della pagina)."""
     w, h = page.rect.width, page.rect.height
     x0, y0, x1, y1 = (max(0.0, bbox[0] - 0.01), max(0.0, bbox[1] - 0.01), min(1.0, bbox[2] + 0.01),
                       min(1.0, bbox[3] + 0.01))
-    clip = pymupdf.Rect(x0 * w, y0 * h, x1 * w, y1 * h)
+    clip = pdfdoc.Rect(x0 * w, y0 * h, x1 * w, y1 * h)
     if clip.width < 4 or clip.height < 4:
         return []
     rgb = ocr.render(page, max_side=int(min(1600, max(500, 4 * max(clip.width, clip.height)))), clip=clip)
@@ -57,7 +57,7 @@ def _inside(p: OcrPrice, bbox: list[float], pad: float = 0.01) -> bool:
     return x0 - pad <= p.cx <= x1 + pad and y0 - pad <= p.cy <= y1 + pad
 
 
-def confirm_by_ocr(page: pymupdf.Page, o) -> bool:
+def confirm_by_ocr(page: pdfdoc.Page, o) -> bool:
     """Il prezzo dell'offerta compare, grande, nel suo ritaglio? (i prezzi piccoli sono al kg o barrati)"""
     found = [p for p in ocr_crop_prices(page, o.bbox) if _inside(p, o.bbox)]
     if not found:
@@ -84,16 +84,16 @@ _CHECK_SYSTEM = (
 )
 
 
-def _crop_png(page: pymupdf.Page, bbox: list[float], max_side: int = 700) -> bytes:
+def _crop_png(page: pdfdoc.Page, bbox: list[float], max_side: int = 700) -> bytes:
     w, h = page.rect.width, page.rect.height
     x0, y0, x1, y1 = bbox
-    rect = pymupdf.Rect(max(0, x0 - 0.01) * w, max(0, y0 - 0.01) * h, min(1, x1 + 0.01) * w, min(1, y1 + 0.01) * h)
+    rect = pdfdoc.Rect(max(0, x0 - 0.01) * w, max(0, y0 - 0.01) * h, min(1, x1 + 0.01) * w, min(1, y1 + 0.01) * h)
     longest = max(rect.width, rect.height) or 1
     zoom = max(1.0, min(6.0, max_side / longest))
-    return page.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom), clip=rect, alpha=False).tobytes("png")
+    return page.get_pixmap(matrix=pdfdoc.Matrix(zoom, zoom), clip=rect, alpha=False).tobytes("png")
 
 
-def crosscheck(offers: list, doc: pymupdf.Document, llm: LLM | None, pages_without_text: set[int],
+def crosscheck(offers: list, doc: pdfdoc.Document, llm: LLM | None, pages_without_text: set[int],
                already_read: bool = False) -> list[str]:
     """Conferma i prezzi delle pagine senza testo. Modifica le offerte; restituisce gli avvisi.
     already_read: le offerte vengono dalla lettura ottica, che ha già fatto la sua doppia lettura."""

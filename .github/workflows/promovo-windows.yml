@@ -41,11 +41,6 @@ jobs:
         working-directory: promovo
         run: python -c "from promovo.sample_flyer import build_sample_flyer, make_image_only; from promovo.modules.flyer.pdf import open_pdf; from promovo.modules.flyer import ocr; d = open_pdf(make_image_only(build_sample_flyer())); r = ocr.read_page(d[0], 1); print(len(r.offers), 'offerte lette'); assert len(r.offers) >= 5"
 
-      - name: Prova dal vivo la mappa dei concorrenti e il meteo (Colleferro)
-        working-directory: promovo
-        continue-on-error: true
-        run: python tools/check_nearby.py "Via Roma 1" Colleferro
-
       - name: Tutti i test, su Windows
         working-directory: promovo
         env:
@@ -148,8 +143,22 @@ jobs:
           Copy-Item "promovo\packaging\LEGGIMI.txt" "$dist\LEGGIMI.txt"
           Copy-Item "promovo\packaging\Avvia Promovo (se si chiude subito).bat" "$dist\"
           Copy-Item "promovo\GUIDA.md" "$dist\GUIDA.md"
+          Copy-Item "promovo\packaging\LICENZE_TERZE_PARTI.txt" "$dist\LICENZE_TERZE_PARTI.txt"
+          Copy-Item "promovo\CONFORMITA.md" "$dist\CONFORMITA.md"
           Compress-Archive -Path $dist -DestinationPath "Promovo_Windows.zip" -CompressionLevel Optimal
           "{0:N0} MB" -f ((Get-Item "Promovo_Windows.zip").Length / 1MB)
+
+      - name: Codice sorgente di FFmpeg (obbligo della licenza GPL per il programma ffmpeg incluso)
+        shell: pwsh
+        run: |
+          $exe = python -c "import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())"
+          $ver = (& $exe -hide_banner -version | Select-Object -First 1)
+          Write-Host $ver
+          if ($ver -match "-g([0-9a-f]{7,40})") { $ref = $Matches[1] }
+          elseif ($ver -match "version n?([0-9]+\.[0-9]+(\.[0-9]+)?)") { $ref = "n" + $Matches[1] }
+          else { throw "Versione di FFmpeg non riconosciuta: $ver" }
+          Invoke-WebRequest "https://github.com/FFmpeg/FFmpeg/archive/$ref.tar.gz" -OutFile "ffmpeg-sorgente.tar.gz"
+          "Sorgente di FFmpeg ($ref): {0:N0} MB" -f ((Get-Item "ffmpeg-sorgente.tar.gz").Length / 1MB)
 
       - name: Crea l'installazione (Promovo_Setup.exe)
         working-directory: promovo/packaging
@@ -183,6 +192,7 @@ jobs:
           path: |
             Promovo_Windows.zip
             Promovo_Setup.exe
+            ffmpeg-sorgente.tar.gz
           retention-days: 30
 
       - name: Pubblica da scaricare
@@ -195,6 +205,7 @@ jobs:
           files: |
             Promovo_Setup.exe
             Promovo_Windows.zip
+            ffmpeg-sorgente.tar.gz
           body: |
             **Consigliato: scarica Promovo_Setup.exe** e fai doppio clic: installa Promovo con l'icona sul Desktop.
             Se Windows dice "PC protetto da Windows": premi "Ulteriori informazioni" e poi "Esegui comunque".

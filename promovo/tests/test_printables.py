@@ -4,7 +4,7 @@ from __future__ import annotations
 import io
 import zipfile
 
-import pymupdf
+from promovo import pdfdoc
 from fastapi.testclient import TestClient
 
 from promovo.api import create_app
@@ -32,10 +32,10 @@ def test_unit_price_line():
 def test_tags_poster_and_calendar(session, store, sample_pdf, tmp_settings, tmp_path):
     f = ingest_flyer(session, store, sample_pdf, tmp_settings, None, today=TODAY)
     tags = pr.shelf_tags_pdf(store, f, tmp_path / "c.pdf")
-    doc = pymupdf.open(tags)
+    doc = pdfdoc.open(tags)
     assert doc.page_count == 2 and round(doc[0].rect.width) == 595          # 12 offerte, 8 per foglio A4
     pdf = pr.poster_pdf(store, f, tmp_path / "l.pdf", "A3")
-    assert round(pymupdf.open(pdf)[0].rect.height) == 1191                  # A3
+    assert round(pdfdoc.open(pdf)[0].rect.height) == 1191                  # A3
     ics = pr.plan_ics(store, [{"date": "2026-11-20", "time": "12:30", "where": "Instagram · Reel", "what": "Apre, la settimana"},
                               {"date": "2026-11-20", "time": "", "where": "Schermi", "what": "In loop"}])
     assert ics.startswith("BEGIN:VCALENDAR") and ics.count("BEGIN:VEVENT") == 2

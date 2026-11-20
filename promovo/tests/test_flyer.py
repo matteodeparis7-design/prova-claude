@@ -1,6 +1,6 @@
 from pathlib import Path
 
-import pymupdf
+from promovo import pdfdoc
 import pytest
 
 from promovo.modules.flyer.extract import AIMeta, AIPage, extract_offers, pick_featured
@@ -101,7 +101,7 @@ def test_invalid_pdf(data, msg):
 
 
 def test_image_only_page_warns():
-    doc = pymupdf.open()
+    doc = pdfdoc.open()
     doc.new_page()
     data = doc.tobytes()
     res = extract_offers(open_pdf(data), None, TODAY)

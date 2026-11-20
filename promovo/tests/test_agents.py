@@ -127,8 +127,8 @@ def test_autopilot_prepares_cutouts_and_checks_omnibus(client, live_pdf, monkeyp
 
 
 def test_autopilot_reports_unreadable_flyer(client, monkeypatch):
-    import pymupdf
-    doc = pymupdf.open()
+    from promovo import pdfdoc
+    doc = pdfdoc.open()
     doc.new_page().insert_text((50, 100), "Buone feste da tutto lo staff", fontsize=20)
     h = register(client)
     store = make_store(client, h)

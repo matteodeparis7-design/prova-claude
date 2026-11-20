@@ -8,10 +8,14 @@ from __future__ import annotations
 import io
 from dataclasses import dataclass
 
-import pymupdf
+from . import pdfdoc
 from PIL import Image, ImageDraw
 
 from .money import price_parts
+
+# Caratteri incorporati nel PDF, come nei volantini veri (Liberation Sans, licenza SIL OFL 1.1).
+_FONTS_DIR = __import__("pathlib").Path(__file__).resolve().parent / "assets" / "fonts"
+BOLD, REGULAR = str(_FONTS_DIR / "LiberationSans-Bold.ttf"), str(_FONTS_DIR / "LiberationSans-Regular.ttf")
 
 
 @dataclass
@@ -69,15 +73,17 @@ def build_sample_flyer(products: list[SampleProduct] | None = None, per_page: in
     products = products if products is not None else DEFAULT_PRODUCTS
     st = style or FlyerStyle()
     per_page = per_page or st.cols * st.rows
-    doc = pymupdf.open()
+    doc = pdfdoc.new_document()
     W, H = st.page_size
     cols, rows = st.cols, st.rows
     red = (0.84, 0.15, 0.18)
     for start in range(0, max(len(products), 1), per_page):
         page = doc.new_page(width=W, height=H)
+        page.insert_font(fontname="hebo", fontfile=BOLD)
+        page.insert_font(fontname="helv", fontfile=REGULAR)
         if st.background != (1, 1, 1):
             page.draw_rect(page.rect, color=None, fill=st.background)
-        page.draw_rect(pymupdf.Rect(0, 0, W, 90), color=None, fill=st.header)
+        page.draw_rect(pdfdoc.Rect(0, 0, W, 90), color=None, fill=st.header)
         page.insert_text((30, 50), banner, fontsize=30, fontname="hebo", color=(1, 1, 1))
         page.insert_text((30, 75), validity, fontsize=12, fontname="helv", color=(1, 1, 1))
         cell_w, cell_h = (W - 40) / cols, (H - 120) / rows
@@ -85,9 +91,9 @@ def build_sample_flyer(products: list[SampleProduct] | None = None, per_page: in
         for i, p in enumerate(products[start:start + per_page]):
             c, r = i % cols, i // cols
             x0, y0 = 20 + c * cell_w, 105 + r * cell_h
-            box = pymupdf.Rect(x0 + 5, y0 + 5, x0 + cell_w - 5, y0 + cell_h - 5)
+            box = pdfdoc.Rect(x0 + 5, y0 + 5, x0 + cell_w - 5, y0 + cell_h - 5)
             page.draw_rect(box, color=(0.8, 0.8, 0.8), fill=(1, 1, 1), width=1)
-            photo = pymupdf.Rect(box.x0 + 10 * k, box.y0 + 10 * k, box.x0 + 150 * k, box.y0 + 115 * k)
+            photo = pdfdoc.Rect(box.x0 + 10 * k, box.y0 + 10 * k, box.x0 + 150 * k, box.y0 + 115 * k)
             art = None
             if illustrated:
                 from .demo_art import product_png
@@ -99,8 +105,8 @@ def build_sample_flyer(products: list[SampleProduct] | None = None, per_page: in
             label = f"{'€ ' if st.euro_sign else ''}{euros},{cents}"
             px, py, fs = box.x0 + 160 * k, box.y0 + 80 * k, 34 * k
             if st.price_style == "badge":
-                tw = pymupdf.get_text_length(label, fontname="hebo", fontsize=fs)
-                page.draw_rect(pymupdf.Rect(px - 4 * k, py - fs * 0.85, px + tw + 4 * k, py + fs * 0.25),
+                tw = pdfdoc.Font(fontfile=BOLD).text_length(label, fontsize=fs)
+                page.draw_rect(pdfdoc.Rect(px - 4 * k, py - fs * 0.85, px + tw + 4 * k, py + fs * 0.25),
                                color=None, fill=red)
                 page.insert_text((px, py), label, fontsize=fs, fontname="hebo", color=(1, 1, 1))
             else:
@@ -124,8 +130,8 @@ def build_sample_flyer(products: list[SampleProduct] | None = None, per_page: in
 
 def make_image_only(pdf: bytes, dpi: int = 150) -> bytes:
     """Converte ogni pagina in un'immagine senza testo, come molti volantini veri."""
-    src = pymupdf.open(stream=pdf, filetype="pdf")
-    out = pymupdf.open()
+    src = pdfdoc.open(stream=pdf, filetype="pdf")
+    out = pdfdoc.new_document()
     for page in src:
         pix = page.get_pixmap(dpi=dpi, alpha=False)
         new = out.new_page(width=page.rect.width, height=page.rect.height)

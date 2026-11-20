@@ -26,5 +26,6 @@ FACOLTATIVO (si attiva dentro Promovo, pagina Impostazioni)
 Le chiavi restano solo su questo computer: non mandarle a nessuno.
 
 La guida completa e' nel file GUIDA.md (si apre anche con il Blocco note).
+Le regole di legge rispettate sono in CONFORMITA.md; le licenze dei componenti in LICENZE_TERZE_PARTI.txt.
 Se qualcosa non va: dal menu Start apri "Promovo (con messaggi di errore)",
 fai una foto della finestra nera e mandala.

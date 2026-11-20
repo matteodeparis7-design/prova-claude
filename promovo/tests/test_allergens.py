@@ -1,7 +1,7 @@
 """Banco e allergeni: proposta degli allergeni dagli ingredienti, conferma della persona, cartellini e registro."""
 from __future__ import annotations
 
-import pymupdf
+from promovo import pdfdoc
 from fastapi.testclient import TestClient
 
 from promovo.api import create_app
@@ -64,7 +64,7 @@ def test_api_flow(tmp_settings):
         assert len(lst["items"]) == 2 and len(lst["allergens"]) == 14
         reg = c.get(f"/api/stores/{s['id']}/allergens/registro.pdf", headers=h)
         assert reg.status_code == 200 and reg.content[:4] == b"%PDF"
-        assert pymupdf.open(stream=reg.content, filetype="pdf")[0].rect.width > 800      # A4 orizzontale
+        assert pdfdoc.open(stream=reg.content, filetype="pdf")[0].rect.width > 800      # A4 orizzontale
         lab = c.get(f"/api/stores/{s['id']}/allergens/cartellini.pdf?counter=forno", headers=h)
         assert lab.status_code == 200
         assert c.get(f"/api/stores/{s['id']}/allergens/cartello.pdf", headers=h).status_code == 200

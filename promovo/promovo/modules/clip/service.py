@@ -195,7 +195,13 @@ def plan_texts(store: Store, flyer: Flyer | None, analysis: Analysis, video: Pat
     """Decide cosa c'è in ogni tratto e scrive titolo e testo."""
     segs = analysis.segments
     warnings: list[str] = []
-    offers = list(flyer.offers) if flyer is not None else []
+    from ..content.writer import available
+    offers = available(flyer) if flyer is not None else []
+    from ..compliance import offer_restriction
+    if chosen is not None and offer_restriction(chosen) is not None:
+        warnings.append(f"«{chosen.name}» non si può pubblicizzare ({offer_restriction(chosen).law}): "
+                        "il video esce senza prezzo.")
+        chosen = None
     if chosen is not None:                      # il negoziante ha detto cosa c'è: vale per tutto il video
         seg_offers: list[Offer | None] = [chosen] * len(segs)
     else:

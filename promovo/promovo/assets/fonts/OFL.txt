@@ -1,4 +1,4 @@
-Caratteri inclusi (SIL Open Font License 1.1): Inter (Rasmus Andersson), Bricolage Grotesque (Ateliertriay).
+Caratteri inclusi (SIL Open Font License 1.1): Inter (Rasmus Andersson), Bricolage Grotesque (Ateliertriay), Liberation Sans (Google Corporation, Red Hat, Inc. — Reserved Font Name «Liberation»). DejaVu Sans: licenza Bitstream Vera / DejaVu (libera).
 
 Google Inc.
 

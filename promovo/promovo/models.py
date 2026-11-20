@@ -119,7 +119,7 @@ class Flyer(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     store_id: Mapped[int] = mapped_column(ForeignKey("stores.id", ondelete="CASCADE"), index=True)
     title: Mapped[str] = mapped_column(String(300), default="")
-    # Vuoto = volantino del negozio; altrimenti nome del concorrente (radar del quartiere).
+    # Colonna delle versioni vecchie (volantini dei concorrenti): non si usa più, quei volantini si cancellano all'avvio.
     competitor: Mapped[str] = mapped_column(String(120), default="")
     pdf_path: Mapped[str] = mapped_column(String(500))
     pdf_sha256: Mapped[str] = mapped_column(String(64))
@@ -263,6 +263,8 @@ class Producer(Base):
     lon: Mapped[float | None] = mapped_column(Float, nullable=True)
     km: Mapped[float | None] = mapped_column(Float, nullable=True)       # in linea d'aria dal negozio
     geo_error: Mapped[str] = mapped_column(String(200), default="")
+    # il consenso del produttore a usare nome, foto e frase nei contenuti del negozio (artt. 10 c.c. e 96 L. 633/1941)
+    consent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
 

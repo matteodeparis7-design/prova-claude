@@ -68,24 +68,4 @@ def seed_demo(db: Database, settings: Settings) -> bool:
         pdf = build_sample_flyer(validity=f"Offerte valide dal {start:%d/%m/%Y} al {end:%d/%m/%Y}",
                                  banner="SUPERMERCATO DEMO", illustrated=True)
         ingest_flyer(s, store, pdf, settings, None, title="Volantino di prova")
-        # Un concorrente immaginario, per vedere subito il radar del quartiere.
-        rival = build_sample_flyer(
-            [SampleProduct("Spaghetti", "500 g", 89, None, (230, 190, 90)),
-             SampleProduct("Passata di pomodoro", "700 g", 89, None, (200, 40, 40)),
-             SampleProduct("Caffè macinato", "500 g", 449, None, (90, 60, 40)),
-             SampleProduct("Olio extravergine di oliva", "750 ml", 599, None, (120, 150, 40)),
-             SampleProduct("Biscotti frollini", "350 g", 149, None, (210, 160, 90)),
-             SampleProduct("Salmone affumicato", "100 g", 329, None, (240, 140, 100))],
-            validity=f"Offerte valide dal {start:%d/%m/%Y} al {end:%d/%m/%Y}", banner="CONCORRENTE")
-        from .modules.flyer.service import create_flyer, process_flyer
-        rival_old = build_sample_flyer(
-            [SampleProduct("Spaghetti", "500 g", 85, None, (230, 190, 90)),
-             SampleProduct("Caffè macinato", "500 g", 469, None, (90, 60, 40)),
-             SampleProduct("Biscotti frollini", "350 g", 159, None, (210, 160, 90)),
-             SampleProduct("Salmone affumicato", "100 g", 359, None, (240, 140, 100))],
-            validity=f"Offerte valide dal {p0:%d/%m/%Y} al {e0:%d/%m/%Y}", banner="CONCORRENTE")
-        process_flyer(s, create_flyer(s, store, rival_old, settings, title="Volantino Market Esempio (precedente)",
-                                      competitor="Market Esempio (concorrente di prova)"), settings, None)
-        process_flyer(s, create_flyer(s, store, rival, settings, title="Volantino Market Esempio",
-                                      competitor="Market Esempio (concorrente di prova)"), settings, None)
     return True

@@ -107,7 +107,8 @@ def spec_offers(flyer: Flyer, fmt: str, limit: int | None = None) -> list[Offer]
     mai quelle segnate «esaurito»."""
     limit = limit or MAX_OFFERS[fmt]
     if fmt == "landscape":
-        return [o for o in flyer.offers if o.sold_out_at is None][:limit]
+        from ..content.writer import available
+        return available(flyer)[:limit]
     return featured_offers(flyer, limit)
 
 

@@ -86,28 +86,6 @@ def test_api_omnibus_and_fix(tmp_settings, live_pdf):
         assert x["offer_id"] not in {y["offer_id"] for y in r2["findings"]}
         rep = c.get(f"/api/flyers/{new['id']}/report.pdf", headers=h)
         assert rep.status_code == 200
-        import pymupdf
-        text = " ".join(" ".join(p.get_text() for p in pymupdf.open(stream=rep.content, filetype="pdf")).split())
+        from promovo import pdfdoc
+        text = " ".join(" ".join(p.get_text() for p in pdfdoc.open(stream=rep.content, filetype="pdf")).split())
         assert "Controllo automatico con il volantino precedente del negozio" in text
-
-
-def test_zone_average_prices(session, store):
-    """Memoria dei prezzi della zona: tutti i volantini dei concorrenti delle ultime settimane."""
-    from promovo.modules.radar.service import zone_prices
-    own = _flyer(session, store, date(2026, 11, 13), date(2026, 11, 22), [
-        ("Spaghetti di grano duro", "500 g", 79, None), ("Caffè macinato", "250 g", 299, None)])
-    _flyer(session, store, date(2026, 11, 1), date(2026, 11, 10), [("Spaghetti grano duro", "500 g", 89, None),
-                                                                  ("Caffè macinato", "250 g", 249, None)], competitor="Market Uno")
-    _flyer(session, store, date(2026, 11, 13), date(2026, 11, 22), [("Spaghetti di grano duro", "1 kg", 198, None)],
-           competitor="Market Uno")                                       # 1,98 al kg = 0,99 per 500 g
-    _flyer(session, store, date(2026, 11, 10), date(2026, 11, 20), [("Spaghetti", "500 g", 85, None)], competitor="Discount Due")
-    _flyer(session, store, date(2026, 6, 1), date(2026, 6, 10), [("Spaghetti di grano duro", "500 g", 10, None)],
-           competitor="Vecchio")                                          # troppo vecchio: non conta
-    z = zone_prices(session, store, own)
-    assert z["flyers_used"] == 3 and z["competitors"] == 2
-    sp = next(p for p in z["products"] if p["offer"].startswith("Spaghetti"))
-    assert sp["observations"] == 3 and sp["competitors"] == 2 and sp["cheapest"]
-    assert sp["min_unit"] == "€ 1,70 al kg" and sp["max_unit"] == "€ 1,98 al kg" and sp["vs_avg_pct"] > 10
-    caf = next(p for p in z["products"] if p["offer"].startswith("Caffè"))
-    assert caf["vs_avg_pct"] < -2 and not caf["cheapest"]
-    assert z["below_avg"] == 1 and z["above_avg"] == 1

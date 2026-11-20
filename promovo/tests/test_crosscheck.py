@@ -1,7 +1,7 @@
 """Volantini fatti solo di immagini: OCR, doppia lettura IA e lettura in background."""
 import copy
 
-import pymupdf
+from promovo import pdfdoc
 import pytest
 
 from promovo.models import FlyerStatus
@@ -15,8 +15,8 @@ from conftest import TODAY
 
 def image_only(pdf: bytes) -> bytes:
     """Trasforma ogni pagina in un'immagine: niente testo, come molti volantini veri."""
-    src = pymupdf.open(stream=pdf, filetype="pdf")
-    out = pymupdf.open()
+    src = pdfdoc.open(stream=pdf, filetype="pdf")
+    out = pdfdoc.open()
     for page in src:
         pix = page.get_pixmap(dpi=150, alpha=False)
         new = out.new_page(width=page.rect.width, height=page.rect.height)

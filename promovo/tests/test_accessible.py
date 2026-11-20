@@ -5,7 +5,7 @@ import math
 import struct
 import wave
 
-import pymupdf
+from promovo import pdfdoc
 from fastapi.testclient import TestClient
 
 from promovo.api import create_app
@@ -40,7 +40,7 @@ def test_script_is_spoken_and_true(session, store, sample_pdf, tmp_settings):
 def test_large_print_pdf(session, store, sample_pdf, tmp_settings, tmp_path):
     f = ingest_flyer(session, store, sample_pdf, tmp_settings, None, today=TODAY)
     pdf = accessible.large_print_pdf(store, f, tmp_path / "g.pdf")
-    doc = pymupdf.open(pdf)
+    doc = pdfdoc.open(pdf)
     assert doc.page_count == 3 and round(doc[0].rect.width) == 595      # 12 offerte, 5 per pagina, A4
 
 

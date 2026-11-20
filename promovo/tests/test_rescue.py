@@ -4,7 +4,7 @@ from __future__ import annotations
 import io
 from datetime import date, timedelta
 
-import pymupdf
+from promovo import pdfdoc
 import pytest
 from fastapi.testclient import TestClient
 from PIL import Image
@@ -85,7 +85,7 @@ def test_create_texts_close_and_month(tmp_path):
         assert rs.impact_image(st, st_).size == (1080, 1350)
         assert "abbiamo salvato 10 kg" in rs.impact_text(st, st_)
         pdf = rs.tags_pdf(st, [y, b], tmp_path / "t.pdf", TODAY)
-        assert pymupdf.open(pdf).page_count == 1
+        assert pdfdoc.open(pdf).page_count == 1
 
 
 def test_validation_errors(tmp_path):
@@ -159,7 +159,7 @@ def test_api_flow(tmp_settings, live_pdf):
         # il report della settimana racconta anche il Salvaspreco del mese del volantino
         if (f.get("valid_from") or today.isoformat())[:7] == today.isoformat()[:7]:
             rep = c.get(f"/api/flyers/{f['id']}/report.pdf", headers=h)
-            text = "".join(pg.get_text() for pg in pymupdf.open(stream=rep.content, filetype="pdf"))
+            text = "".join(pg.get_text() for pg in pdfdoc.open(stream=rep.content, filetype="pdf"))
             assert "Salvaspreco di" in text and "kg di cibo salvato" in text
         # un altro account non vede niente
         h2 = register(c, email="altro@test.it", org="Altra")

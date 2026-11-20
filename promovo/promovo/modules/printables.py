@@ -16,7 +16,7 @@ from PIL import Image, ImageDraw
 from ..models import Flyer, Offer, Store
 from ..money import format_eur
 from .content.service import featured_offers, validity_text
-from .radar.service import per_unit
+from .products import per_unit
 from .video.render import (INK, brand_background, discount_burst, fit_text, font, hex_rgb, logo_image, old_price_line,
                            paste, price_block, qr_image, readable_on_paper, soft_background, text_layer, text_on)
 from .video.service import store_contacts, to_video_offer
@@ -92,7 +92,8 @@ def shelf_tag(store: Store, flyer: Flyer, o: Offer, w: int, h: int) -> Image.Ima
 
 def shelf_tags_pdf(store: Store, flyer: Flyer, out: Path, offers: list[Offer] | None = None) -> Path:
     """Cartellini di tutte le offerte, 8 per foglio A4, con le linee di taglio tratteggiate."""
-    offers = list(offers if offers is not None else flyer.offers)
+    from .compliance import advertisable
+    offers = advertisable(offers if offers is not None else flyer.offers)
     W, H = A4
     cols, rows = 2, 4
     tw, th = W // cols, H // rows

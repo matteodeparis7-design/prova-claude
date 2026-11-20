@@ -116,6 +116,10 @@ def validate(d: NoticeIn, today: date) -> NoticeIn:
         raise NoticeError("Un avviso può durare al massimo tre mesi.")
     if not d.closed and not d.hours and d.kind in ("festivo", "orari"):
         raise NoticeError("Scrivi gli orari (es. «8:00 – 13:00») oppure segna «chiuso».")
+    from .compliance import text_issues
+    problems = text_issues(f"{d.title} {d.message}")
+    if problems:
+        raise NoticeError("Da correggere: " + "; ".join(problems) + ".")
     return d
 
 

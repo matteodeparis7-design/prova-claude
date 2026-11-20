@@ -19,7 +19,7 @@ from sqlalchemy.orm import Session
 
 from ..models import Flyer, FlyerStatus, Offer, Store
 from ..money import discount_percent, format_eur
-from .radar.service import per_unit, quantity, similarity
+from .products import per_unit, quantity, similarity
 
 WINDOW_DAYS = 30
 

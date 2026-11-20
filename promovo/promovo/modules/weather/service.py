@@ -125,7 +125,7 @@ Fetch = Callable[[str, dict], dict]
 
 def http_json(url: str, params: dict, timeout: float = 8.0) -> dict:
     if url == GEO_URL:              # regola di Nominatim: una richiesta al secondo, condivisa con la mappa
-        from ..radar.nearby import nominatim_turn
+        from ..geo import nominatim_turn
         nominatim_turn()
     full = url + "?" + urllib.parse.urlencode(params)
     req = urllib.request.Request(full, headers={"User-Agent": USER_AGENT, "Accept-Language": "it"})
@@ -272,7 +272,8 @@ def weekly_weather(store: Store, flyer: Flyer | None, fetch: Fetch | None = None
     today = today or date.today()
     start = max(today, flyer.valid_from) if flyer is not None and flyer.valid_from else today
     end = flyer.valid_to if flyer is not None and flyer.valid_to else today + timedelta(days=6)
-    offers = list(flyer.offers) if flyer is not None else []
+    from ..content.writer import available
+    offers = available(flyer) if flyer is not None else []
     adv = advice(days, offers, start, end)
     return {
         "available": True, "place": place, "source": ATTRIBUTION,

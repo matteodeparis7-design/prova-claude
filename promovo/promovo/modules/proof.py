@@ -28,7 +28,7 @@ from sqlalchemy.orm import Session
 
 from ..models import Flyer, FlyerStatus, Offer, Store
 from ..money import format_eur
-from .radar.service import per_unit, quantity, similarity
+from .products import per_unit, quantity, similarity
 
 SEVERITY = {"err": "Da correggere", "warn": "Da controllare", "info": "Nota"}
 LOOSE = {"frutta e verdura", "carne", "pesce", "salumi e formaggi", "pane e forno"}   # spesso venduti a peso
@@ -76,11 +76,11 @@ def _box_text(doc, o: Offer) -> str | None:
         return None
     if not page.get_text("text").strip():
         return None
-    import pymupdf
+    from .. import pdfdoc
     w, h = page.rect.width, page.rect.height
     x0, y0, x1, y1 = o.bbox
     pad = 0.01
-    rect = pymupdf.Rect(max(0, x0 - pad) * w, max(0, y0 - pad) * h, min(1, x1 + pad) * w, min(1, y1 + pad) * h)
+    rect = pdfdoc.Rect(max(0, x0 - pad) * w, max(0, y0 - pad) * h, min(1, x1 + pad) * w, min(1, y1 + pad) * h)
     return page.get_text("text", clip=rect)
 
 
@@ -104,9 +104,9 @@ def check(session: Session, store: Store, flyer: Flyer, today: date | None = Non
     offers = list(flyer.offers)
     doc = None
     try:
-        import pymupdf
+        from .. import pdfdoc
         if flyer.pdf_path and Path(flyer.pdf_path).exists():
-            doc = pymupdf.open(flyer.pdf_path)
+            doc = pdfdoc.open(flyer.pdf_path)
     except Exception:
         doc = None
     text_pages = 0
@@ -146,6 +146,13 @@ def check(session: Session, store: Store, flyer: Flyer, today: date | None = Non
             if o.price_cents <= 0:
                 add("err", "prezzo_zero", "Prezzo a zero o mancante.", "Scrivi il prezzo.")
                 continue
+            from .compliance import TOBACCO, GAMBLING, offer_restriction
+            r = offer_restriction(o)
+            if r is not None:
+                add("err" if r in (TOBACCO, GAMBLING) else "warn", "prodotto_vietato",
+                    f"«{lab}»: {r.label}, {r.law}.",
+                    "Togli il prodotto dal volantino." if r in (TOBACCO, GAMBLING)
+                    else "Valuta di toglierlo dal volantino: Promovo lo esclude dai contenuti promozionali.")
             if o.price_cents > 50000:
                 add("warn", "prezzo_alto", f"Prezzo molto alto: {format_eur(o.price_cents)}.", "Controlla le cifre.")
             if not o.price_verified:
@@ -238,14 +245,13 @@ def check(session: Session, store: Store, flyer: Flyer, today: date | None = Non
 # ----------------------------------------------------------------- rapporto PDF per il grafico
 
 def report_pdf(store: Store, flyer: Flyer, rep: dict, out: Path) -> Path:
-    import pymupdf
-    from .report import _font
-    doc = pymupdf.open()
-    W, H = pymupdf.paper_size("a4")
+    from .. import pdfdoc
+    from .report import FONT_FILES, FONTS
+    doc = pdfdoc.new_document()
+    W, H = pdfdoc.paper_size("a4")
     M = 46
     INK, MUTED = (0.08, 0.11, 0.18), (0.42, 0.45, 0.52)
     colors = {"err": (0.78, 0.16, 0.12), "warn": (0.72, 0.45, 0.0), "info": (0.2, 0.4, 0.7)}
-    reg, bold = _font("pr"), _font("pb")
     offers = {o.id: o for o in flyer.offers}
     page = None
     y = 0.0
@@ -253,13 +259,13 @@ def report_pdf(store: Store, flyer: Flyer, rep: dict, out: Path) -> Path:
     def new_page():
         nonlocal page, y
         page = doc.new_page(width=W, height=H)
-        page.insert_font(fontname="r", fontbuffer=reg.buffer)
-        page.insert_font(fontname="b", fontbuffer=bold.buffer)
+        page.insert_font(fontname="r", fontfile=str(FONTS / FONT_FILES["pr"]))
+        page.insert_font(fontname="b", fontfile=str(FONTS / FONT_FILES["pb"]))
         y = M
 
     def text(x, s, size=10, b=False, color=INK, width=W - 2 * M):
         nonlocal y
-        rect = pymupdf.Rect(x, y, x + width, y + 400)
+        rect = pdfdoc.Rect(x, y, x + width, y + 400)
         left = page.insert_textbox(rect, s, fontname="b" if b else "r", fontsize=size, color=color,
                                    lineheight=1.25)
         return 400 - left if left >= 0 else size * 1.3
@@ -284,9 +290,9 @@ def report_pdf(store: Store, flyer: Flyer, rep: dict, out: Path) -> Path:
         top = y
         x = M
         if thumb:
-            page.insert_image(pymupdf.Rect(M, top, M + 72, top + 72), filename=thumb, keep_proportion=True)
+            page.insert_image(pdfdoc.Rect(M, top, M + 72, top + 72), filename=thumb, keep_proportion=True)
             x = M + 84
-        page.draw_rect(pymupdf.Rect(x, top + 2, x + 6, top + 14), color=colors[f["severity"]],
+        page.draw_rect(pdfdoc.Rect(x, top + 2, x + 6, top + 14), color=colors[f["severity"]],
                        fill=colors[f["severity"]])
         y = top
         head = f"{f['severity_label']}" + (f" · pagina {f['page']}" if f.get("page") else "") + \

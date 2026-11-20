@@ -216,10 +216,8 @@ decide il retailer.
 | 15 | **Kit WhatsApp Business** | Le risposte pronte dell'assistenza clienti | Risposte rapide della settimana («/offerte», «/orari», «/consegna») da inserire in WhatsApp Business. |
 | 16 | **Banca immagini della rete** | Le banche immagini dei grandi marchi | Ogni foto scontornata da un volantino resta disponibile per tutti i negozi della catena: niente foto rifatte due volte. |
 
-**Sui concorrenti.** Leggere un volantino cartaceo ricevuto, per uso interno, di per sé non è vietato; scaricare
-dati in automatico da siti che lo vietano nelle loro condizioni, oppure pubblicare confronti, sì può creare problemi
-(la pubblicità comparativa ha regole precise). Per stare tranquilli al 100%, il «Radar del quartiere» e i «prezzi
-medi della zona» si possono **spegnere** o togliere del tutto.
+**Sui concorrenti.** Il «Radar del quartiere» e i «prezzi medi della zona» sono stati **tolti** (novembre 2026):
+Promovo non usa volantini, prezzi o dati di altri supermercati. I dettagli sono in **CONFORMITA.md**.
 
 ## 3. Le regole che non cambiano
 

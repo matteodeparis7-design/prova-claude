@@ -19,7 +19,7 @@ import threading
 from dataclasses import dataclass, field
 
 import numpy as np
-import pymupdf
+from ... import pdfdoc
 from PIL import Image
 
 from ...money import discount_percent, parse_price
@@ -92,10 +92,10 @@ class Line:
         return (self.y0 + self.y1) / 2
 
 
-def render(page: pymupdf.Page, max_side: int = PAGE_MAX_SIDE, clip: pymupdf.Rect | None = None) -> np.ndarray:
+def render(page: pdfdoc.Page, max_side: int = PAGE_MAX_SIDE, clip: pdfdoc.Rect | None = None) -> np.ndarray:
     rect = clip or page.rect
     zoom = max_side / max(rect.width, rect.height)
-    pix = page.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom), clip=rect, alpha=False)
+    pix = page.get_pixmap(matrix=pdfdoc.Matrix(zoom, zoom), clip=rect, alpha=False)
     return np.frombuffer(pix.samples, np.uint8).reshape(pix.height, pix.width, pix.n)[..., :3].copy()
 
 
@@ -155,7 +155,7 @@ def merge_lines(first: list[Line], second: list[Line]) -> list[Line]:
     return out
 
 
-def read_lines(page: pymupdf.Page) -> tuple[list[Line], np.ndarray]:
+def read_lines(page: pdfdoc.Page) -> tuple[list[Line], np.ndarray]:
     """Le righe di testo della pagina (lette a due risoluzioni), con coordinate normalizzate 0..1."""
     rgb = render(page)
     lines = _lines_from(rgb)
@@ -642,12 +642,12 @@ def _make_offer(p: Line, group: list[Line], lines: list[Line], small: list[Line]
 
 # ------------------------------------------------------------------ seconda lettura del prezzo
 
-def reread_once(page: pymupdf.Page, line: Line, factor: float, trim_left: float = 0.0) -> int | None:
+def reread_once(page: pdfdoc.Page, line: Line, factor: float, trim_left: float = 0.0) -> int | None:
     """Rilegge il solo prezzo su un ritaglio ingrandito (trim_left: quanto togliere a sinistra)."""
     w, h = page.rect.width, page.rect.height
     pad_x, pad_y = 0.35 * (line.x1 - line.x0), 0.35 * (line.y1 - line.y0)
     left = line.x0 + trim_left * (line.x1 - line.x0) - (0 if trim_left else pad_x)
-    clip = pymupdf.Rect(max(0, left) * w, max(0, line.y0 - pad_y) * h,
+    clip = pdfdoc.Rect(max(0, left) * w, max(0, line.y0 - pad_y) * h,
                         min(1, line.x1 + pad_x) * w, min(1, line.y1 + pad_y) * h)
     rgb = render(page, max_side=int(max(160, min(1100, factor * max(clip.width, clip.height)))), clip=clip)
     # altezza attesa del prezzo nel ritaglio: un prezzo molto più piccolo (barrato, al kg) non vale
@@ -919,7 +919,7 @@ class PageReading:
     lines: list[Line]
 
 
-def look_closer(page: pymupdf.Page, lines: list[Line], offers: list[OcrOffer]) -> list[Line]:
+def look_closer(page: pdfdoc.Page, lines: list[Line], offers: list[OcrOffer]) -> list[Line]:
     """Per i nomi rimasti senza prezzo: ingrandisce la zona intorno e cerca il prezzo lì."""
     main_h = [o.price_line.h for o in offers]
     name_h = [g.h for o in offers for g in o.lines]
@@ -940,7 +940,7 @@ def look_closer(page: pymupdf.Page, lines: list[Line], offers: list[OcrOffer]) -
     for n in names:
         x0, x1 = max(0.0, n.x0 - 1.8 * max(n.w, 2 * ph)), min(1.0, n.x1 + 0.6 * max(n.w, ph))
         y0, y1 = max(0.0, n.y0 - 0.5 * ph), min(1.0, n.y1 + 2.2 * ph)
-        clip = pymupdf.Rect(x0 * w, y0 * h, x1 * w, y1 * h)
+        clip = pdfdoc.Rect(x0 * w, y0 * h, x1 * w, y1 * h)
         rgb = render(page, max_side=int(max(400, min(1400, 900 * (x1 - x0) / max(1e-6, ph * 2)))), clip=clip)
         for ln in _lines_from(rgb, x0, y0, x1 - x0, y1 - y0):
             classify(ln)
@@ -963,7 +963,7 @@ def _euro_as_digit(line: Line) -> int | None:
     return int(euros[1:]) * 100 + line.cents % 100
 
 
-def reread_price(page: pymupdf.Page, line: Line) -> tuple[bool, int | None]:
+def reread_price(page: pdfdoc.Page, line: Line) -> tuple[bool, int | None]:
     """Nuove letture del prezzo su ritagli ingranditi. Restituisce (confermato, lettura alternativa)."""
     a = reread_once(page, line, 6)
     if a == line.cents:
@@ -997,7 +997,7 @@ def measure_busy(lines: list[Line], rgb: np.ndarray) -> None:
         ln.busy = float(min(1.0, vals.std() / 60)) if vals.size > 10 else 0.0
 
 
-def read_page(page: pymupdf.Page, page_no: int, confirm: bool = True) -> PageReading:
+def read_page(page: pdfdoc.Page, page_no: int, confirm: bool = True) -> PageReading:
     lines, rgb = read_lines(page)
     _CELLS.value = Cells(rgb)
     measure_busy(lines, rgb)

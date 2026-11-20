@@ -3,14 +3,14 @@ from __future__ import annotations
 
 import io
 
-import pymupdf
+from promovo import pdfdoc
 from fastapi.testclient import TestClient
 from PIL import Image
 
 from promovo.api import create_app
 from promovo.db import Database
 from promovo.modules import filiera
-from promovo.modules.radar import nearby as nb
+from promovo.modules import geo as nb
 
 from conftest import FakeLLM, make_store, register, upload
 
@@ -32,6 +32,9 @@ def test_clean_and_text():
         filiera.clean({"name": "X", "town": "Paliano", "what": "formaggi"})
     with pytest.raises(filiera.FilieraError, match="comune"):
         filiera.clean({"name": "Caseificio", "town": "", "what": "formaggi"})
+    with pytest.raises(filiera.FilieraError, match="consenso"):
+        filiera.clean({"name": "Caseificio Rossi", "town": "Paliano", "what": "formaggi"})
+    assert filiera.clean({"name": "Caseificio Rossi", "town": "Paliano", "what": "formaggi", "consent": "true"})
     assert filiera.km_text(0.4) == "a meno di 1 km da qui" and filiera.km_text(12.3) == "a circa 12 km da qui"
 
 
@@ -48,7 +51,7 @@ def test_api_flow(tmp_settings, live_pdf):
         buf = io.BytesIO()
         Image.new("RGB", (900, 700), (180, 150, 110)).save(buf, "JPEG")
         r = c.post(f"/api/stores/{s['id']}/producers", headers=h,
-                   data={"name": "Caseificio Rossi", "town": "Paliano", "what": "mozzarella e ricotta",
+                   data={"consent": "true", "name": "Caseificio Rossi", "town": "Paliano", "what": "mozzarella e ricotta",
                          "story": "Lavorano il latte delle loro mucche dal 1962", "keywords": word},
                    files={"photo": ("rossi.jpg", buf.getvalue(), "image/jpeg")})
         assert r.status_code == 201, r.text
@@ -58,16 +61,16 @@ def test_api_flow(tmp_settings, live_pdf):
         assert "Caseificio Rossi, a Paliano, a circa" in a["text"] and "dal 1962" in a["text"]
         assert "in offerta" in a["text"] and "#Paliano" in a["text"] and "km 0" not in a["text"].lower()
         b = c.post(f"/api/stores/{s['id']}/producers", headers=h,
-                   data={"name": "Orto Bianchi", "town": "Segni", "what": "verdura di stagione"}).json()
+                   data={"consent": "true", "name": "Orto Bianchi", "town": "Segni", "what": "verdura di stagione"}).json()
         assert b["km"] is not None and not b["offers"]
         # comune che non esiste: salvato con l'errore da mostrare, nessuna distanza inventata
         x = c.post(f"/api/stores/{s['id']}/producers", headers=h,
-                   data={"name": "Apicoltura Verdi", "town": "Paesinventato", "what": "miele"}).json()
+                   data={"consent": "true", "name": "Apicoltura Verdi", "town": "Paesinventato", "what": "miele"}).json()
         assert x["km"] is None and "Paesinventato" in x["geo_error"]
         assert c.get(f"/api/stores/{s['id']}/producers", headers=h).json()["week"] != x["id"]    # mai senza distanza
         # correzione del comune: ricalcola
         x = c.put(f"/api/producers/{x['id']}", headers=h,
-                  data={"name": "Apicoltura Verdi", "town": "Anagni", "what": "miele"}).json()
+                  data={"consent": "true", "name": "Apicoltura Verdi", "town": "Anagni", "what": "miele"}).json()
         assert x["km"] is not None and x["geo_error"] == ""
         lst = c.get(f"/api/stores/{s['id']}/producers", headers=h).json()
         assert [p["name"] for p in lst["items"]][0] == "Orto Bianchi"             # dal più vicino
@@ -78,7 +81,7 @@ def test_api_flow(tmp_settings, live_pdf):
         mp = c.get(f"/api/stores/{s['id']}/producers-map.jpg", headers=h)
         assert mp.status_code == 200 and Image.open(io.BytesIO(mp.content)).size == (1080, 1350)
         pdf = c.get(f"/api/stores/{s['id']}/producers-labels", headers=h)
-        assert pdf.status_code == 200 and pymupdf.open(stream=pdf.content, filetype="pdf").page_count == 1
+        assert pdf.status_code == 200 and pdfdoc.open(stream=pdf.content, filetype="pdf").page_count == 1
         # privacy tra account
         h2 = register(c, email="altro@test.it", org="Altra")
         assert c.get(a["post_url"], headers=h2).status_code == 404

@@ -17,7 +17,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import date
 
-import pymupdf
+from ... import pdfdoc
 from pydantic import BaseModel, Field
 
 from ...llm import AIRefused, AIUnavailable, LLM, image_block
@@ -154,7 +154,7 @@ def _ai_offer_to_raw(page_no: int, o: AIOffer) -> RawOffer | None:
     )
 
 
-def extract_with_ai(doc: pymupdf.Document, llm: LLM, today: date | None = None) -> ExtractionResult:
+def extract_with_ai(doc: pdfdoc.Document, llm: LLM, today: date | None = None) -> ExtractionResult:
     today = today or date.today()
     offers: list[RawOffer] = []
     warnings: list[str] = []
@@ -326,7 +326,7 @@ def _from_ocr(o, page_no: int) -> RawOffer:
     )
 
 
-def extract_heuristic(doc: pymupdf.Document, today: date | None = None,
+def extract_heuristic(doc: pdfdoc.Document, today: date | None = None,
                       progress: Callable[[int, int], None] | None = None) -> ExtractionResult:
     """Lettura senza IA esterna: testo del PDF, oppure lettura ottica per le pagine fatte di immagini."""
     from . import ocr
@@ -383,7 +383,7 @@ def extract_heuristic(doc: pymupdf.Document, today: date | None = None,
 
 # ------------------------------------------------------------------ verifica e pulizia
 
-def verify_and_clean(result: ExtractionResult, doc: pymupdf.Document, llm: LLM | None = None) -> ExtractionResult:
+def verify_and_clean(result: ExtractionResult, doc: pdfdoc.Document, llm: LLM | None = None) -> ExtractionResult:
     """Agente Controllo: verifica ogni prezzo contro il testo del PDF e rimuove i doppioni."""
     page_prices: dict[int, set[int]] = {}
     page_percents: dict[int, set[int]] = {}
@@ -437,7 +437,7 @@ def pick_featured(offers: list[RawOffer], limit: int = 6) -> set[int]:
     return set(ranked[:limit])
 
 
-def extract_offers(doc: pymupdf.Document, llm: LLM | None, today: date | None = None,
+def extract_offers(doc: pdfdoc.Document, llm: LLM | None, today: date | None = None,
                    progress: Callable[[int, int], None] | None = None) -> ExtractionResult:
     """Con l'IA facoltativa se è attiva; altrimenti (o se non risponde) lavorano gli agenti da soli."""
     if llm is not None:

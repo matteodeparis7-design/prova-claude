@@ -10,6 +10,10 @@ datas += collect_data_files("certifi")              # certificati per le conness
 datas += collect_data_files("segno")
 datas += collect_data_files("rapidocr")             # lettura ottica: configurazione e modelli (scaricati prima)
 datas += collect_data_files("faster_whisper")       # sottotitoli: rilevatore della voce (VAD)
+datas += collect_data_files("pypdfium2_raw")        # PDF: il motore pdfium (licenze Apache-2.0 / BSD-3)
+datas += collect_data_files("pypdfium2")
+datas += collect_data_files("pdfminer")             # PDF: tabelle dei caratteri per leggere il testo (MIT)
+datas += collect_data_files("reportlab")            # PDF: misure dei caratteri standard (BSD)
 
 hidden = []
 hidden += collect_submodules("promovo")             # alcuni moduli si caricano solo quando servono
@@ -17,12 +21,13 @@ hidden += collect_submodules("uvicorn")
 hidden += collect_submodules("rapidocr")
 hidden += collect_submodules("faster_whisper")
 hidden += ["ctranslate2", "av", "tokenizers"]
+hidden += collect_submodules("pdfplumber") + collect_submodules("pdfminer") + ["pypdfium2", "pypdfium2_raw"]
 hidden += ["email_validator", "multipart", "python_multipart"]
 
 a = Analysis(
     ["promovo_app.py"],
     pathex=[".."],
-    binaries=collect_dynamic_libs("ctranslate2"),
+    binaries=collect_dynamic_libs("ctranslate2") + collect_dynamic_libs("pypdfium2_raw"),
     datas=datas,
     hiddenimports=hidden,
     excludes=["tkinter", "matplotlib", "IPython", "pytest"],

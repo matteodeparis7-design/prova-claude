@@ -27,7 +27,7 @@ from sqlalchemy.orm import Session
 
 from ..models import Offer, Rescue, Store
 from ..money import format_eur
-from .radar.service import quantity
+from .products import quantity
 from .video.render import (INK, WHITE, brand_background, discount_burst, fit_text, font, hex_rgb, logo_image, mix,
                            old_price_line, pill, price_block, product_visual, readable_on_paper, scaled,
                            soft_background, text_layer, text_on)
@@ -422,6 +422,13 @@ def validate(data: RescueIn, today: date) -> list[str]:
         raise RescueError("Indica quanti pezzi (o chili) ci sono.")
     if data.price_cents <= 0:
         raise RescueError("Scrivi il prezzo normale del prodotto.")
+    from .compliance import restriction, text_issues
+    r = restriction(data.name, data.description)
+    if r is not None:
+        raise RescueError(f"Questo prodotto non si può promuovere: {r.label}, {r.law}.")
+    problems = text_issues(f"{data.name} {data.description}")
+    if problems:
+        raise RescueError("Da correggere: " + "; ".join(problems) + ".")
     if data.rescue_price_cents is not None and not (0 < data.rescue_price_cents < data.price_cents):
         raise RescueError("Il prezzo Salvaspreco deve essere più basso del prezzo normale.")
     if data.until and data.until < today:

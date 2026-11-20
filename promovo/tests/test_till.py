@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from datetime import date, timedelta
 
-import pymupdf
+from promovo import pdfdoc
 from fastapi.testclient import TestClient
 
 from promovo.api import create_app
@@ -66,12 +66,12 @@ def test_full_flow(tmp_settings, live_pdf):
         assert any("Reel e TikTok" in a for a in st["advice"])
         # nel report per il cliente
         rep = c.get(f"/api/flyers/{f['id']}/report.pdf", headers=h)
-        rtext = "".join(pg.get_text() for pg in pymupdf.open(stream=rep.content, filetype="pdf"))
+        rtext = "".join(pg.get_text() for pg in pdfdoc.open(stream=rep.content, filetype="pdf"))
         assert "Parola alla cassa" in rtext and "12 clienti" in rtext
         # foglio per la cassa
         pdf = c.get(f"/api/stores/{s['id']}/till-sheet", headers=h)
         assert pdf.status_code == 200
-        text = pymupdf.open(stream=pdf.content, filetype="pdf")[0].get_text()
+        text = pdfdoc.open(stream=pdf.content, filetype="pdf")[0].get_text()
         assert pdf.content[:4] == b"%PDF"
         # spenta: la riga sparisce dai testi
         c.put(f"/api/stores/{s['id']}/till", headers=h, json={"on": False})

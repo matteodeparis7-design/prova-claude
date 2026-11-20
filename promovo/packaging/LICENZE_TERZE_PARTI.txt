@@ -1,0 +1,53 @@
+PROMOVO - COMPONENTI DI TERZE PARTI E LORO LICENZE
+===================================================
+
+Promovo usa componenti open source. Tutti hanno licenze che ne permettono l'uso e la vendita dentro un
+programma commerciale, alle condizioni scritte qui sotto. Questo file va distribuito insieme al programma.
+
+COMPONENTI CON OBBLIGHI PARTICOLARI
+-----------------------------------
+FFmpeg (programma separato «ffmpeg.exe», usato per video e audio)
+  Licenza: GNU General Public License versione 3 (GPLv3), https://www.gnu.org/licenses/gpl-3.0.html
+  Promovo lo usa come programma separato, lanciandolo dall'esterno (non è unito al codice di Promovo).
+  Il codice sorgente della versione inclusa è pubblicato insieme a ogni versione del programma, nel file
+  «ffmpeg-sorgente.tar.gz» della pagina di download. Chi lo desidera può chiederne una copia per tre anni
+  dalla distribuzione. Sito: https://ffmpeg.org
+
+Librerie FFmpeg incluse in PyAV (lettura dei video per i sottotitoli)
+  Licenza: GNU Lesser General Public License (LGPL) 2.1 o successiva. Sono librerie separate e sostituibili.
+
+CARATTERI
+---------
+Inter (Rasmus Andersson), Bricolage Grotesque (Ateliertriay), Liberation Sans (Google, Red Hat):
+  SIL Open Font License 1.1. DejaVu Sans: licenza Bitstream Vera / DejaVu (libera).
+  Testo completo nella cartella dei caratteri (OFL.txt).
+
+MODELLI DI INTELLIGENZA ARTIFICIALE CHE GIRANO SUL COMPUTER
+-----------------------------------------------------------
+PP-OCR (PaddleOCR, lettura ottica, tramite RapidOCR)   Apache-2.0
+BiRefNet (scontorno dei prodotti)                      MIT
+Whisper / faster-whisper (sottotitoli)                 MIT
+
+DATI DA SERVIZI PUBBLICI
+------------------------
+Mappa e posizioni: © OpenStreetMap contributors, licenza ODbL (https://www.openstreetmap.org/copyright).
+  Promovo usa Nominatim rispettando la sua politica d'uso (una richiesta al secondo, risultati salvati).
+Previsioni del tempo: MET Norway (api.met.no), licenze CC BY 4.0 e NLOD; Promovo cita la fonte.
+
+LIBRERIE PYTHON (con licenza permissiva: MIT, BSD, Apache-2.0, ISC, PSF, MPL-2.0, Unlicense)
+--------------------------------------------------------------------------------------------
+FastAPI (MIT) · Starlette (BSD-3) · Uvicorn (BSD-3) · SQLAlchemy (MIT) · Pydantic (MIT) · email-validator
+(Unlicense) · python-multipart (Apache-2.0) · pypdfium2 e PDFium (BSD-3 / Apache-2.0) · pdfplumber (MIT) ·
+pdfminer.six (MIT) · ReportLab (BSD) · Pillow (MIT-CMU) · NumPy (BSD-3) · imageio-ffmpeg (BSD-2) · tzdata
+(Apache-2.0) · segno (BSD) · httpx (BSD-3) · anthropic (Apache-2.0) · RapidOCR (Apache-2.0) · ONNX Runtime
+(MIT) · faster-whisper (MIT) · CTranslate2 (MIT) · tokenizers (Apache-2.0) · PyAV (BSD-3) · huggingface-hub
+(Apache-2.0) · OpenCV (Apache-2.0) · Shapely (BSD-3) · pyclipper (MIT) · OmegaConf (BSD) · certifi (MPL-2.0) ·
+charset-normalizer (MIT) · cryptography (Apache-2.0 o BSD-3) · h11 (MIT) · AnyIO (MIT) · sniffio (MIT o
+Apache-2.0) · idna (BSD-3) · typing-extensions (PSF-2.0) · PyYAML (MIT) · tqdm (MPL-2.0 e MIT) · colorlog (MIT)
+· requests (Apache-2.0) · urllib3 (MIT) · six (MIT) · flatbuffers (Apache-2.0) · protobuf (BSD-3) · packaging
+(Apache-2.0 o BSD-2) · filelock (MIT) · fsspec (BSD-3) · httpcore (BSD-3) · distro (Apache-2.0) · jiter (MIT) ·
+annotated-types (MIT) · click (BSD-3) · python-dotenv (BSD-3) · dnspython (ISC) · Python (PSF License).
+
+Il programma per Windows è costruito con PyInstaller (GPL con eccezione per il programma avviatore: permette
+di distribuire programmi commerciali) e l'installazione con Inno Setup (licenza propria, uso commerciale
+permesso).

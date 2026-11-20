@@ -4,7 +4,7 @@ from __future__ import annotations
 import io
 from datetime import date, timedelta
 
-import pymupdf
+from promovo import pdfdoc
 import pytest
 from fastapi.testclient import TestClient
 from PIL import Image
@@ -67,7 +67,7 @@ def test_api_and_chain(tmp_settings):
             img = c.get(url, headers=h)
             assert img.status_code == 200 and Image.open(io.BytesIO(img.content)).size == size
         pdf = c.get(n["poster_url"], headers=h)
-        assert pdf.status_code == 200 and round(pymupdf.open(stream=pdf.content, filetype="pdf")[0].rect.width) == 595
+        assert pdf.status_code == 200 and round(pdfdoc.open(stream=pdf.content, filetype="pdf")[0].rect.width) == 595
         h2 = register(c, email="altro@test.it", org="Altra")
         assert c.get(n["image_url"], headers=h2).status_code == 404
         assert c.delete(f"/api/notices/{n['id']}", headers=h).status_code == 204

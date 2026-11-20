@@ -35,6 +35,8 @@ Source: "..\dist\Promovo\*"; DestDir: "{app}"; Excludes: "Dati Promovo\*"; Flags
 Source: "LEGGIMI.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Avvia Promovo (se si chiude subito).bat"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\GUIDA.md"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\CONFORMITA.md"; DestDir: "{app}"; Flags: ignoreversion
+Source: "LICENZE_TERZE_PARTI.txt"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\Promovo"; Filename: "{app}\Promovo.exe"; WorkingDir: "{app}"

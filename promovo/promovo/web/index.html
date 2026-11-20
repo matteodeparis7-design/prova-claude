@@ -208,24 +208,11 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .howto b { display: block; font-size: 15px; } .howto span { color: var(--muted); font-size: 13.5px; }
 @media (max-width: 920px) { .hero { padding: 22px 18px; } .hero-grid { grid-template-columns: 1fr; } .hero h2 { font-size: 25px; } .fan { height: 220px; } .fan .tile { width: 130px; } .fan .tile.t1 { width: 144px; } .howto { grid-template-columns: 1fr 1fr; gap: 18px; } .howto > div::after { display: none; } .auth-main { grid-template-columns: 1fr; } .showcase { display: none; } }
 
-.kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-@media (max-width: 920px) { .kpis { grid-template-columns: 1fr 1fr; } }
-.near-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
-.near-list { margin-top: 10px; display: grid; gap: 6px; }
-.near { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 14px; background: #fcfbf8; flex-wrap: wrap; }
-.near .pin { flex: none; width: 30px; height: 30px; border-radius: 50% 50% 50% 4px; transform: rotate(-45deg); background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; font-weight: 750; font-size: 12.5px; font-family: var(--display); }
-.near .pin span { transform: rotate(45deg); }
-.near .t { flex: 1; min-width: 200px; } .near .t b { display: block; font-size: 14.5px; } .near .t span { font-size: 13px; color: var(--muted); }
-.comp-add { margin-top: 18px; padding: 16px; border-radius: 16px; background: #faf7f1; border: 1px solid var(--line); }
-.comp-add h3 { margin: 0; }
+.kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 920px) { .kpis { grid-template-columns: 1fr; } }
 .omni { margin-top: 12px; border: 1px solid #f0c36d; background: #fffaf0; border-radius: 14px; padding: 14px; }
 .omni-head { display: flex; gap: 10px; color: var(--warn); } .omni-head span { display: block; color: var(--text); font-size: 13.5px; margin-top: 2px; }
 .omni-row { display: flex; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid #f4e3bd; flex-wrap: wrap; } .omni-row .t { flex: 1; min-width: 240px; font-size: 14px; }
-.zone { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
-.zone h3 { margin: 0; font-size: 15.5px; }
-.zrow { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, .9fr) minmax(0, 1.3fr) 190px; gap: 12px; padding: 9px 4px; border-top: 1px solid var(--line-2); font-size: 14px; align-items: start; }
-.zrow .u { display: block; font-size: 12px; color: var(--muted); } .zrow .zv { text-align: right; }
-@media (max-width: 700px) { .zrow { grid-template-columns: 1fr 1fr; } .zrow .zp, .zrow .zv { grid-column: 1 / -1; text-align: left; } }
 .rev-head { margin-top: 12px; padding: 10px 14px; border-radius: 12px; font-weight: 600; font-size: 14.5px; }
 .rev-head.ok { background: var(--ok-soft); color: var(--ok); } .rev-head.warn { background: var(--warn-soft); color: var(--warn); } .rev-head.err { background: var(--err-soft); color: var(--err); }
 .rev-list { margin-top: 8px; } .rev-row { display: grid; grid-template-columns: 110px minmax(0, 220px) 1fr; gap: 10px; align-items: baseline; padding: 7px 2px; border-top: 1px solid var(--line-2); font-size: 13.5px; }
@@ -364,8 +351,6 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .rec audio { height: 36px; max-width: 100%; }
 @keyframes blink { 50% { opacity: .25; } }
 .cap-box { white-space: pre-wrap; font-size: 13.5px; background: var(--line-2); border-radius: 10px; padding: 10px 12px; max-height: 120px; overflow: auto; }
-.radar-sum { display: flex; gap: 10px; flex-wrap: wrap; margin: 4px 0 14px; }
-.radar-sum .chip { font-size: 13.5px; padding: 6px 12px; }
 .rlist { display: grid; }
 .rrow { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1.3fr) 170px; gap: 12px; align-items: start; padding: 11px 4px; border-top: 1px solid var(--line-2); font-size: 14px; }
 .rrow .u { display: block; font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
@@ -553,7 +538,6 @@ tr:last-child td { border-bottom: 0; }
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
   <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L17 6h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.6"/></symbol>
   <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M8.5 21h7"/></symbol>
-  <symbol id="i-radar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><path d="M12 12l6-6"/><circle cx="12" cy="12" r="1.2"/></symbol>
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
   <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
   <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-14 15-15-1 10-7 15-15 15z"/><path d="M5 19c3-4 6-7 10-9"/></symbol>
@@ -869,7 +853,6 @@ const TEAM = [
   ["i-image", "Grafico", "Copertina, storia, idea e post delle offerte"],
   ["i-video", "Montatore", "Reel 9:16, video 1:1 e per gli schermi 16:9"],
   ["i-camera", "Regista dal banco", "Dal video del telefono a un Reel vero"],
-  ["i-radar", "Analista prezzi", "Trova i concorrenti della zona e confronta i prezzi"],
   ["i-sun", "Meteorologo", "Cosa spingere con caldo, freddo o pioggia"],
   ["i-calendar", "Pianificatore", "Calendario dei post e cosa filmare"],
   ["i-leaf", "Salvaspreco", "La merce in scadenza diventa un'offerta lampo"],
@@ -888,10 +871,7 @@ VIEWS.home = async el => {
   const many = ov.length > 1 || (S.me && S.me.organization.kind === "agency");
   const mine = ov.find(x => x.store.id === S.storeId) || ov[0];
   const f = mine.last_flyer;
-  const [content, comps] = await Promise.all([
-    f ? api(`/api/flyers/${f.id}/content`).catch(() => []) : [],
-    api(`/api/stores/${mine.store.id}/competitors`).catch(() => []),
-  ]);
+  const content = f ? await api(`/api/flyers/${f.id}/content`).catch(() => []) : [];
   const imgs = content.filter(c => c.kind === "image");
   const order = ["idea", "cover", "story"];
   imgs.sort((a, b) => ((order.indexOf(a.meta.format) + 1) || 9) - ((order.indexOf(b.meta.format) + 1) || 9));
@@ -923,12 +903,12 @@ VIEWS.home = async el => {
 
   const verified = f ? f.offer_count - f.unverified_count : 0;
   const kpis = f ? [["i-flyer", "Offerte lette", f.offer_count, ""], ["i-check", "Prezzi confermati", verified, f.offer_count ? `/${f.offer_count}` : ""],
-    ["i-spark", "Materiali pronti", mine.content_total, ""], ["i-radar", "Concorrenti nel radar", comps.length, ""]] : [];
+    ["i-spark", "Materiali pronti", mine.content_total, ""]] : [];
   const did = {
     "Lettore": f ? plural(f.offer_count, "offerta letta", "offerte lette") : "", "Controllo": f ? plural(verified, "prezzo confermato", "prezzi confermati") : "",
     "Stratega e copywriter": ig && ig.meta.angle ? `Idea: ${IDEA_NAME[ig.meta.angle] || "le offerte"}` : "",
     "Grafico": imgs.length ? plural(imgs.length, "grafica pronta", "grafiche pronte") : "", "Montatore": vids.length ? plural(vids.length, "video pronto", "video pronti") : "",
-    "Analista prezzi": comps.length ? plural(comps.length, "concorrente nel radar", "concorrenti nel radar") : "", "Meteorologo": mine.store.city ? `Previsioni per ${mine.store.city}` : "",
+    "Meteorologo": mine.store.city ? `Previsioni per ${mine.store.city}` : "",
     "Pianificatore": plan ? "Piano della settimana pronto" : "",
   };
   el.innerHTML = `
@@ -1014,74 +994,7 @@ VIEWS.flyers = async (el, opts) => {
   file.onchange = () => { if (file.files[0]) uploadFlyer(file.files[0]); };
   $("#autoPilot").onchange = e => { S.autopilot = e.target.checked; };
   bindFlyerItems(el);
-  competitorsCard(el);
 };
-
-const meters = m => m < 1000 ? `${Math.round(m / 10) * 10} m` : `${(m / 1000).toFixed(1).replace(".", ",")} km`;
-async function competitorsCard(el) {
-  const box = document.createElement("div");
-  box.className = "card"; box.id = "compCard";
-  el.appendChild(box);
-  const comps = await api(`/api/stores/${S.storeId}/competitors`);
-  const city = (currentStore() || {}).city || "";
-  box.innerHTML = `<h2>${icon("i-radar")} Concorrenti e loro volantini</h2>
-    <p class="sub">Promovo trova i supermercati veri intorno al negozio. I loro prezzi li legge dai loro volantini: carichi il file, una foto o il link al PDF dal sito dell'insegna. Così il confronto è vero, prodotto per prodotto. I nomi dei concorrenti restano solo tuoi: non compaiono mai nei contenuti pubblicati.</p>
-    <div class="near-head"><h3 style="margin:0">Nella zona${city ? ` di ${esc(city)}` : ""}</h3>
-      <div class="seg" id="radius">${[1000, 3000, 5000, 10000].map(r => `<button data-r="${r}" class="${(S.radius || 3000) === r ? "on" : ""}">${r / 1000} km</button>`).join("")}</div></div>
-    <div id="nearList" class="near-list"><div class="muted">Cerco i supermercati sulla mappa…</div><div class="progress"><div></div></div></div>
-    <div class="comp-add" id="compAdd">
-      <h3>Aggiungi un volantino al radar</h3>
-      <div class="row" style="align-items:flex-end;margin-top:10px">
-        <div class="f"><label class="l" for="compName">Concorrente</label><input class="in" id="compName" placeholder="es. Market Uno via Latina"></div>
-        <div><button class="btn sec" id="compBtn">${icon("i-upload")} Carica file o foto</button><input type="file" id="compFile" accept="application/pdf,image/jpeg,image/png,image/webp" class="hidden"></div>
-      </div>
-      <div class="row" style="align-items:flex-end;margin-top:10px">
-        <div class="f"><label class="l" for="compUrl">oppure il link al volantino (PDF o immagine)</label><input class="in" id="compUrl" placeholder="https://… /volantino.pdf" inputmode="url"></div>
-        <div><button class="btn sec" id="compLinkBtn">${icon("i-download")} Scarica dal link</button></div>
-      </div>
-      <div id="compState"></div>
-    </div>
-    <div class="stack tight" style="margin-top:14px">${comps.map(c => `<div class="flyer-item" style="cursor:default">${c.status === "ready" ? `<div class="thumb"><img data-src="/api/flyers/${c.id}/thumb" alt=""></div>` : `<div class="ic">${icon("i-radar")}</div>`}
-      <div class="t"><b>${esc(c.competitor)}</b><span class="muted">${c.status === "processing" ? "in lettura…" : c.status === "failed" ? "lettura non riuscita" : `${c.valid_from ? `dal ${itDate(c.valid_from)} al ${itDate(c.valid_to)} · ` : ""}${c.offer_count} offerte lette`}</span></div>
-      <span class="chip ok">${icon("i-radar")} nel radar</span>
-      <button class="btn ghost sm" data-cdelf="${c.id}" aria-label="Elimina">${icon("i-trash")}</button></div>`).join("") || `<div class="muted">Nessun volantino dei concorrenti ancora: scegline uno dalla zona qui sopra.</div>`}</div>`;
-  loadImages(box);
-  const nameIn = $("#compName", box), fileIn = $("#compFile", box), btn = $("#compBtn", box), linkBtn = $("#compLinkBtn", box);
-  const needName = () => { if (nameIn.value.trim().length < 2) { toast("Scrivi prima il nome del concorrente.", "err"); nameIn.focus(); return true; } return false; };
-  const follow = async f => {
-    while (f.status === "processing") { $("#compState", box).innerHTML = notice("info", "Lettura del volantino del concorrente…", "i-radar"); await sleep(2500); f = await api(`/api/flyers/${f.id}`); }
-    if (f.status === "failed") throw new Error("Lettura non riuscita: " + f.error);
-    toast(`${f.offers.length} offerte lette dal volantino di ${f.competitor}.`);
-    box.remove(); competitorsCard(el);
-  };
-  btn.onclick = () => { if (!needName()) fileIn.click(); };
-  fileIn.onchange = () => busy(btn, async () => {
-    const fd = new FormData(); fd.append("file", fileIn.files[0]); fd.append("competitor", nameIn.value.trim());
-    await follow(await api(`/api/stores/${S.storeId}/competitors`, {body: fd}));
-  }, "Lettura…");
-  linkBtn.onclick = () => { if (needName()) return; const url = $("#compUrl", box).value.trim();
-    if (!/^https?:\/\//i.test(url)) { toast("Incolla un link completo che inizia con https://", "err"); return; }
-    busy(linkBtn, async () => follow(await api(`/api/stores/${S.storeId}/competitors/link`, {json: {url, competitor: nameIn.value.trim()}})), "Scarico…"); };
-  $$("[data-cdelf]", box).forEach(b => b.onclick = async () => { if (await confirmBox("Eliminare questo volantino?", "Non verrà più usato per i confronti.", "Elimina", true)) busy(b, async () => { await api(`/api/flyers/${b.dataset.cdelf}`, {method: "DELETE"}); box.remove(); competitorsCard(el); }); });
-  $$("#radius button", box).forEach(b => b.onclick = () => { S.radius = Number(b.dataset.r); $$("#radius button", box).forEach(x => x.classList.toggle("on", x === b)); nearList(); });
-  const inRadar = p => { const k = (p.brand || p.name).toLowerCase(); return comps.some(c => c.competitor.toLowerCase().includes(k)); };
-  async function nearList() {
-    const list = $("#nearList", box);
-    list.innerHTML = `<div class="muted">Cerco i supermercati sulla mappa…</div><div class="progress"><div></div></div>`;
-    let r;
-    try { r = await api(`/api/stores/${S.storeId}/nearby?radius=${S.radius || 3000}`); }
-    catch (e) { r = {ok: false, reason: e.message, places: []}; }
-    if (!r.ok) { list.innerHTML = notice("warn", `Non riesco a vedere la mappa ora: ${r.reason}. I server pubblici della mappa a volte sono occupati: riprova tra poco. Intanto puoi aggiungere un concorrente qui sotto.`) + `<div><button class="btn sec sm" id="nearRetry">${icon("i-arrow")} Riprova</button></div>`; $("#nearRetry", list).onclick = nearList; return; }
-    if (!r.places.length) { list.innerHTML = `<div class="muted">Nessun supermercato segnato sulla mappa entro ${(S.radius || 3000) / 1000} km.${(S.radius || 3000) < 10000 ? " Nei paesi piccoli prova 10 km." : ""} Puoi anche aggiungerlo a mano qui sotto.</div>`; return; }
-    list.innerHTML = r.places.slice(0, 12).map((p, i) => `<div class="near">
-        <div class="pin"><span>${i + 1}</span></div>
-        <div class="t"><b>${esc(p.label)}</b><span>${esc(p.kind)} · ${meters(p.distance_m)}${p.address ? ` · ${esc(p.address)}` : ""}</span></div>
-        ${inRadar(p) ? `<span class="chip ok">${icon("i-check")} nel radar</span>` : `<a class="btn ghost sm" href="${esc(p.search)}" target="_blank" rel="noopener">Trova il volantino ${icon("i-arrow")}</a><button class="btn sec sm" data-pick="${esc(p.label)}">${icon("i-plus")} Aggiungi</button>`}
-      </div>`).join("") + `<div class="hint" style="margin-top:8px">${esc(r.attribution)}${r.saved_at ? ` · elenco salvato il ${esc(r.saved_at)}` : ""} · posizione del negozio ricavata ${r.center.precision === "indirizzo" ? "dall'indirizzo" : "dal centro della città (aggiungi l'indirizzo nella pagina Negozio per più precisione)"}.</div>`;
-    $$("[data-pick]", list).forEach(b => b.onclick = () => { nameIn.value = b.dataset.pick; $("#compAdd", box).scrollIntoView({behavior: "smooth", block: "center"}); $("#compUrl", box).focus(); toast("Ora carica il suo volantino: file, foto o link."); });
-  }
-  nearList();
-}
 
 async function weatherCard(box, f) {
   let w;
@@ -1106,46 +1019,6 @@ async function weatherCard(box, f) {
     toast("Messi in evidenza: il piano della settimana li metterà nelle storie di quel giorno.");
     go("flyers", {flyer: f.id, step: "make"});
   }));
-}
-
-function zoneBlock(z) {
-  if (!z || !z.products || !z.products.length) return "";
-  const pos = x => x.cheapest && x.competitors > 1 ? `<span class="chip ok">${icon("i-check")} il più basso della zona</span>`
-    : x.vs_avg_pct >= 2 ? `<span class="chip ok">${Math.round(x.vs_avg_pct)}% sotto la media</span>`
-    : x.vs_avg_pct <= -2 ? `<span class="chip warn">${Math.round(-x.vs_avg_pct)}% sopra la media</span>` : `<span class="chip grey">in media</span>`;
-  return `<div class="zone"><h3>Prezzi medi della zona <span class="muted" style="font-weight:500">· ${z.flyers_used} ${z.flyers_used === 1 ? "volantino" : "volantini"} di ${z.competitors} ${z.competitors === 1 ? "concorrente" : "concorrenti"}, ultime ${z.weeks} settimane</span></h3>
-    <p class="hint" style="margin:2px 0 8px">Più volantini dei concorrenti carichi nel tempo, più la media è affidabile. Si confronta il prezzo al kg, al litro o al pezzo.</p>
-    <div class="ztab">${z.products.slice(0, 10).map(x => `<div class="zrow"><div class="zp"><b>${esc(x.offer)}</b><span class="u">${esc(x.description || "")}</span></div>
-      <div><span class="u">Tu</span><b>${esc(x.own_unit)}</b></div>
-      <div><span class="u">Media zona${x.observations > 1 ? ` (${x.observations} prezzi)` : ""}</span><b>${esc(x.avg_unit)}</b>${x.observations > 1 ? `<span class="u">da ${esc(x.min_unit)} a ${esc(x.max_unit)}</span>` : ""}</div>
-      <div class="zv">${pos(x)}</div></div>`).join("")}</div></div>`;
-}
-
-async function radarCard(box, f) {
-  let r;
-  try { r = await api(`/api/flyers/${f.id}/radar`); } catch (e) { box.remove(); return; }
-  if (!r.competitors.length) {
-    box.innerHTML = `<div class="toolbar"><div style="flex:1"><h2>${icon("i-radar")} Radar del quartiere</h2><p class="sub" style="margin:0">Carica i volantini dei concorrenti vicini: Promovo ti dirà dove sei più conveniente, da mettere in evidenza nei video.</p></div>
-      <button class="btn sec sm" id="toComp">${icon("i-plus")} Aggiungi un concorrente</button></div>`;
-    $("#toComp", box).onclick = () => go("flyers").then(() => { const c = $("#compCard"); if (c) c.scrollIntoView({behavior: "smooth"}); });
-    return;
-  }
-  const s = r.summary;
-  const todo = r.suggest_feature.filter(id => !(f.offers.find(o => o.id === id) || {}).is_featured);
-  const verdict = v => v === "meno caro" ? `<span class="chip ok">${icon("i-check")} più conveniente</span>` : v === "più caro" ? `<span class="chip warn">${icon("i-alert")} più caro</span>` : `<span class="chip grey">uguale</span>`;
-  box.innerHTML = `<div class="toolbar"><div style="flex:1"><h2>${icon("i-radar")} Radar del quartiere</h2>
-      <p class="sub" style="margin:0">Confronto con ${r.competitors.map(c => esc(c.name)).join(", ")}. Formati diversi? Si confronta il prezzo al kg o al litro.</p></div>
-      ${todo.length ? `<button class="btn sm" id="radarFeat">${icon("i-star")} ${todo.length === 1 ? "Metti in evidenza quello dove vinci" : `Metti in evidenza i ${todo.length} dove vinci`}</button>` : r.suggest_feature.length ? `<span class="chip ok">${icon("i-check")} già in evidenza</span>` : ""}</div>
-    ${s.compared ? `<div class="radar-sum"><span class="chip ok">più conveniente su ${s.cheaper}</span><span class="chip warn">più caro su ${s.dearer}</span><span class="chip grey">uguale su ${s.same}</span><span class="muted" style="align-self:center">${s.compared} prodotti in comune</span></div>
-    <div class="rlist">${r.rows.slice(0, 12).map(x => `<div class="rrow">
-        <div class="rp"><b>${esc(x.offer)}</b>${x.is_featured ? ` <span class="chip gold" style="font-size:11px;padding:2px 8px">in evidenza</span>` : ""}<span class="u">${esc(x.description || "")}</span></div>
-        <div class="rc"><span class="u">Tu</span><b>${esc(x.price)}</b><span class="u">${esc(x.own_unit)}</span></div>
-        <div class="rc"><span class="u" title="${esc(x.competitor_offer)}">${esc(x.competitor)}</span><b>${esc(x.competitor_price)}</b><span class="u">${esc(x.competitor_unit)}</span></div>
-        <div class="rv">${verdict(x.verdict)}${x.verdict !== "uguale" ? `<span class="u">${Math.abs(x.diff_pct).toFixed(0)}% ${x.diff_pct > 0 ? "in meno" : "in più"}</span>` : ""}${x.verdict === "più caro" && x.is_featured ? `<span class="u" style="color:#8a5a00">è in evidenza: valuta se spingerne un altro</span>` : ""}</div></div>`).join("")}
-    </div>` : `<p class="muted">Nessun prodotto in comune con i volantini dei concorrenti di questo periodo.</p>`}
-    ${zoneBlock(r.zone)}`;
-  const fb = $("#radarFeat", box);
-  if (fb) fb.onclick = () => busy(fb, async () => { await api(`/api/flyers/${f.id}/feature`, {json: {offer_ids: todo}}); toast("Messi in evidenza: saranno i primi nel Reel e nelle grafiche."); go("flyers", {flyer: f.id, step: "make"}); });
 }
 
 async function uploadFlyer(f) {
@@ -1387,7 +1260,6 @@ function stepMake(el, f, content, autostart = false) {
   const has = new Set(content.map(c => c.kind === "video" ? "video_" + c.meta.format : c.kind === "image" ? "images" : "texts"));
   const unverified = f.offers.filter(o => !o.price_verified).length;
   el.innerHTML = `
-    <div class="card" id="radarBox"><div class="muted">Radar del quartiere…</div></div>
     <div class="card" id="weatherBox"><div class="muted">Il meteo della settimana…</div></div>
     <div class="card">
       <h2>Cosa vuoi creare?</h2><p class="sub">Scegli i materiali: il montatore, il grafico e il copywriter li preparano uno dopo l'altro. Puoi rifarli quando vuoi.</p>
@@ -1396,7 +1268,6 @@ function stepMake(el, f, content, autostart = false) {
       <div id="jobState"></div>
     </div>
     <div class="sticky-bar"><span class="muted" id="selInfo"></span><button class="btn lg" id="makeBtn">${icon("i-spark")} Crea i materiali</button></div>`;
-  radarCard($("#radarBox"), f);
   weatherCard($("#weatherBox"), f);
   const upd = () => { $("#selInfo").textContent = S.makeSel.size ? `${S.makeSel.size} materiali selezionati` : "Seleziona almeno un materiale"; $("#makeBtn").disabled = !S.makeSel.size; };
   $$("[data-mk]", el).forEach(c => c.onchange = () => { c.checked ? S.makeSel.add(c.dataset.mk) : S.makeSel.delete(c.dataset.mk); c.closest(".mk").classList.toggle("on", c.checked); upd(); });
@@ -2100,7 +1971,7 @@ VIEWS.till = async el => {
       <label class="switch"><input type="checkbox" id="tillOn" ${t.on ? "checked" : ""}> <span><b>Attiva la Parola alla cassa</b> — le parole compaiono subito nei testi del volantino in corso (Instagram, Facebook, Reel) e nello stato WhatsApp del Salvaspreco</span></label>
       <div class="row" style="margin-top:14px"><div class="f"><label class="l" for="tillReward">Cosa ricevono i clienti che dicono la parola</label><input class="in" id="tillReward" maxlength="80" value="${esc(t.reward)}"></div>
         <div style="flex:0 0 auto"><button class="btn sec" id="tillSave">Salva</button></div></div>
-      <div class="hint">Meglio uno sconto (es. «il 5% di sconto sulla spesa»): gli sconti sul prezzo non sono «operazioni a premio» (DPR 430/2001, art. 6). Per regali e omaggi chiedi prima al commercialista.</div>
+      <div class="hint">Deve essere uno sconto (es. «il 5% di sconto sulla spesa»): gli sconti sul prezzo non sono «operazioni a premio» (DPR 430/2001, art. 6). Omaggi, regali, buoni e punti richiedono regolamento e cauzione, per questo Promovo non li accetta.</div>
       ${!fl ? `<div style="margin-top:14px">${notice("info", "Carica il volantino in corso: le parole cambiano a ogni volantino, così i conti di ogni settimana restano separati.")}</div>` : ""}
     </div>
     ${fl && res ? `
@@ -2125,7 +1996,7 @@ VIEWS.till = async el => {
     </div>` : ""}`;
   const save = async body => { await api(`/api/stores/${S.storeId}/till`, {method: "PUT", json: body}); await loadStores(); };
   $("#tillOn").onchange = async () => { try { await save({on: $("#tillOn").checked}); toast($("#tillOn").checked ? "Attiva: le parole sono nei testi del volantino." : "Spenta: le parole sono state tolte dai testi."); go("till"); } catch (e) { toast(e.message, "err"); } };
-  $("#tillSave").onclick = () => busy($("#tillSave"), async () => { await save({reward: $("#tillReward").value}); toast("Premio salvato e aggiornato nei testi."); go("till"); });
+  $("#tillSave").onclick = () => busy($("#tillSave"), async () => { await save({reward: $("#tillReward").value}); toast("Sconto salvato e aggiornato nei testi."); go("till"); });
   if (!res) return;
   const hit = (id, delta, b) => busy(b, async () => { const r = await api(`/api/till/${id}/hit`, {json: {delta}}); const n = $(`#tillN${id}`); n.innerHTML = `${r.today}<small> oggi</small>`; n.classList.remove("flash"); void n.offsetWidth; n.classList.add("flash"); });
   $$("[data-plus]", el).forEach(b => b.onclick = () => hit(b.dataset.plus, 1, b));
@@ -2221,11 +2092,13 @@ function flForm(p = {}) {
       <div class="f"><label class="l" for="flKeys">Parole per riconoscerlo nel volantino</label><input class="in" id="flKeys" maxlength="200" value="${esc(p.keywords || "")}" placeholder="es. mozzarella, ricotta"></div></div>
     <div style="margin-top:12px"><label class="l" for="flStory">Una frase vera su di loro <span class="muted">(facoltativa)</span></label><input class="in" id="flStory" maxlength="300" value="${esc(p.story || "")}" placeholder="es. Lavorano il latte delle loro mucche dal 1962">
       <div class="hint">Solo cose che sai: Promovo non inventa storie né qualità. La distanza la calcola Promovo dal comune.</div></div>
-    <div class="rs-photo" style="margin-top:12px"><button class="btn sm sec" id="flPhotoBtn" type="button">${icon("i-camera")} ${p.photo_url ? "Cambia foto" : "Foto del produttore o dei prodotti"}</button><span class="muted" id="flPhotoName">${p.photo_url ? "foto presente" : "facoltativa"}</span><input type="file" id="flPhoto" accept="image/*" class="hidden"></div>`;
+    <div class="rs-photo" style="margin-top:12px"><button class="btn sm sec" id="flPhotoBtn" type="button">${icon("i-camera")} ${p.photo_url ? "Cambia foto" : "Foto del produttore o dei prodotti"}</button><span class="muted" id="flPhotoName">${p.photo_url ? "foto presente" : "facoltativa"}</span><input type="file" id="flPhoto" accept="image/*" class="hidden"></div>
+    <label class="switch" style="margin-top:12px;align-items:flex-start"><input type="checkbox" id="flConsent" ${p.consent ? "checked" : ""}> <span>Il produttore è d'accordo che il negozio usi il suo nome, la foto e la frase nei post e nei cartelli. <span class="muted">Serve il suo consenso, meglio per iscritto (anche un messaggio).</span></span></label>`;
 }
 function flData(root) {
   const fd = new FormData();
   for (const [id, k] of [["flName", "name"], ["flTown", "town"], ["flWhat", "what"], ["flStory", "story"], ["flKeys", "keywords"]]) fd.append(k, $("#" + id, root).value.trim());
+  fd.append("consent", $("#flConsent", root).checked ? "true" : "");
   const ph = $("#flPhoto", root).files[0]; if (ph) fd.append("photo", ph);
   return fd;
 }
@@ -2308,6 +2181,7 @@ VIEWS.clips = async el => {
     <div class="card">
       <h2>${icon("i-camera")} Dal banco al Reel</h2>
       <p class="sub">Gira 15-60 secondi col telefono davanti al banco, come viene. Promovo sceglie i momenti migliori, raddrizza e stabilizza il video, aggiunge prezzo, sottotitoli, logo e musica. In un minuto hai un Reel vero del tuo negozio, non una pubblicità finta.</p>
+      ${notice("info", "Riprendi prodotti e banco. Se nel video si riconoscono persone (clienti o colleghi) serve il loro consenso a pubblicare la loro immagine: altrimenti inquadra in modo che non si vedano.", "i-users")}
       ${subs && !subs.ready ? `<div class="notice info" style="align-items:center">${icon("i-msg")}<span style="flex:1">Con l'agente <b>Sottotitoli automatici</b> le parole compaiono esattamente quando vengono dette, anche se parli a braccio. Si scarica una volta sola (${subs.size_mb} MB) dalle Impostazioni.</span><button class="btn sm sec" id="goExtras">Vai alle Impostazioni</button></div>` : ""}
       <div class="clip-steps">
         <div class="clip-step"><span class="n">1</span><div><h3>Il video</h3>
@@ -2513,7 +2387,6 @@ const AGENTS = [
   ["i-image", "Grafico", "Prepara copertina, storie e un'immagine per ogni offerta, con i colori e il logo del negozio."],
   ["i-video", "Montatore", "Monta Reel, video per i post e per gli schermi in negozio, con musica originale."],
   ["i-camera", "Regista dal banco", "Trasforma un video girato col telefono in un Reel stabilizzato, con titoli e prezzi."],
-  ["i-radar", "Analista prezzi", "Trova i supermercati della zona sulla mappa, legge i loro volantini e indica dove sei più conveniente."],
   ["i-sun", "Meteorologo", "Guarda le previsioni della settimana e suggerisce cosa spingere nei giorni di caldo, freddo o pioggia."],
   ["i-calendar", "Pianificatore", "Prepara il calendario di pubblicazione e cosa filmare al banco."],
 ];

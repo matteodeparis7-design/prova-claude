@@ -44,7 +44,6 @@ Poi tutto il resto:
 - **Memoria del negozio**: gli agenti ricordano cosa hanno pubblicato e non si ripetono; seguono le
   ricorrenze (Pasqua, Natale, Ferragosto...) e il meteo della zona.
 - **Catene**: lo stesso volantino diventa il pacchetto di ogni punto vendita, con i suoi dati.
-- **Radar dei concorrenti**: sai dove il negozio è più conveniente e lo metti in evidenza.
 - **Dal banco**: un video girato col telefono diventa un Reel vero, stabilizzato, con il prezzo giusto.
 - **Report PDF settimanale**: il cliente vede il lavoro fatto e i controlli di conformità.
 - **Agente Omnibus**: controlla da solo i prezzi barrati con i volantini dei 30 giorni prima (la regola che
@@ -54,8 +53,6 @@ Poi tutto il resto:
 - **Anche per il negozio fisico**: cartellini promozionali per gli scaffali (con il prezzo al kg obbligatorio),
   locandina per la vetrina e piano della settimana nel calendario del telefono. È lavoro che oggi il personale
   fa a mano ogni settimana.
-- **Prezzi medi della zona**: con i volantini dei concorrenti caricati nel tempo, il negozio sa dove è sotto o
-  sopra la media del quartiere.
 
 ### Prezzi indicativi (da adattare)
 
@@ -119,13 +116,18 @@ risultati (con il report PDF) come referenza.
 
 ## 5. Le regole sui contenuti (Promovo ti aiuta già)
 
+Il controllo completo delle leggi (cosa è stato tolto, cosa è stato aggiunto, servizio per servizio) è in
+**CONFORMITA.md**. In breve: nessun dato dei concorrenti; prodotti non pubblicizzabili (tabacco, giochi,
+latte per lattanti, farmaci) esclusi da tutti i contenuti; concorsi, superlativi e claim salutari scartati;
+licenze del software tutte compatibili con la vendita.
+
 - **Prezzi barrati – Direttiva Omnibus** (art. 17-bis del Codice del Consumo): il prezzo «prima» deve
   essere il più basso praticato nei 30 giorni precedenti lo sconto. Promovo usa i prezzi stampati sul
   volantino del negozio e lo ricorda nel controllo e nel report.
 - **Pubblicità ingannevole**: niente promesse inventate («pescato stamattina», «a km zero»...) se non le
   dice il negoziante. Gli agenti di Promovo non le scrivono mai da soli.
-- **Concorrenti**: i loro nomi non compaiono mai nei contenuti pubblicati (la pubblicità comparativa ha
-  regole precise); il radar resta solo per te e per il negozio.
+- **Concorrenti**: Promovo non usa volantini, prezzi o dati di altri supermercati e non nomina mai i
+  concorrenti nei contenuti (la pubblicità comparativa ha regole precise, D.Lgs. 145/2007).
 - **AI Act (art. 50)**: i contenuti con voce o immagini generate che possono sembrare reali vanno dichiarati;
   Promovo lo scrive da solo nei video con voce generata.
 - **Musica e immagini**: la musica dei video è originale (nessun diritto da pagare); le immagini dei

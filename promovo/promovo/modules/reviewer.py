@@ -115,6 +115,9 @@ def _text_checks(p: ContentPiece, allowed: set[int]) -> list[Check]:
         if wrong:
             out.append(Check("testi", label, "err",
                              "Prezzi che non sono nel volantino: " + ", ".join(format_eur(c) for c in wrong[:3]) + "."))
+    from .compliance import text_issues
+    for issue in text_issues(body):
+        out.append(Check("testi", label, "err", f"Da togliere {issue}."))
     if not out:
         out.append(Check("testi", label, "ok", "Prezzi veri, lunghezza giusta, nessun segno strano."))
     return out

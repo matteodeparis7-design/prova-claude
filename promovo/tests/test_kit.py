@@ -111,8 +111,8 @@ def test_kit_and_zip(client, live_pdf):
     assert any(n.endswith("Report_della_settimana.pdf") for n in names)
     rep = client.get(f"/api/flyers/{f['id']}/report.pdf", headers=h)
     assert rep.status_code == 200 and rep.content[:4] == b"%PDF"
-    import pymupdf
-    text = "".join(p.get_text() for p in pymupdf.open(stream=rep.content, filetype="pdf"))
+    from promovo import pdfdoc
+    text = "".join(p.get_text() for p in pdfdoc.open(stream=rep.content, filetype="pdf"))
     assert "Report della settimana" in text and "Offerte e controllo dei prezzi" in text and "Omnibus" in text
     # Solo i contenuti approvati.
     z2 = client.get(f"/api/flyers/{f['id']}/kit.zip?approved_only=true", headers=h)
@@ -152,8 +152,7 @@ def test_demo_seed(tmp_settings):
         # il volantino precedente fa vedere subito l'agente Omnibus: spaghetti e caffè erano più bassi
         from promovo.modules.omnibus import check
         assert {x.offer.name for x in check(ses, st, cur)} == {"Spaghetti di grano duro", "Caffè macinato"}
-        from promovo.modules.radar.service import zone_prices
-        assert zone_prices(ses, st, cur)["flyers_used"] == 2
+        assert all(not f.competitor for f in st.flyers)      # nessun volantino di concorrenti nella demo
 
 
 def test_another_idea_redraws_only_the_idea_image(client, live_pdf):

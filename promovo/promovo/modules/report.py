@@ -2,14 +2,14 @@
 
 È il documento da consegnare al supermercato insieme ai materiali: offerte e prezzi controllati
 (con il modo in cui è stato confermato ciascuno), l'idea della settimana, il piano di pubblicazione,
-l'anteprima dei materiali, il confronto con i concorrenti e i controlli di conformità.
+l'anteprima dei materiali e i controlli di conformità.
 """
 from __future__ import annotations
 
 from datetime import date, datetime
 from pathlib import Path
 
-import pymupdf
+from .. import pdfdoc
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -18,7 +18,7 @@ from ..money import format_eur
 from .content.writer import fmt_date, validity_text
 
 FONTS = Path(__file__).resolve().parents[1] / "assets" / "fonts"
-A4 = pymupdf.paper_rect("a4")
+A4 = pdfdoc.paper_rect("a4")
 M = 46                                   # margine
 INK, MUTED, LINE = (0.08, 0.11, 0.18), (0.42, 0.45, 0.52), (0.88, 0.87, 0.84)
 VERIFIED = {"testo PDF": "letto dal testo del PDF", "doppia lettura": "seconda lettura ingrandita",
@@ -33,17 +33,17 @@ def _hex(c: str) -> tuple[float, float, float]:
 
 # Gli stessi caratteri di grafiche e video: Inter per il testo, Bricolage Grotesque per i titoli.
 FONT_FILES = {"pr": "Inter-Medium.ttf", "pb": "Inter-Bold.ttf", "pd": "BricolageGrotesque-ExtraBold.ttf"}
-_FONTS: dict[str, pymupdf.Font] = {}
+_FONTS: dict[str, pdfdoc.Font] = {}
 
 
-def _font(name: str) -> pymupdf.Font:
+def _font(name: str) -> pdfdoc.Font:
     if name not in _FONTS:
-        _FONTS[name] = pymupdf.Font(fontfile=str(FONTS / FONT_FILES[name]))
+        _FONTS[name] = pdfdoc.Font(fontfile=str(FONTS / FONT_FILES[name]))
     return _FONTS[name]
 
 class Doc:
     def __init__(self, brand: tuple[float, float, float]):
-        self.pdf = pymupdf.open()
+        self.pdf = pdfdoc.new_document()
         self.brand = brand
         self.page = None
         self.y = 0.0
@@ -54,7 +54,7 @@ class Doc:
         for name, file in FONT_FILES.items():
             self.page.insert_font(fontname=name, fontfile=str(FONTS / file))
         self.n += 1
-        self.page.draw_rect(pymupdf.Rect(0, 0, A4.width, 8), color=None, fill=self.brand)
+        self.page.draw_rect(pdfdoc.Rect(0, 0, A4.width, 8), color=None, fill=self.brand)
         self.text(M, 30, store.name.upper(), 8.5, bold=True, color=MUTED)
         self.text(A4.width - M - 160, 30, f"Promovo · pagina {self.n}", 8.5, color=MUTED, width=160, align=2)
         self.y = 58
@@ -66,7 +66,7 @@ class Doc:
              width: float | None = None, align: int = 0) -> float:
         """Scrive un blocco di testo a capo automatico; restituisce l'altezza usata."""
         width = width or (A4.width - M - x)
-        rect = pymupdf.Rect(x, y, x + width, y + 2000)
+        rect = pdfdoc.Rect(x, y, x + width, y + 2000)
         font = "pd" if bold == "display" else "pb" if bold else "pr"
         lh = size * 1.32
         # misura le righe con la larghezza dei caratteri
@@ -95,7 +95,7 @@ class Doc:
 
     def heading(self, s: str) -> None:
         self.y += 8
-        self.page.draw_rect(pymupdf.Rect(M, self.y + 2, M + 4, self.y + 15), color=None, fill=self.brand)
+        self.page.draw_rect(pdfdoc.Rect(M, self.y + 2, M + 4, self.y + 15), color=None, fill=self.brand)
         self.text(M + 12, self.y, s, 12.5, bold=True)
         self.y += 24
 
@@ -105,7 +105,6 @@ class Doc:
 
 
 def build_report(session: Session, store: Store, flyer: Flyer, out_path: Path) -> Path:
-    from .radar.service import radar
     pieces = session.scalars(select(ContentPiece).where(ContentPiece.flyer_id == flyer.id).order_by(ContentPiece.id)).all()
     by_kind: dict[str, list[ContentPiece]] = {}
     for p in pieces:
@@ -120,7 +119,7 @@ def build_report(session: Session, store: Store, flyer: Flyer, out_path: Path) -
     doc.para(f"{store.name} · volantino {validity_text(flyer) or 'senza date'}", 12, color=MUTED, gap=2)
     doc.para(f"Preparato da Promovo il {fmt_date(datetime.now().date())}", 9, color=MUTED, gap=18)
     if store.logo_path and Path(store.logo_path).exists():
-        doc.page.insert_image(pymupdf.Rect(A4.width - M - 130, 70, A4.width - M, 120), filename=store.logo_path,
+        doc.page.insert_image(pdfdoc.Rect(A4.width - M - 130, 70, A4.width - M, 120), filename=store.logo_path,
                               keep_proportion=True)
     kpis = [(str(len(offers)), "offerte lette"), (f"{len(ok)}/{len(offers)}", "prezzi confermati"),
             (str(len(by_kind.get("video", []))), "video"), (str(len(by_kind.get("image", []))), "immagini"),
@@ -128,7 +127,7 @@ def build_report(session: Session, store: Store, flyer: Flyer, out_path: Path) -
     w = (A4.width - 2 * M - 4 * 10) / 5
     for i, (v, k) in enumerate(kpis):
         x = M + i * (w + 10)
-        doc.page.draw_rect(pymupdf.Rect(x, doc.y, x + w, doc.y + 62), color=LINE, fill=(0.98, 0.97, 0.95), width=0.8)
+        doc.page.draw_rect(pdfdoc.Rect(x, doc.y, x + w, doc.y + 62), color=LINE, fill=(0.98, 0.97, 0.95), width=0.8)
         doc.text(x + 10, doc.y + 10, v, 19, bold="display", color=doc.brand, width=w - 20)
         doc.text(x + 10, doc.y + 38, k, 8.5, color=MUTED, width=w - 20)
     doc.y += 82
@@ -140,23 +139,12 @@ def build_report(session: Session, store: Store, flyer: Flyer, out_path: Path) -
             doc.para(strategy, 10.5, gap=6)
         from .content.writer import _EMOJI_RE
         first = _EMOJI_RE.sub("", ig.body.splitlines()[0] if ig.body else "").replace("\ufe0f", "").strip()
-        doc.page.draw_rect(pymupdf.Rect(M, doc.y, A4.width - M, doc.y + 4 + 15 * max(1, len(first) // 80 + 1)),
+        doc.page.draw_rect(pdfdoc.Rect(M, doc.y, A4.width - M, doc.y + 4 + 15 * max(1, len(first) // 80 + 1)),
                            color=None, fill=(0.96, 0.95, 0.92))
         doc.para("«" + first + "»", 11, bold=True, gap=8)
         doc.para("Gli agenti scelgono l'idea tra quelle che i numeri della settimana permettono (risparmi, "
                  "ricorrenze, reparti freschi, cene complete con le offerte...) e non ripetono quelle già usate "
                  "per questo negozio nelle settimane precedenti.", 9, color=MUTED, gap=6)
-    # ---- confronto concorrenti
-    try:
-        r = radar(session, store, flyer)
-    except Exception:  # noqa: BLE001 - il report si fa comunque
-        r = {"competitors": [], "summary": {}}
-    if r.get("competitors") and r.get("summary", {}).get("compared"):
-        s = r["summary"]
-        doc.heading("Confronto con i concorrenti della zona")
-        doc.para(f"Su {s['compared']} prodotti in comune: più conveniente su {s['cheaper']}, più caro su {s['dearer']}, "
-                 f"uguale su {s['same']}. I prodotti dove il negozio vince sono stati messi in evidenza nei materiali. "
-                 "I nomi dei concorrenti non compaiono mai nei contenuti pubblicati.", 10, gap=6)
     # ---- anteprima dei materiali
     imgs = [p for p in by_kind.get("image", []) if p.file_path and Path(p.file_path).exists()][:4]
     posters = [p for p in by_kind.get("video", []) if (p.meta or {}).get("poster") and Path(p.meta["poster"]).exists()][:3]
@@ -165,13 +153,13 @@ def build_report(session: Session, store: Store, flyer: Flyer, out_path: Path) -
         doc.heading("I materiali preparati")
         x, h = M, 170
         for p in imgs:
-            doc.page.insert_image(pymupdf.Rect(x, doc.y, x + 118, doc.y + h), filename=p.file_path, keep_proportion=True)
+            doc.page.insert_image(pdfdoc.Rect(x, doc.y, x + 118, doc.y + h), filename=p.file_path, keep_proportion=True)
             x += 126
         doc.y += h + 8
         if posters:
             x = M
             for p in posters:
-                doc.page.insert_image(pymupdf.Rect(x, doc.y, x + 160, doc.y + 100), filename=p.meta["poster"],
+                doc.page.insert_image(pdfdoc.Rect(x, doc.y, x + 160, doc.y + 100), filename=p.meta["poster"],
                                       keep_proportion=True)
                 doc.text(x, doc.y + 102, p.title, 8, color=MUTED, width=160)
                 x += 170

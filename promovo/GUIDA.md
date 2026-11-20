@@ -29,7 +29,6 @@ tono dei testi, indirizzo e orari suoi: Promovo li usa in tutti i materiali.
 | **Grafico** | copertina, storia e un'immagine per ogni offerta in evidenza; scontorna i prodotti dalle foto del volantino |
 | **Montatore** | Reel 9:16, video per i post 1:1, video per gli schermi in negozio 16:9 |
 | **Regista dal banco** | trasforma un video girato col telefono in un Reel stabilizzato, con i sottotitoli a tempo di parola |
-| **Analista prezzi** | trova i supermercati della zona e confronta i prezzi con i loro volantini |
 | **Meteorologo** | suggerisce cosa spingere nei giorni di caldo, freddo o pioggia |
 | **Pianificatore** | prepara il calendario di pubblicazione (anche per il calendario del telefono) e cosa filmare al banco |
 | **Omnibus** | controlla i prezzi barrati con i volantini dei 30 giorni prima e propone la correzione |
@@ -75,10 +74,7 @@ Promovo segnala e basta: i prezzi li decide il negozio, le correzioni le fa il g
 
 ### Passo 2: Crea i materiali
 
-Se non hai usato il pilota automatico, qui scegli cosa creare. Sopra trovi due aiuti:
-- **Radar del quartiere**: se hai caricato i volantini dei concorrenti (in fondo alla pagina Volantini)
-  vedi su quali prodotti sei più conveniente; con un clic li metti in evidenza. I nomi dei concorrenti
-  restano solo per te: non finiscono mai nei post.
+Se non hai usato il pilota automatico, qui scegli cosa creare. Sopra trovi un aiuto:
 - **Il meteo della settimana**: le previsioni della città del negozio nei giorni del volantino e i
   prodotti da spingere. Serve internet: le previsioni vengono da MET Norway, l'istituto meteorologico
   norvegese (gratuito anche per uso commerciale, copre tutta l'Italia).
@@ -107,8 +103,7 @@ automatico toglie le frasi fatte («imperdibile», «scopri»...) e controlla ch
 
 **Il report per il cliente.** Il pulsante **«Report per il cliente (PDF)»** (e lo ZIP) contiene un
 documento pronto da consegnare al negozio: offerte e prezzi controllati (con il modo in cui è stato
-confermato ciascuno), l'idea della settimana, il piano, l'anteprima dei materiali, il confronto con i
-concorrenti e le note di conformità (prezzi barrati e regola Omnibus).
+confermato ciascuno), l'idea della settimana, il piano, l'anteprima dei materiali e le note di conformità (prezzi barrati e regola Omnibus).
 
 **Il Revisore finale.** In cima al passo 3 trovi l'esito del controllo di qualità: «pronto da consegnare»
 oppure l'elenco di cosa guardare (per esempio una grafica fatta prima di correggere un prezzo).
@@ -122,25 +117,14 @@ promemoria all'ora di ogni pubblicazione. Stampa i PDF al 100%, senza «adatta a
 altri punti vendita»**: scegli i negozi e gli agenti preparano i materiali di ognuno con il suo logo,
 colori, indirizzo, orari e tono, senza rileggere il volantino.
 
-## 4. I concorrenti della zona
+## 4. Solo i dati del tuo negozio
 
-In fondo alla pagina **Volantini**, la scheda **«Concorrenti e loro volantini»**:
-
-1. **Nella zona di…**: Promovo mostra i supermercati e i minimarket veri intorno all'indirizzo del negozio
-   (dalla mappa libera OpenStreetMap), dal più vicino, con la distanza, in qualunque comune d'Italia.
-   Puoi scegliere 1, 3, 5 o 10 km (nei paesi piccoli conviene 10 km). L'elenco resta salvato sul computer.
-2. Su un concorrente premi **«Trova il volantino»**: si apre la ricerca del suo volantino della settimana.
-3. Premi **«Aggiungi»** e carica il volantino: come **file** (PDF), come **foto**, oppure incollando il
-   **link** al PDF pubblicato sul sito dell'insegna.
-4. Promovo lo legge come i tuoi volantini e, nel passo 2, il **Radar** confronta i prezzi prodotto per prodotto
-   (anche al kg o al litro quando i formati sono diversi).
-5. **Prezzi medi della zona**: sotto il radar, per ogni prodotto, la media, il minimo e il massimo dei prezzi
-   visti nei volantini dei concorrenti delle ultime 8 settimane. Più volantini carichi nel tempo, più la media
-   è affidabile.
-
-Perché i prezzi arrivano dai volantini e non da «internet»: è l'unico modo di avere prezzi veri, della
-settimana giusta e verificabili (il volantino resta come prova). I siti che raccolgono i volantini di
-tutte le insegne non permettono di copiarne i dati in automatico. Serve internet solo per vedere la mappa.
+Promovo lavora solo con i dati del negozio (il suo volantino, i suoi prodotti, i suoi avvisi) e con fonti
+pubbliche ufficiali (calendario delle festività, previsioni del tempo, mappa per la distanza dei produttori).
+**Non usa volantini, prezzi o dati di altri supermercati**: per questo il vecchio «Radar del quartiere» e i
+«Prezzi medi della zona» sono stati tolti, e gli eventuali volantini dei concorrenti caricati con le versioni
+precedenti vengono cancellati da soli all'avvio. I dettagli sulle regole rispettate sono nel documento
+**CONFORMITA.md**.
 
 ## 5. Dal banco al Reel
 
@@ -271,9 +255,10 @@ nei testi, per trasparenza. Promovo non aggiunge mai qualità che non hai scritt
 
 I «mi piace» non dicono se un post ha portato gente in negozio. La **Parola alla cassa** sì.
 
-1. Apri **Alla cassa**, scrivi il premio per chi dice la parola (meglio uno sconto, per esempio
-   «il 5% di sconto sulla spesa»: gli sconti non sono operazioni a premio; per regali e omaggi chiedi
-   al commercialista) e attiva la funzione.
+1. Apri **Alla cassa**, scrivi lo sconto per chi dice la parola (per esempio «il 5% di sconto sulla
+   spesa») e attiva la funzione. Deve essere uno sconto: gli sconti non sono «operazioni a premio»
+   (DPR 430/2001), mentre omaggi, regali, buoni e punti richiedono regolamento e cauzione, quindi
+   Promovo non li accetta.
 2. Ogni canale riceve la sua parola per questo volantino (per esempio **ORIGANO** su Instagram,
    **CANNELLA** su WhatsApp). Le parole compaiono da sole nei testi: «Dì ORIGANO alla cassa: per te il 5% di
    sconto sulla spesa». Per i messaggi WhatsApp usa **Riga per WhatsApp**.
@@ -288,7 +273,9 @@ Si contano solo numeri: nessun nome e nessun dato dei clienti.
 
 1. Apri **Filiera vicina** e aggiungi i produttori da cui compri: nome, **comune**, cosa producono e,
    se vuoi, una foto e una frase vera su di loro. Nelle «parole per riconoscerlo» scrivi come compaiono i
-   loro prodotti nel volantino (per esempio «mozzarella, ricotta»).
+   loro prodotti nel volantino (per esempio «mozzarella, ricotta»). Spunta la casella del **consenso**:
+   nome, foto e frase del produttore finiscono nei post e nei cartelli solo se è d'accordo (meglio per
+   iscritto, anche un messaggio).
 2. Promovo calcola la distanza dal negozio (in linea d'aria, dal comune del produttore, con la mappa
    di OpenStreetMap) e riconosce i loro prodotti nel volantino in corso.
 3. **Il produttore della settimana**: ogni settimana un post «Conosci chi lo produce?» pronto, con

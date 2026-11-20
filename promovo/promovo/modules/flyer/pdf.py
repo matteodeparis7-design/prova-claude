@@ -5,7 +5,7 @@ import io
 from dataclasses import dataclass
 from pathlib import Path
 
-import pymupdf
+from ... import pdfdoc
 from PIL import Image
 
 MAX_PAGES = 60
@@ -52,12 +52,10 @@ def image_to_pdf(data: bytes) -> bytes:
         raise InvalidPDF("L'immagine è danneggiata o in un formato non supportato.") from exc
     buf = io.BytesIO()
     rgb.save(buf, format="PNG")
-    doc = pymupdf.open()
+    doc = pdfdoc.new_document()
     page = doc.new_page(width=rgb.width, height=rgb.height)
     page.insert_image(page.rect, stream=buf.getvalue())
-    pdf = doc.tobytes()
-    doc.close()
-    return pdf
+    return doc.tobytes()
 
 
 def normalize_upload(data: bytes) -> bytes:
@@ -71,12 +69,12 @@ def normalize_upload(data: bytes) -> bytes:
     raise InvalidPDF("Formato non supportato: carica un PDF oppure un'immagine JPG, PNG o WEBP.")
 
 
-def open_pdf(data: bytes) -> pymupdf.Document:
+def open_pdf(data: bytes) -> pdfdoc.Document:
     if not data.startswith(b"%PDF"):
         raise InvalidPDF("Il file non è un PDF.")
     try:
-        doc = pymupdf.open(stream=data, filetype="pdf")
-    except Exception as exc:  # pymupdf solleva vari tipi di errore
+        doc = pdfdoc.open(stream=data, filetype="pdf")
+    except Exception as exc:  # il lettore PDF solleva vari tipi di errore
         raise InvalidPDF("Il PDF è danneggiato o non leggibile.") from exc
     if doc.needs_pass:
         raise InvalidPDF("Il PDF è protetto da password.")
@@ -87,26 +85,15 @@ def open_pdf(data: bytes) -> pymupdf.Document:
     return doc
 
 
-def page_info(page: pymupdf.Page) -> PageInfo:
+def page_info(page: pdfdoc.Page) -> PageInfo:
     spans: list[Span] = []
-    data = page.get_text("dict")
-    for block in data.get("blocks", []):
-        if block.get("type") != 0:
-            continue
-        for line in block.get("lines", []):
-            for sp in line.get("spans", []):
-                txt = sp.get("text", "").strip()
-                if not txt:
-                    continue
-                spans.append(Span(
-                    text=txt,
-                    bbox=tuple(sp["bbox"]),
-                    size=float(sp.get("size", 0)),
-                    bold=bool(sp.get("flags", 0) & 16) or "bold" in sp.get("font", "").lower(),
-                ))
+    for sp in page.spans():
+        txt = sp["text"].strip()
+        if txt:
+            spans.append(Span(text=txt, bbox=sp["bbox"], size=sp["size"], bold=sp["bold"]))
     area = page.rect.width * page.rect.height
     images = []
-    for info in page.get_image_info(xrefs=True):
+    for info in page.get_image_info():
         x0, y0, x1, y1 = info["bbox"]
         x0, y0 = max(x0, 0), max(y0, 0)
         x1, y1 = min(x1, page.rect.width), min(y1, page.rect.height)
@@ -124,51 +111,51 @@ def page_info(page: pymupdf.Page) -> PageInfo:
     )
 
 
-def render_page_png(page: pymupdf.Page, max_side: int = 1568) -> bytes:
+def render_page_png(page: pdfdoc.Page, max_side: int = 1568) -> bytes:
     """Immagine della pagina per la lettura con l'IA (lato lungo limitato)."""
     longest = max(page.rect.width, page.rect.height)
     zoom = max_side / longest
-    pix = page.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom), alpha=False)
+    pix = page.get_pixmap(matrix=pdfdoc.Matrix(zoom, zoom), alpha=False)
     return pix.tobytes("png")
 
 
-def render_half_png(page: pymupdf.Page, half: int, max_side: int = 1568, overlap: float = 0.06) -> bytes:
+def render_half_png(page: pdfdoc.Page, half: int, max_side: int = 1568, overlap: float = 0.06) -> bytes:
     """Metà superiore (0) o inferiore (1) della pagina, con un po' di sovrapposizione, ingrandita."""
     w, h = page.rect.width, page.rect.height
     y0 = 0 if half == 0 else h * (0.5 - overlap)
     y1 = h * (0.5 + overlap) if half == 0 else h
-    rect = pymupdf.Rect(0, y0, w, y1)
+    rect = pdfdoc.Rect(0, y0, w, y1)
     zoom = max_side / max(rect.width, rect.height)
-    return page.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom), clip=rect, alpha=False).tobytes("png")
+    return page.get_pixmap(matrix=pdfdoc.Matrix(zoom, zoom), clip=rect, alpha=False).tobytes("png")
 
 
-def render_crop(page: pymupdf.Page, bbox_norm: list[float], out_path: Path, dpi: int = 220,
+def render_crop(page: pdfdoc.Page, bbox_norm: list[float], out_path: Path, dpi: int = 220,
                 pad: float = 0.01) -> Path:
     """Ritaglio ad alta risoluzione del riquadro normalizzato (0..1) di un prodotto."""
     w, h = page.rect.width, page.rect.height
     x0, y0, x1, y1 = bbox_norm
-    rect = pymupdf.Rect(max(0.0, x0 - pad) * w, max(0.0, y0 - pad) * h,
+    rect = pdfdoc.Rect(max(0.0, x0 - pad) * w, max(0.0, y0 - pad) * h,
                         min(1.0, x1 + pad) * w, min(1.0, y1 + pad) * h)
     zoom = dpi / 72
-    pix = page.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom), clip=rect, alpha=False)
+    pix = page.get_pixmap(matrix=pdfdoc.Matrix(zoom, zoom), clip=rect, alpha=False)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     pix.save(str(out_path))
     return out_path
 
 
-def extract_photo(page: pymupdf.Page, bbox_norm: list[float], out_path: Path, dpi: int = 260) -> Path:
+def extract_photo(page: pdfdoc.Page, bbox_norm: list[float], out_path: Path, dpi: int = 260) -> Path:
     """Foto del solo prodotto, ad alta risoluzione e scontornata quando lo sfondo è uniforme."""
     from ...imaging import save_product_photo
     w, h = page.rect.width, page.rect.height
     x0, y0, x1, y1 = bbox_norm
-    rect = pymupdf.Rect(x0 * w, y0 * h, x1 * w, y1 * h)
+    rect = pdfdoc.Rect(x0 * w, y0 * h, x1 * w, y1 * h)
     zoom = dpi / 72
-    pix = page.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom), clip=rect, alpha=False)
+    pix = page.get_pixmap(matrix=pdfdoc.Matrix(zoom, zoom), clip=rect, alpha=False)
     img = Image.open(io.BytesIO(pix.tobytes("png")))
     return save_product_photo(img, out_path)
 
 
-def clean_card(page: pymupdf.Page, bbox_norm: list[float], erase: list[list[float]], out_path: Path,
+def clean_card(page: pdfdoc.Page, bbox_norm: list[float], erase: list[list[float]], out_path: Path,
                dpi: int = 260) -> Path | None:
     """Il riquadro dell'offerta senza nome, prezzi e sconti stampati (ricostruendo lo sfondo):
     resta il prodotto, pronto per video e grafiche che hanno già il loro cartellino del prezzo."""
@@ -177,9 +164,9 @@ def clean_card(page: pymupdf.Page, bbox_norm: list[float], erase: list[list[floa
     from ...imaging import save_product_photo
     w, h = page.rect.width, page.rect.height
     x0, y0, x1, y1 = bbox_norm
-    rect = pymupdf.Rect(x0 * w, y0 * h, x1 * w, y1 * h)
+    rect = pdfdoc.Rect(x0 * w, y0 * h, x1 * w, y1 * h)
     zoom = dpi / 72
-    pix = page.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom), clip=rect, alpha=False)
+    pix = page.get_pixmap(matrix=pdfdoc.Matrix(zoom, zoom), clip=rect, alpha=False)
     rgb = np.frombuffer(pix.samples, np.uint8).reshape(pix.height, pix.width, pix.n)[..., :3].copy()
     mask = np.zeros(rgb.shape[:2], np.uint8)
     gray = rgb.mean(axis=2)

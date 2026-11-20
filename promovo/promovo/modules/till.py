@@ -22,7 +22,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ..models import ContentPiece, Flyer, Store, TillCode, TillHit
-from .radar.service import tokens
+from .products import tokens
 from .video.render import INK, WHITE, fit_text, font, hex_rgb, mix, readable_on_paper
 
 CHANNELS = {"instagram": "Instagram", "facebook": "Facebook", "whatsapp": "WhatsApp", "reel": "Reel e TikTok"}
@@ -74,6 +74,10 @@ def clean_reward(text: str) -> str:
         raise ValueError("Scrivi cosa ricevono i clienti che dicono la parola (es. «il 5% di sconto sulla spesa»).")
     if len(t) > MAX_REWARD:
         raise ValueError(f"Il premio deve stare in {MAX_REWARD} caratteri.")
+    from .compliance import reward_issue
+    problem = reward_issue(t)
+    if problem:
+        raise ValueError(problem)
     return t
 
 

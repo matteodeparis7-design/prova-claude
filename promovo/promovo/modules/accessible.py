@@ -55,7 +55,8 @@ def script(store: Store, flyer: Flyer, limit: int = MAX_OFFERS) -> str:
         if o.old_price_cents and o.old_price_cents > o.price_cents:
             line += f", invece di {format_eur(o.old_price_cents)}"
         parts.append(line + ".")
-    rest = len(flyer.offers) - len(offers)
+    from .content.writer import available
+    rest = len(available(flyer)) - len(offers)
     if rest > 0:
         parts.append(f"E altre {rest} offerte nel volantino.")
     where = ", ".join(x for x in (store.address, store.city) if x)
@@ -180,7 +181,7 @@ def large_print_pages(store: Store, flyer: Flyer) -> list[Image.Image]:
     W, H = 1654, 2339                                    # A4 a 200 dpi
     brand = hex_rgb(store.brand_color)
     ink = readable_on_paper(brand)
-    offers = featured_offers(flyer, len(flyer.offers)) or list(flyer.offers)
+    offers = featured_offers(flyer, len(flyer.offers))
     per_page = 5
     pages = []
     for start in range(0, max(1, len(offers)), per_page):

@@ -185,6 +185,11 @@ def make_program(store: Store, texts: list[str], engine: str, minutes: int, out:
         raise RadioError("Durata non valida.")
     if any(len(t) > 600 for t in texts):
         raise RadioError("Un annuncio è troppo lungo: tienilo sotto le 600 lettere.")
+    from .compliance import text_issues
+    for i, t in enumerate(texts, 1):
+        problems = text_issues(t)
+        if problems:
+            raise RadioError(f"Annuncio {i}, da correggere: " + "; ".join(problems) + ".")
     voices = []
     with tempfile.TemporaryDirectory() as tmp:
         for i, t in enumerate(texts):

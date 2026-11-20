@@ -22,7 +22,6 @@ class AppState:
     voice_client: object | None = None      # client HTTP per la voce (solo nei test se ne passa uno finto)
     weather_fetch: object | None = None     # funzione che scarica le previsioni (nei test, una finta)
     nearby_fetch: object | None = None      # funzione che interroga la mappa (nei test, una finta)
-    link_download: object | None = None     # funzione che scarica un volantino da un link (nei test, una finta)
     extras_download: object | None = None   # funzione che scarica un agente aggiuntivo (nei test, una finta)
     update_fetch: object | None = None      # funzione che legge l'ultima versione pubblicata (nei test, una finta)
     key_test_client: object | None = None   # client finto per provare le chiavi (solo nei test)

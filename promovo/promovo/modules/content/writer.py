@@ -98,8 +98,10 @@ def join_it(parts: list[str]) -> str:
 
 
 def available(flyer: Flyer) -> list[Offer]:
-    """Le offerte ancora disponibili nel punto vendita (senza quelle segnate «esaurito»)."""
-    return [o for o in flyer.offers if o.sold_out_at is None]
+    """Le offerte da usare nei contenuti: ancora disponibili (non «esaurito») e pubblicizzabili per legge
+    (niente tabacco, giochi con vincite, latte per lattanti, farmaci: vedi modules/compliance.py)."""
+    from ..compliance import advertisable
+    return advertisable(o for o in flyer.offers if o.sold_out_at is None)
 
 
 def featured_offers(flyer: Flyer, limit: int = 6) -> list[Offer]:
@@ -543,6 +545,8 @@ def review(text: str, allowed: set[int], tone: str) -> list[str]:
     issues = []
     low = text.lower()
     issues += [f"frase fatta «{b}»" for b in BANNED if b in low]
+    from ..compliance import text_issues
+    issues += [f"regola di legge: {x}" for x in text_issues(text)]
     if "—" in text:
         issues.append("trattino lungo")
     if text.count("!") > 1:

@@ -40,8 +40,7 @@ from ..modules.video.service import render_flyer_video
 from ..modules.clip.analyze import ClipError
 from ..modules.clip.service import AUDIO_EXT, VIDEO_EXT, VOICE_MODES, ClipFailed, delete_clip_files, make_reel, script_for
 from .. import voice as voicemod
-from ..modules.radar.service import radar as radar_report
-from ..modules.radar import nearby as nearbymod
+from ..modules import geo as geomod
 from ..modules.weather.service import weekly_weather
 from ..modules import rescue as rescuemod
 from ..modules import till as tillmod
@@ -129,11 +128,6 @@ class StoreIn(BaseModel):
 class KeyIn(BaseModel):
     service: str = Field(pattern="^(ai|voice)$")
     key: str = Field(max_length=400)
-
-
-class CompetitorLinkIn(BaseModel):
-    url: str = Field(min_length=8, max_length=2000)
-    competitor: str = Field(min_length=2, max_length=120)
 
 
 class ReplicateIn(BaseModel):
@@ -258,7 +252,7 @@ def flyer_out(f: Flyer, with_offers: bool = False) -> dict:
            "valid_from": f.valid_from.isoformat() if f.valid_from else None,
            "valid_to": f.valid_to.isoformat() if f.valid_to else None, "status": f.status.value,
            "extraction_method": f.extraction_method, "error": f.error, "warnings": f.warnings,
-           "competitor": f.competitor, "offer_count": len(f.offers), "unverified_count": sum(1 for o in f.offers if not o.price_verified),
+           "offer_count": len(f.offers), "unverified_count": sum(1 for o in f.offers if not o.price_verified),
            "created_at": f.created_at.isoformat()}
     if with_offers:
         out["offers"] = [offer_out(o) for o in f.offers]
@@ -482,6 +476,20 @@ def run_video_job(app_state: AppState, job_id: int) -> None:
 
 # ------------------------------------------------------------------ applicazione
 
+def _purge_competitor_flyers(db: Database) -> int:
+    """Le versioni vecchie permettevano di caricare i volantini dei concorrenti (radar, prezzi della zona).
+    Promovo ora usa solo i dati del negozio: quei volantini, i loro file e le loro offerte si cancellano."""
+    with db.session() as session:
+        rows = session.scalars(select(Flyer).where(Flyer.competitor != "")).all()
+        for f in rows:
+            for path in (f.pdf_path,):
+                if path:
+                    Path(path).unlink(missing_ok=True)
+            session.delete(f)
+        session.commit()
+        return len(rows)
+
+
 def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Database | None = None,
                use_ai: bool = True) -> FastAPI:
     settings = settings or get_settings()
@@ -493,6 +501,7 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
     db = db or Database(settings.database_url)
     db.create_all()
     settings.ensure_dirs()
+    _purge_competitor_flyers(db)
     from .. import extras
     extras.set_data_dir(settings.data_dir)
     keys.load_voice_key(settings)
@@ -864,74 +873,6 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         background.add_task(run_flyer_job, state(request), f.id)
         return flyer_out(f)
 
-    # -------------------------------------------------- radar del quartiere
-
-    @app.post("/api/stores/{store_id}/competitors", status_code=202)
-    async def upload_competitor(store_id: int, request: Request, background: BackgroundTasks,
-                                file: UploadFile = File(...), competitor: str = Form(...),
-                                user: User = Depends(current_user), session: Session = Depends(get_session)):
-        """Volantino di un concorrente della zona: si legge come gli altri, serve solo per il confronto."""
-        store = store_for(session, user, store_id)
-        name = competitor.strip()
-        if len(name) < 2:
-            raise HTTPException(400, "Scrivi il nome del concorrente (es. «Conad via Roma»).")
-        st = state(request)
-        limit = st.settings.max_upload_mb * 1024 * 1024
-        data = await file.read(limit + 1)
-        if len(data) > limit:
-            raise HTTPException(413, f"Il file supera {st.settings.max_upload_mb} MB.")
-        try:
-            flyer = create_flyer(session, store, data, st.settings, title=f"Volantino {name}"[:300], competitor=name)
-        except InvalidPDF as exc:
-            raise HTTPException(400, str(exc)) from exc
-        session.commit()
-        background.add_task(run_flyer_job, st, flyer.id)
-        return flyer_out(flyer)
-
-    @app.post("/api/stores/{store_id}/competitors/link", status_code=202)
-    def competitor_from_link(store_id: int, body: CompetitorLinkIn, request: Request, background: BackgroundTasks,
-                             user: User = Depends(current_user), session: Session = Depends(get_session)):
-        """Volantino del concorrente da un link (il PDF pubblicato sul sito dell'insegna)."""
-        store = store_for(session, user, store_id)
-        st = state(request)
-        get = st.link_download or nearbymod.download_flyer
-        try:
-            data = get(body.url, st.settings.max_upload_mb * 1024 * 1024)
-            flyer = create_flyer(session, store, data, st.settings, title=f"Volantino {body.competitor.strip()}"[:300],
-                                 competitor=body.competitor.strip())
-        except (nearbymod.LinkError, InvalidPDF) as exc:
-            raise HTTPException(400, str(exc)) from exc
-        session.commit()
-        background.add_task(run_flyer_job, st, flyer.id)
-        return flyer_out(flyer)
-
-    @app.get("/api/stores/{store_id}/nearby")
-    def stores_nearby(store_id: int, request: Request, radius: int = 3000, user: User = Depends(current_user),
-                      session: Session = Depends(get_session)):
-        """I supermercati veri intorno al negozio (OpenStreetMap): i concorrenti da mettere nel radar."""
-        store = store_for(session, user, store_id)
-        st = state(request)
-        try:
-            return {"ok": True, **nearbymod.nearby(store, radius, fetch=st.nearby_fetch or nearbymod.http_json,
-                                                   cache_dir=st.settings.data_dir / "nearby",
-                                                   pause=0 if st.nearby_fetch else 3.0)}
-        except nearbymod.NearbyUnavailable as exc:
-            return {"ok": False, "reason": str(exc), "places": [], "attribution": nearbymod.ATTRIBUTION}
-
-    @app.get("/api/stores/{store_id}/competitors")
-    def list_competitors(store_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
-        store = store_for(session, user, store_id)
-        rows = session.scalars(select(Flyer).where(Flyer.store_id == store.id, Flyer.competitor != "")
-                               .order_by(Flyer.created_at.desc(), Flyer.id.desc())).all()
-        return [flyer_out(f) for f in rows]
-
-    @app.get("/api/flyers/{flyer_id}/radar")
-    def flyer_radar(flyer_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
-        f = flyer_for(session, user, flyer_id)
-        if f.competitor:
-            raise HTTPException(400, "Il radar si calcola sui volantini del negozio, non su quelli dei concorrenti.")
-        return radar_report(session, f.store, f)
-
     @app.get("/api/flyers/{flyer_id}/weather")
     def flyer_weather(flyer_id: int, request: Request, user: User = Depends(current_user),
                       session: Session = Depends(get_session)):
@@ -1053,8 +994,6 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         """Agente Omnibus: prezzi barrati confrontati con il minimo dei 30 giorni prima (volantini già caricati)."""
         from ..modules import omnibus
         f = flyer_for(session, user, flyer_id)
-        if f.competitor:
-            raise HTTPException(400, "Il controllo Omnibus riguarda i volantini del negozio.")
         return omnibus.summary(session, f.store, f)
 
     @app.get("/api/flyers/{flyer_id}/thumb")
@@ -1067,12 +1006,12 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         if not src.exists():
             raise HTTPException(404, "Volantino non disponibile.")
         if not out.exists() or out.stat().st_mtime < src.stat().st_mtime:
-            import pymupdf
+            from .. import pdfdoc
             out.parent.mkdir(parents=True, exist_ok=True)
-            with pymupdf.open(src) as doc:
+            with pdfdoc.open(src) as doc:
                 page = doc[0]
                 zoom = 420 / max(page.rect.width, page.rect.height)
-                pix = page.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom), alpha=False)
+                pix = page.get_pixmap(matrix=pdfdoc.Matrix(zoom, zoom), alpha=False)
                 pix.save(str(out), jpg_quality=82)
         return FileResponse(out, media_type="image/jpeg")
 
@@ -1740,6 +1679,7 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         base = f"/api/producers/{p.id}"
         return {"id": p.id, "name": p.name, "town": p.town, "what": p.what, "story": p.story, "keywords": p.keywords,
                 "km": p.km, "km_text": filieramod.km_text(p.km), "geo_error": p.geo_error,
+                "consent": p.consent_at is not None,
                 "photo_url": f"{base}/foto" if p.photo_path and Path(p.photo_path).exists() else None,
                 "post_url": f"{base}/post", "offers": [{"id": o.id, "name": o.name, "price": format_eur(o.price_cents)}
                                                        for o in offers],
@@ -1779,24 +1719,26 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         week = filieramod.of_the_week(ps, offers, date.today())
         return {"items": [producer_out(p, m.get(p.id, []), store) for p in ps],
                 "week": week.id if week is not None else None,
-                "located": sum(1 for p in ps if p.km is not None), "attribution": nearbymod.ATTRIBUTION}
+                "located": sum(1 for p in ps if p.km is not None), "attribution": geomod.ATTRIBUTION}
 
     def _fetch(request: Request):
         st = state(request)
-        return st.nearby_fetch or nearbymod.http_json
+        return st.nearby_fetch or geomod.http_json
 
     @app.post("/api/stores/{store_id}/producers", status_code=201)
     async def create_producer(store_id: int, request: Request, name: str = Form(default=""), town: str = Form(default=""),
                               what: str = Form(default=""), story: str = Form(default=""),
-                              keywords: str = Form(default=""), photo: UploadFile | None = File(default=None),
+                              keywords: str = Form(default=""), consent: str = Form(default=""),
+                              photo: UploadFile | None = File(default=None),
                               user: User = Depends(current_user), session: Session = Depends(get_session)):
         store = store_for(session, user, store_id)
         try:
-            data = filieramod.clean({"name": name, "town": town, "what": what, "story": story, "keywords": keywords})
+            data = filieramod.clean({"name": name, "town": town, "what": what, "story": story, "keywords": keywords,
+                                     "consent": consent})
         except filieramod.FilieraError as exc:
             raise HTTPException(400, str(exc)) from exc
         img = await _producer_photo(photo)
-        p = Producer(store_id=store.id, **data)
+        p = Producer(store_id=store.id, consent_at=datetime.now(timezone.utc), **data)
         session.add(p)
         session.flush()
         if img is not None:
@@ -1807,14 +1749,17 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
     @app.put("/api/producers/{producer_id}")
     async def update_producer(producer_id: int, request: Request, name: str = Form(default=""),
                               town: str = Form(default=""), what: str = Form(default=""), story: str = Form(default=""),
-                              keywords: str = Form(default=""), photo: UploadFile | None = File(default=None),
+                              keywords: str = Form(default=""), consent: str = Form(default=""),
+                              photo: UploadFile | None = File(default=None),
                               user: User = Depends(current_user), session: Session = Depends(get_session)):
         p = producer_for(session, user, producer_id)
         store = session.get(Store, p.store_id)
         try:
-            data = filieramod.clean({"name": name, "town": town, "what": what, "story": story, "keywords": keywords})
+            data = filieramod.clean({"name": name, "town": town, "what": what, "story": story, "keywords": keywords,
+                                     "consent": consent})
         except filieramod.FilieraError as exc:
             raise HTTPException(400, str(exc)) from exc
+        p.consent_at = p.consent_at or datetime.now(timezone.utc)
         moved = data["town"] != p.town
         for k, v in data.items():
             setattr(p, k, v)
@@ -1843,6 +1788,8 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
             return FileResponse(p.photo_path, media_type="image/jpeg")
         if what != "post":
             raise HTTPException(404, "File non disponibile.")
+        if p.consent_at is None:
+            raise HTTPException(400, "Manca il consenso del produttore: aprilo, confermalo e salva.")
         out = _render_tmp(state(request).settings, "produttore", ".jpg")
         filieramod.post_image(session.get(Store, p.store_id), p).save(out, quality=92)
         name = re.sub(r"[^\w]+", "_", f"Filiera_{p.name}")[:50]
@@ -1854,12 +1801,12 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
                       session: Session = Depends(get_session)):
         """La mappa della filiera da pubblicare: il negozio al centro, i produttori nella loro direzione vera."""
         store = store_for(session, user, store_id)
-        ps = [p for p in filieramod.store_producers(session, store) if p.km is not None]
+        ps = [p for p in filieramod.public(filieramod.store_producers(session, store)) if p.km is not None]
         if not ps:
             raise HTTPException(404, "Aggiungi almeno un produttore con il comune trovato sulla mappa.")
         try:
-            lat, lon, _ = nearbymod.locate(store, _fetch(request))
-        except nearbymod.NearbyUnavailable as exc:
+            lat, lon, _ = geomod.locate(store, _fetch(request))
+        except geomod.GeoUnavailable as exc:
             raise HTTPException(503, f"Mappa non disponibile: {exc}.") from exc
         out = _render_tmp(state(request).settings, "filiera", ".jpg")
         filieramod.map_image(store, ps, (lat, lon)).save(out, quality=92)
@@ -1871,7 +1818,7 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
                          session: Session = Depends(get_session)):
         """Etichette da scaffale «Filiera vicina», 8 per foglio A4."""
         store = store_for(session, user, store_id)
-        ps = filieramod.store_producers(session, store)
+        ps = filieramod.public(filieramod.store_producers(session, store))
         if ids:
             wanted = {int(x) for x in ids.split(",") if x.strip().isdigit()}
             ps = [p for p in ps if p.id in wanted]
@@ -1890,7 +1837,8 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         """La spesa a budget con le offerte del volantino (totale al centesimo) e il momento del mese."""
         f = flyer_for(session, user, flyer_id)
         today = date.today()
-        offers = list(f.offers)
+        from ..modules.content.writer import available
+        offers = available(f)
         amounts = budgetmod.amounts_for(offers)
         day, why = budgetmod.best_day(f, today)
         out = {"moment": budgetmod.moment(today), "best_day": day.isoformat(), "best_why": why,
@@ -1910,7 +1858,8 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
     def flyer_budget_image(flyer_id: int, request: Request, amount: int = 20, user: User = Depends(current_user),
                            session: Session = Depends(get_session)):
         f = flyer_for(session, user, flyer_id)
-        b = budgetmod.make_basket(list(f.offers), amount * 100)
+        from ..modules.content.writer import available
+        b = budgetmod.make_basket(available(f), amount * 100)
         if b is None:
             raise HTTPException(404, "Con questo budget non si compone una spesa di almeno 3 prodotti.")
         out = _render_tmp(state(request).settings, "budget", ".jpg")

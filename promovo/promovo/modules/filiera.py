@@ -9,6 +9,8 @@ inserisce una volta i suoi produttori (nome, comune, cosa fanno, una foto, una f
 
 Promovo usa solo quello che scrive il negozio: non inventa storie, qualità o metodi di produzione.
 Non usa «km 0» (in alcune regioni ha un significato di legge preciso): scrive la distanza calcolata.
+Nome, foto e frase del produttore vanno nei contenuti pubblici solo con il suo consenso (diritto al nome e
+all'immagine, artt. 7 e 10 c.c., art. 96 L. 633/1941): il negozio lo conferma quando inserisce il produttore.
 """
 from __future__ import annotations
 
@@ -22,8 +24,8 @@ from sqlalchemy.orm import Session
 
 from ..models import Offer, Producer, Store
 from ..money import format_eur
-from .radar import nearby as nearbymod
-from .radar.service import tokens
+from . import geo as geomod
+from .products import tokens
 from .video.render import (INK, WHITE, fit_text, font, hex_rgb, logo_image, mix, pill, product_visual,
                            readable_on_paper, soft_background, text_layer)
 
@@ -48,7 +50,18 @@ def clean(data: dict) -> dict:
         raise FilieraError("Scrivi il comune del produttore: serve per calcolare la distanza.")
     if len(out["what"]) < 2:
         raise FilieraError("Scrivi cosa produce (es. «mozzarella e ricotta»).")
+    if str(data.get("consent") or "").lower() not in ("1", "true", "on", "yes", "si", "sì"):
+        raise FilieraError("Serve il consenso del produttore a usare nome, foto e frase nei contenuti del negozio.")
+    from .compliance import text_issues
+    problems = text_issues(f"{out['what']} {out['story']}")
+    if problems:
+        raise FilieraError("Da correggere: " + "; ".join(problems) + ".")
     return out
+
+
+def public(producers: list[Producer]) -> list[Producer]:
+    """I produttori che hanno dato il consenso: solo loro finiscono nei contenuti pubblici."""
+    return [p for p in producers if p.consent_at is not None]
 
 
 def km_text(km: float | None) -> str:
@@ -59,18 +72,18 @@ def km_text(km: float | None) -> str:
     return f"a circa {int(round(km))} km da qui"
 
 
-def locate(session: Session, store: Store, p: Producer, fetch=nearbymod.http_json) -> None:
+def locate(session: Session, store: Store, p: Producer, fetch=geomod.http_json) -> None:
     """Coordinate del comune del produttore e distanza dal negozio. In caso di problemi resta l'errore da mostrare."""
     try:
-        slat, slon, _ = nearbymod.locate(store, fetch)
-        c = nearbymod._cached(("comune", nearbymod._norm(p.town)), 30 * 86400,
-                              lambda: nearbymod.city_center(p.town, fetch))
+        slat, slon, _ = geomod.locate(store, fetch)
+        c = geomod._cached(("comune", geomod._norm(p.town)), 30 * 86400,
+                              lambda: geomod.city_center(p.town, fetch))
         if c is None:
-            raise nearbymod.NearbyUnavailable(f"non trovo il comune «{p.town}» sulla mappa: controlla come è scritto")
+            raise geomod.GeoUnavailable(f"non trovo il comune «{p.town}» sulla mappa: controlla come è scritto")
         p.lat, p.lon = c[0], c[1]
-        p.km = round(nearbymod.distance_m(slat, slon, p.lat, p.lon) / 1000, 1)
+        p.km = round(geomod.distance_m(slat, slon, p.lat, p.lon) / 1000, 1)
         p.geo_error = ""
-    except nearbymod.NearbyUnavailable as exc:
+    except geomod.GeoUnavailable as exc:
         p.km = None
         p.geo_error = str(exc)[:200]
     session.flush()
@@ -95,6 +108,7 @@ def matches(producers: list[Producer], offers: list[Offer]) -> dict[int, list[Of
 
 def of_the_week(producers: list[Producer], offers: list[Offer], today: date) -> Producer | None:
     """Il produttore da raccontare questa settimana: a turno, prima quelli con prodotti nel volantino."""
+    producers = public(producers)
     if not producers:
         return None
     week = today.isocalendar()[1]

@@ -10,7 +10,9 @@ dependencies = [
     "sqlalchemy>=2.0",
     "pydantic[email]>=2.6",
     "python-multipart>=0.0.9",
-    "pymupdf>=1.24",
+    "pypdfium2>=4.30",  # pagine dei PDF come immagine (Apache-2.0 / BSD-3)
+    "pdfplumber>=0.11", # testo e posizione delle parole nei PDF (MIT)
+    "reportlab>=4.0",   # scrittura dei PDF: report, rapporti, cartelli (BSD)
     "pillow>=10.0",
     "numpy>=1.26",
     "imageio-ffmpeg>=0.5",
@@ -33,7 +35,7 @@ build-backend = "setuptools.build_meta"
 include = ["promovo*"]
 
 [tool.setuptools.package-data]
-promovo = ["assets/fonts/*.ttf", "assets/models/*/*", "web/*.html", "web/assets/*", "build_info.json"]
+promovo = ["assets/fonts/*.ttf", "assets/fonts/*.txt", "assets/models/*/*", "web/*.html", "web/assets/*", "build_info.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
