@@ -163,6 +163,9 @@ class Offer(Base):
     verified_by: Mapped[str] = mapped_column(String(40), default="")   # testo PDF | OCR | doppia lettura IA | persona
     is_featured: Mapped[bool] = mapped_column(Boolean, default=False)
     cost_cents: Mapped[int | None] = mapped_column(Integer, nullable=True)  # costo d'acquisto, se noto
+    # «Esaurito»: il prodotto è finito in questo punto vendita (esce dai materiali nuovi)
+    sold_out_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    sold_out_note: Mapped[str] = mapped_column(String(120), default="")
 
     flyer: Mapped[Flyer] = relationship(back_populates="offers")
 
@@ -290,4 +293,25 @@ class Notice(Base):
     hours: Mapped[str] = mapped_column(String(80), default="")            # «8:00 – 13:00» oppure vuoto se chiuso
     closed: Mapped[bool] = mapped_column(Boolean, default=False)
     message: Mapped[str] = mapped_column(String(300), default="")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class JobPost(Base):
+    """Annuncio «Lavora con noi» del punto vendita: dallo stesso annuncio il post, la storia e il cartello con QR."""
+    __tablename__ = "job_posts"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    store_id: Mapped[int] = mapped_column(ForeignKey("stores.id", ondelete="CASCADE"), index=True)
+    role: Mapped[str] = mapped_column(String(80))
+    contract: Mapped[str] = mapped_column(String(30), default="indeterminato")
+    hours: Mapped[str] = mapped_column(String(30), default="full-time")
+    hours_note: Mapped[str] = mapped_column(String(120), default="")
+    tasks: Mapped[str] = mapped_column(String(600), default="")
+    requirements: Mapped[str] = mapped_column(String(600), default="")
+    offer: Mapped[str] = mapped_column(String(600), default="")
+    pay: Mapped[str] = mapped_column(String(120), default="")
+    start: Mapped[str] = mapped_column(String(80), default="")
+    apply_link: Mapped[str] = mapped_column(String(300), default="")
+    apply_email: Mapped[str] = mapped_column(String(160), default="")
+    in_store: Mapped[bool] = mapped_column(Boolean, default=True)
+    closed: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)

@@ -199,6 +199,31 @@ orari oppure «chiuso» e un messaggio facoltativo. Hai subito:
 Se l'account ha più punti vendita, il titolare può **mandare l'avviso a tutti**: ognuno lo riceve con il suo nome e
 indirizzo. La festa del patrono del comune la aggiungi tu come avviso.
 
+### «Esaurito»: il prodotto finito esce dai contenuti
+
+**Servizi → Esaurito.** Quando un prodotto in offerta finisce, tocca **Esaurito** (anche dal telefono) e, se vuoi,
+scrivi quando torna. Da quel momento il prodotto **non compare più nei materiali nuovi** di quel punto vendita
+(grafiche, video per gli schermi e per i social, testi). Promovo ti dice quali materiali già fatti lo mostrano
+ancora e li **rifà con un clic**. C'è anche un **messaggio facoltativo** per i clienti («Esaurito, grazie a tutti!
+Torna giovedì»). Quando il prodotto torna, tocca **Di nuovo disponibile**.
+
+Con più punti vendita, la sezione **Nella rete** mostra alla sede dove e in quale giorno del volantino i prodotti
+sono finiti: un segnale per gli ordini e per i prossimi volantini.
+
+### Radio del negozio: gli annunci in loop sugli altoparlanti
+
+**Servizi → Radio del negozio.** Promovo prepara gli annunci della settimana dai dati del negozio: le offerte del
+volantino (a gruppi di tre, senza quelle esaurite), gli avvisi in corso, il Salvaspreco del giorno, il produttore
+della settimana e gli orari. Li puoi cambiare, togliere o aggiungerne di tuoi (fino a 12). Scegli la voce e la durata
+del giro (3, 5 o 10 minuti) e premi **Crea la radio**: esce un file MP3 con la **musica originale di Promovo** (non è
+un brano di repertorio) che si abbassa quando parla la voce e una campanella prima di ogni annuncio. Mettilo in loop
+su qualsiasi lettore o chiavetta USB collegata agli altoparlanti. All'inizio si dice che la voce è sintetica.
+
+C'è anche l'**annuncio di chiusura** («il negozio chiude tra 15 minuti»), da far partire a parte.
+
+La voce è quella italiana di Windows (si aggiunge gratis da Impostazioni → Ora e lingua → Voce) oppure la voce del
+negozio, se l'hai impostata.
+
 ### Salvaspreco: la merce in scadenza diventa un'offerta lampo
 
 Ogni negozio butta via ogni giorno qualcosa: yogurt che scadono domani, frutta molto matura, pane

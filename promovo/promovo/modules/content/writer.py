@@ -97,9 +97,15 @@ def join_it(parts: list[str]) -> str:
     return ", ".join(parts[:-1]) + " e " + parts[-1]
 
 
+def available(flyer: Flyer) -> list[Offer]:
+    """Le offerte ancora disponibili nel punto vendita (senza quelle segnate «esaurito»)."""
+    return [o for o in flyer.offers if o.sold_out_at is None]
+
+
 def featured_offers(flyer: Flyer, limit: int = 6) -> list[Offer]:
-    feat = [o for o in flyer.offers if o.is_featured]
-    rest = sorted((o for o in flyer.offers if not o.is_featured), key=lambda o: (-pct(o), -saving(o), o.price_cents))
+    offers = available(flyer)
+    feat = [o for o in offers if o.is_featured]
+    rest = sorted((o for o in offers if not o.is_featured), key=lambda o: (-pct(o), -saving(o), o.price_cents))
     return (feat + rest)[:limit]
 
 
@@ -272,7 +278,7 @@ class Facts:
 def gather_facts(store: Store, flyer: Flyer, offers: list[Offer] | None = None, weather: dict | None = None,
                  today: date | None = None) -> Facts:
     offers = list(offers if offers is not None else featured_offers(flyer))
-    all_offers = list(flyer.offers) or offers
+    all_offers = available(flyer) or offers
     tone = store.tone if store.tone in TONES else "familiare"
     hero = hero_offer(offers) if offers else None
     marked = [o for o in offers if saving(o) > 0]

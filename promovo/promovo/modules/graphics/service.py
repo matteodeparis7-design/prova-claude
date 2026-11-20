@@ -206,7 +206,10 @@ def render_flyer_images(session: Session, store: Store, flyer: Flyer, settings: 
     pieces = []
     from ..video.service import week_idea
     idea = week_idea(flyer)
-    jobs = [("idea", None), ("cover", None), ("story", None)] + [("offer", i) for i in range(min(6, len(flyer.offers)))]
+    feats = featured_offers(flyer, 6)
+    if not feats:
+        return []
+    jobs = [("idea", None), ("cover", None), ("story", None)] + [("offer", i) for i in range(len(feats))]
     for kind, idx in jobs:
         if kind == "idea":
             img = idea_image(store, flyer, idea)
@@ -220,7 +223,10 @@ def render_flyer_images(session: Session, store: Store, flyer: Flyer, settings: 
         title = LABELS[kind] + ("" if idx is None else f" {idx + 1}")
         meta = {"format": kind, "width": img.width, "height": img.height, "prices_at": price_snapshot(flyer)}
         if idx is not None:
-            meta["offer_id"] = featured_offers(flyer, 6)[idx].id       # per il Revisore: quale prezzo c'è scritto
+            meta["offer_id"] = feats[idx].id                           # per il Revisore: quale prezzo c'è scritto
+            meta["offer_ids"] = [feats[idx].id]
+        else:
+            meta["offer_ids"] = [o.id for o in feats]                  # per «Esaurito»: quali prodotti si vedono
         piece = ContentPiece(store_id=store.id, flyer_id=flyer.id, kind="image", title=title, file_path=str(path),
                              meta=meta)
         session.add(piece)

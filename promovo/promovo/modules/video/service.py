@@ -102,13 +102,22 @@ def week_idea(flyer: Flyer) -> dict:
     return dict(row.meta or {}) if row else {}
 
 
+def spec_offers(flyer: Flyer, fmt: str, limit: int | None = None) -> list[Offer]:
+    """Le offerte del video: sugli schermi tutte nell'ordine del volantino, sui social quelle di punta;
+    mai quelle segnate «esaurito»."""
+    limit = limit or MAX_OFFERS[fmt]
+    if fmt == "landscape":
+        return [o for o in flyer.offers if o.sold_out_at is None][:limit]
+    return featured_offers(flyer, limit)
+
+
 def build_spec(store: Store, flyer: Flyer, fmt: str = "landscape", scale: float = 1.0,
                max_offers: int | None = None, music: bool | None = None) -> VideoSpec:
     if fmt not in FORMATS:
         raise RenderError(f"Formato sconosciuto: {fmt}. Usa: {', '.join(FORMATS)}")
     limit = max_offers or MAX_OFFERS[fmt]
     # Schermo in negozio: tutte le offerte nell'ordine del volantino. Social: solo quelle di punta.
-    offers = list(flyer.offers)[:limit] if fmt == "landscape" else featured_offers(flyer, limit)
+    offers = spec_offers(flyer, fmt, limit)
     address = ", ".join(x for x in (store.address, store.city) if x)
     contacts, qr, qr_label = store_contacts(store)
     idea = week_idea(flyer)
@@ -160,7 +169,8 @@ def render_flyer_video(session: Session, store: Store, flyer: Flyer, settings: S
                          file_path=str(out),
                          meta={"format": fmt, "duration": round(duration, 2), "offers": len(spec.offers),
                                "music": spec.music, "poster": str(poster) if poster else "",
-                               "prices_at": price_snapshot(flyer)})
+                               "prices_at": price_snapshot(flyer),
+                               "offer_ids": [o.id for o in spec_offers(flyer, fmt)]})
     session.add(piece)
     session.flush()
     return piece

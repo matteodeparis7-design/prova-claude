@@ -312,6 +312,14 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .nt-item:first-child { border-top: 0; }
 .nt-item img { width: 150px; border-radius: 12px; border: 1px solid var(--line); cursor: zoom-in; }
 @media (max-width: 640px) { .nt-item { grid-template-columns: 1fr; } .nt-item img { width: 100%; } }
+.so-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.so { border: 1px solid var(--line); border-radius: 16px; padding: 12px; display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 10px; align-items: center; background: #fff; }
+.so img { width: 64px; height: 64px; object-fit: contain; border-radius: 10px; background: #f6f3ec; }
+.so.out { background: #fdf3f1; border-color: #f2c9c3; } .so.out img { filter: grayscale(1); opacity: .6; }
+.so .btn { grid-column: 1 / -1; width: 100%; }
+.rd-list textarea { min-height: 64px; }
+.rd-row { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 8px; align-items: start; margin-top: 8px; }
+.rd-row .n { width: 28px; height: 28px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; font-weight: 700; font-size: 13px; margin-top: 8px; }
 /* negozi (agenzia) */
 .store-card { display: flex; flex-direction: column; gap: 12px; }
 .store-head { display: flex; gap: 12px; align-items: center; }
@@ -634,6 +642,10 @@ const SERVICES = {
     text: "Per gastronomia, forno e banchi: scrivi gli ingredienti, Promovo propone i 14 allergeni, tu confermi. Cartellini, registro e cartello pronti da stampare."},
   avvisi: {group: "Il negozio fisico", title: "Avvisi di servizio", icon: "i-calendar", sub: "Orari festivi e chiusure, pronti per ogni canale",
     text: "Orari delle feste, chiusure, lavori: li scrivi una volta e hai cartello per la porta, post, storia, stato WhatsApp, schermo e testo per Google."},
+  esaurito: {group: "Il negozio fisico", title: "Esaurito", icon: "i-x", sub: "Il prodotto finito esce dai contenuti del negozio",
+    text: "Un prodotto in offerta è finito? Un tocco e sparisce da grafiche, video e testi del negozio. La sede vede dove le offerte finiscono prima."},
+  radio: {group: "Il negozio fisico", title: "Radio del negozio", icon: "i-mic", sub: "Gli annunci del negozio in loop, con musica originale",
+    text: "Ogni settimana un audio da mandare sugli altoparlanti: offerte, avvisi, Salvaspreco, produttori, con musica originale. E l'annuncio di chiusura."},
   rescue: {group: "Il negozio fisico", title: "Salvaspreco", icon: "i-leaf", sub: "La merce in scadenza diventa un'offerta lampo",
     text: "I prodotti vicini alla scadenza diventano storia, post e cartellino in 30 secondi, con il conto del cibo salvato."},
   till: {group: "I canali del negozio", title: "Parola alla cassa", icon: "i-key", sub: "Quali canali portano clienti in negozio",
@@ -1740,6 +1752,106 @@ VIEWS.avvisi = async el => {
     if (!await confirmBox("Eliminare l'avviso?", "Spariscono anche i materiali preparati.", "Elimina", true)) return;
     try { await api(`/api/notices/${b.dataset.delN}`, {method: "DELETE"}); go("avvisi"); } catch (e) { toast(e.message, "err"); }
   });
+};
+
+// ---------- «Esaurito»
+VIEWS.esaurito = async el => {
+  const {flyer} = await currentOffers();
+  if (!flyer) { el.innerHTML = `<div class="card">${empty("i-flyer", "Nessun volantino in corso", "Carica il volantino: qui segnerai i prodotti finiti.")}</div>`; return; }
+  const [st, net] = await Promise.all([api(`/api/flyers/${flyer.id}/sold-out`), api("/api/sold-out-network").catch(() => ({rows: []}))]);
+  const out = st.offers.filter(o => o.sold_out);
+  const multi = S.stores.length > 1;
+  el.innerHTML = `
+    <div class="card"><h2>${icon("i-x")} Esaurito</h2>
+      <p class="sub">Quando un prodotto in offerta finisce, toccalo qui: esce da grafiche, video e testi nuovi di questo punto vendita, così nessun cliente arriva per un prodotto che non c'è. Quando torna, lo rimetti con un tocco.</p>
+      ${st.stale.length ? `<div class="notice warn" style="align-items:center">${icon("i-alert")}<span style="flex:1"><b>${st.stale.length} materiali mostrano ancora prodotti esauriti</b> (${esc([...new Set(st.stale.flatMap(x => x.offers))].join(", "))}).</span>
+        <button class="btn sm" id="soRemake">${icon("i-spark")} Rifai i materiali</button></div>` : out.length ? notice("ok", "Tutti i materiali sono già senza i prodotti esauriti.", "i-check") : ""}
+      <div class="so-grid" style="margin-top:14px">${st.offers.map(o => `<div class="so ${o.sold_out ? "out" : ""}">
+        ${o.photo_url || o.image_url ? `<img data-src="${o.photo_url || o.image_url}" alt="">` : `<span></span>`}
+        <div style="min-width:0"><b style="font-size:14px">${esc((o.brand ? o.brand + " " : "") + o.name)}</b><div class="muted" style="font-size:13px">${esc(o.description || "")} · ${esc(o.price)}</div>
+          ${o.sold_out ? `<span class="chip err">esaurito</span>${o.sold_out_note ? ` <span class="muted" style="font-size:12px">${esc(o.sold_out_note)}</span>` : ""}` : ""}</div>
+        ${o.sold_out ? `<div class="toolbar" style="grid-column:1/-1"><button class="btn sm sec" style="flex:1" data-back="${o.id}">Di nuovo disponibile</button><button class="btn sm ghost" data-msg="${o.id}">Messaggio</button></div>`
+          : `<button class="btn sm sec" data-out="${o.id}">${icon("i-x")} Esaurito</button>`}</div>`).join("")}</div>
+    </div>
+    ${multi ? `<div class="card"><h2>${icon("i-chart")} Nella rete</h2><p class="sub">Per la sede: dove e dopo quanti giorni sono finiti i prodotti in offerta. È un segnale per gli ordini e per i prossimi volantini.</p>
+      ${net.rows.length ? `<div class="till-scroll"><table class="till-table"><tr><th>Prodotto</th><th>Punto vendita</th><th>Finito il</th><th>Giorno del volantino</th></tr>
+        ${net.rows.map(r => `<tr><td>${esc(r.offer)}</td><td>${esc(r.store)}</td><td>${new Date(r.sold_out_at).toLocaleString("it-IT", {day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"})}</td><td>${r.day_of_flyer ? r.day_of_flyer + "°" : "—"}</td></tr>`).join("")}</table></div>`
+        : `<div class="muted">Nessun prodotto esaurito nei punti vendita.</div>`}</div>` : ""}`;
+  $$("[data-out]", el).forEach(b => b.onclick = () => {
+    const o = st.offers.find(x => x.id === Number(b.dataset.out));
+    modal(`<h3>«${esc(o.name)}» è finito?</h3><p class="muted">Esce dai materiali nuovi di questo punto vendita. Se vuoi, scrivi quando torna: compare nel messaggio per i clienti.</p>
+      <input class="in" id="soNote" maxlength="120" placeholder="es. Torna giovedì (facoltativo)">
+      <div class="toolbar" style="justify-content:flex-end;margin-top:16px"><button class="btn sec" data-close>Annulla</button><button class="btn" id="soOk">Segna esaurito</button></div>`, (m, close) => {
+      $("#soOk", m).onclick = () => busy($("#soOk", m), async () => {
+        await api(`/api/offers/${o.id}/sold-out`, {json: {sold_out: true, note: $("#soNote", m).value}});
+        close(); toast("Segnato esaurito."); go("esaurito");
+      });
+    });
+  });
+  $$("[data-back]", el).forEach(b => b.onclick = () => busy(b, async () => { await api(`/api/offers/${b.dataset.back}/sold-out`, {json: {sold_out: false}}); toast("Di nuovo disponibile: torna nei materiali nuovi."); go("esaurito"); }));
+  $$("[data-msg]", el).forEach(b => b.onclick = async () => {
+    const m = await api(`/api/offers/${b.dataset.msg}/sold-out-message`);
+    modal(`<div class="toolbar" style="margin-bottom:12px"><h3 style="flex:1;margin:0">Messaggio per i clienti <span class="muted" style="font-weight:500">(facoltativo)</span></h3><button class="btn ghost sm" data-close>${icon("i-x")}</button></div>
+      <div class="fl-week"><img data-src="${m.image_url}" alt=""><div><textarea class="in" readonly id="soText">${esc(m.text)}</textarea>
+      <div class="toolbar" style="margin-top:10px"><button class="btn sm sec" id="soCopy">${icon("i-copy")} Copia</button><button class="btn sm sec" id="soDl">${icon("i-download")} Immagine</button></div></div></div>`, mm => {
+      loadImages(mm);
+      $("#soCopy", mm).onclick = async () => { try { await navigator.clipboard.writeText(m.text); toast("Copiato."); } catch (e) { toast("Copia non riuscita.", "err"); } };
+      $("#soDl", mm).onclick = () => download(m.image_url, "Esaurito.jpg");
+    });
+    const md = $("#modalRoot .modal"); if (md) md.classList.add("big");
+  });
+  const rm = $("#soRemake");
+  if (rm) rm.onclick = () => busy(rm, async () => {
+    const job = await api(`/api/flyers/${flyer.id}/kit`, {json: {items: st.remake_items}});
+    toast("Rifaccio i materiali senza i prodotti esauriti: li trovi nel volantino, passo 3.");
+    for (let i = 0; i < 400; i++) { const j = await api(`/api/jobs/${job.id}`); if (["done", "failed"].includes(j.status)) break; await sleep(1500); }
+    go("esaurito");
+  }, "Rifaccio…");
+};
+
+// ---------- Radio del negozio
+VIEWS.radio = async el => {
+  const info = await api(`/api/stores/${S.storeId}/radio`);
+  let items = info.announcements.slice();
+  const voices = info.engines.length ? `<select class="in" id="rdEngine">${info.engines.map(e => `<option value="${e.key}">${esc(e.label)}</option>`).join("")}</select>` : "";
+  el.innerHTML = `
+    <div class="card"><h2>${icon("i-mic")} Radio del negozio</h2>
+      <p class="sub">Un audio da mandare in loop sugli altoparlanti del negozio (va bene qualsiasi lettore o una chiavetta USB): annunci delle offerte, degli avvisi, del Salvaspreco e dei produttori, con la musica originale di Promovo che si abbassa quando parla la voce. All'inizio si dice che la voce è sintetica.</p>
+      ${info.engines.length ? "" : notice("info", "Su questo computer non c'è ancora una voce italiana. Su Windows si aggiunge gratis da Impostazioni → Ora e lingua → Voce → Aggiungi voci → Italiano; poi riapri questa pagina.", "i-mic")}
+      <label class="l" style="margin-top:12px">Gli annunci della settimana <span class="muted">(preparati dai dati del negozio: puoi cambiarli, toglierli o aggiungerne)</span></label>
+      <div class="rd-list" id="rdList"></div>
+      <div class="toolbar" style="margin-top:10px"><button class="btn sm sec" id="rdAdd">${icon("i-plus")} Aggiungi un annuncio</button></div>
+      ${info.engines.length ? `<div class="row" style="margin-top:16px"><div class="f"><label class="l" for="rdEngine">La voce</label>${voices}</div>
+        <div class="f" style="flex:0 0 auto"><label class="l">Durata del giro</label><div class="seg" id="rdMin">${info.minutes.map(m => `<button data-m="${m}" class="${m === 5 ? "on" : ""}">${m} minuti</button>`).join("")}</div></div>
+        <div style="flex:0 0 auto"><button class="btn" id="rdGo">${icon("i-mic")} Crea la radio</button></div></div>
+        <div id="rdOut" style="margin-top:12px"></div>` : ""}
+    </div>
+    ${info.engines.length ? `<div class="card"><h2>Annuncio di chiusura</h2><p class="sub">Da far partire un quarto d'ora prima della chiusura.</p>
+      <div class="muted" style="margin-bottom:10px">«${esc(info.closing)}»</div>
+      <div class="toolbar"><button class="btn sec" id="rdClose">${icon("i-mic")} Crea l'annuncio di chiusura</button></div><div id="rdCloseOut" style="margin-top:12px"></div></div>` : ""}`;
+  const draw = () => {
+    $("#rdList").innerHTML = items.map((t, i) => `<div class="rd-row"><span class="n">${i + 1}</span><textarea class="in" data-i="${i}">${esc(t)}</textarea><button class="btn sm ghost" data-rm="${i}" aria-label="Togli">${icon("i-trash")}</button></div>`).join("");
+    const fit = t => { t.style.height = "auto"; t.style.height = (t.scrollHeight + 2) + "px"; };
+    $$("#rdList textarea").forEach(t => { fit(t); t.oninput = () => { items[Number(t.dataset.i)] = t.value; fit(t); }; });
+    $$("[data-rm]").forEach(b => b.onclick = () => { items.splice(Number(b.dataset.rm), 1); draw(); });
+  };
+  draw();
+  $("#rdAdd").onclick = () => { if (items.length >= 12) { toast("Al massimo 12 annunci.", "err"); return; } items.push(""); draw(); $$("#rdList textarea").slice(-1)[0].focus(); };
+  let minutes = 5;
+  $$("#rdMin button").forEach(b => b.onclick = () => { minutes = Number(b.dataset.m); $$("#rdMin button").forEach(x => x.classList.toggle("on", x === b)); });
+  const make = async (body, out, name) => {
+    const res = await fetch(`/api/stores/${S.storeId}/radio`, {method: "POST", headers: {"Content-Type": "application/json", Authorization: "Bearer " + S.token}, body: JSON.stringify(body)});
+    if (!res.ok) { let d = "Errore"; try { d = (await res.json()).detail; } catch (e) {} throw new Error(d); }
+    const url = URL.createObjectURL(await res.blob());
+    $(out).innerHTML = `<div class="toolbar"><audio controls src="${url}"></audio><a class="btn sm sec" href="${url}" download="${name}">${icon("i-download")} Scarica l'MP3</a></div>`;
+  };
+  const go_ = $("#rdGo");
+  if (go_) go_.onclick = () => busy(go_, async () => {
+    await make({announcements: items.filter(t => t.trim()), engine: $("#rdEngine").value, minutes}, "#rdOut", "Radio_del_negozio.mp3");
+    toast("Radio pronta: mettila in loop sul lettore del negozio.");
+  }, "Preparo la radio…");
+  const cl = $("#rdClose");
+  if (cl) cl.onclick = () => busy(cl, () => make({closing: true, engine: $("#rdEngine").value}, "#rdCloseOut", "Radio_chiusura.mp3"), "Preparo…");
 };
 
 // ---------- Salvaspreco

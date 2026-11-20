@@ -149,9 +149,18 @@ def review(session: Session, store: Store, flyer: Flyer) -> dict:
         checks.append(Check("offerte", "Prezzi barrati (Omnibus)", "warn",
                             ("1 prezzo barrato più alto" if len(om) == 1 else f"{len(om)} prezzi barrati più alti")
                             + " del minimo dei 30 giorni prima: rivedili nel passo 1."))
+    from .soldout import stale_pieces
+    gone = {x["piece_id"]: x for x in stale_pieces(session, flyer)}
     now = price_snapshot(flyer)
     names = {str(o.id): o.name for o in flyer.offers}
     for p in pieces:
+        if p.id in gone:
+            area = {"image": "grafiche", "video": "video"}.get(p.kind, "testi")
+            names = gone[p.id]["offers"]
+            checks.append(Check(area, p.title or p.kind, "err",
+                                f"Mostra «{names[0]}»" + (f" e altri {len(names) - 1} prodotti" if len(names) > 1 else "")
+                                + ", segnato esaurito: premi «Rifai i materiali»."))
+            continue
         was = (p.meta or {}).get("prices_at")
         if was:
             changed = [k for k, v in now.items() if k in was and list(was[k]) != list(v)]

@@ -122,6 +122,33 @@ def _to_mp3(src: Path, out: Path) -> Path:
     return out
 
 
+def speak_wav(store: Store, text: str, engine: str, out_wav: Path) -> Path:
+    """Legge un testo con la voce scelta e salva un WAV mono a 44,1 kHz (per montarlo, per esempio nella radio)."""
+    from .video.render import ffmpeg_path
+    with tempfile.TemporaryDirectory() as tmp:
+        if engine == "negozio":
+            key = voicemod.api_key()
+            if not (store.voice_id and store.voice_consent_at and key):
+                raise AudioError("La voce del negozio non è configurata.")
+            raw = voicemod.synthesize(text, store.voice_id, Path(tmp) / "voce.mp3", key)
+        elif engine == "windows":
+            v = windows_voice()
+            if not v:
+                raise AudioError("Su questo computer non c'è la voce italiana di Windows: si aggiunge da "
+                                 "Impostazioni → Ora e lingua → Voce → Aggiungi voci → Italiano.")
+            raw = Path(tmp) / "voce.wav"
+            _windows_wav(text, raw, v)
+        else:
+            raise AudioError("Voce non disponibile.")
+        out_wav.parent.mkdir(parents=True, exist_ok=True)
+        r = subprocess.run([ffmpeg_path(), "-y", "-loglevel", "error", "-i", str(raw), "-ac", "1", "-ar", "44100",
+                            "-sample_fmt", "s16", str(out_wav)], capture_output=True, text=True, timeout=120,
+                           creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+        if r.returncode != 0 or not out_wav.exists():
+            raise AudioError("Conversione della voce non riuscita.")
+    return out_wav
+
+
 def make_audio(store: Store, text: str, out_mp3: Path, engine: str) -> Path:
     """Legge il testo con la voce scelta e salva un MP3 pronto per WhatsApp."""
     if len(text.strip()) < 10:

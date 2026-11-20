@@ -129,8 +129,21 @@ def to_spoken(text: str) -> str:
     s = re.sub(r"(\d)\s?g\b", r"\1 grammi", s)
     s = re.sub(r"(\d)\s?ml\b", r"\1 millilitri", s)
     s = re.sub(r"(\d)\s?cl\b", r"\1 centilitri", s)
-    s = re.sub(r"\b1\s?l\b", "1 litro", s)
-    s = re.sub(r"(\d)\s?l\b", r"\1 litri", s)
+    s = re.sub(r"\b1\s?[lL]\b", "1 litro", s)
+    s = re.sub(r"(\d)\s?[lL]\b", r"\1 litri", s)
+    # orari: «lun-sab 8:00-20:00» -> «dal lunedì al sabato dalle 8 alle 20»
+    days = {"lun": "lunedì", "mar": "martedì", "mer": "mercoledì", "gio": "giovedì", "ven": "venerdì",
+            "sab": "sabato", "dom": "domenica"}
+    d = "|".join(days)
+    s = re.sub(rf"\b({d})\.?\s?[-–]\s?({d})\b\.?", lambda m: f"dal {days[m.group(1).lower()]} al "
+               f"{days[m.group(2).lower()]}".replace("dal domenica", "dalla domenica").replace("al domenica", "alla domenica"),
+               s, flags=re.I)
+    s = re.sub(rf"\b({d})\.?(?=\s+\d{{1,2}}[:.]\d{{2}})", lambda m: days[m.group(1).lower()], s, flags=re.I)
+
+    def hh(h: str, m: str) -> str:
+        return str(int(h)) + ("" if m == "00" else f" e {int(m)}")
+    s = re.sub(r"\b(\d{1,2})[:.](\d{2})\s?[-–]\s?(\d{1,2})[:.](\d{2})\b",
+               lambda m: f"dalle {hh(m.group(1), m.group(2))} alle {hh(m.group(3), m.group(4))}", s)
     s = re.sub(r"(\d+)\s?x\s?(\d+)", r"\1 per \2", s)
     s = s.replace("%", " per cento").replace("&", " e ").replace("/", " o ")
     return re.sub(r"\s{2,}", " ", s).strip()

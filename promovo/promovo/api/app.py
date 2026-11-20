@@ -51,6 +51,8 @@ from ..modules import proof as proofmod
 from ..modules import accessible as accessmod
 from ..modules import allergens as allergmod
 from ..modules import notices as noticemod
+from ..modules import soldout as soldmod
+from ..modules import radio as radiomod
 from .deps import (
     AppState, bearer_token, content_for, current_user, flyer_for, get_session, job_for, offer_for,
     require_owner, state, store_for,
@@ -246,7 +248,8 @@ def offer_out(o: Offer) -> dict:
             "unit_price_text": o.unit_price_text, "conditions": o.conditions, "bbox": o.bbox,
             "price_verified": o.price_verified, "verified_by": o.verified_by, "is_featured": o.is_featured, "cost_cents": o.cost_cents,
             "image_url": f"/api/offers/{o.id}/image" if o.crop_path else None,
-            "photo_url": f"/api/offers/{o.id}/photo" if o.photo_path else None, "manual": o.manual}
+            "photo_url": f"/api/offers/{o.id}/photo" if o.photo_path else None, "manual": o.manual,
+            "sold_out": o.sold_out_at is not None, "sold_out_note": o.sold_out_note or ""}
 
 
 def flyer_out(f: Flyer, with_offers: bool = False) -> dict:
@@ -2126,6 +2129,80 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         out = _render_tmp(st.settings, "avviso", ".jpg")
         makers[what]().save(out, quality=92)
         return FileResponse(out, media_type="image/jpeg", filename=f"Avviso_{what}",
+                            background=StarletteTask(lambda: out.unlink(missing_ok=True)))
+
+    # -------------------------------------------------- «Esaurito»
+
+    def _soldout_state(session: Session, f: Flyer) -> dict:
+        pieces = list(session.scalars(select(ContentPiece).where(ContentPiece.flyer_id == f.id)))
+        stale = soldmod.stale_pieces(session, f)
+        return {"flyer": {"id": f.id, "title": f.title, "valid_to": f.valid_to.isoformat() if f.valid_to else None},
+                "offers": [offer_out(o) for o in f.offers], "stale": stale,
+                "remake_items": soldmod.remake_items(stale, pieces)}
+
+    @app.get("/api/flyers/{flyer_id}/sold-out")
+    def flyer_sold_out(flyer_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Le offerte del volantino con lo stato «esaurito» e i materiali che mostrano ancora prodotti finiti."""
+        return _soldout_state(session, flyer_for(session, user, flyer_id))
+
+    @app.post("/api/offers/{offer_id}/sold-out")
+    def offer_sold_out(offer_id: int, body: dict, user: User = Depends(current_user),
+                       session: Session = Depends(get_session)):
+        """Segna (o toglie) «esaurito»: il prodotto esce dai materiali nuovi di questo punto vendita."""
+        o = offer_for(session, user, offer_id)
+        soldmod.mark(o, bool(body.get("sold_out", True)), str(body.get("note") or ""))
+        session.flush()
+        return _soldout_state(session, o.flyer)
+
+    @app.get("/api/offers/{offer_id}/sold-out-message")
+    def offer_sold_out_message(offer_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        o = offer_for(session, user, offer_id)
+        return {"text": soldmod.message_text(o.flyer.store, o), "image_url": f"/api/offers/{o.id}/esaurito.jpg"}
+
+    @app.get("/api/offers/{offer_id}/esaurito.jpg")
+    def offer_sold_out_image(offer_id: int, request: Request, user: User = Depends(current_user),
+                             session: Session = Depends(get_session)):
+        o = offer_for(session, user, offer_id)
+        out = _render_tmp(state(request).settings, "esaurito", ".jpg")
+        soldmod.message_image(o.flyer.store, o).save(out, quality=92)
+        return FileResponse(out, media_type="image/jpeg", filename="Esaurito.jpg",
+                            background=StarletteTask(lambda: out.unlink(missing_ok=True)))
+
+    @app.get("/api/sold-out-network")
+    def sold_out_network(user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Per la sede: in quali punti vendita e dopo quanti giorni sono finiti i prodotti in offerta."""
+        return {"rows": soldmod.network(session, user.organization_id)}
+
+    # -------------------------------------------------- radio del punto vendita
+
+    @app.get("/api/stores/{store_id}/radio")
+    def radio_info(store_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Gli annunci della settimana (modificabili), l'annuncio di chiusura e le voci disponibili."""
+        store = store_for(session, user, store_id)
+        return {"announcements": radiomod.announcements(session, store), "closing": radiomod.closing(store),
+                "engines": accessmod.engines(store), "minutes": list(radiomod.MINUTES)}
+
+    @app.post("/api/stores/{store_id}/radio")
+    def radio_make(store_id: int, body: dict, request: Request, user: User = Depends(current_user),
+                   session: Session = Depends(get_session)):
+        """Crea l'MP3 della radio (annunci + musica originale) o, con closing=true, l'annuncio di chiusura."""
+        store = store_for(session, user, store_id)
+        engine = str(body.get("engine") or "")
+        out = _render_tmp(state(request).settings, "radio", ".mp3")
+        try:
+            if body.get("closing"):
+                radiomod.make_closing(store, engine, out, int(body.get("closing_minutes") or 15))
+                name = "Radio_chiusura.mp3"
+            else:
+                texts = body.get("announcements")
+                if not isinstance(texts, list):
+                    texts = radiomod.announcements(session, store)
+                radiomod.make_program(store, [str(t) for t in texts], engine, int(body.get("minutes") or 5), out)
+                name = "Radio_del_negozio.mp3"
+        except (radiomod.RadioError, accessmod.AudioError, voicemod.VoiceError, ValueError) as exc:
+            out.unlink(missing_ok=True)
+            raise HTTPException(400, str(exc)) from exc
+        return FileResponse(out, media_type="audio/mpeg", filename=name,
                             background=StarletteTask(lambda: out.unlink(missing_ok=True)))
 
     return app
