@@ -124,55 +124,54 @@ Queste richiedono che Promovo abbia anche una parte su internet (oggi il program
 
 ---
 
-## 2-bis. Seconda tornata: funzioni nuove della piattaforma
+## 2-bis. Terza tornata: servizi nuovi per catene, punti vendita e negozi indipendenti
 
-**Il criterio, chiarito:** Promovo è una piattaforma di creazione e gestione dei contenuti. Prezzi, sconti e
-promozioni li decide il supermercato: Promovo non li inventa e non li propone. Le idee nuove devono quindi
-essere **cose che fa la piattaforma** e che oggi nessuno strumento fa. Ogni idea è stata controllata sul mercato
-(novembre 2026).
+**Il criterio.** Promovo è una piattaforma di contenuti e di servizi per **tutti**: la **sede** delle grandi catene,
+i **singoli punti vendita** delle catene (spesso affiliati) e i negozi indipendenti. Un'idea entra solo se è utile in
+tutti e tre i casi. Prezzi, sconti e promozioni li decide il retailer: Promovo non li tocca. Ogni idea prende un
+meccanismo che funziona in un altro settore ed è stata controllata sul mercato (novembre 2026).
 
-| # | Idea | Da dove arriva | Esiste già? | Voto |
-|---|---|---|---|---|
-| A | **Correttore del volantino** – controlla la bozza prima che vada in stampa | Il controllo prima della stampa delle tipografie, il correttore ortografico, i test automatici del software | Esistono controlli tecnici dei file di stampa; **nessuno controlla prezzi, prezzo al kg, sconti e date** | ★★★★★ |
-| B | **Volantino da ascoltare e a caratteri grandi** – per anziani e ipovedenti | Audiolibri, siti accessibili (European Accessibility Act) | **Nessun supermercato** lo fa | ★★★★ |
-| C | **Regia del giorno** – ogni mattina i contenuti di oggi già pronti, da tutte le funzioni | I «daily brief» dei giornali, le playlist automatiche | Gli strumenti per programmare i post non partono dal volantino | ★★★ |
-| – | Il messaggio vocale che diventa post | Note vocali, assistenti | **Esiste già** in app generiche: scartata | – |
+| # | Servizio | Da dove arriva | Sede della catena | Punto vendita | Esiste già? | Stato |
+|---|---|---|---|---|---|---|
+| 1 | **Correttore del volantino** | Controllo pre-stampa, test automatici del software | Un errore × centinaia di negozi × milioni di copie | Bozza locale controllata | Solo controlli tecnici del file, non del contenuto | **fatto** |
+| 2 | **Volantino accessibile** (audio e caratteri grandi) | Audiolibri, accessibilità digitale | Un servizio per tutta la rete | Pronto da mandare | No | **fatto** |
+| 3 | **«Esaurito»: contenuti che sanno cosa c'è a scaffale** | Google Shopping ed e-commerce sospendono gli annunci quando il prodotto finisce | Vede in quali punti vendita le promo finiscono prima | Un tocco: il prodotto sparisce dai suoi materiali | No: i contenuti continuano a pubblicizzare prodotti finiti | proposta |
+| 4 | **Regia sede → punti vendita** | Piattaforme per i franchising (SOCi, BrandMuscle) | Carica una volta, controlla lo stile, vede chi ha pubblicato | Riceve il suo kit già localizzato | Esiste per franchising generici, non parte dal volantino | proposta |
+| 5 | **Radio del punto vendita** | In-store radio delle grandi catene (spot in negozio: +19,5% vendite in uno studio Polimi-Carrefour) | Annunci locali dentro la radio centrale | Radio vera senza costi di produzione | Solo servizi su misura e a pagamento | proposta |
+| 6 | **Pronto-promo del punto vendita** | Checklist dell'aviazione, audit dei negozi | Rapporto di conformità di tutta la rete | Giro prezzi del primo giorno, per reparto | Solo checklist generiche, non generate dal volantino | proposta |
+| 7 | **Briefing del personale** | Il briefing prima del servizio della ristorazione | Stesso messaggio a tutti i negozi | Una pagina (e un audio) per cassieri e banconisti | No | proposta |
+| 8 | **Scheda Google del punto vendita** | Gestione delle schede multi-sede (Uberall, Yext) | Tutte le schede aggiornate | Post «Offerte» settimanali su Google Maps | Esiste, ma non parte dal volantino | proposta |
+| 9 | **Comunicazione multilingue del quartiere** | Turismo e trasporti | Una rete, molte comunità | Testi nelle lingue del quartiere | No | proposta |
 
-### A. Correttore del volantino — la più forte
+### Servizio 3 · «Esaurito»: contenuti che sanno cosa c'è a scaffale
 
-**Il problema.** Un errore nel volantino stampato costa caro: il negozio deve vendere al prezzo sbagliato
-stampato, oppure ritirare migliaia di copie, e rischia sanzioni (prezzo al kg mancante, prezzo barrato
-non conforme). Oggi la bozza la ricontrolla una persona, a occhio, di corsa.
+Quando un prodotto in volantino finisce, oggi i post, gli schermi e i messaggi continuano a pubblicizzarlo: il
+cliente arriva e non lo trova, e il fastidio è maggiore proprio perché era in promozione (GS1 Italia / ECR).
+Con Promovo il punto vendita segna **«esaurito»** con un tocco: il prodotto esce dai materiali di quel negozio
+(video per gli schermi, storia, locandina e stato WhatsApp, rifatti senza quel prodotto), e se il negozio vuole
+Promovo prepara il messaggio «esaurito, torna giovedì». La **sede** vede in quali negozi e dopo quanti giorni i
+prodotti finiscono: è un segnale per gli ordini e per il prossimo volantino. È quello che fanno l'e-commerce e
+Google Shopping (l'annuncio si ferma quando il prodotto finisce), portato nel negozio fisico.
 
-**Cosa fa Promovo.** Si carica la **bozza** del volantino (il PDF del grafico). In un minuto Promovo la legge e
-segnala, offerta per offerta:
-- **prezzo al kg o al litro mancante** (va indicato anche nella pubblicità che riporta il prezzo: Direttiva
-  98/6/CE, Codice del Consumo artt. 13-17) e **prezzo al kg sbagliato** rispetto a prezzo e formato;
-- **prezzo barrato più basso o uguale** al prezzo in offerta, e **barrato non conforme Omnibus** (30 giorni);
-- **probabili refusi**: un prezzo 5 o 10 volte diverso da quello dello stesso prodotto nei volantini precedenti
-  (1,99 diventato 19,90), prezzi a zero;
-- **lo stesso prodotto due volte** con prezzi diversi;
-- **formato mancante** sui prodotti confezionati;
-- **date** mancanti, incoerenti o già passate;
-- **prezzi letti con incertezza**, da guardare sulla stampa.
+### Servizio 4 · Regia sede → punti vendita
 
-Poi prepara il **rapporto di correzione in PDF** da mandare al grafico, con la miniatura di ogni offerta da
-correggere.
+La sede carica il volantino una volta. Ogni punto vendita riceve il suo kit già localizzato: indirizzo, orari, meteo
+della sua zona, produttori locali, parola alla cassa, lingua. La sede fissa cosa si può cambiare e cosa no (logo,
+colori, frasi obbligatorie), approva, e vede in una tabella **chi ha scaricato e pubblicato cosa**.
 
-**Per chi vende Promovo**: è il servizio che si fa pagare da solo. Basta un errore evitato.
+### Servizio 5 · Radio del punto vendita
 
-### B. Volantino da ascoltare e a caratteri grandi
+Ogni settimana Promovo prepara un file audio da mandare in loop sugli altoparlanti del negozio: annunci delle offerte
+del volantino, il Salvaspreco del giorno, i produttori locali, «il negozio chiude tra 15 minuti», con musica originale
+creata da Promovo. Usa la voce italiana del computer (o quella del negozio). Per le catene: gli annunci locali
+si inseriscono nella radio centrale.
 
-In Italia quasi una persona su quattro ha più di 65 anni (ISTAT). Promovo prepara dalla stessa lettura:
-- **il volantino da ascoltare**: un messaggio audio di un minuto con le offerte principali, da mandare su
-  WhatsApp (le persone anziane ascoltano i vocali più volentieri di quanto leggano);
-- **il volantino a caratteri grandi**: un A4 da tenere alla cassa e da consegnare, leggibile senza occhiali.
+### Servizio 6 · Pronto-promo del punto vendita
 
-### C. Regia del giorno
-
-Una schermata «Oggi»: Promovo guarda il volantino, il meteo, il calendario, la filiera e il Salvaspreco e
-prepara i 2-3 contenuti da pubblicare oggi, già pronti, con l'ora consigliata. Chi gestisce più negozi li ha
-tutti in un'unica lista.
+Il giorno prima che parta il volantino Promovo prepara, per ogni negozio, il giro di controllo **per reparto**: ogni
+offerta con il prezzo, il prezzo al kg, le condizioni e le caselle «cartellino esposto» e «prezzo in cassa giusto». Il
+personale lo spunta dal telefono o sulla carta; gli errori restano registrati e la sede riceve il rapporto di tutta la
+rete. Lo scopo è evitare il prezzo diverso tra scaffale e cassa, che costa reclami e sanzioni.
 
 ## 3. Le regole che non cambiano
 
@@ -194,4 +193,4 @@ tutti in un'unica lista.
 | 4 | Calendario dei portafogli + spesa a budget | **fatto** (beta) |
 | 5 | A · Correttore del volantino | **fatto** (beta) |
 | 6 | B · Volantino da ascoltare e a caratteri grandi | **fatto** (beta) |
-| 7 | C · Regia del giorno | da fare |
+| 7 | Esaurito, Regia sede → punti vendita, Radio, Pronto-promo | proposte, da scegliere |
