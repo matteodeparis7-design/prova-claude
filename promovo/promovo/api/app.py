@@ -2134,14 +2134,14 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
 
     # -------------------------------------------------- «Lavora con noi»
 
-    def job_for(session: Session, user: User, job_id: int) -> JobPost:
+    def post_for(session: Session, user: User, job_id: int) -> JobPost:
         j = session.get(JobPost, job_id)
         if j is None:
             raise HTTPException(404, "Annuncio non trovato.")
         store_for(session, user, j.store_id)
         return j
 
-    def job_in(body: dict) -> jobsmod.JobIn:
+    def post_in(body: dict) -> jobsmod.JobIn:
         return jobsmod.JobIn(
             role=str(body.get("role") or ""), contract=str(body.get("contract") or "indeterminato"),
             hours=str(body.get("hours") or "full-time"), hours_note=str(body.get("hours_note") or ""),
@@ -2150,7 +2150,7 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
             apply_link=str(body.get("apply_link") or "").strip(), apply_email=str(body.get("apply_email") or "").strip(),
             in_store=bool(body.get("in_store", True)))
 
-    def job_out(store: Store, j: JobPost) -> dict:
+    def post_out(store: Store, j: JobPost) -> dict:
         return {"id": j.id, "store_id": j.store_id, "role": j.role, "title_role": jobsmod.title_role(j.role),
                 "contract": j.contract, "hours": j.hours, "hours_note": j.hours_note, "tasks": j.tasks,
                 "requirements": j.requirements, "offer": j.offer, "pay": j.pay, "start": j.start,
@@ -2167,13 +2167,13 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
                                .order_by(JobPost.created_at.desc())).all()
         others = session.scalar(select(func.count()).select_from(Store)
                                 .where(Store.organization_id == store.organization_id)) or 1
-        return {"items": [job_out(store, j) for j in rows], "contracts": jobsmod.CONTRACTS, "hours": jobsmod.HOURS,
+        return {"items": [post_out(store, j) for j in rows], "contracts": jobsmod.CONTRACTS, "hours": jobsmod.HOURS,
                 "stores_in_org": others}
 
     @app.post("/api/job-posts/check")
     def check_job(body: dict, user: User = Depends(current_user)):
         """Il controllo dell'annuncio mentre lo si scrive: parole da togliere (err) e cose da rivedere (warn, info)."""
-        return {"issues": [i.__dict__ for i in jobsmod.check(job_in(body))]}
+        return {"issues": [i.__dict__ for i in jobsmod.check(post_in(body))]}
 
     @app.post("/api/stores/{store_id}/jobs", status_code=201)
     def create_job(store_id: int, body: dict, user: User = Depends(current_user),
@@ -2181,7 +2181,7 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         """Crea l'annuncio; con all_stores=true la sede lo pubblica uguale in tutti i punti vendita."""
         store = store_for(session, user, store_id)
         try:
-            d = jobsmod.validate(job_in(body))
+            d = jobsmod.validate(post_in(body))
         except jobsmod.JobError as exc:
             raise HTTPException(400, str(exc)) from exc
         targets = [store]
@@ -2198,16 +2198,16 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
             made.append(j)
         session.flush()
         mine = next(j for j in made if j.store_id == store.id)
-        return {**job_out(store, mine), "created_for": len(made)}
+        return {**post_out(store, mine), "created_for": len(made)}
 
     @app.delete("/api/job-posts/{job_id}", status_code=204)
     def delete_job(job_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
-        session.delete(job_for(session, user, job_id))
+        session.delete(post_for(session, user, job_id))
 
     @app.get("/api/job-posts/{job_id}/{what}")
     def job_file(job_id: int, what: str, request: Request, user: User = Depends(current_user),
                  session: Session = Depends(get_session)):
-        j = job_for(session, user, job_id)
+        j = post_for(session, user, job_id)
         store = session.get(Store, j.store_id)
         st = state(request)
         if what == "cartello.pdf":
