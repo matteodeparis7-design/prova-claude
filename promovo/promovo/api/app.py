@@ -25,7 +25,7 @@ from ..config import Settings, get_settings
 from ..db import Database
 from ..llm import AIRefused, AIUnavailable, LLM
 from .. import keys
-from ..models import ContentPiece, CounterItem, Flyer, FlyerStatus, Job, JobStatus, Notice, Offer, Organization, Producer, Rescue, Role, Store, TillCode, User
+from ..models import ContentPiece, CounterItem, Flyer, FlyerStatus, Job, JobPost, JobStatus, Notice, Offer, Organization, Producer, Rescue, Role, Store, TillCode, User
 from ..imaging import ImageError, load_logo, open_image, save_product_photo
 from ..money import discount_percent, format_eur, parse_price
 from ..security import hash_password, issue_token, revoke_token, verify_password
@@ -51,6 +51,7 @@ from ..modules import proof as proofmod
 from ..modules import accessible as accessmod
 from ..modules import allergens as allergmod
 from ..modules import notices as noticemod
+from ..modules import jobs as jobsmod
 from ..modules import soldout as soldmod
 from ..modules import radio as radiomod
 from .deps import (
@@ -2129,6 +2130,99 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         out = _render_tmp(st.settings, "avviso", ".jpg")
         makers[what]().save(out, quality=92)
         return FileResponse(out, media_type="image/jpeg", filename=f"Avviso_{what}",
+                            background=StarletteTask(lambda: out.unlink(missing_ok=True)))
+
+    # -------------------------------------------------- «Lavora con noi»
+
+    def job_for(session: Session, user: User, job_id: int) -> JobPost:
+        j = session.get(JobPost, job_id)
+        if j is None:
+            raise HTTPException(404, "Annuncio non trovato.")
+        store_for(session, user, j.store_id)
+        return j
+
+    def job_in(body: dict) -> jobsmod.JobIn:
+        return jobsmod.JobIn(
+            role=str(body.get("role") or ""), contract=str(body.get("contract") or "indeterminato"),
+            hours=str(body.get("hours") or "full-time"), hours_note=str(body.get("hours_note") or ""),
+            tasks=str(body.get("tasks") or ""), requirements=str(body.get("requirements") or ""),
+            offer=str(body.get("offer") or ""), pay=str(body.get("pay") or ""), start=str(body.get("start") or ""),
+            apply_link=str(body.get("apply_link") or "").strip(), apply_email=str(body.get("apply_email") or "").strip(),
+            in_store=bool(body.get("in_store", True)))
+
+    def job_out(store: Store, j: JobPost) -> dict:
+        return {"id": j.id, "store_id": j.store_id, "role": j.role, "title_role": jobsmod.title_role(j.role),
+                "contract": j.contract, "hours": j.hours, "hours_note": j.hours_note, "tasks": j.tasks,
+                "requirements": j.requirements, "offer": j.offer, "pay": j.pay, "start": j.start,
+                "apply_link": j.apply_link, "apply_email": j.apply_email, "in_store": j.in_store,
+                "conditions": jobsmod.conditions(j), "created_at": j.created_at.isoformat(),
+                "image_url": f"/api/job-posts/{j.id}/post.jpg", "story_url": f"/api/job-posts/{j.id}/storia.jpg",
+                "screen_url": f"/api/job-posts/{j.id}/schermo.jpg", "poster_url": f"/api/job-posts/{j.id}/cartello.pdf",
+                **jobsmod.texts(store, j)}
+
+    @app.get("/api/stores/{store_id}/jobs")
+    def list_jobs(store_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        store = store_for(session, user, store_id)
+        rows = session.scalars(select(JobPost).where(JobPost.store_id == store.id)
+                               .order_by(JobPost.created_at.desc())).all()
+        others = session.scalar(select(func.count()).select_from(Store)
+                                .where(Store.organization_id == store.organization_id)) or 1
+        return {"items": [job_out(store, j) for j in rows], "contracts": jobsmod.CONTRACTS, "hours": jobsmod.HOURS,
+                "stores_in_org": others}
+
+    @app.post("/api/job-posts/check")
+    def check_job(body: dict, user: User = Depends(current_user)):
+        """Il controllo dell'annuncio mentre lo si scrive: parole da togliere (err) e cose da rivedere (warn, info)."""
+        return {"issues": [i.__dict__ for i in jobsmod.check(job_in(body))]}
+
+    @app.post("/api/stores/{store_id}/jobs", status_code=201)
+    def create_job(store_id: int, body: dict, user: User = Depends(current_user),
+                   session: Session = Depends(get_session)):
+        """Crea l'annuncio; con all_stores=true la sede lo pubblica uguale in tutti i punti vendita."""
+        store = store_for(session, user, store_id)
+        try:
+            d = jobsmod.validate(job_in(body))
+        except jobsmod.JobError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        targets = [store]
+        if body.get("all_stores"):
+            if user.role != Role.owner:
+                raise HTTPException(403, "Solo il titolare dell'account può pubblicare in tutti i punti vendita.")
+            targets = list(session.scalars(select(Store).where(Store.organization_id == store.organization_id)))
+        made = []
+        for t in targets:
+            j = JobPost(store_id=t.id, role=d.role, contract=d.contract, hours=d.hours, hours_note=d.hours_note,
+                        tasks=d.tasks, requirements=d.requirements, offer=d.offer, pay=d.pay, start=d.start,
+                        apply_link=d.apply_link, apply_email=d.apply_email, in_store=d.in_store)
+            session.add(j)
+            made.append(j)
+        session.flush()
+        mine = next(j for j in made if j.store_id == store.id)
+        return {**job_out(store, mine), "created_for": len(made)}
+
+    @app.delete("/api/job-posts/{job_id}", status_code=204)
+    def delete_job(job_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        session.delete(job_for(session, user, job_id))
+
+    @app.get("/api/job-posts/{job_id}/{what}")
+    def job_file(job_id: int, what: str, request: Request, user: User = Depends(current_user),
+                 session: Session = Depends(get_session)):
+        j = job_for(session, user, job_id)
+        store = session.get(Store, j.store_id)
+        st = state(request)
+        if what == "cartello.pdf":
+            out = _render_tmp(st.settings, "lavoro", ".pdf")
+            jobsmod.poster_pdf(store, j, out)
+            return FileResponse(out, media_type="application/pdf", filename="Lavora_con_noi_cartello.pdf",
+                                background=StarletteTask(lambda: out.unlink(missing_ok=True)))
+        makers = {"post.jpg": lambda: jobsmod.social_image(store, j, 1080, 1350),
+                  "storia.jpg": lambda: jobsmod.social_image(store, j, 1080, 1920),
+                  "schermo.jpg": lambda: jobsmod.screen_image(store, j)}
+        if what not in makers:
+            raise HTTPException(404, "File sconosciuto.")
+        out = _render_tmp(st.settings, "lavoro", ".jpg")
+        makers[what]().save(out, quality=92)
+        return FileResponse(out, media_type="image/jpeg", filename=f"Lavora_con_noi_{what}",
                             background=StarletteTask(lambda: out.unlink(missing_ok=True)))
 
     # -------------------------------------------------- «Esaurito»

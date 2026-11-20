@@ -224,6 +224,24 @@ C'è anche l'**annuncio di chiusura** («il negozio chiude tra 15 minuti»), da 
 La voce è quella italiana di Windows (si aggiunge gratis da Impostazioni → Ora e lingua → Voce) oppure la voce del
 negozio, se l'hai impostata.
 
+### Lavora con noi: annunci di lavoro corretti, pronti per ogni canale
+
+**Servizi → Lavora con noi.** Scrivi il ruolo, il contratto, l'orario, cosa farà la persona, cosa chiedete e cosa
+offrite, la retribuzione (consigliata) e come candidarsi (link, email o curriculum alla cassa). Promovo prepara
+l'**annuncio completo** per i portali di lavoro e il sito, il **post** e la **storia**, il messaggio per lo **stato
+WhatsApp**, il **cartello A4 con il QR** per candidarsi e la **schermata** per gli schermi del negozio.
+
+Mentre scrivi, il **controllo dell'annuncio** segnala:
+- in rosso, e blocca la pubblicazione, le richieste che la legge non permette: età («max 30 anni», «giovane»),
+  genere («ragazza», «uomo»), stato civile o figli, aspetto («bella presenza»), nazionalità, religione o opinioni
+  (D.Lgs. 198/2006, D.Lgs. 215/2003 e 216/2003, D.Lgs. 276/2003);
+- in giallo, quello che conviene rivedere: la foto nel curriculum, «madrelingua», la patente se non serve davvero;
+- il consiglio di indicare la retribuzione (direttiva UE 2023/970 sulla trasparenza retributiva).
+
+Il titolo è sempre rivolto a tutti i generi («Addetto/a», oppure Promovo aggiunge «(m/f)») e il testo chiude con la
+nota sul trattamento dei dati dei candidati. Con più punti vendita, il titolare può pubblicare lo stesso annuncio in
+tutti i negozi, ognuno con il suo nome e indirizzo.
+
 ### Salvaspreco: la merce in scadenza diventa un'offerta lampo
 
 Ogni negozio butta via ogni giorno qualcosa: yogurt che scadono domani, frutta molto matura, pane

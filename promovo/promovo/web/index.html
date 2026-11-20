@@ -320,6 +320,8 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 .rd-list textarea { min-height: 64px; }
 .rd-row { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 8px; align-items: start; margin-top: 8px; }
 .rd-row .n { width: 28px; height: 28px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; font-weight: 700; font-size: 13px; margin-top: 8px; }
+.jb-issues { display: grid; gap: 6px; margin-top: 12px; }
+.jb-issues .notice { margin: 0; }
 /* negozi (agenzia) */
 .store-card { display: flex; flex-direction: column; gap: 12px; }
 .store-head { display: flex; gap: 12px; align-items: center; }
@@ -640,6 +642,8 @@ const NAV = [
 const SERVICES = {
   allergeni: {group: "Sicurezza e obblighi di legge", title: "Banco e allergeni", icon: "i-shield", sub: "Cartellini e registro degli allergeni dei prodotti sfusi",
     text: "Per gastronomia, forno e banchi: scrivi gli ingredienti, Promovo propone i 14 allergeni, tu confermi. Cartellini, registro e cartello pronti da stampare."},
+  lavoro: {group: "Il personale", title: "Lavora con noi", icon: "i-users", sub: "Annunci di lavoro corretti, pronti per ogni canale",
+    text: "Cerchi personale? Scrivi il ruolo: annuncio per i portali, post, storia, cartello con QR e schermo. Il controllo blocca le parole che la legge non permette."},
   avvisi: {group: "Il negozio fisico", title: "Avvisi di servizio", icon: "i-calendar", sub: "Orari festivi e chiusure, pronti per ogni canale",
     text: "Orari delle feste, chiusure, lavori: li scrivi una volta e hai cartello per la porta, post, storia, stato WhatsApp, schermo e testo per Google."},
   esaurito: {group: "Il negozio fisico", title: "Esaurito", icon: "i-x", sub: "Il prodotto finito esce dai contenuti del negozio",
@@ -1616,9 +1620,9 @@ async function currentOffers() {
 VIEWS.servizi = async el => {
   const groups = {};
   for (const [k, v] of Object.entries(SERVICES)) (groups[v.group] = groups[v.group] || []).push([k, v]);
-  const order = ["Sicurezza e obblighi di legge", "Il negozio fisico", "I canali del negozio"];
+  const order = ["Sicurezza e obblighi di legge", "Il negozio fisico", "I canali del negozio", "Il personale"];
   el.innerHTML = `<div class="card"><h2>${icon("i-grid")} Servizi del punto vendita</h2>
-      <p class="sub">Oltre ai contenuti del volantino, gli strumenti per il negozio: obblighi di legge, comunicazione in negozio e canali locali. Usano solo i dati del tuo negozio.</p>
+      <p class="sub">Oltre ai contenuti del volantino, gli strumenti per il negozio: obblighi di legge, comunicazione in negozio, canali locali e personale. Usano solo i dati del tuo negozio.</p>
       ${order.filter(g => groups[g]).map(g => `<div class="svc-group"><h3>${esc(g)}</h3><div class="svc-grid">${groups[g].map(([k, v]) => `<button class="svc" data-svc="${k}"><span class="ic">${icon(v.icon)}</span><b>${esc(v.title)}</b><span>${esc(v.text)}</span></button>`).join("")}</div></div>`).join("")}
     </div>`;
   $$("[data-svc]", el).forEach(b => b.onclick = () => go(b.dataset.svc));
@@ -1751,6 +1755,80 @@ VIEWS.avvisi = async el => {
   $$("[data-del-n]", el).forEach(b => b.onclick = async () => {
     if (!await confirmBox("Eliminare l'avviso?", "Spariscono anche i materiali preparati.", "Elimina", true)) return;
     try { await api(`/api/notices/${b.dataset.delN}`, {method: "DELETE"}); go("avvisi"); } catch (e) { toast(e.message, "err"); }
+  });
+};
+
+// ---------- «Lavora con noi»
+VIEWS.lavoro = async el => {
+  const data = await api(`/api/stores/${S.storeId}/jobs`);
+  el.innerHTML = `
+    <div class="card"><h2>${icon("i-users")} Lavora con noi</h2>
+      <p class="sub">Scrivi chi cercate: Promovo prepara l'annuncio completo per i portali di lavoro e il sito, il post e la storia, lo stato WhatsApp, il cartello per la porta con il QR per candidarsi e la schermata per gli schermi del negozio. Il titolo è sempre rivolto a tutti i generi e il controllo segnala le richieste che la legge non permette (età, genere, stato civile, aspetto, nazionalità…).</p>
+      <div class="row" style="margin-top:8px">
+        <div class="f"><label class="l" for="jbRole">Il ruolo</label><input class="in jb" id="jbRole" maxlength="80" placeholder="es. Addetto/a al banco gastronomia"></div>
+        <div class="f" style="flex:0 0 200px"><label class="l" for="jbContract">Contratto</label><select class="in jb" id="jbContract">${Object.entries(data.contracts).map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join("")}</select></div>
+        <div class="f" style="flex:0 0 150px"><label class="l" for="jbHours">Orario</label><select class="in jb" id="jbHours">${Object.entries(data.hours).map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join("")}</select></div></div>
+      <div class="row" style="margin-top:12px">
+        <div class="f"><label class="l" for="jbHoursNote">Dettagli dell'orario <span class="muted">(facoltativo)</span></label><input class="in jb" id="jbHoursNote" maxlength="120" placeholder="es. 24 ore a settimana, su turni"></div>
+        <div class="f" style="flex:0 0 220px"><label class="l" for="jbStart">Inizio <span class="muted">(facoltativo)</span></label><input class="in jb" id="jbStart" maxlength="80" placeholder="es. gennaio"></div></div>
+      <div class="row" style="margin-top:12px">
+        <div class="f"><label class="l" for="jbTasks">Cosa farà <span class="muted">(una cosa per riga)</span></label><textarea class="in jb" id="jbTasks" maxlength="600" placeholder="Servizio al banco&#10;Preparazione dei piatti pronti"></textarea></div>
+        <div class="f"><label class="l" for="jbReq">Cosa chiedete</label><textarea class="in jb" id="jbReq" maxlength="600" placeholder="Esperienza al banco gradita&#10;Disponibilità ai turni nel fine settimana"></textarea></div>
+        <div class="f"><label class="l" for="jbOffer">Cosa offrite</label><textarea class="in jb" id="jbOffer" maxlength="600" placeholder="Contratto CCNL Commercio&#10;Formazione pagata"></textarea></div></div>
+      <div style="margin-top:12px"><label class="l" for="jbPay">Retribuzione <span class="muted">(consigliata)</span></label><input class="in jb" id="jbPay" maxlength="120" placeholder="es. Livello 4 CCNL Commercio, oppure la fascia lorda mensile"></div>
+      <label class="l" style="margin-top:14px">Come candidarsi</label>
+      <div class="row">
+        <div class="f"><input class="in jb" id="jbLink" maxlength="300" placeholder="Link al modulo di candidatura (https://…) — diventa il QR"></div>
+        <div class="f"><input class="in jb" id="jbEmail" maxlength="160" placeholder="Email per il curriculum"></div>
+        <div style="flex:0 0 auto;padding-bottom:10px"><label class="switch"><input type="checkbox" id="jbInStore" checked> <span>Curriculum alla cassa</span></label></div></div>
+      <div class="jb-issues" id="jbIssues"></div>
+      ${data.stores_in_org > 1 ? `<label class="switch" style="margin-top:12px"><input type="checkbox" id="jbAll"> <span><b>Pubblica in tutti i ${data.stores_in_org} punti vendita</b> — ognuno con il suo nome e indirizzo</span></label>` : ""}
+      <div class="toolbar" style="margin-top:16px"><button class="btn" id="jbGo">${icon("i-spark")} Prepara l'annuncio</button></div>
+    </div>
+    <div class="card"><h2>Gli annunci</h2>
+      <div>${data.items.map(j => `<div class="nt-item"><img data-src="${j.image_url}" alt="" data-zoom="${j.image_url}">
+        <div style="min-width:0"><b>${esc(j.title_role)}</b>
+          <div class="muted" style="margin:4px 0 8px">${esc(j.conditions)}${j.start ? " · inizio " + esc(j.start) : ""}</div>
+          <div class="toolbar">
+            <button class="btn sm" data-dl="${j.poster_url}" data-name="Lavora_con_noi_cartello.pdf">${icon("i-download")} Cartello con QR</button>
+            <button class="btn sm sec" data-dl="${j.image_url}" data-name="Lavora_con_noi_post.jpg">Post</button>
+            <button class="btn sm sec" data-dl="${j.story_url}" data-name="Lavora_con_noi_storia.jpg">Storia</button>
+            <button class="btn sm sec" data-dl="${j.screen_url}" data-name="Lavora_con_noi_schermo.jpg">Schermo</button></div>
+          <div class="toolbar" style="margin-top:8px">
+            <button class="btn sm ghost" data-copy-j="${j.id}" data-k="full">${icon("i-copy")} Annuncio completo</button>
+            <button class="btn sm ghost" data-copy-j="${j.id}" data-k="post">${icon("i-copy")} Testo del post</button>
+            <button class="btn sm ghost" data-copy-j="${j.id}" data-k="status">${icon("i-copy")} Stato WhatsApp</button>
+            <span style="flex:1"></span><button class="btn sm ghost" data-del-j="${j.id}" aria-label="Elimina">${icon("i-trash")}</button></div></div></div>`).join("")
+        || empty("i-users", "Nessun annuncio", "Quando prepari un annuncio lo trovi qui, con tutti i materiali.")}</div></div>`;
+  const body = () => ({role: $("#jbRole").value, contract: $("#jbContract").value, hours: $("#jbHours").value, hours_note: $("#jbHoursNote").value,
+    start: $("#jbStart").value, tasks: $("#jbTasks").value, requirements: $("#jbReq").value, offer: $("#jbOffer").value, pay: $("#jbPay").value,
+    apply_link: $("#jbLink").value, apply_email: $("#jbEmail").value, in_store: $("#jbInStore").checked});
+  const kinds = {err: ["err", "i-alert", "Da togliere"], warn: ["warn", "i-alert", "Da rivedere"], info: ["info", "i-check", "Consiglio"]};
+  let timer = null;
+  const recheck = () => { clearTimeout(timer); timer = setTimeout(async () => {
+    const b = body();
+    if (!b.role && !b.tasks && !b.requirements && !b.offer) { $("#jbIssues").innerHTML = ""; return; }
+    try {
+      const r = await api("/api/job-posts/check", {json: b});
+      $("#jbIssues").innerHTML = r.issues.map(i => `<div class="notice ${kinds[i.level][0]}">${icon(kinds[i.level][1])}<span><b>${kinds[i.level][2]}${i.found ? " «" + esc(i.found) + "»" : ""}:</b> ${esc(i.message)}</span></div>`).join("");
+    } catch (e) {}
+  }, 450); };
+  $$(".jb", el).forEach(x => x.addEventListener("input", recheck));
+  $("#jbInStore").onchange = recheck;
+  $("#jbGo").onclick = () => busy($("#jbGo"), async () => {
+    const r = await api(`/api/stores/${S.storeId}/jobs`, {json: {...body(), all_stores: !!($("#jbAll") && $("#jbAll").checked)}});
+    toast(r.created_for > 1 ? `Annuncio pronto per ${r.created_for} punti vendita.` : "Annuncio pronto: scarica il cartello e pubblica.");
+    go("lavoro");
+  }, "Preparo…");
+  $$("[data-dl]", el).forEach(b => b.onclick = () => busy(b, () => download(b.dataset.dl, b.dataset.name)));
+  $$("[data-zoom]", el).forEach(i => i.onclick = () => lightbox(i.dataset.zoom));
+  $$("[data-copy-j]", el).forEach(b => b.onclick = async () => {
+    const j = data.items.find(x => x.id === Number(b.dataset.copyJ));
+    try { await navigator.clipboard.writeText(j[b.dataset.k]); toast("Copiato."); } catch (e) { toast("Copia non riuscita.", "err"); }
+  });
+  $$("[data-del-j]", el).forEach(b => b.onclick = async () => {
+    if (!await confirmBox("Eliminare l'annuncio?", "Spariscono anche i materiali preparati.", "Elimina", true)) return;
+    try { await api(`/api/job-posts/${b.dataset.delJ}`, {method: "DELETE"}); go("lavoro"); } catch (e) { toast(e.message, "err"); }
   });
 };
 

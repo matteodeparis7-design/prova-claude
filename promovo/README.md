@@ -37,6 +37,7 @@ stesso): più negozi, ognuno con la sua identità, e un pacchetto ZIP pronto da 
 | Avvisi di servizio | Festività nazionali (con il 4 ottobre dal 2026), orari e chiusure: cartello A4, post, storia, schermo, stato WhatsApp, orari speciali per Google; invio a tutti i punti vendita | `modules/notices.py` |
 | Esaurito | Il prodotto finito esce dai materiali nuovi del punto vendita; materiali da rifare (anche per il Revisore), rifacimento con un clic, messaggio per i clienti, quadro della rete per la sede | `modules/soldout.py` |
 | Radio del negozio | Annunci della settimana dai dati del negozio (offerte, avvisi, Salvaspreco, produttori, orari), modificabili; MP3 di 3/5/10 minuti con musica originale che si abbassa sotto la voce; annuncio di chiusura | `modules/radio.py` |
+| Lavora con noi | Annunci di lavoro per portali, social, WhatsApp, cartello con QR e schermo; controllo che blocca le richieste discriminatorie; titolo per tutti i generi; nota privacy; pubblicazione in tutti i punti vendita | `modules/jobs.py` |
 | Copia di sicurezza | Backup ZIP, ripristino anche su un altro PC (percorsi riscritti), pacchetto assistenza, avviso nuova versione | `backup.py` |
 
 Tutti gli importi sono in centesimi interi. L'IA facoltativa è Claude (`claude-opus-5-5`, configurabile).

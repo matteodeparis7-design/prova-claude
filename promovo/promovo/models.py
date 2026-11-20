@@ -313,5 +313,4 @@ class JobPost(Base):
     apply_link: Mapped[str] = mapped_column(String(300), default="")
     apply_email: Mapped[str] = mapped_column(String(160), default="")
     in_store: Mapped[bool] = mapped_column(Boolean, default=True)
-    closed: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)

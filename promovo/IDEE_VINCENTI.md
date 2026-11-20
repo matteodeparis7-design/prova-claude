@@ -135,9 +135,9 @@ meccanismo che funziona in un altro settore ed è stata controllata sul mercato 
 |---|---|---|---|---|---|---|
 | 1 | **Correttore del volantino** | Controllo pre-stampa, test automatici del software | Un errore × centinaia di negozi × milioni di copie | Bozza locale controllata | Solo controlli tecnici del file, non del contenuto | **fatto** |
 | 2 | **Volantino accessibile** (audio e caratteri grandi) | Audiolibri, accessibilità digitale | Un servizio per tutta la rete | Pronto da mandare | No | **fatto** |
-| 3 | **«Esaurito»: contenuti che sanno cosa c'è a scaffale** | Google Shopping ed e-commerce sospendono gli annunci quando il prodotto finisce | Vede in quali punti vendita le promo finiscono prima | Un tocco: il prodotto sparisce dai suoi materiali | No: i contenuti continuano a pubblicizzare prodotti finiti | proposta |
+| 3 | **«Esaurito»: contenuti che sanno cosa c'è a scaffale** | Google Shopping ed e-commerce sospendono gli annunci quando il prodotto finisce | Vede in quali punti vendita le promo finiscono prima | Un tocco: il prodotto sparisce dai suoi materiali | No: i contenuti continuano a pubblicizzare prodotti finiti | **fatto** |
 | 4 | **Regia sede → punti vendita** | Piattaforme per i franchising (SOCi, BrandMuscle) | Carica una volta, controlla lo stile, vede chi ha pubblicato | Riceve il suo kit già localizzato | Esiste per franchising generici, non parte dal volantino | proposta |
-| 5 | **Radio del punto vendita** | In-store radio delle grandi catene (spot in negozio: +19,5% vendite in uno studio Polimi-Carrefour) | Annunci locali dentro la radio centrale | Radio vera senza costi di produzione | Solo servizi su misura e a pagamento | proposta |
+| 5 | **Radio del punto vendita** | In-store radio delle grandi catene (spot in negozio: +19,5% vendite in uno studio Polimi-Carrefour) | Annunci locali dentro la radio centrale | Radio vera senza costi di produzione | Solo servizi su misura e a pagamento | **fatto** |
 | 6 | **Pronto-promo del punto vendita** | Checklist dell'aviazione, audit dei negozi | Rapporto di conformità di tutta la rete | Giro prezzi del primo giorno, per reparto | Solo checklist generiche, non generate dal volantino | proposta |
 | 7 | **Briefing del personale** | Il briefing prima del servizio della ristorazione | Stesso messaggio a tutti i negozi | Una pagina (e un audio) per cassieri e banconisti | No | proposta |
 | 8 | **Scheda Google del punto vendita** | Gestione delle schede multi-sede (Uberall, Yext) | Tutte le schede aggiornate | Post «Offerte» settimanali su Google Maps | Esiste, ma non parte dal volantino | proposta |
@@ -185,7 +185,7 @@ decide il retailer.
 | # | Servizio | Da dove arriva | Perché serve |
 |---|---|---|---|
 | 1 | **Richiami alimentari: allerta e cartello pronto** | I sistemi di richiamo di aerei e automobili | Il Ministero della Salute pubblica i richiami (marca, prodotto, lotto, scadenza). Promovo li confronta con i prodotti del negozio e del volantino, avvisa subito, prepara il **cartello da esporre** e il messaggio per i clienti, e **toglie il prodotto da tutti i contenuti**. Per le catene: tutti i punti vendita avvisati insieme. |
-| 2 | **Cartelli e registro allergeni del banco** | I menù con gli allergeni dei ristoranti | Per gastronomia, forno e banco pronti, l'informazione sui 14 allergeni è obbligatoria (Reg. UE 1169/2011, D.Lgs. 231/2017). Il negozio scrive gli ingredienti, Promovo riconosce gli allergeni e prepara cartelli e registro, sempre aggiornati. |
+| 2 | **Cartelli e registro allergeni del banco** | I menù con gli allergeni dei ristoranti | **Fatto.** Per gastronomia, forno e banco pronti, l'informazione sui 14 allergeni è obbligatoria (Reg. UE 1169/2011, D.Lgs. 231/2017). Il negozio scrive gli ingredienti, Promovo riconosce gli allergeni e prepara cartelli e registro, sempre aggiornati. |
 | 3 | **Archivio di conformità** | La conservazione obbligatoria dei documenti nella finanza | Ogni contenuto pubblicato resta archiviato con data, prezzi e canali: la prova pronta in caso di contestazione di un cliente o di un controllo. |
 | 4 | **Correttore del volantino** | Il controllo prima della stampa | **Fatto.** |
 
@@ -193,17 +193,17 @@ decide il retailer.
 
 | # | Servizio | Da dove arriva | Perché serve |
 |---|---|---|---|
-| 5 | **Radio del punto vendita** | La radio delle grandi catene | Un audio in loop ogni settimana: annunci delle offerte del negozio, orari, «chiudiamo tra 15 minuti», con musica originale creata da Promovo. |
+| 5 | **Radio del punto vendita** | La radio delle grandi catene | **Fatto.** Un audio in loop ogni settimana: annunci delle offerte del negozio, orari, «chiudiamo tra 15 minuti», con musica originale creata da Promovo. |
 | 6 | **Palinsesto degli schermi per fascia oraria** | I palinsesti della televisione | La mattina colazione e forno, a mezzogiorno pranzo veloce, la sera la cena: lo stesso schermo cambia contenuti da solo. |
-| 7 | **«Esaurito»** | Gli annunci online che si fermano quando il prodotto finisce | Il prodotto finito sparisce dai contenuti di quel negozio; la sede vede dove le promo finiscono prima. |
-| 8 | **Avvisi di servizio su tutti i canali** | Gli avvisi dei trasporti pubblici | Orari festivi, chiusure, lavori: si scrivono una volta, Promovo prepara il cartello per la porta, il post, lo stato WhatsApp, la slide per lo schermo e il testo per la scheda Google. Il calendario delle festività è già dentro. |
+| 7 | **«Esaurito»** | Gli annunci online che si fermano quando il prodotto finisce | **Fatto.** Il prodotto finito sparisce dai contenuti di quel negozio; la sede vede dove le promo finiscono prima. |
+| 8 | **Avvisi di servizio su tutti i canali** | Gli avvisi dei trasporti pubblici | **Fatto.** Orari festivi, chiusure, lavori: si scrivono una volta, Promovo prepara il cartello per la porta, il post, lo stato WhatsApp, la slide per lo schermo e il testo per la scheda Google. Il calendario delle festività è già dentro. |
 | 9 | **Volantino accessibile** | Gli audiolibri | **Fatto.** |
 
 ### Le persone del negozio
 
 | # | Servizio | Da dove arriva | Perché serve |
 |---|---|---|---|
-| 10 | **Kit «Lavora con noi»** | L'employer branding delle grandi aziende | La GDO fatica a trovare personale. Per ogni punto vendita: annuncio di lavoro, post, storia e locandina con QR, nello stile del negozio. |
+| 10 | **Kit «Lavora con noi»** | L'employer branding delle grandi aziende | **Fatto.** La GDO fatica a trovare personale. Per ogni punto vendita: annuncio di lavoro, post, storia e locandina con QR, nello stile del negozio. Il controllo blocca le richieste discriminatorie (età, genere, stato civile, aspetto, nazionalità) e il titolo è sempre per tutti i generi. |
 | 11 | **Le persone del negozio** | Le storie del personale di compagnie aeree e hotel | Tre domande al banconista (con il suo consenso scritto), e Promovo prepara post e storia. È il contenuto che piace di più ed è impossibile da copiare. |
 | 12 | **Briefing del personale** | Il briefing prima del servizio della ristorazione | Una pagina (e un audio) a settimana per cassieri e banconisti: cosa è in offerta, le condizioni, le domande dei clienti. |
 | 13 | **Pronto-promo** | Le checklist dell'aviazione | Il giro di controllo per reparto prima che parta il volantino: cartellino esposto, prezzo in cassa giusto. |
@@ -241,4 +241,9 @@ medi della zona» si possono **spegnere** o togliere del tutto.
 | 4 | Calendario dei portafogli + spesa a budget | **fatto** (beta) |
 | 5 | A · Correttore del volantino | **fatto** (beta) |
 | 6 | B · Volantino da ascoltare e a caratteri grandi | **fatto** (beta) |
-| 7 | Esaurito, Regia sede → punti vendita, Radio, Pronto-promo | proposte, da scegliere |
+| 7 | Banco e allergeni | **fatto** (beta) |
+| 8 | Avvisi di servizio | **fatto** (beta) |
+| 9 | Esaurito | **fatto** (beta) |
+| 10 | Radio del punto vendita | **fatto** (beta) |
+| 11 | Kit «Lavora con noi» | **fatto** (beta) |
+| 12 | Regia sede → punti vendita, Pronto-promo, Briefing del personale, Scheda Google | proposte, da scegliere |
