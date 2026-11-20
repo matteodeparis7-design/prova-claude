@@ -47,6 +47,7 @@ from ..modules import rescue as rescuemod
 from ..modules import till as tillmod
 from ..modules import filiera as filieramod
 from ..modules import budget as budgetmod
+from ..modules import proof as proofmod
 from .deps import (
     AppState, bearer_token, content_for, current_user, flyer_for, get_session, job_for, offer_for,
     require_owner, state, store_for,
@@ -1905,6 +1906,25 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         out = _render_tmp(state(request).settings, "budget", ".jpg")
         budgetmod.image(f.store, f, b).save(out, quality=92)
         return FileResponse(out, media_type="image/jpeg", filename=f"Spesa_a_{amount}_euro.jpg",
+                            background=StarletteTask(lambda: out.unlink(missing_ok=True)))
+
+    # -------------------------------------------------- correttore del volantino
+
+    @app.get("/api/flyers/{flyer_id}/proof")
+    def flyer_proof(flyer_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Il correttore: errori e cose da controllare nella bozza del volantino, prima della stampa."""
+        f = flyer_for(session, user, flyer_id)
+        return proofmod.check(session, f.store, f)
+
+    @app.get("/api/flyers/{flyer_id}/proof.pdf")
+    def flyer_proof_pdf(flyer_id: int, request: Request, user: User = Depends(current_user),
+                        session: Session = Depends(get_session)):
+        """Il rapporto di correzione da mandare al grafico."""
+        f = flyer_for(session, user, flyer_id)
+        rep = proofmod.check(session, f.store, f)
+        out = _render_tmp(state(request).settings, "correzioni", ".pdf")
+        proofmod.report_pdf(f.store, f, rep, out)
+        return FileResponse(out, media_type="application/pdf", filename="Rapporto_di_correzione.pdf",
                             background=StarletteTask(lambda: out.unlink(missing_ok=True)))
 
     return app

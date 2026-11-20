@@ -31,6 +31,7 @@ stesso): più negozi, ognuno con la sua identità, e un pacchetto ZIP pronto da 
 | Parola alla cassa | Una parola d'ordine per canale nei testi (mai un prodotto in offerta, nuove a ogni volantino), contatore +1 e foglio per la cassa, clienti per canale, consigli, nel report | `modules/till.py` |
 | Filiera vicina | Produttori del territorio con distanza vera (OpenStreetMap), riconoscimento nel volantino, produttore della settimana, mappa della filiera, etichette da scaffale | `modules/filiera.py` |
 | Spesa a budget | Momento del mese (scorta, spesa regolare, fine mese, tredicesima), giorno consigliato, cestino vero nel budget con totale al centesimo e risparmio, immagine e testo | `modules/budget.py` |
+| Correttore del volantino | Controlla la bozza prima della stampa: prezzo al kg mancante o sbagliato, sconto stampato incoerente, barrato basso o non Omnibus, refusi rispetto allo storico, doppioni, formati, date; rapporto PDF per il grafico | `modules/proof.py` |
 | Copia di sicurezza | Backup ZIP, ripristino anche su un altro PC (percorsi riscritti), pacchetto assistenza, avviso nuova versione | `backup.py` |
 
 Tutti gli importi sono in centesimi interi. L'IA facoltativa è Claude (`claude-opus-5-5`, configurabile).

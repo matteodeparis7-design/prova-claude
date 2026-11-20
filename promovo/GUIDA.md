@@ -62,6 +62,17 @@ che non è uno sconto) e lo correggi con un clic. Per attivarlo carica anche i v
 Qui puoi anche **evidenziare** un'offerta (stella: finisce per prima nel Reel e nelle grafiche) e
 aggiungere un'offerta mancante.
 
+### Il Correttore del volantino (prima della stampa)
+
+Se il volantino lo prepara il tuo grafico (o lo prepari tu per un cliente), caricane la **bozza** prima della
+stampa, senza pilota automatico. Nel passo 1 trovi il **Correttore del volantino**, che segnala:
+prezzo al kg o al litro **mancante** o **sbagliato** (va indicato anche nel volantino quando c'è il prezzo),
+**sconto stampato** che non torna con i prezzi, **prezzo barrato** più basso del prezzo o non conforme alla regola
+dei 30 giorni, **probabili refusi** (un prezzo 4 o più volte diverso dal solito), **doppioni**, **formati mancanti**
+e **date** sbagliate. Con **Rapporto per il grafico** scarichi il PDF con le miniature delle offerte da correggere.
+
+Promovo segnala e basta: i prezzi li decide il negozio, le correzioni le fa il grafico.
+
 ### Passo 2: Crea i materiali
 
 Se non hai usato il pilota automatico, qui scegli cosa creare. Sopra trovi due aiuti:

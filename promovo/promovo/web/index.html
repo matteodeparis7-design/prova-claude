@@ -287,6 +287,13 @@ textarea.in { min-height: 170px; resize: vertical; line-height: 1.5; }
 @media (max-width: 720px) { .fl-week { grid-template-columns: 1fr; } .fl-item { grid-template-columns: 54px minmax(0, 1fr); } .fl-item > :last-child { grid-column: 1 / -1; } }
 .bd-moment { display: flex; gap: 12px; align-items: flex-start; border-radius: 14px; padding: 14px 16px; background: #f6f1e7; margin-bottom: 14px; }
 .bd-moment svg.i { width: 22px; height: 22px; color: #8a5a00; flex: none; margin-top: 2px; }
+.proof { margin-top: 12px; border: 1px solid var(--line); background: #fbfaf7; border-radius: 14px; padding: 14px; }
+.proof.bad { border-color: #f2c9c3; background: #fdf6f4; }
+.proof-head { display: flex; gap: 10px; align-items: flex-start; } .proof-head > div { flex: 1; }
+.proof-head span.s { display: block; color: var(--muted); font-size: 13.5px; margin-top: 2px; }
+.proof-row { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 12px; align-items: start; padding: 10px 0; border-top: 1px solid var(--line-2); }
+.proof-row img { width: 54px; height: 54px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); cursor: zoom-in; background: #fff; }
+.proof-row .t { font-size: 14px; } .proof-row .fx { font-size: 13px; color: var(--muted); margin-top: 2px; }
 /* negozi (agenzia) */
 .store-card { display: flex; flex-direction: column; gap: 12px; }
 .store-head { display: flex; gap: 12px; align-items: center; }
@@ -1241,6 +1248,7 @@ function stepCheck(el, f, content = []) {
         <div class="legend"><span class="chip ok">${icon("i-check")} confermato</span><span class="chip warn">${icon("i-alert")} da controllare</span></div></div></div>
       ${(f.warnings || []).filter(w => !/da controllare a mano|non trovati nel testo|non confermati/.test(w)).map(w => notice("warn", w)).join("")}
       ${f.offers.some(o => o.old_price_cents) ? `<div id="omniBox"></div>` : ""}
+      ${f.offers.length ? `<div id="proofBox"></div>` : ""}
       ${f.error ? notice("err", f.error) : ""}
       <div class="meter" style="margin-top:16px"><div class="bar"><div style="width:${total ? Math.round(okN / total * 100) : 0}%"></div></div><b>${okN} di ${total} prezzi confermati</b></div>
       <div class="toolbar" style="margin-top:16px">
@@ -1255,6 +1263,8 @@ function stepCheck(el, f, content = []) {
   $$("[data-filter]", el).forEach(b => b.onclick = () => { S.offerFilter = b.dataset.filter; go("flyers", {flyer: f.id, step: "check"}); });
   const ob = $("#omniBox", el);
   if (ob) omnibusBox(ob, f);
+  const pb = $("#proofBox", el);
+  if (pb) proofBox(pb, f);
   $$("[data-crop]", el).forEach(c => c.onclick = () => lightbox(c.dataset.crop));
   $$("[data-ok]", el).forEach(b => b.onclick = () => busy(b, async () => { await api(`/api/offers/${b.dataset.ok}`, {method: "PATCH", json: {confirm: true}}); go("flyers", {flyer: f.id, step: "check"}); }));
   $$("[data-edit]", el).forEach(b => b.onclick = () => editOffer(f.offers.find(o => o.id === Number(b.dataset.edit)), f.id));
@@ -1777,6 +1787,33 @@ async function budgetCard(box, f, amount = 0) {
   $("#bdCopy", box).onclick = async () => { try { await navigator.clipboard.writeText(b.text); toast("Testo copiato."); } catch (e) { toast("Copia non riuscita.", "err"); } };
   $("#bdDl", box).onclick = () => download(b.image_url, `Spesa_a_${b.amount}_euro.jpg`);
   $("#bdImg", box).onclick = () => lightbox(b.image_url);
+}
+
+async function proofBox(box, f) {
+  let r;
+  try { r = await api(`/api/flyers/${f.id}/proof`); } catch (e) { box.remove(); return; }
+  const offers = Object.fromEntries(f.offers.map(o => [o.id, o]));
+  const sev = {err: "err", warn: "warn", info: "info"};
+  const omniShown = !!$("#omniBox");
+  const list = omniShown ? r.findings.filter(x => x.code !== "omnibus") : r.findings;
+  const rows = list.map(x => {
+    const o = offers[x.offer_id];
+    return `<div class="proof-row">${o && o.image_url ? `<img data-src="${o.image_url}" alt="" data-crop="${o.image_url}">` : `<span></span>`}
+      <div><span class="chip ${sev[x.severity]}">${esc(x.severity_label)}</span> ${x.page ? `<span class="muted">pagina ${x.page}</span> · ` : ""}<b>${esc(x.offer || "Volantino")}</b>
+        <div class="t">${esc(x.message)}</div>${x.fix ? `<div class="fx">→ ${esc(x.fix)}</div>` : ""}</div></div>`;
+  });
+  const MAX = 6;
+  box.className = "proof" + (r.counts.err ? " bad" : "");
+  box.innerHTML = `<div class="proof-head">${icon(r.counts.err ? "i-alert" : "i-check")}<div><b>Correttore del volantino: ${esc(r.verdict)}</b>
+      <span class="s">Controlla la bozza prima della stampa: prezzo al kg, sconti stampati, prezzi barrati, probabili refusi, doppioni, formati e date. Promovo segnala, i prezzi li decide il negozio.</span></div>
+      <button class="btn sm sec" id="proofPdf">${icon("i-download")} Rapporto per il grafico</button></div>
+    ${omniShown && list.length < r.findings.length ? `<div class="muted" style="font-size:13px;margin-top:6px">I prezzi barrati da rivedere sono qui sopra, nell'Agente Omnibus (e anche nel rapporto per il grafico).</div>` : ""}
+    ${rows.slice(0, MAX).join("")}
+    ${rows.length > MAX ? `<details><summary class="muted" style="cursor:pointer;margin-top:8px">Altre ${rows.length - MAX} segnalazioni</summary>${rows.slice(MAX).join("")}</details>` : ""}`;
+  loadImages(box);
+  $$("[data-crop]", box).forEach(c => c.onclick = () => lightbox(c.dataset.crop));
+  const b = $("#proofPdf", box);
+  b.onclick = () => busy(b, () => download(`/api/flyers/${f.id}/proof.pdf`, "Rapporto_di_correzione.pdf"), "Preparo…");
 }
 
 // ---------- Filiera vicina
