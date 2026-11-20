@@ -156,6 +156,17 @@ la frutta, la persona che ti serve.
 5. **Crea il Reel**: Promovo sceglie i momenti migliori, raddrizza in verticale, stabilizza, mette
    logo, sottotitoli, cartellino con il prezzo verificato, musica e la scena finale con il QR code.
 
+### Il volantino da ascoltare e a caratteri grandi
+
+Per i clienti che leggono a fatica, nel passo 3 del volantino trovi:
+- **Il volantino da ascoltare**: Promovo scrive il testo con le offerte principali (prezzi e misure scritti
+  come si dicono: «1 euro e 29», «500 grammi») e lo legge con la **voce italiana di Windows**, gratuita e sul
+  computer, oppure con la voce del negozio se l'hai creata. Ottieni un MP3 da mandare su WhatsApp. Il testo
+  dice all'inizio che la voce è sintetica. Se la voce italiana manca: Impostazioni di Windows → Ora e lingua →
+  Voce → Aggiungi voci → Italiano.
+- **Il volantino a caratteri grandi** (in «Per il negozio»): un A4 ad alto contrasto, 5 offerte per pagina,
+  da tenere alla cassa e da consegnare.
+
 ### Salvaspreco: la merce in scadenza diventa un'offerta lampo
 
 Ogni negozio butta via ogni giorno qualcosa: yogurt che scadono domani, frutta molto matura, pane

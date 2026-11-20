@@ -193,5 +193,5 @@ tutti in un'unica lista.
 | 3 | Filiera vicina | **fatto** (beta) |
 | 4 | Calendario dei portafogli + spesa a budget | **fatto** (beta) |
 | 5 | A · Correttore del volantino | **fatto** (beta) |
-| 6 | B · Volantino da ascoltare e a caratteri grandi | da fare |
+| 6 | B · Volantino da ascoltare e a caratteri grandi | **fatto** (beta) |
 | 7 | C · Regia del giorno | da fare |

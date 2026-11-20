@@ -48,6 +48,7 @@ from ..modules import till as tillmod
 from ..modules import filiera as filieramod
 from ..modules import budget as budgetmod
 from ..modules import proof as proofmod
+from ..modules import accessible as accessmod
 from .deps import (
     AppState, bearer_token, content_for, current_user, flyer_for, get_session, job_for, offer_for,
     require_owner, state, store_for,
@@ -1017,10 +1018,13 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
                             headers={"Content-Disposition": 'attachment; filename="Piano_della_settimana.ics"'})
         if not f.offers:
             raise HTTPException(400, "Il volantino non ha offerte.")
-        out = _render_tmp(state(request).settings, what, ".pdf")
+        out = _render_tmp(state(request).settings, "stampa", ".pdf")
         if what == "cartellini":
             printables.shelf_tags_pdf(f.store, f, out)
             name = "Cartellini_scaffale.pdf"
+        elif what == "grandi":
+            accessmod.large_print_pdf(f.store, f, out)
+            name = "Volantino_a_caratteri_grandi.pdf"
         elif what == "locandina":
             size = "A3" if size.upper() == "A3" else "A4"
             printables.poster_pdf(f.store, f, out, size)
@@ -1925,6 +1929,30 @@ def create_app(settings: Settings | None = None, llm: LLM | None = None, db: Dat
         out = _render_tmp(state(request).settings, "correzioni", ".pdf")
         proofmod.report_pdf(f.store, f, rep, out)
         return FileResponse(out, media_type="application/pdf", filename="Rapporto_di_correzione.pdf",
+                            background=StarletteTask(lambda: out.unlink(missing_ok=True)))
+
+    # -------------------------------------------------- volantino accessibile
+
+    @app.get("/api/flyers/{flyer_id}/audio")
+    def flyer_audio_info(flyer_id: int, user: User = Depends(current_user), session: Session = Depends(get_session)):
+        """Il testo del volantino da ascoltare e le voci disponibili su questo computer."""
+        f = flyer_for(session, user, flyer_id)
+        text = accessmod.script(f.store, f)
+        return {"text": text, "seconds": accessmod.seconds(text), "engines": accessmod.engines(f.store)}
+
+    @app.post("/api/flyers/{flyer_id}/audio")
+    def flyer_audio(flyer_id: int, body: dict, request: Request, user: User = Depends(current_user),
+                    session: Session = Depends(get_session)):
+        """Legge il testo e restituisce l'MP3 da mandare su WhatsApp."""
+        f = flyer_for(session, user, flyer_id)
+        text = str(body.get("text") or accessmod.script(f.store, f))
+        out = _render_tmp(state(request).settings, "volantino_audio", ".mp3")
+        try:
+            accessmod.make_audio(f.store, text, out, str(body.get("engine") or ""))
+        except (accessmod.AudioError, voicemod.VoiceError) as exc:
+            out.unlink(missing_ok=True)
+            raise HTTPException(400, str(exc)) from exc
+        return FileResponse(out, media_type="audio/mpeg", filename="Volantino_da_ascoltare.mp3",
                             background=StarletteTask(lambda: out.unlink(missing_ok=True)))
 
     return app

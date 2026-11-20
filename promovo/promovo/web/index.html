@@ -1419,9 +1419,11 @@ function stepPublish(el, f, content) {
         <button class="shop-item" data-print="cartellini"><span class="ic">${icon("i-flyer")}</span><b>Cartellini per gli scaffali</b><span>Tutte le offerte, 8 per foglio A4, con prezzo al kg e linee di taglio</span></button>
         <button class="shop-item" data-print="locandina" data-size="A4"><span class="ic">${icon("i-image")}</span><b>Locandina per la vetrina</b><span>Formato A4 con le offerte in evidenza e il QR code</span></button>
         <button class="shop-item" data-print="locandina" data-size="A3"><span class="ic">${icon("i-image")}</span><b>Locandina grande (A3)</b><span>Per la porta d'ingresso o la bacheca</span></button>
+        <button class="shop-item" data-print="grandi"><span class="ic">${icon("i-flyer")}</span><b>Volantino a caratteri grandi</b><span>Per chi legge a fatica: A4 ad alto contrasto, da tenere alla cassa</span></button>
         ${plan ? `<button class="shop-item" data-print="calendario"><span class="ic">${icon("i-calendar")}</span><b>Piano nel calendario</b><span>Aprilo sul telefono: un promemoria per ogni pubblicazione</span></button>` : ""}
       </div></div>
     <div class="card" id="budgetCard"><div class="muted">Preparo la spesa a budget…</div></div>
+    <div class="card" id="audioCard"><div class="muted">Preparo il volantino da ascoltare…</div></div>
     ${vids.length ? `<div class="card"><h2>${icon("i-video")} Video</h2><p class="sub">Guardali, poi approvali o scaricali.</p>
       ${S.refreshVideos === f.id ? `<div class="notice info" style="justify-content:space-between;align-items:center">${icon("i-spark")}<span style="flex:1">I video si aprono ancora con l'idea precedente.</span><button class="btn sm" id="refreshVideos">Aggiorna anche i video</button></div>` : ""}
       <div class="vids">${vids.map(c => `<div class="vid"><div class="ph" data-play="${c.file_url}" title="Guarda il video">${c.poster_url ? `<img data-src="${c.poster_url}" alt="">` : ""}<span class="play"><svg class="i" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></span></div>
@@ -1444,9 +1446,10 @@ function stepPublish(el, f, content) {
   const tc = $("#toCheck"); if (tc) tc.onclick = () => go("flyers", {flyer: f.id, step: "check"});
   const rvc = $("#reviewCard", el); if (rvc) reviewCard(rvc, f);
   const bc = $("#budgetCard", el); if (bc) budgetCard(bc, f);
+  const ac = $("#audioCard", el); if (ac) audioCard(ac, f);
   $$("[data-print]", el).forEach(b => b.onclick = () => busy(b, async () => {
     const what = b.dataset.print, size = b.dataset.size || "A4";
-    const names = {cartellini: "Cartellini_scaffale.pdf", locandina: `Locandina_vetrina_${size}.pdf`, calendario: "Piano_della_settimana.ics"};
+    const names = {cartellini: "Cartellini_scaffale.pdf", locandina: `Locandina_vetrina_${size}.pdf`, calendario: "Piano_della_settimana.ics", grandi: "Volantino_a_caratteri_grandi.pdf"};
     await download(`/api/flyers/${f.id}/print/${what}?size=${size}`, names[what]);
     toast(what === "calendario" ? "Calendario scaricato: aprilo sul telefono per aggiungere i promemoria." : "PDF pronto da stampare (stampa al 100%, senza adattare alla pagina).");
   }, "Preparo…"));
@@ -1814,6 +1817,30 @@ async function proofBox(box, f) {
   $$("[data-crop]", box).forEach(c => c.onclick = () => lightbox(c.dataset.crop));
   const b = $("#proofPdf", box);
   b.onclick = () => busy(b, () => download(`/api/flyers/${f.id}/proof.pdf`, "Rapporto_di_correzione.pdf"), "Preparo…");
+}
+
+async function audioCard(box, f) {
+  let a;
+  try { a = await api(`/api/flyers/${f.id}/audio`); } catch (e) { box.remove(); return; }
+  box.innerHTML = `<h2>${icon("i-mic")} Il volantino da ascoltare</h2>
+    <p class="sub">Per i clienti che leggono a fatica: un messaggio audio di circa ${Math.round(a.seconds / 10) * 10 || a.seconds} secondi con le offerte principali, da mandare su WhatsApp. Il testo dice all'inizio che la voce è sintetica.</p>
+    <label class="l" for="audText">Il testo che viene letto (puoi cambiarlo)</label>
+    <textarea class="in" id="audText" style="min-height:130px">${esc(a.text)}</textarea>
+    ${a.engines.length ? `<div class="row" style="margin-top:12px"><div class="f"><label class="l" for="audEngine">La voce</label>
+        <select class="in" id="audEngine">${a.engines.map(e => `<option value="${e.key}">${esc(e.label)}</option>`).join("")}</select></div>
+        <div style="flex:0 0 auto"><button class="btn" id="audGo">${icon("i-mic")} Crea l'audio</button></div></div>
+      <div id="audOut" style="margin-top:12px"></div>`
+    : `<div style="margin-top:12px">${notice("info", "Su questo computer non c'è ancora una voce italiana. Su Windows si aggiunge gratis da Impostazioni → Ora e lingua → Voce → Aggiungi voci → Italiano; poi riapri questa pagina. In alternativa puoi registrare tu il testo qui sopra con il telefono.", "i-mic")}</div>`}`;
+  const go_ = $("#audGo", box);
+  if (!go_) return;
+  go_.onclick = () => busy(go_, async () => {
+    const res = await fetch(`/api/flyers/${f.id}/audio`, {method: "POST", headers: {"Content-Type": "application/json", Authorization: "Bearer " + S.token},
+      body: JSON.stringify({text: $("#audText", box).value, engine: $("#audEngine", box).value})});
+    if (!res.ok) { let d = "Errore"; try { d = (await res.json()).detail; } catch (e) {} throw new Error(d); }
+    const url = URL.createObjectURL(await res.blob());
+    $("#audOut", box).innerHTML = `<div class="toolbar"><audio controls src="${url}"></audio><a class="btn sm sec" href="${url}" download="Volantino_da_ascoltare.mp3">${icon("i-download")} Scarica l'MP3</a></div>
+      <div class="hint">Su WhatsApp: allega il file audio al messaggio o allo stato.</div>`;
+  }, "Leggo il testo…");
 }
 
 // ---------- Filiera vicina
