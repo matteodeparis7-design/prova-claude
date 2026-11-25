@@ -63,9 +63,10 @@ body{-webkit-print-color-adjust:exact;print-color-adjust:exact;color:var(--ink);
 .alloro{top:40.3mm;width:17.5mm}
 .alloro.sx{left:14.6mm;transform:scaleX(-1) rotate(-4deg)}
 .alloro.dx{right:13.9mm;transform:rotate(-4deg)}
-.denominazione{left:0;right:0;top:49.1mm;text-align:center;font-family:Cormorant;font-style:italic;font-weight:600;font-size:14.5pt;color:var(--ink);line-height:1}
+.denominazione{left:0;right:0;top:48.65mm;text-align:center;font-family:Cormorant;font-style:italic;font-weight:600;font-size:14.5pt;color:var(--ink);line-height:1}
 .denominazione i{display:inline-block;width:15mm;border-top:.2mm solid #B8894A;vertical-align:.95mm;margin:0 2.6mm;position:relative}
 .denominazione i::after{content:'';position:absolute;top:-.62mm;width:1mm;height:1mm;background:#B8894A;transform:rotate(45deg)}
+.denominazione .gusto{color:var(--rosso);font-size:16pt;font-weight:600}
 .denominazione i:first-child::after{left:-.5mm}.denominazione i:last-child::after{right:-.5mm}
 .nastro{left:50%;top:56.6mm;width:102mm;transform:translateX(-50%)}
 .nastro svg{width:100%;display:block;overflow:visible}
@@ -111,7 +112,7 @@ table.nutri th{font-weight:700;font-size:7pt;text-align:left;padding:.7mm 0 .55m
 table.nutri th:last-child{text-align:right}
 table.nutri td{padding:.43mm 0 .33mm;border-bottom:.12mm solid rgba(35,31,32,.35)}
 table.nutri td:last-child{text-align:right;white-space:nowrap;font-weight:600}
-table.nutri tr.sub td:first-child{padding-left:2mm;font-weight:400;font-style:italic}
+table.nutri tr.sub td:first-child{padding-left:2mm;font-weight:400;font-style:italic;white-space:nowrap}
 table.nutri tr.e td{font-weight:700}
 table.nutri tr:last-child td{border-bottom:0}
 
@@ -135,6 +136,8 @@ table.nutri tr:last-child td{border-bottom:0}
 .prod{top:68.6mm;left:48.8mm;width:38.4mm}
 .barre{top:58.4mm;left:89.8mm;width:33.6mm;height:23.4mm;background:#fff;border-radius:.8mm;padding:.8mm .7mm}
 .barre img{width:100%;height:100%;display:block}
+.barre .manca{height:100%;border:.25mm dashed #A08C6E;border-radius:.5mm;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:BarlowC;font-size:7pt;color:#A08C6E;font-style:italic;text-align:center;line-height:1.25}
 /* campi da compilare (modello vuoto) */
 .vuoto-campo{color:#A08C6E;font-style:italic;font-weight:400}
 .righe-vuote{display:block;height:var(--hr,9mm);margin-top:.6mm;
@@ -146,32 +149,51 @@ table.nutri td.vuoto-n{color:#A08C6E;font-weight:400}
 </head>
 <body>
 
-<!-- ===================== DATI DEL PRODOTTO ===================== -->
+<!-- ===================== DATI DEI PRODOTTI ===================== -->
 <!--
-  Tutti i dati del prodotto stanno qui. Un campo vuoto ('') viene mostrato in etichetta
-  come spazio "da compilare". Allergeni: racchiuderli tra **asterischi doppi** per il grassetto,
-  es. "farina di **grano** tenero tipo 0, ..." (Reg. UE 1169/2011 art. 21).
+  COMUNI = dati uguali per tutti i gusti.  GUSTI = dati di ogni pizza (uno per etichetta).
+  Il gusto si sceglie con ?gusto=margherita | diavola | ortolana (vedi build.js).
+  Valori nutrizionali: si scrivono ESATTAMENTE come forniti dal produttore; l'etichetta applica
+  da sola gli arrotondamenti delle linee guida UE (Commissione europea, dicembre 2012).
+  Un campo vuoto ('') compare in etichetta come spazio "da compilare".
 -->
 <script>
-const DATI = {
-  // quantita' e campi per timbratura
-  peso: '',                 // es. '350'  -> "350 g ℮"
-  lotto: '',                // vuoto = spazio per timbratura
-  tmc: '',                  // vuoto = spazio per timbratura
-  // composizione
-  ingredienti: '',          // di norma VUOTO: gli ingredienti vanno sulla patch adesiva di ogni gusto
-                            // (se compilato: ordine decrescente di peso, allergeni tra **...**)
-  tracce: '',               // es. 'frutta a guscio e sesamo' (senza "Può contenere tracce di")
-  // dichiarazione nutrizionale per 100 g (numeri con virgola o punto)
-  nutrizione: { energia_kj: '', energia_kcal: '', grassi: '', saturi: '', carboidrati: '', zuccheri: '', fibre: '', proteine: '', sale: '' },
-  // istruzioni d'uso
-  preparazione: '',
-  // etichettatura ambientale dell'imballaggio (D.Lgs. 116/2020)
+const COMUNI = {
+  produttore: { ragione: 'Gustoso di Boccuccia Angelo', indirizzo: 'Contrada Toce, 9 – 00033 Cave (RM)', piva: '13331521008', origine: 'Italia' },
+  preparazione: '',          // es. 'Cuocere senza scongelare in forno statico preriscaldato a 250 °C per 6–8 minuti.'
   imballaggio: { componente: '', materiale: '', codice: '', raccolta: '' },   // es. 'Sacchetto', 'Plastica', 'PP 5', 'Plastica'
-  // operatore responsabile (fisso)
-  produttore: { ragione: 'Caffè 6x6 di Boccuccia Angelo', indirizzo: 'Contrada Toce, 9 – 00033 Cave (RM)', piva: '13331521008', origine: 'Italia' },
-  ean: '8052675470031'
+  lotto: '',                 // vuoto = spazio per timbratura
+  tmc: ''                    // vuoto = spazio per timbratura
 };
+const GUSTI = {
+  // fonte: "valori-nutrizionali-pizze.pdf" del produttore, nell'ordine del messaggio (Margherita, Diavola, Ortolana)
+  margherita: {
+    nome: 'Margherita',
+    fonte_nutrizione: 'PIZZA MARGHERITA',
+    ean: '8052675470031',    // DA CONFERMARE: associazione codice ↔ gusto dedotta dall'ordine
+    peso: '',
+    nutrizione: { energia_kj: '1036', energia_kcal: '248', grassi: '8,0', saturi: '3,8', carboidrati: '32,0', zuccheri: '2,5', fibre: '1,8', proteine: '11,0', sale: '1,3' },
+    ingredienti: '', tracce: ''          // sulla patch adesiva del gusto
+  },
+  diavola: {
+    nome: 'Diavola',
+    fonte_nutrizione: 'PIZZA MOZZARELLA E SALUMI / INSACCATI',   // DA CONFERMARE che corrisponda alla Diavola
+    ean: '8052675470048',    // DA CONFERMARE: associazione codice ↔ gusto dedotta dall'ordine
+    peso: '',
+    nutrizione: { energia_kj: '1076', energia_kcal: '257', grassi: '9,4', saturi: '4,3', carboidrati: '30,6', zuccheri: '2,4', fibre: '1,7', proteine: '11,6', sale: '1,4' },
+    ingredienti: '', tracce: ''
+  },
+  ortolana: {
+    nome: 'Ortolana',
+    fonte_nutrizione: 'PIZZA ORTOLANA',
+    ean: '',                 // MANCANTE: codice a barre non ricevuto
+    peso: '',
+    nutrizione: { energia_kj: '1000', energia_kcal: '239', grassi: '7,5', saturi: '3,5', carboidrati: '31,0', zuccheri: '2,8', fibre: '2,0', proteine: '10,5', sale: '1,2' },
+    ingredienti: '', tracce: ''
+  }
+};
+const GUSTO = new URLSearchParams(location.search).get('gusto') || Object.keys(GUSTI)[0];
+const DATI = Object.assign({ gusto: GUSTO }, COMUNI, GUSTI[GUSTO]);
 </script>
 
 <svg width="0" height="0" style="position:absolute">
@@ -232,7 +254,7 @@ const DATI = {
     <img class="alloro sx" src="assets/alloro.svg" alt="">
     <img class="alloro dx" src="assets/alloro.svg" alt="">
     <div class="titolo">Pizza Romana</div>
-    <div class="denominazione"><i></i>surgelata<i></i></div>
+    <div class="denominazione"><i></i><span class="gusto" id="gustoFronte"></span> surgelata<i></i></div>
     <div class="nastro">
       <svg viewBox="0 0 106 10.4">
         <path d="M0,2.4 H10 V9.9 H0 L3,6.15Z" fill="#6E2116"/>
@@ -304,7 +326,7 @@ const DATI = {
     <div class="r-logo"><img src="assets/logo_gustoso.svg" alt="Gustoso – Cucina Italiana"></div>
     <div class="r-testa">
       <div class="t">Pizza Romana</div>
-      <div class="d">Pizza romana surgelata</div>
+      <div class="d" id="denomRetro"></div>
     </div>
     <div class="r-peso">
       <svg class="cart" viewBox="0 0 25 9.8" preserveAspectRatio="none">
@@ -374,7 +396,7 @@ const DATI = {
       </table>
       <div class="avviso">Una volta scongelato, il prodotto non deve essere ricongelato</div>
     </div>
-    <div class="barre"><img src="assets/barcode_8052675470031.svg" alt="EAN 8052675470031"></div>
+    <div class="barre" id="barre"></div>
   </div>
   <svg class="crocini"></svg>
 </section>
@@ -399,13 +421,30 @@ const num = v => String(v).trim().replace('.', ',');
 document.getElementById('testoIngredienti').innerHTML = DATI.ingredienti ? conGrassetto(DATI.ingredienti) : '';
 document.getElementById('testoTracce').innerHTML = DATI.tracce ? 'Può contenere tracce di ' + conGrassetto(DATI.tracce) + '.' : '';
 document.getElementById('testoPreparazione').innerHTML = DATI.preparazione ? conGrassetto(DATI.preparazione) : vuoto('Modalità di cottura', 2);
+// --- denominazione e gusto
+document.getElementById('gustoFronte').textContent = DATI.nome;
+document.getElementById('denomRetro').textContent = `Pizza romana ${DATI.nome} surgelata`;
+document.title = `Gustoso · Pizza Romana ${DATI.nome}`;
+// --- codice a barre
+document.getElementById('barre').innerHTML = DATI.ean
+  ? `<img src="assets/barcode_${DATI.ean}.svg" alt="EAN ${DATI.ean}">`
+  : '<div class="manca">Codice a barre EAN-13<br>da inserire</div>';
+// --- arrotondamenti delle linee guida UE sulle tolleranze (dicembre 2012)
+const v2n = v => parseFloat(String(v).replace(/\./g, '').replace(',', '.'));   // "1.036" -> 1036 ; "8,0" -> 8
+const virgola = (x, dec) => x.toFixed(dec).replace('.', ',');
+function arrotonda(k, v) {
+  const x = v2n(v);
+  if (k === 'saturi') return x >= 10 ? virgola(Math.round(x), 0) : x < .1 ? '< 0,1' : virgola(x, 1);
+  if (k === 'sale') return x >= 1 ? virgola(x, 1) : x < .0125 ? '0' : virgola(x, 2);
+  return x >= 10 ? virgola(Math.round(x), 0) : x < .5 ? '< 0,5' : virgola(x, 1);   // grassi, carboidrati, zuccheri, fibre, proteine
+}
 const n = DATI.nutrizione;
 document.querySelectorAll('table.nutri td[data-n]').forEach(td => {
   const k = td.dataset.n;
   if (k === 'energia') {
-    if (n.energia_kj && n.energia_kcal) td.textContent = `${num(n.energia_kj)} kJ / ${num(n.energia_kcal)} kcal`;
+    if (n.energia_kj && n.energia_kcal) td.textContent = `${Math.round(v2n(n.energia_kj))} kJ / ${Math.round(v2n(n.energia_kcal))} kcal`;
     else { td.textContent = '… kJ / … kcal'; td.classList.add('vuoto-n'); }
-  } else if (n[k] !== '') td.textContent = num(n[k]) + ' g';
+  } else if (n[k] !== '') td.textContent = arrotonda(k, n[k]) + ' g';
   else { td.textContent = '… g'; td.classList.add('vuoto-n'); }
 });
 const im = DATI.imballaggio;

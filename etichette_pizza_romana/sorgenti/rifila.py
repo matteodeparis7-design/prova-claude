@@ -5,7 +5,7 @@ from pypdf import PdfReader, PdfWriter
 from pypdf.generic import RectangleObject
 MM = 72/25.4
 pagine = [(150, 100), (130, 88)]
-def rifila(path, bleed, marks):
+def rifila(path, bleed, marks, titolo='Gustoso – Pizza romana surgelata – etichette fronte/retro'):
     r = PdfReader(path); w = PdfWriter()
     for pg, (tw, th) in zip(r.pages, pagine):
         top = float(pg.mediabox.top)
@@ -14,6 +14,6 @@ def rifila(path, bleed, marks):
         pg.mediabox = box(0); pg.cropbox = box(0)
         pg.trimbox = box(bleed+marks); pg.bleedbox = box(marks)
         w.add_page(pg)
-    w.add_metadata({'/Title': 'Gustoso – Pizza Romana surgelata – etichette fronte/retro', '/Author': 'Gustoso Cucina Italiana'})
+    w.add_metadata({'/Title': titolo, '/Author': 'Gustoso di Boccuccia Angelo'})
     with open(path, 'wb') as f: w.write(f)
-rifila(sys.argv[1], float(sys.argv[2]), float(sys.argv[3]))
+rifila(sys.argv[1], float(sys.argv[2]), float(sys.argv[3]), *(sys.argv[4:5]))

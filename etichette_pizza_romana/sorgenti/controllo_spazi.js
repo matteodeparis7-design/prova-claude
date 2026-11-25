@@ -24,7 +24,7 @@ const ELEMENTI = {
     await p.setViewportSize({ width: Math.ceil(W / 25.4 * 96), height: Math.ceil(H / 25.4 * 96) });
     ris[pag] = [];
     for (const [nome, sel] of lista) {
-      await p.goto(`${SRC}?p=${pag}`); await p.evaluate(() => document.fonts.ready);
+      await p.goto(`${SRC}?p=${pag}&gusto=${process.env.GUSTO || ''}`); await p.evaluate(() => document.fonts.ready);
       await p.evaluate(([pag, sel]) => {
         document.documentElement.style.background = 'transparent'; document.body.style.background = 'transparent';
         const f = document.getElementById(pag); f.style.background = 'transparent';
