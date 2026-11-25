@@ -2,12 +2,13 @@
 
 | Gusto | EAN | Superati | Non superati | Da compilare |
 |---|---|---|---|---|
-| Margherita | 8052675470031 | 41 | 0 | 3 |
-| Diavola | 8052675470048 | 41 | 0 | 3 |
-| Ortolana | — | 38 | 0 | 4 |
+| Margherita | 8052675470048 | 41 | 0 | 3 |
+| Diavola | 8052675470062 | 41 | 0 | 3 |
+| Ortolana | 8052675470055 | 41 | 0 | 3 |
 
 ## Dati comuni a tutti i gusti
 - ✅ Partita IVA 13331521008 formalmente valida (cifra di controllo)
+- ✅ Codici a barre tutti diversi tra i gusti (8052675470048, 8052675470062, 8052675470055)
 - 📝 Modalità di preparazione/cottura (uguale per tutti i gusti o da specificare per gusto)
 - 📝 Imballaggio: componente, materiale e codice (etichettatura ambientale D.Lgs. 116/2020)
 - ⚠️ "Prodotto artigianale": il claim va usato solo se il produttore è impresa artigiana (L. 443/1985).
@@ -19,8 +20,6 @@ Fonte valori: "PIZZA MARGHERITA"
 
 **Da compilare**
 - 📝 Peso netto in grammi
-
-- ⚠️ Ci sono associazioni da confermare (vedi commenti "DA CONFERMARE" nel blocco GUSTI).
 
 <details><summary>Controlli superati (41)</summary>
 
@@ -47,9 +46,9 @@ Fonte valori: "PIZZA MARGHERITA"
 - ✅ Conversione kcal→kJ coerente (248 × 4,184 = 1038 kJ, dichiarati 1036)
 - ✅ Sottovoci ≤ voci principali
 - ✅ Ordine dei nutrienti conforme all'all. XV Reg. UE 1169/2011
-- ✅ EAN-13 8052675470031: cifra di controllo corretta
-- ✅ Codice a barre decodificato dal PDF a misura (1200 dpi): 8052675470031
-- ✅ Codice a barre decodificato dal PDF di stampa (1200 dpi): 8052675470031
+- ✅ EAN-13 8052675470048: cifra di controllo corretta
+- ✅ Codice a barre decodificato dal PDF a misura (1200 dpi): 8052675470048
+- ✅ Codice a barre decodificato dal PDF di stampa (1200 dpi): 8052675470048
 - ✅ Operatore: Gustoso di Boccuccia Angelo, Contrada Toce, 9 – 00033 Cave (RM)
 - ✅ Nessuna traccia di "Caffè 6x6" né del vecchio indirizzo
 - ✅ Sigillo surgelato −18 °C
@@ -102,9 +101,9 @@ Fonte valori: "PIZZA MOZZARELLA E SALUMI / INSACCATI"
 - ✅ Conversione kcal→kJ coerente (257 × 4,184 = 1075 kJ, dichiarati 1076)
 - ✅ Sottovoci ≤ voci principali
 - ✅ Ordine dei nutrienti conforme all'all. XV Reg. UE 1169/2011
-- ✅ EAN-13 8052675470048: cifra di controllo corretta
-- ✅ Codice a barre decodificato dal PDF a misura (1200 dpi): 8052675470048
-- ✅ Codice a barre decodificato dal PDF di stampa (1200 dpi): 8052675470048
+- ✅ EAN-13 8052675470062: cifra di controllo corretta
+- ✅ Codice a barre decodificato dal PDF a misura (1200 dpi): 8052675470062
+- ✅ Codice a barre decodificato dal PDF di stampa (1200 dpi): 8052675470062
 - ✅ Operatore: Gustoso di Boccuccia Angelo, Contrada Toce, 9 – 00033 Cave (RM)
 - ✅ Nessuna traccia di "Caffè 6x6" né del vecchio indirizzo
 - ✅ Sigillo surgelato −18 °C
@@ -128,10 +127,9 @@ Fonte valori: "PIZZA MOZZARELLA E SALUMI / INSACCATI"
 Fonte valori: "PIZZA ORTOLANA"
 
 **Da compilare**
-- 📝 Codice a barre EAN-13 (non ricevuto)
 - 📝 Peso netto in grammi
 
-<details><summary>Controlli superati (38)</summary>
+<details><summary>Controlli superati (41)</summary>
 
 - ✅ Fronte: "PIZZA ROMANA – Ortolana surgelata"
 - ✅ Retro: denominazione "Pizza romana Ortolana surgelata" accanto al peso netto (art. 13.5)
@@ -156,6 +154,9 @@ Fonte valori: "PIZZA ORTOLANA"
 - ✅ Conversione kcal→kJ coerente (239 × 4,184 = 1000 kJ, dichiarati 1000)
 - ✅ Sottovoci ≤ voci principali
 - ✅ Ordine dei nutrienti conforme all'all. XV Reg. UE 1169/2011
+- ✅ EAN-13 8052675470055: cifra di controllo corretta
+- ✅ Codice a barre decodificato dal PDF a misura (1200 dpi): 8052675470055
+- ✅ Codice a barre decodificato dal PDF di stampa (1200 dpi): 8052675470055
 - ✅ Operatore: Gustoso di Boccuccia Angelo, Contrada Toce, 9 – 00033 Cave (RM)
 - ✅ Nessuna traccia di "Caffè 6x6" né del vecchio indirizzo
 - ✅ Sigillo surgelato −18 °C

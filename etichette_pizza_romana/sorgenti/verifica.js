@@ -50,6 +50,8 @@ function leggiFonte(file) {
   if (!COMUNI.preparazione) daCompilareComuni.push('Modalità di preparazione/cottura (uguale per tutti i gusti o da specificare per gusto)');
   if (!COMUNI.imballaggio.materiale) daCompilareComuni.push('Imballaggio: componente, materiale e codice (etichettatura ambientale D.Lgs. 116/2020)');
 
+  const eans = Object.values(GUSTI).map(g => g.ean).filter(Boolean);
+  comuni.push([new Set(eans).size === eans.length ? 'ok' : 'ko', `Codici a barre tutti diversi tra i gusti (${eans.join(', ')})`]);
   const sintesi = [];
   for (const [chiave, G] of Object.entries(GUSTI)) {
     const ok = [], ko = [], daCompilare = [], note = [];
