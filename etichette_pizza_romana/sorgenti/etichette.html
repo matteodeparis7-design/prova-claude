@@ -405,7 +405,7 @@ const DATI = Object.assign({ gusto: GUSTO }, COMUNI, GUSTI[GUSTO]);
 const q = new URLSearchParams(location.search);
 const pag = q.get('p'), bleed = parseFloat(q.get('bleed') || 0);
 if (pag) document.querySelectorAll('.foglio').forEach(s => { if (s.id !== pag) s.classList.add('nascosto'); });
-const mark = bleed ? 6 : 0;
+const mark = 0;   // nessuna fascia bianca per i crocini: il fondo arriva fino al bordo (abbondanza)
 document.documentElement.style.setProperty('--b', bleed + 'mm');
 document.documentElement.style.setProperty('--m', mark + 'mm');
 
@@ -456,8 +456,37 @@ const pr = DATI.produttore;
 document.getElementById('testoProduttore').innerHTML = `Prodotto e confezionato da:<br><b>${esc(pr.ragione)}</b><br>${esc(pr.indirizzo)}<br>P.IVA ${esc(pr.piva)} · Origine: ${esc(pr.origine)}`;
 document.getElementById('tmcVal').textContent = DATI.tmc;
 
+// --- modalita' Excel (?excel=1): svuota i campi compilabili dal cliente e ne espone le posizioni (mm)
+if (q.get('excel')) {
+  const vuotaPeso = document.getElementById('pesoVal'); vuotaPeso.innerHTML = '<span style="display:inline-block;width:10.5mm"></span>';
+  document.getElementById('testoPreparazione').innerHTML = '';
+  document.getElementById('testoRiciclo').innerHTML = '';
+  document.getElementById('codiceRiciclo').textContent = '';
+  const R = document.querySelector('#retro .rif').getBoundingClientRect(), mm = v => v * 25.4 / 96;
+  const box = el => el.getBoundingClientRect();
+  const h3 = [...document.querySelectorAll('#retro .c2 h3')].map(box);
+  const prod = box(document.querySelector('#retro .prod p'));
+  const c2 = box(document.querySelector('#retro .c2'));
+  const pesoBox = box(document.querySelector('#retro .r-peso'));
+  const g = box(vuotaPeso);
+  const ric = box(document.getElementById('testoRiciclo').parentNode), icona = box(document.getElementById('iconaRiciclo'));
+  const rect = (x0, y0, x1, y1) => ({ x: mm(x0 - R.left), y: mm(y0 - R.top), w: mm(x1 - x0), h: mm(y1 - y0) });
+  window.CAMPI_EXCEL = {
+    ingredienti: rect(c2.left, h3[0].bottom + 3, c2.right, h3[1].top - 5),
+    preparazione: rect(c2.left, h3[1].bottom + 3, c2.right, prod.top - 4),
+    peso: (() => {   // dal bordo interno del riquadro fino alla "g", sotto la scritta PESO NETTO
+      const rg = document.createRange(), t = vuotaPeso.nextSibling; rg.setStart(t, 1); rg.setEnd(t, 2);
+      const gl = rg.getBoundingClientRect(), et = box(document.querySelector('#retro .r-peso .et'));
+      const base = box(vuotaPeso.firstChild).bottom;          // linea di base delle cifre (= base della "g")
+      const asc = 0.905 * 16 * 96 / 72;                        // ascendente di Arial Narrow a 16 pt, in px
+      return rect(pesoBox.left + 6.5, base - asc, gl.left - 2, base + 6);
+    })(),
+    imballaggio: rect(icona.right + 4, ric.top - 3, c2.left - 10, ric.bottom + 9),
+  };
+}
+
 // crocini di taglio (solo con abbondanza)
-if (bleed) document.querySelectorAll('.foglio').forEach(s => {
+if (bleed && mark) document.querySelectorAll(".foglio").forEach(s => {
   const w = parseFloat(getComputedStyle(s).getPropertyValue('--w')), h = parseFloat(getComputedStyle(s).getPropertyValue('--h'));
   const W = w + 2*(bleed+mark), H = h + 2*(bleed+mark), o = bleed + mark, L = mark - 1;
   const svg = s.querySelector('.crocini'); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);

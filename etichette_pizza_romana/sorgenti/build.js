@@ -21,7 +21,7 @@ const pagine = { fronte: [150, 100], retro: [130, 88] };
     for (const bleed of [0, 3]) {
       const files = [];
       for (const [pag, [w, h]] of Object.entries(pagine)) {
-        const extra = bleed ? 2 * (bleed + 6) : 0;
+        const extra = 2 * bleed;
         await p.goto(`${SRC}?gusto=${chiave}&p=${pag}&bleed=${bleed}`); await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(300);
         const f = path.join(dir, `.tmp_${pag}_${bleed}.pdf`);
         await p.pdf({ path: f, width: `${w + extra}mm`, height: `${h + extra}mm`, printBackground: true, margin: { top: 0, right: 0, bottom: 0, left: 0 } });
@@ -29,7 +29,7 @@ const pagine = { fronte: [150, 100], retro: [130, 88] };
       }
       const dest = path.join(dir, `Gustoso_Pizza_Romana_${nome}${bleed ? '_STAMPA_abbondanza_3mm' : ''}.pdf`);
       execFileSync('pdfunite', [...files, dest]);
-      execFileSync('python3', [path.join(__dirname, 'rifila.py'), dest, String(bleed), String(bleed ? 6 : 0), `Gustoso – Pizza romana ${nome} surgelata – etichette fronte/retro`]);
+      execFileSync('python3', [path.join(__dirname, 'rifila.py'), dest, String(bleed), "0", `Gustoso – Pizza romana ${nome} surgelata – etichette fronte/retro`]);
     }
     tmp.forEach(f => fs.unlinkSync(f));
     // anteprime PNG a 600 dpi (dimensione reale di taglio)
