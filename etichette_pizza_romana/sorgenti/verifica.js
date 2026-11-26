@@ -129,7 +129,7 @@ function leggiFonte(file) {
   await b.close();
   rep = rep.replace('\n\n', `\n\n| Gusto | EAN | Superati | Non superati | Da compilare |\n|---|---|---|---|---|\n${sintesi.join('\n')}\n\n` +
     `## Dati comuni a tutti i gusti\n${comuni.map(([s, m]) => (s === 'ok' ? '- ✅ ' : '- ❌ ') + m).join('\n')}\n${daCompilareComuni.map(x => '- 📝 ' + x).join('\n')}\n` +
-    `- ⚠️ "Prodotto artigianale": il claim va usato solo se il produttore è impresa artigiana (L. 443/1985).\n` +
+    `- ✅ "Prodotto artigianale italiano": uso confermato dal produttore.\n- ✅ Diavola = blocco "Mozzarella e salumi / insaccati": confermato dal produttore.\n` +
     `- ⚠️ Ingredienti e tracce di allergeni: sulla patch adesiva di ogni gusto, allergeni in grassetto (art. 21 Reg. 1169/2011).\n\n`);
   fs.writeFileSync(path.join(OUT, 'VERIFICA.md'), rep);
   console.log(rep);

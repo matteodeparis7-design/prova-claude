@@ -11,7 +11,8 @@
 - ✅ Codici a barre tutti diversi tra i gusti (8052675470048, 8052675470062, 8052675470055)
 - 📝 Modalità di preparazione/cottura (uguale per tutti i gusti o da specificare per gusto)
 - 📝 Imballaggio: componente, materiale e codice (etichettatura ambientale D.Lgs. 116/2020)
-- ⚠️ "Prodotto artigianale": il claim va usato solo se il produttore è impresa artigiana (L. 443/1985).
+- ✅ "Prodotto artigianale italiano": uso confermato dal produttore.
+- ✅ Diavola = blocco "Mozzarella e salumi / insaccati": confermato dal produttore.
 - ⚠️ Ingredienti e tracce di allergeni: sulla patch adesiva di ogni gusto, allergeni in grassetto (art. 21 Reg. 1169/2011).
 
 ## Pizza romana Margherita
@@ -73,8 +74,6 @@ Fonte valori: "PIZZA MOZZARELLA E SALUMI / INSACCATI"
 
 **Da compilare**
 - 📝 Peso netto in grammi
-
-- ⚠️ Ci sono associazioni da confermare (vedi commenti "DA CONFERMARE" nel blocco GUSTI).
 
 <details><summary>Controlli superati (41)</summary>
 
