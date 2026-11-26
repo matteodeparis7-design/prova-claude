@@ -32,6 +32,23 @@ const pagine = { fronte: [150, 100], retro: [130, 88] };
       execFileSync('python3', [path.join(__dirname, 'rifila.py'), dest, String(bleed), "0", `Gustoso – Pizza romana ${nome} surgelata – etichette fronte/retro`]);
     }
     tmp.forEach(f => fs.unlinkSync(f));
+    // PDF compilabile: fronte normale + retro senza segnaposto grigi, con i campi del modulo
+    {
+      const parti = [];
+      for (const [pag, [w, h]] of Object.entries(pagine)) {
+        await p.goto(`${SRC}?gusto=${chiave}&p=${pag}&excel=1`); await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(300);
+        const f = path.join(dir, `.tmp_c_${pag}.pdf`);
+        await p.pdf({ path: f, width: `${w}mm`, height: `${h}mm`, printBackground: true, margin: { top: 0, right: 0, bottom: 0, left: 0 } });
+        parti.push(f);
+      }
+      const campi = await p.evaluate(() => CAMPI_EXCEL);
+      const base = path.join(dir, '.tmp_c.pdf'), cj = path.join(dir, '.tmp_campi.json');
+      execFileSync('pdfunite', [...parti, base]);
+      execFileSync('python3', [path.join(__dirname, 'rifila.py'), base, '0', '0', `Gustoso – Pizza romana ${nome} surgelata – etichette compilabili`]);
+      fs.writeFileSync(cj, JSON.stringify(campi));
+      execFileSync('python3', [path.join(__dirname, 'compilabile.py'), base, cj, path.join(dir, `Gustoso_Pizza_Romana_${nome}_COMPILABILE.pdf`), ...(process.env.PROVA ? ['prova'] : [])]);
+      [...parti, base, cj].forEach(f => fs.unlinkSync(f));
+    }
     // anteprime PNG a 600 dpi (dimensione reale di taglio)
     for (const [pag, [w, h]] of Object.entries(pagine)) {
       await pv.setViewportSize({ width: Math.ceil(w / 25.4 * 96), height: Math.ceil(h / 25.4 * 96) });
@@ -39,6 +56,11 @@ const pagine = { fronte: [150, 100], retro: [130, 88] };
       await pv.locator('#' + pag).screenshot({ path: path.join(dir, `anteprima_${pag}.png`) });
     }
     console.log('creato', nome);
+  }
+  // istruzioni per il cliente
+  if (!process.argv[2]) {
+    await p.goto('file://' + path.resolve(__dirname, 'istruzioni.html')); await p.evaluate(() => document.fonts.ready);
+    await p.pdf({ path: path.join(OUT, 'LEGGIMI_Istruzioni_etichette.pdf'), format: 'A4', printBackground: true, preferCSSPageSize: true });
   }
   await b.close();
 })();

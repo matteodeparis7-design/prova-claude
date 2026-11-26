@@ -479,7 +479,7 @@ if (q.get('excel')) {
       const gl = rg.getBoundingClientRect(), et = box(document.querySelector('#retro .r-peso .et'));
       const base = box(vuotaPeso.firstChild).bottom;          // linea di base delle cifre (= base della "g")
       const asc = 0.905 * 16 * 96 / 72;                        // ascendente di Arial Narrow a 16 pt, in px
-      return rect(pesoBox.left + 6.5, base - asc, gl.left - 2, base + 6);
+      return Object.assign(rect(pesoBox.left + 6.5, base - asc, gl.left - 2, base + 6), { base: (base - R.top) * 25.4 / 96 });
     })(),
     imballaggio: rect(icona.right + 4, ric.top - 3, c2.left - 10, ric.bottom + 9),
   };
