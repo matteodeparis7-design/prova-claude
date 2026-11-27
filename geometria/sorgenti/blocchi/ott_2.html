@@ -1,0 +1,35 @@
+<div class="esercizio"><span class="num">2)</span><div class="testo">
+<p>Assegnate le rette \(\ r_1:\begin{cases}x=1-t\\y=t\\z=0\end{cases}\) e \(\ r_2:\begin{cases}x=1+s\\y=0\\z=s\end{cases}\)</p>
+<ol class="num">
+<li>si scriva l'equazione del piano \(\alpha\) a cui appartengono;</li>
+<li>si scrivano le equazioni delle rette passanti per \(A=(0,1,0)\) e formanti con \(r_1\) e \(r_2\) un triangolo di area \(2\sqrt3\).</li>
+</ol>
+</div></div>
+
+<div class="rimando">
+<p><b>Punto 1: procedimento identico</b> all'<b>Es. 2, punto 1, del 16 gennaio</b> (rette incidenti → normale con il prodotto vettoriale → piano per il punto comune).
+Risultati: per \(t=s=0\) entrambe passano per \(O'=(1,0,0)\); \(\ \vec u=(-1,1,0)\), \(\vec v=(1,0,1)\), \(\ \vec u\wedge\vec v=(1,1,-1)\);
+\(\ \boxed{\alpha:\ x+y-z-1=0}\).</p>
+</div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b> del punto 2 (questo è nuovo): dobbiamo ricordare che l'<b>area di un triangolo</b> con due lati
+\(\vec a\) e \(\vec b\) uscenti dallo stesso vertice è \(\ \frac12|\vec a\wedge\vec b|\): il modulo del prodotto vettoriale è l'area del parallelogramma costruito
+sui due vettori, e il triangolo ne è la metà.</p>
+
+<div class="svolg"><ol class="num" start="2" style="counter-reset: lett 1">
+<li><p><b>Osservazione importante.</b> Il punto \(A=(0,1,0)\) <b>sta su \(r_1\)</b>: si ottiene per \(t=1\). Quindi una retta \(\ell\) per \(A\) incontra \(r_1\) proprio in
+\(A\); per formare un triangolo deve incontrare anche \(r_2\) in un punto \(B\) (e quindi stare nel piano \(\alpha\)). I vertici del triangolo sono \(O'=r_1\cap r_2\), \(A\) e \(B\).</p>
+<p>Prendiamo il punto generico \(B=(1+s,\ 0,\ s)\) di \(r_2\). I due lati uscenti da \(O'\) sono
+\(\ \overrightarrow{O'A}=A-O'=(-1,1,0)\ \) e \(\ \overrightarrow{O'B}=B-O'=(s,0,s)=s\,(1,0,1)\). Allora
+\[\text{Area}=\frac12\left|\overrightarrow{O'A}\wedge\overrightarrow{O'B}\right|=\frac12|s|\,\bigl|(-1,1,0)\wedge(1,0,1)\bigr|=\frac12|s|\,\bigl|(1,1,-1)\bigr|=\frac{\sqrt3}2|s|\]
+(il prodotto vettoriale \((-1,1,0)\wedge(1,0,1)=(1,1,-1)\) è lo stesso calcolato per il piano, e \(|(1,1,-1)|=\sqrt{1+1+1}=\sqrt3\)).
+Imponiamo che l'area valga \(2\sqrt3\):
+\[\frac{\sqrt3}2|s|=2\sqrt3\ \Rightarrow\ |s|=4\ \Rightarrow\ s=\pm4\qquad\rightarrow\qquad B_1=(5,0,4),\qquad B_2=(-3,0,-4)\]
+<b>Rette \(AB_1\) e \(AB_2\).</b> Direzioni: \(B_1-A=(5,-1,4)\) e \(B_2-A=(-3,-1,-4)\), che possiamo cambiare di segno: \((3,1,4)\).
+\[\ell_1:\begin{cases}x=5\lambda\\y=1-\lambda\\z=4\lambda\end{cases}\rightarrow\ \boxed{\ell_1:\begin{cases}x+5y-5=0\\z+4y-4=0\end{cases}}\qquad
+\ell_2:\begin{cases}x=3\lambda\\y=1+\lambda\\z=4\lambda\end{cases}\rightarrow\ \boxed{\ell_2:\begin{cases}x-3y+3=0\\z-4y+4=0\end{cases}}\]
+(per la forma cartesiana si elimina \(\lambda\): in \(\ell_1\) \(\lambda=1-y\), da cui \(x=5-5y\) e \(z=4-4y\); in \(\ell_2\) \(\lambda=y-1\), da cui \(x=3y-3\) e \(z=4y-4\)).</p>
+<div class="nota"><p><b>Controllo con la trigonometria.</b> L'angolo in \(O'\) ha \(\cos\theta=\frac{\vec u\cdot\vec v}{|\vec u||\vec v|}=\frac{-1}{\sqrt2\cdot\sqrt2}=-\frac12\), quindi \(\theta=120^\circ\).
+Con \(\overline{O'A}=\sqrt2\) e \(\overline{O'B}=|s|\sqrt2=4\sqrt2\): \(\ \text{Area}=\frac12\cdot\sqrt2\cdot4\sqrt2\cdot\sin120^\circ=4\cdot\frac{\sqrt3}2=2\sqrt3\) ✓.
+Inoltre \(B_1\) e \(B_2\) stanno in \(\alpha\): \(5+0-4-1=0\) e \(-3+0+4-1=0\) ✓.</p></div></li>
+</ol></div>

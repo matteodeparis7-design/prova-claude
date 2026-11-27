@@ -10,7 +10,7 @@
   src: url(FONTDIR/cinzel-decorative/files/cinzel-decorative-latin-700-normal.woff2) format("woff2"); }
 
 :root { --blu: #2f6fc0; --blu-chiaro: #9fc3ee; --arancio: #c55a11; }
-html { font-size: 11.6pt; }
+html { font-size: 11.2pt; }
 body { font-family: "Caladea", "Cambria", serif; color: #000; line-height: 1.36; margin: 0; }
 p { margin: 0.2em 0 0.35em; text-align: justify; hyphens: auto; }
 .katex { font-size: 1.06em; }
@@ -21,8 +21,10 @@ p { margin: 0.2em 0 0.35em; text-align: justify; hyphens: auto; }
   text-align: center; font-size: 15.5pt; letter-spacing: 0.02em; margin: 0 0 0.3em;
   -webkit-text-stroke: 0.4px var(--blu-chiaro); text-shadow: 0.6px 0.6px 0 var(--blu-chiaro); }
 .sottotitolo { text-align: center; font-style: italic; margin: 0 0 1.1em; color: #333; }
-.appello { break-before: page; }
-.appello:first-of-type { break-before: auto; }
+.appello { break-before: auto; margin-top: 1.6em; padding-top: 0.9em; border-top: 2px solid var(--blu-chiaro); }
+.titolo { break-after: avoid; }
+.sottotitolo { break-after: avoid; }
+.esercizio { break-after: avoid; }
 .frontespizio { break-after: page; padding-top: 30mm; text-align: center; }
 .frontespizio .titolo { font-size: 22pt; line-height: 1.35; }
 .frontespizio .box { border: 1px solid #000; display: inline-block; text-align: left;
@@ -70,3 +72,9 @@ table.riass th { background: #eef3fb; }
 
 .fig-center { text-align: center; margin: 0.4em 0; break-inside: avoid; }
 .fig-center img { display: inline-block; }
+
+/* rimando a un esercizio già svolto con procedimento identico */
+.rimando { border-left: 3px solid var(--arancio); background: #fff5ec; padding: 0.4em 0.75em; margin: 0.5em 0; break-inside: avoid; }
+.rimando p { margin: 0.15em 0; }
+.rimando ul { margin: 0.15em 0 0.1em 1.1em; padding: 0; }
+.punto { margin: 0.25em 0 0.25em 0; }

@@ -119,13 +119,23 @@ in un solo modo come \(\vec v=P_W(\vec v)+P_{W^\perp}(\vec v)\).</p>
 \[P_W(\vec v)=\vec v-P_{W^\perp}(\vec v)=(0,2,2,4)-(0,2,-1,1)=\boxed{(0,0,3,3)}\]
 <i>Verifica</i>: \((0,0,3,3)\) soddisfa \(0+0-3+3=0\) e \(0-0=0\), quindi sta in \(W\) ✓.</p></li>
 
-<li><p><b>Matrice del proiettore \(P_{W^\perp}\).</b> Per un vettore \(\vec n\) (colonna) la proiezione su di esso ha matrice \(\dfrac{\vec n\,\vec n^{\,T}}{|\vec n|^2}\).
-Essendo \(\vec n_1\perp\vec n_2\):
+<li><p><b>Matrice del proiettore \(P_{W^\perp}\).</b> Per un vettore \(\vec n\) (scritto in colonna) la proiezione sulla sua direzione ha matrice
+\(\dfrac{\vec n\,\vec n^{\,T}}{|\vec n|^2}\). <i>Da dove viene?</i> Al punto b) abbiamo usato \(P(\vec x)=\frac{\vec x\cdot\vec n}{|\vec n|^2}\,\vec n\). Il prodotto scalare
+si può scrivere come prodotto riga per colonna, \(\vec x\cdot\vec n=\vec n^{\,T}\vec x\), quindi \(P(\vec x)=\frac{\vec n\,(\vec n^{\,T}\vec x)}{|\vec n|^2}=\frac{\vec n\,\vec n^{\,T}}{|\vec n|^2}\,\vec x\).
+Il prodotto \(\vec n\,\vec n^{\,T}\) (colonna per riga) è una matrice \(4\times4\) che nella riga \(i\), colonna \(j\) ha il prodotto \(n_i\,n_j\). Ad esempio, per
+\(\vec n_1=(1,1,-1,1)\) la prima riga è \((1\cdot1,\ 1\cdot1,\ 1\cdot(-1),\ 1\cdot1)=(1,1,-1,1)\).
+Essendo \(\vec n_1\perp\vec n_2\), il proiettore su \(W^\perp\) è la somma dei due:
 \[P_{W^\perp}=\frac{\vec n_1\vec n_1^{\,T}}{4}+\frac{\vec n_2\vec n_2^{\,T}}{2}
 =\frac14\begin{pmatrix}1&1&-1&1\\1&1&-1&1\\-1&-1&1&-1\\1&1&-1&1\end{pmatrix}+\frac12\begin{pmatrix}1&-1&0&0\\-1&1&0&0\\0&0&0&0\\0&0&0&0\end{pmatrix}\]
 \[\boxed{P_{W^\perp}=\frac14\begin{pmatrix}3&-1&-1&1\\-1&3&-1&1\\-1&-1&1&-1\\1&1&-1&1\end{pmatrix}}\]
-<i>Controlli</i>: la matrice è <b>simmetrica</b>, \(P^2=P\) (verificato), la traccia vale \(\frac{3+3+1+1}4=2=\dim W^\perp\) ✓, e
-\(P_{W^\perp}\vec v=\frac14(0-2-2+4,\ 0+6-2+4,\ 0-2+2-4,\ 0+2-2+4)=(0,2,-1,1)\) ✓.</p></li>
+<i>Controlli</i> (si fanno a mano in un minuto):</p>
+<ul style="margin:0.1em 0 0.3em 1.2em;padding:0">
+<li>la matrice è <b>simmetrica</b>, come ogni proiettore ortogonale;</li>
+<li>i vettori di \(W^\perp\) <b>restano fermi</b>: \(P_{W^\perp}\vec n_2=\frac14(3+1,\ -1-3,\ -1+1,\ 1-1)=(1,-1,0,0)=\vec n_2\) ✓;</li>
+<li>i vettori di \(W\) <b>vanno in \(\vec0\)</b>: \(P_{W^\perp}(1,1,2,0)=\frac14(3-1-2,\ -1+3-2,\ -1-1+2,\ 1+1-2)=(0,0,0,0)\) ✓;</li>
+<li>la <b>traccia</b> è uguale alla dimensione di \(W^\perp\): \(\frac{3+3+1+1}4=2\) ✓;</li>
+<li>ritroviamo il punto b): \(P_{W^\perp}\vec v=\frac14(0-2-2+4,\ 0+6-2+4,\ 0-2+2-4,\ 0+2-2+4)=(0,2,-1,1)\) ✓.</li>
+</ul></li>
 </ol></div>
 
 <!-- ======================= ESERCIZIO 4 ======================= -->
@@ -218,21 +228,40 @@ Conserva le aree (\(|\det A|=1\)) e inverte l'orientamento (\(\det A<0\)).</p></
 <div class="esercizio"><span class="num">T)</span><div class="testo"><p><b>Prova teorica</b> — T.1: Endomorfismi diagonalizzabili – Teorema spettrale.
 &nbsp; T.2: Omomorfismi tra spazi vettoriali: definizione, nucleo, immagine e relazione dimensionale. Dimostrare che un omomorfismo \(T\) è iniettivo
 (<i>monomorfismo</i>) se e solo se \(\ker T=\{\vec0\}\).</p></div></div>
-<p class="svolg-head"><b class="label">SVOLGIMENTO</b> (traccia di risposta):</p>
-<p><b>T.1</b> Un endomorfismo \(T:V\to V\) (con \(\dim V=n\)) è <b>diagonalizzabile</b> se esiste una base di \(V\) formata da <b>autovettori</b> di \(T\);
-in tale base la matrice di \(T\) è diagonale, con gli autovalori sulla diagonale. Equivalentemente: la matrice \(A\) è simile a una diagonale,
-\(D=P^{-1}AP\), dove le colonne di \(P\) sono gli autovettori. <i>Criterio</i>: \(T\) è diagonalizzabile se e solo se (1) il polinomio caratteristico
-ha tutte le radici reali e (2) per ogni autovalore la molteplicità geometrica \(m_g=\dim\ker(A-\lambda I)\) è uguale alla molteplicità
-algebrica \(m_a\). In particolare, se ci sono \(n\) autovalori distinti \(T\) è diagonalizzabile.
-<b>Teorema spettrale</b>: se \(A\) è una matrice reale <b>simmetrica</b> (cioè \(T\) è un endomorfismo autoaggiunto di uno spazio euclideo), allora
-tutti i suoi autovalori sono reali, autovettori relativi ad autovalori distinti sono ortogonali e \(A\) è diagonalizzabile mediante una matrice
-<b>ortogonale</b>: esiste una base <b>ortonormale</b> di autovettori, \(D=P^TAP\) con \(P^T=P^{-1}\). È il teorema che si usa per ridurre a forma
-normale le coniche (rotazione degli assi).</p>
-<p><b>T.2</b> Un <b>omomorfismo</b> (applicazione lineare) \(T:V\to W\) è una funzione tale che \(T(u+v)=T(u)+T(v)\) e \(T(\alpha v)=\alpha T(v)\).
-Il <b>nucleo</b> è \(\ker T=\{v\in V:\ T(v)=\vec0\}\), sottospazio di \(V\); l'<b>immagine</b> è \(\operatorname{Im}T=\{T(v):v\in V\}\), sottospazio di
-\(W\). <b>Relazione dimensionale</b> (teorema nullità + rango): \(\ \dim V=\dim\ker T+\dim\operatorname{Im}T\).
-<i>Teorema</i>: \(T\) è iniettivo \(\iff\ker T=\{\vec0\}\).
-<i>Dim.</i> (\(\Rightarrow\)) Si ha sempre \(T(\vec0)=\vec0\). Se \(v\in\ker T\), allora \(T(v)=\vec0=T(\vec0)\) e, per l'iniettività, \(v=\vec0\).
-(\(\Leftarrow\)) Se \(T(u)=T(v)\), per la linearità \(T(u-v)=T(u)-T(v)=\vec0\), quindi \(u-v\in\ker T=\{\vec0\}\), cioè \(u=v\). \(\blacksquare\)</p>
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b> (traccia di risposta, da esporre in quest'ordine):</p>
+
+<p><b>T.1 — Endomorfismi diagonalizzabili e teorema spettrale</b></p>
+<p class="punto"><b>1. Definizione.</b> Un endomorfismo \(T:V\to V\) (con \(\dim V=n\)) è <b>diagonalizzabile</b> se esiste una <b>base di \(V\) formata da autovettori</b>
+di \(T\). Per una matrice: \(A\) è diagonalizzabile se è <b>simile</b> a una matrice diagonale, cioè esiste \(P\) invertibile con \(P^{-1}AP=D\) diagonale.</p>
+<p class="punto"><b>2. Perché si chiama così.</b> Se \(v_1,\dots,v_n\) è una base di autovettori, \(T(v_i)=\lambda_iv_i\): la colonna \(i\)-esima della matrice in questa base
+ha \(\lambda_i\) al posto \(i\) e zeri altrove. La matrice è <b>diagonale</b>, con gli autovalori sulla diagonale; \(P\) ha per colonne gli autovettori.</p>
+<p class="punto"><b>3. Molteplicità.</b> Per ogni autovalore \(\lambda\): la <b>molteplicità algebrica</b> \(m_a\) è quante volte \(\lambda\) è radice del polinomio caratteristico;
+la <b>molteplicità geometrica</b> \(m_g=\dim\ker(A-\lambda I)\) è il numero di autovettori indipendenti per \(\lambda\). Vale sempre \(1\le m_g\le m_a\).</p>
+<p class="punto"><b>4. Criterio.</b> \(T\) è diagonalizzabile \(\iff\) (a) il polinomio caratteristico ha <b>tutte le radici reali</b> e (b) per <b>ogni</b> autovalore
+\(m_g=m_a\). <i>Caso facile</i>: \(n\) autovalori distinti \(\Rightarrow\) diagonalizzabile (autovettori di autovalori distinti sono indipendenti).
+<i>Esempio di non diagonalizzabile</i>: \(\begin{pmatrix}1&1\\0&1\end{pmatrix}\) ha \(\lambda=1\) con \(m_a=2\) ma \(m_g=1\).</p>
+<p class="punto"><b>5. Teorema spettrale.</b> Se \(A\) è una matrice reale <b>simmetrica</b> (\(A^T=A\)), allora: (a) tutti i suoi autovalori sono reali; (b) autovettori di
+autovalori distinti sono <b>ortogonali</b>; (c) esiste una <b>base ortonormale</b> di autovettori, cioè \(A\) si diagonalizza con una matrice <b>ortogonale</b>:
+\(D=P^TAP\) con \(P^T=P^{-1}\).</p>
+<p class="punto"><b>6. Dove si usa.</b> Nella riduzione a forma normale delle <b>coniche</b> (esercizi 4): la matrice della parte quadratica è simmetrica, e la matrice
+ortogonale \(P\) è la <b>rotazione</b> che porta gli assi della conica sugli assi coordinati.</p>
+
+<p><b>T.2 — Omomorfismi, nucleo, immagine</b></p>
+<p class="punto"><b>1. Definizione.</b> Un <b>omomorfismo</b> (applicazione lineare) \(T:V\to W\) è una funzione che rispetta le operazioni:
+\(T(u+v)=T(u)+T(v)\) e \(T(\alpha v)=\alpha T(v)\). Conseguenza: \(T(\vec0)=\vec0\) (basta prendere \(\alpha=0\)).</p>
+<p class="punto"><b>2. Nucleo e immagine.</b> Il <b>nucleo</b> \(\ker T=\{v\in V:\ T(v)=\vec0\}\) è un sottospazio di \(V\); l'<b>immagine</b>
+\(\operatorname{Im}T=\{T(v):\ v\in V\}\) è un sottospazio di \(W\), generato dalle colonne della matrice di \(T\).</p>
+<p class="punto"><b>3. Relazione dimensionale</b> (teorema della dimensione): \(\ \dim V=\dim\ker T+\dim\operatorname{Im}T\).
+Esempio: nell'Es. 3 del 12 giugno \(\dim\ker T=1\) e \(\dim\operatorname{Im}T=2\), e infatti \(1+2=3\).</p>
+<p class="punto"><b>4. Teorema.</b> \(T\) è iniettivo (vettori diversi hanno immagini diverse) \(\iff\ker T=\{\vec0\}\).</p>
+<p class="punto"><b>5. Dimostrazione.</b></p>
+<ul style="margin:0 0 0.2em 1.2em;padding:0">
+<li>(\(\Rightarrow\)) Supponiamo \(T\) iniettivo e prendiamo \(v\in\ker T\). Allora \(T(v)=\vec0=T(\vec0)\): \(v\) e \(\vec0\) hanno la stessa immagine e, per
+l'iniettività, \(v=\vec0\). Quindi nel nucleo c'è solo \(\vec0\).</li>
+<li>(\(\Leftarrow\)) Supponiamo \(\ker T=\{\vec0\}\) e che \(T(u)=T(v)\). Per la linearità \(T(u-v)=T(u)-T(v)=\vec0\), quindi \(u-v\in\ker T\), cioè
+\(u-v=\vec0\) e \(u=v\): \(T\) è iniettivo. \(\blacksquare\)</li>
+</ul>
+<p class="punto"><b>6. Conseguenza.</b> Per un endomorfismo di \(\mathbb{R}^n\): iniettivo \(\iff\ker T=\{\vec0\}\iff\dim\operatorname{Im}T=n\iff\det A\neq0\) (la matrice è invertibile).</p>
 </div>
+
 </section>

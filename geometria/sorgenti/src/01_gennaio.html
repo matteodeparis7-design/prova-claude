@@ -220,9 +220,12 @@ nell'origine. La trasformazione inversa (che serve per sostituire) si ricava da 
 \[x=\frac{X-Y}{\sqrt2}+1\qquad\qquad y=\frac{X+Y}{\sqrt2}-2\]
 Ora \(x+y+1=\sqrt2X\) e \(x-y-3=-\sqrt2\,Y\). Sostituendo nell'equazione \(3(x+y+1)^2+(x-y-3)=0\):
 \[3\cdot 2X^2-\sqrt2\,Y=0\ \rightarrow\ \boxed{Y=3\sqrt2\,X^2}\quad\text{ovvero}\quad X^2=2pY\ \ \text{con}\ \ 2p=\frac{1}{3\sqrt2}=\frac{\sqrt2}{6},\ \ p=\frac{\sqrt2}{12}\]
-<div class="nota"><p><b>Controllo con gli invarianti.</b> La matrice della parte quadratica \(3x^2+6xy+3y^2\) è
-\(\begin{pmatrix}3&3\\3&3\end{pmatrix}\), con autovalori \(0\) e \(6\) (traccia 6, determinante 0): infatti nella forma ridotta
-compare \(6X^2\) e manca \(Y^2\) ✓.</p></div></li>
+<div class="nota"><p><b>Controllo con gli invarianti.</b> Gli <i>invarianti</i> sono numeri che <b>non cambiano</b> quando si ruota il riferimento, e servono
+per controllare la forma ridotta. La parte quadratica \(ax^2+bxy+cy^2\) si rappresenta con la matrice simmetrica \(\begin{pmatrix}a&b/2\\b/2&c\end{pmatrix}\)
+(attenzione: fuori dalla diagonale va <b>metà</b> del coefficiente di \(xy\)). Dopo una rotazione, i coefficienti di \(X^2\) e \(Y^2\) sono proprio gli
+<b>autovalori</b> di questa matrice, che si trovano da \(\lambda^2-(\text{traccia})\,\lambda+\det=0\).
+Qui: \(3x^2+6xy+3y^2\ \rightarrow\ \begin{pmatrix}3&3\\3&3\end{pmatrix}\), traccia \(6\), determinante \(0\): \(\lambda^2-6\lambda=0\Rightarrow\lambda=0,\ 6\).
+Infatti nella forma ridotta compare \(6X^2\) e manca \(Y^2\) ✓.</p></div></li>
 
 <li><p>Per la parabola \(X^2=2pY\) il <b>fuoco</b> è \(F=\left(0,\frac p2\right)\) e la <b>direttrice</b> è \(Y=-\frac p2\), con
 \(\frac p2=\frac{\sqrt2}{24}\).</p>
@@ -250,7 +253,9 @@ determinare direzioni invarianti, punti e rette uniti. Si dia una descrizione ge
 <li><p><b>Matrice e determinante.</b>
 \[A=\begin{pmatrix}3&-4\\2&-3\end{pmatrix},\qquad B=\begin{pmatrix}8\\-4\end{pmatrix},\qquad \det A=-9+8=-1\neq0\]
 Quindi è una trasformazione <b>affine</b> (invertibile). Poiché \(|\det A|=1\) <b>conserva le aree</b>, e poiché \(\det A<0\)
-<b>inverte l'orientamento</b>. Non è un'isometria: le colonne \((3,2)\) e \((-4,-3)\) non sono versori, cioè \(A\) non è ortogonale.</p></li>
+<b>inverte l'orientamento</b>. (Ricorda: una trasformazione affine moltiplica <b>tutte le aree</b> per \(|\det A|\); se \(\det A<0\) “ribalta” le figure come
+uno specchio, cioè cambia il verso di percorrenza del contorno.) Non è un'<b>isometria</b> (trasformazione che conserva le distanze): per esserlo \(A\)
+dovrebbe essere ortogonale, cioè avere colonne di lunghezza 1 e perpendicolari, mentre \((3,2)\) ha lunghezza \(\sqrt{13}\).</p></li>
 
 <li><p><b>Direzioni invarianti.</b> Polinomio caratteristico:
 \[\det(A-\lambda I)=\begin{vmatrix}3-\lambda&-4\\2&-3-\lambda\end{vmatrix}=(3-\lambda)(-3-\lambda)+8=\lambda^2-9+8=\lambda^2-1=0\ \rightarrow\ \lambda=\pm1\]
@@ -273,13 +278,19 @@ Quindi i punti della retta \(x-2y=c\) vanno sulla retta \(x-2y=16-c\). La retta 
 <p>La retta unita \(x-2y-8=0\) <b>non</b> è fatta di punti fissi (non ce ne sono): i suoi punti scorrono lungo di essa.
 Per esempio \((8,0)\mapsto(3\cdot8+8,\ 2\cdot8-4)=(32,12)\), che sta ancora sulla retta (\(32-24=8\) ✓).</p></li>
 
-<li><p><b>Descrizione geometrica.</b> Osserviamo che \[A^2=\begin{pmatrix}9-8&-12+12\\6-6&-8+9\end{pmatrix}=I\]la parte lineare è
-una <b>simmetria obliqua</b> (lascia ferma la direzione \((2,1)\) e ribalta la direzione \((1,1)\)). Applicando due volte la trasformazione:
+<li><p><b>Descrizione geometrica.</b> Osserviamo che \[A^2=\begin{pmatrix}9-8&-12+12\\6-6&-8+9\end{pmatrix}=I\]applicando due volte la sola parte lineare si torna al punto di partenza: la parte lineare è una <b>simmetria obliqua</b>.
+Cos'è? Una <b>simmetria obliqua</b> (o affine) di asse \(a\) e direzione \(\vec d\) manda ogni punto \(P\) nel punto \(P'\) tale che il segmento \(PP'\) sia
+parallelo a \(\vec d\) e il suo punto medio stia sull'asse. Se \(\vec d\) è perpendicolare all'asse è la simmetria assiale “normale” (ortogonale); altrimenti
+è “obliqua”. Qui la direzione \((2,1)\) (autovalore \(1\)) è quella dell'asse, che resta ferma, e la direzione \((1,1)\) (autovalore \(-1\)) è quella lungo cui si
+“ribalta”. Applicando due volte la trasformazione:
 \[P''=A(AP+B)+B=P+(A+I)B=P+\begin{pmatrix}4&-4\\2&-2\end{pmatrix}\begin{pmatrix}8\\-4\end{pmatrix}=P+\begin{pmatrix}48\\24\end{pmatrix}\]
 cioè due applicazioni equivalgono a una <b>traslazione</b> di vettore \((48,24)\), parallelo all'asse \((2,1)\). La trasformazione è quindi
 la composizione di una <b>simmetria obliqua</b> di asse \(x-2y-8=0\) e direzione \((1,1)\) con una <b>traslazione</b> di vettore
 \(\vec w=\frac12(48,24)=(24,12)\) lungo l'asse:</p>
-\[\boxed{\text{glissosimmetria obliqua (affine, non isometrica), equivalente: conserva le aree e inverte l'orientamento}}\]
+\[\boxed{\text{glissosimmetria obliqua di asse } x-2y-8=0,\ \text{direzione } (1,1),\ \text{glissé } \vec w=(24,12)}\]
+<p>Il nome: <b>glissosimmetria</b> = simmetria + “glissé” (dal francese <i>scivolato</i>), cioè una traslazione <b>parallela all'asse</b>. È “obliqua” perché la
+simmetria è obliqua. Non è un'isometria; è una trasformazione <b>equivalente</b> (in geometria vuol dire che <b>conserva le aree</b>, \(|\det A|=1\)) e inverte
+l'orientamento.</p>
 <p><i>Verifica</i> su \((8,0)\), che sta sull'asse: la simmetria lo lascia fermo e la traslazione lo porta in \((8+24,\,0+12)=(32,12)\), proprio come visto sopra ✓.</p></li>
 </ol></div>
 
@@ -287,24 +298,50 @@ la composizione di una <b>simmetria obliqua</b> di asse \(x-2y-8=0\) e direzione
 <div class="teoria">
 <div class="esercizio"><span class="num">T)</span><div class="testo"><p><b>Prova teorica</b> — T.1: Si dia la definizione di <i>spazio euclideo</i> e si discuta la nozione di
 <i>base ortonormale</i>. &nbsp; T.2: Nozione di autovettore e autovalore. Dimostrare che autovettori relativi ad autovalori distinti sono indipendenti.</p></div></div>
-<p class="svolg-head"><b class="label">SVOLGIMENTO</b> (traccia di risposta):</p>
-<p><b>T.1</b> Uno <b>spazio euclideo</b> è uno spazio vettoriale reale \(V\) dotato di un <b>prodotto scalare</b> \(\langle\cdot,\cdot\rangle\), cioè una funzione
-\(V\times V\to\mathbb{R}\) <i>bilineare</i>, <i>simmetrica</i> (\(\langle u,v\rangle=\langle v,u\rangle\)) e <i>definita positiva</i>
-(\(\langle v,v\rangle>0\) per ogni \(v\neq\vec0\)). Esso permette di definire la <b>norma</b> \(\|v\|=\sqrt{\langle v,v\rangle}\), la distanza, l'angolo
-(\(\cos\theta=\frac{\langle u,v\rangle}{\|u\|\|v\|}\)) e l'<b>ortogonalità</b> (\(\langle u,v\rangle=0\)). Esempio: \(\mathbb{R}^n\) con
-\(\langle u,v\rangle=u_1v_1+\dots+u_nv_n\).
-Una base \(\{e_1,\dots,e_n\}\) è <b>ortonormale</b> se \(\langle e_i,e_j\rangle=0\) per \(i\neq j\) e \(\|e_i\|=1\). Vantaggi: le componenti di un vettore si
-trovano con i prodotti scalari, \(v=\sum_i\langle v,e_i\rangle e_i\), e il prodotto scalare diventa quello “standard” sulle componenti. La
-matrice di cambiamento tra basi ortonormali è <b>ortogonale</b> (\(P^{-1}=P^T\)). Ogni spazio euclideo di dimensione finita ha una base
-ortonormale: la si costruisce da una base qualunque con il <b>procedimento di Gram-Schmidt</b>.</p>
-<p><b>T.2</b> Sia \(T:V\to V\) lineare. Un vettore \(v\neq\vec0\) è <b>autovettore</b> con <b>autovalore</b> \(\lambda\in\mathbb{R}\) se \(T(v)=\lambda v\).
-Gli autovalori sono le radici del polinomio caratteristico \(\det(A-\lambda I)\).
-<i>Teorema</i>: se \(v_1,\dots,v_k\) sono autovettori relativi ad autovalori <b>distinti</b> \(\lambda_1,\dots,\lambda_k\), allora sono linearmente indipendenti.
-<i>Dimostrazione</i> (per induzione su \(k\)). Per \(k=1\): \(v_1\neq\vec0\), quindi è indipendente. Supponiamo vero per \(k-1\) vettori e sia
-\[a_1v_1+\dots+a_kv_k=\vec0\qquad(1)\]
-Applichiamo \(T\): \(a_1\lambda_1v_1+\dots+a_k\lambda_kv_k=\vec0\ \ (2)\). Moltiplichiamo la (1) per \(\lambda_k\) e sottraiamola dalla (2):
-\[a_1(\lambda_1-\lambda_k)v_1+\dots+a_{k-1}(\lambda_{k-1}-\lambda_k)v_{k-1}=\vec0\]
-Per l'ipotesi induttiva \(v_1,\dots,v_{k-1}\) sono indipendenti, quindi \(a_i(\lambda_i-\lambda_k)=0\); essendo \(\lambda_i\neq\lambda_k\) si ha
-\(a_1=\dots=a_{k-1}=0\). La (1) diventa \(a_kv_k=\vec0\) e, poiché \(v_k\neq\vec0\), anche \(a_k=0\). \(\blacksquare\)</p>
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b> (traccia di risposta, da esporre in quest'ordine):</p>
+
+<p><b>T.1 — Spazio euclideo e base ortonormale</b></p>
+<p class="punto"><b>1. Definizione.</b> Uno <b>spazio euclideo</b> è uno spazio vettoriale reale \(V\) in cui è definito un <b>prodotto scalare</b>, cioè una regola che a due
+vettori \(u,v\) associa un numero \(\langle u,v\rangle\), con tre proprietà:</p>
+<ul style="margin:0 0 0.2em 1.2em;padding:0">
+<li><i>simmetrica</i>: \(\langle u,v\rangle=\langle v,u\rangle\);</li>
+<li><i>bilineare</i>: è lineare in ciascun vettore, per esempio \(\langle au+bw,\,v\rangle=a\langle u,v\rangle+b\langle w,v\rangle\);</li>
+<li><i>definita positiva</i>: \(\langle v,v\rangle>0\) per ogni \(v\neq\vec0\) (e \(\langle\vec0,\vec0\rangle=0\)).</li>
+</ul>
+<p class="punto"><b>2. A cosa serve.</b> Con il prodotto scalare si possono misurare le cose: la <b>norma</b> (lunghezza) \(\|v\|=\sqrt{\langle v,v\rangle}\), la
+<b>distanza</b> \(d(u,v)=\|u-v\|\), l'<b>angolo</b> \(\cos\theta=\frac{\langle u,v\rangle}{\|u\|\,\|v\|}\) e l'<b>ortogonalità</b>: \(u\perp v\iff\langle u,v\rangle=0\).</p>
+<p class="punto"><b>3. Esempio.</b> \(\mathbb{R}^n\) con il prodotto scalare standard \(\langle u,v\rangle=u_1v_1+u_2v_2+\dots+u_nv_n\).</p>
+<p class="punto"><b>4. Base ortonormale.</b> Una base \(\{e_1,\dots,e_n\}\) è <b>ortonormale</b> se i vettori sono a due a due <b>ortogonali</b> (\(\langle e_i,e_j\rangle=0\) per
+\(i\neq j\)) e tutti di <b>lunghezza 1</b> (\(\|e_i\|=1\)). Esempio: la base canonica di \(\mathbb{R}^n\).</p>
+<p class="punto"><b>5. Perché è comoda.</b> (a) Le componenti di un vettore si trovano con un prodotto scalare: se \(v=a_1e_1+\dots+a_ne_n\), facendo il prodotto
+scalare con \(e_j\) tutti i termini si annullano tranne uno, \(\langle v,e_j\rangle=a_j\langle e_j,e_j\rangle=a_j\). Quindi \(v=\sum_j\langle v,e_j\rangle\,e_j\).
+(b) Il prodotto scalare di due vettori è la somma dei prodotti delle loro componenti, come in \(\mathbb{R}^n\). (c) La matrice di cambiamento tra due basi ortonormali è
+<b>ortogonale</b>: \(P^{-1}=P^T\).</p>
+<p class="punto"><b>6. Esistenza (Gram-Schmidt).</b> Ogni spazio euclideo di dimensione finita ha una base ortonormale. Da una base qualunque \(v_1,v_2,\dots\) si costruisce
+così: \(e_1=\frac{v_1}{\|v_1\|}\); poi a \(v_2\) si toglie la sua proiezione su \(e_1\), \(w_2=v_2-\langle v_2,e_1\rangle e_1\), e si normalizza, \(e_2=\frac{w_2}{\|w_2\|}\);
+e così via, togliendo ogni volta le proiezioni sui vettori già trovati.</p>
+
+<p><b>T.2 — Autovettori e autovalori</b></p>
+<p class="punto"><b>1. Definizione.</b> Sia \(T:V\to V\) lineare. Un vettore \(v\neq\vec0\) è un <b>autovettore</b> di \(T\) con <b>autovalore</b> \(\lambda\in\mathbb{R}\) se
+\(T(v)=\lambda v\): \(T\) non cambia la direzione di \(v\), lo allunga o lo accorcia (o lo ribalta, se \(\lambda<0\)).</p>
+<p class="punto"><b>2. Come si calcolano.</b> \(Av=\lambda v\iff(A-\lambda I)v=\vec0\). Questo sistema omogeneo ha soluzioni non nulle se e solo se
+\(\det(A-\lambda I)=0\): gli autovalori sono le radici del <b>polinomio caratteristico</b> e gli autovettori sono le soluzioni non nulle di \((A-\lambda I)v=\vec0\).</p>
+<p class="punto"><b>3. Teorema.</b> Se \(v_1,\dots,v_k\) sono autovettori relativi ad autovalori <b>distinti</b> \(\lambda_1,\dots,\lambda_k\), allora sono linearmente indipendenti.</p>
+<p class="punto"><b>4. Dimostrazione</b> (per induzione sul numero \(k\) di vettori).</p>
+<ul style="margin:0 0 0.2em 1.2em;padding:0">
+<li><i>Passo 1 (\(k=1\)).</i> Un solo vettore è indipendente se non è nullo, e \(v_1\neq\vec0\) per definizione di autovettore.</li>
+<li><i>Passo 2 (ipotesi).</i> Supponiamo il teorema vero per \(k-1\) autovettori, e scriviamo una combinazione nulla dei \(k\) vettori:
+\(\ a_1v_1+\dots+a_kv_k=\vec0\ \ (1)\). Dobbiamo dimostrare che tutti gli \(a_i\) sono \(0\).</li>
+<li><i>Passo 3.</i> Applichiamo \(T\) alla (1) e usiamo \(T(v_i)=\lambda_iv_i\): \(\ a_1\lambda_1v_1+\dots+a_k\lambda_kv_k=\vec0\ \ (2)\).
+Moltiplichiamo la (1) per \(\lambda_k\): \(\ a_1\lambda_kv_1+\dots+a_k\lambda_kv_k=\vec0\ \ (3)\).</li>
+<li><i>Passo 4.</i> Sottraiamo (2) − (3): l'ultimo termine si cancella e resta
+\(\ a_1(\lambda_1-\lambda_k)v_1+\dots+a_{k-1}(\lambda_{k-1}-\lambda_k)v_{k-1}=\vec0\).</li>
+<li><i>Passo 5.</i> Per l'ipotesi induttiva \(v_1,\dots,v_{k-1}\) sono indipendenti, quindi tutti i coefficienti sono nulli: \(a_i(\lambda_i-\lambda_k)=0\). Poiché gli
+autovalori sono distinti, \(\lambda_i-\lambda_k\neq0\), e quindi \(a_1=\dots=a_{k-1}=0\).</li>
+<li><i>Passo 6.</i> La (1) si riduce a \(a_kv_k=\vec0\); essendo \(v_k\neq\vec0\), anche \(a_k=0\). Tutti i coefficienti sono nulli: i vettori sono indipendenti. \(\blacksquare\)</li>
+</ul>
+<p class="punto"><b>5. Conseguenza.</b> Se una matrice \(n\times n\) ha \(n\) autovalori distinti, ha \(n\) autovettori indipendenti, cioè una base di autovettori: è
+<b>diagonalizzabile</b> (lo abbiamo usato in molti esercizi 3).</p>
 </div>
+
 </section>

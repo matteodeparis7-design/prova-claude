@@ -19,7 +19,11 @@ Facciamo \(R_1\to R_1-R_2\): la prima riga diventa \((k^2-k,\ k-k^2,\ 0)=k(k-1)\
 (\(C_2\to C_2+C_1\)) per creare un altro zero:
 \[\det A=k(k-1)\begin{vmatrix}1&-1&0\\k&k^2&1\\1&1&k\end{vmatrix}=k(k-1)\begin{vmatrix}1&0&0\\k&k^2+k&1\\1&2&k\end{vmatrix}=k(k-1)\bigl[(k^2+k)k-2\bigr]\]
 \[\det A=k(k-1)(k^3+k^2-2)=k(k-1)(k-1)(k^2+2k+2)=\boxed{k(k-1)^2(k^2+2k+2)}\]
-(\(k^3+k^2-2\) si annulla per \(k=1\); con Ruffini \(k^3+k^2-2=(k-1)(k^2+2k+2)\)). Il fattore \(k^2+2k+2\) ha discriminante \(4-8<0\): <b>non si annulla mai</b>.
+Come si scompone \(k^3+k^2-2\)? Si cerca una radice tra i divisori del termine noto (\(\pm1,\pm2\)): per \(k=1\) si ha \(1+1-2=0\). Allora il polinomio è
+divisibile per \((k-1)\) e la divisione si fa con la <b>regola di Ruffini</b> (coefficienti \(1,\ 1,\ 0,\ -2\): si abbassa il primo, si moltiplica per la radice \(1\) e
+si somma alla colonna successiva):
+\[\begin{array}{c|cccc}&1&1&0&-2\\1&&1&2&2\\\hline&1&2&2&0\end{array}\qquad\Rightarrow\qquad k^3+k^2-2=(k-1)(k^2+2k+2)\]
+(l'ultimo numero, \(0\), è il resto: conferma che la divisione è esatta). Il fattore \(k^2+2k+2\) ha discriminante \(4-8<0\): <b>non si annulla mai</b>.
 Quindi \(\det A=0\iff k=0\) oppure \(k=1\).</p>
 
 <p><b>Caso \(k\neq0,1\).</b> \(\operatorname{rg}A=\operatorname{rg}(A|B)=3\): compatibile per ogni \(h\), <b>una sola soluzione</b>; tre piani per un punto.</p>
@@ -104,8 +108,11 @@ sottospazi di \(\mathbb{R}^4\).</p>
 <li><p><b>Studiamo \(M\).</b> Due equazioni indipendenti in \(\mathbb{R}^4\): \(\dim M=2\). Da \(x=z,\ y=w\): \(\ M=\operatorname{span}\{(1,0,1,0),\ (0,1,0,1)\}\).</p>
 <p><b>Studiamo \(N\).</b> I tre generatori non sono indipendenti: \((2,1,2,1)-2(1,1,0,1)=(0,-1,2,-1)=-(0,1,-2,1)\). Quindi
 \[N=\operatorname{span}\{\vec n_1=(2,1,2,1),\ \vec n_2=(1,1,0,1)\},\qquad\dim N=2\]
-<p><b>Spazio somma \(V=M+N\).</b> È generato da \((1,0,1,0),\ (0,1,0,1),\ (2,1,2,1),\ (1,1,0,1)\). Osserviamo che <b>tutti</b> hanno seconda e quarta componente uguali
-(\(y=w\)), mentre \((1,0,1,0),(0,1,0,1),(1,1,0,1)\) sono indipendenti (il terzo ha \(x\neq z\)). Quindi \(\dim V=3\) e un'equazione basta:
+</p><p><b>Spazio somma \(V=M+N\).</b> È generato dall'unione delle due basi. Mettiamo i quattro vettori come righe di una matrice e riduciamo con Gauss
+(il rango è la dimensione dello spazio generato):
+\[\begin{pmatrix}1&0&1&0\\0&1&0&1\\2&1&2&1\\1&1&0&1\end{pmatrix}\ \xrightarrow[R_4\to R_4-R_1-R_2]{R_3\to R_3-2R_1-R_2}\ \begin{pmatrix}1&0&1&0\\0&1&0&1\\0&0&0&0\\0&0&-1&0\end{pmatrix}\]
+Restano tre righe non nulle e indipendenti (a scala): \(\dim V=3\). Per le equazioni: uno spazio di dimensione 3 in \(\mathbb{R}^4\) ha bisogno di \(4-3=1\)
+equazione. Osserviamo che <b>tutti</b> i generatori hanno seconda e quarta componente uguali, quindi soddisfano \(y=w\):
 \[\boxed{V=M+N:\ \ y-w=0,\qquad\dim V=3}\]</p>
 <p><b>Intersezione \(W=M\cap N\).</b> Per Grassmann \(\dim W=2+2-3=1\). Un vettore di \(N\) è \(a\,\vec n_1+b\,\vec n_2=(2a+b,\ a+b,\ 2a,\ a+b)\); imponiamo le equazioni di \(M\):
 \(x-z=b=0\) e \(y-w=0\) (sempre vera). Quindi \(b=0\):

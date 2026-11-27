@@ -1,0 +1,21 @@
+<div class="esercizio"><span class="num">1)</span><div class="testo">
+<p>Si studi al variare dei parametri \(k\) e \(h\) la compatibilità del sistema
+\[\begin{cases} kx+y=2h\\ x+ky=k^2+1\\ kx+y+z=h\end{cases}\]
+e se ne dia un'interpretazione geometrica in \(\mathbb{R}^3\).
+Si esprimano esplicitamente le soluzioni (se esistono) per \(k=2\) e \(h=0\), con uno dei metodi conosciuti (Cramer, Gauss, ecc…).</p>
+</div></div>
+
+<div class="rimando">
+<p><b>Procedimento identico</b> all'<b>Es. 1 del 16 gennaio</b> (determinante di \(A\), poi i valori di \(k\) che lo annullano) e, per i casi con
+\(\operatorname{rg}A=2\), al <b>caso \(k=0\) dell'Es. 1 dell'11 settembre</b> (due equazioni con lo stesso primo membro: si confrontano i termini noti).
+Rifallo seguendo quei passaggi e controlla qui i risultati.</p>
+<ul>
+<li>\(\det A=\begin{vmatrix}k&1&0\\1&k&0\\k&1&1\end{vmatrix}=1\cdot\begin{vmatrix}k&1\\1&k\end{vmatrix}=k^2-1\) (sviluppo lungo la 3ª colonna, che ha un solo elemento non nullo).</li>
+<li>\(k\neq\pm1\): una sola soluzione per ogni \(h\) (sottraendo la 1ª equazione dalla 3ª si trova subito \(z=-h\)). Tre piani per un punto.</li>
+<li>\(k=1\): \(x+y=2h,\ x+y=2,\ x+y+z=h\); \(\operatorname{rg}A=2\). Compatibile solo per \(h=1\): \((x,y,z)=(2-t,\ t,\ -1)\), \(\infty^1\) soluzioni.</li>
+<li>\(k=-1\): la 2ª equazione equivale a \(-x+y=-2\); compatibile solo per \(h=-1\): \((x,y,z)=(t+2,\ t,\ 1)\), \(\infty^1\) soluzioni.</li>
+<li>Geometria: \(\pi_1\) e \(\pi_2\) sono paralleli all'asse \(z\) (manca la \(z\)) e paralleli tra loro solo per \(k=\pm1\). Nei casi compatibili coincidono e
+\(\pi_3\) li taglia in una retta; negli altri casi con \(k=\pm1\) sono paralleli distinti e \(\pi_3\) li taglia in due rette parallele.</li>
+<li>\(k=2,\ h=0\): \(\ 2x+y=0,\ x+2y=5,\ 2x+y+z=0\ \Rightarrow\ \boxed{(x,y,z)=\left(-\tfrac53,\ \tfrac{10}3,\ 0\right)}\).</li>
+</ul>
+</div>

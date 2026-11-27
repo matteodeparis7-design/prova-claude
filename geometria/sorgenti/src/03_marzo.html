@@ -10,31 +10,36 @@ e se ne dia un'interpretazione geometrica in \(\mathbb{R}^3\).
 Per \(k=2\) e \(h=-2\) si esplicitino, se esistono, le soluzioni con uno dei metodi conosciuti (Cramer, Gauss, ecc…).</p>
 </div></div>
 
-<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo utilizzare il <b>teorema di Rouché-Capelli</b>, come nell'appello di gennaio:
-si parte dal determinante della matrice dei coefficienti e si studiano a parte i valori che lo annullano.</p>
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo utilizzare il <b>teorema di Rouché-Capelli</b>. Lo schema è quello dell'Es. 1 del 16 gennaio
+(determinante → valori che lo annullano → ranghi → interpretazione). Qui ci sono tre cose <b>nuove</b>: un trucco per calcolare il determinante, un caso con
+\(\operatorname{rg}A=2\) e la soluzione con la <b>regola di Cramer</b>.</p>
 
 <div class="svolg"><ol>
 <li><p><b>Determinante.</b>
 \[A=\begin{pmatrix}k&1&1\\1&k&1\\1&1&k\end{pmatrix}\qquad (A|B)=\left(\begin{array}{ccc|c}k&1&1&1\\1&k&1&h\\1&1&k&k^2\end{array}\right)\]
-Un trucco utile: <b>sommiamo tutte le colonne alla prima</b> (il determinante non cambia); la prima colonna diventa \((k+2,k+2,k+2)\) e possiamo raccogliere \(k+2\):
+<b>Trucco</b>: in ogni riga la somma degli elementi è la stessa, \(k+2\). Sostituiamo alla prima colonna la somma di tutte le colonne (\(C_1\to C_1+C_2+C_3\):
+il determinante non cambia, perché aggiungiamo a una colonna una combinazione delle altre). La prima colonna diventa \((k+2,\ k+2,\ k+2)\) e possiamo
+raccogliere \(k+2\):
 \[\det A=(k+2)\begin{vmatrix}1&1&1\\1&k&1\\1&1&k\end{vmatrix}\ \xrightarrow{R_2-R_1,\ R_3-R_1}\ (k+2)\begin{vmatrix}1&1&1\\0&k-1&0\\0&0&k-1\end{vmatrix}=\boxed{(k+2)(k-1)^2}\]
-(il determinante di una matrice triangolare è il prodotto degli elementi della diagonale).</p>
+(il determinante di una matrice triangolare è il prodotto degli elementi della diagonale: \(1\cdot(k-1)\cdot(k-1)\)).</p>
 
-<p><b>Caso \(k\neq1,\ k\neq-2\).</b> \(\operatorname{rg}A=3=\operatorname{rg}(A|B)\): compatibile per ogni \(h\), con <b>una sola soluzione</b>.</p>
+<p><b>Caso \(k\neq1,\ k\neq-2\).</b> \(\det A\neq0\Rightarrow\operatorname{rg}A=\operatorname{rg}(A|B)=3\): compatibile per ogni \(h\), con <b>una sola soluzione</b>; tre piani per un punto.</p>
 
-<p><b>Caso \(k=1\).</b> Tutte e tre le equazioni hanno primo membro \(x+y+z\); i termini noti sono \(1,\ h,\ 1\). \(\operatorname{rg}A=1\) e
-\[(A|B)\ \xrightarrow{R_2-R_1,\ R_3-R_1}\ \left(\begin{array}{ccc|c}1&1&1&1\\0&0&0&h-1\\0&0&0&0\end{array}\right)\]
-Quindi per \(h=1\) \(\operatorname{rg}(A|B)=1\): <b>compatibile</b> con \(\infty^2\) soluzioni; per \(h\neq1\) \(\operatorname{rg}(A|B)=2\): <b>incompatibile</b>.</p>
+<div class="rimando"><p><b>Caso \(k=1\): procedimento identico</b> al caso \(k=1\) dell'<b>Es. 1 del 16 gennaio</b> (tutte le righe di \(A\) uguali, si confrontano i termini noti).
+Risultati: primo membro sempre \(x+y+z\), termini noti \(1,\ h,\ 1\); \(\operatorname{rg}A=1\). \(h=1\): compatibile, \(\infty^2\) soluzioni, tre piani coincidenti.
+\(h\neq1\): incompatibile, \(\pi_1\equiv\pi_3\) e \(\pi_2\) parallelo distinto.</p></div>
 
-<p><b>Caso \(k=-2\).</b>
+<p><b>Caso \(k=-2\)</b> (nuovo: qui \(\operatorname{rg}A=2\)).
 \[(A|B)=\left(\begin{array}{ccc|c}-2&1&1&1\\1&-2&1&h\\1&1&-2&4\end{array}\right)\]
-Il minore \(\begin{vmatrix}-2&1\\1&-2\end{vmatrix}=3\neq0\), quindi \(\operatorname{rg}A=2\). Osserviamo che la <b>somma delle tre righe di \(A\) è nulla</b>:
-\(R_1+R_2+R_3=(0,0,0)\). Sommando anche i termini noti, il sistema implica \(0=1+h+4\). Quindi:</p>
+Il minore \(\begin{vmatrix}-2&1\\1&-2\end{vmatrix}=4-1=3\neq0\), mentre \(\det A=0\): quindi \(\operatorname{rg}A=2\). Per la completa osserviamo che la
+<b>somma delle tre righe di \(A\) è nulla</b>: \((-2+1+1,\ 1-2+1,\ 1+1-2)=(0,0,0)\). Sommando le tre equazioni membro a membro si ottiene quindi
+\[0x+0y+0z=1+h+4\ \rightarrow\ 0=h+5\]
+Questa uguaglianza è vera solo per \(h=-5\). Quindi:</p>
 <ul style="margin:0.1em 0 0.3em 1.2em;padding:0">
-<li>\(h=-5\): l'ultima riga diventa combinazione delle altre, \(\operatorname{rg}(A|B)=2\): <b>compatibile</b> con \(\infty^{3-2}=\infty^1\) soluzioni.
-Risolvendo (sottraiamo la 2ª dalla 1ª: \(-3x+3y=6\Rightarrow y=x+2\); sostituendo nella 3ª: \(2x+2-2z=4\Rightarrow x=z+1\)):
+<li>\(h=-5\): la terza equazione è conseguenza delle prime due, \(\operatorname{rg}(A|B)=2\): <b>compatibile</b> con \(\infty^{3-2}=\infty^1\) soluzioni.
+Risolviamo: (1ª − 2ª) \(-3x+3y=1-h=6\Rightarrow y=x+2\); sostituendo nella 3ª: \(x+(x+2)-2z=4\Rightarrow x=z+1\), e quindi \(y=z+3\). Con \(z=t\):
 \((x,y,z)=(t+1,\ t+3,\ t)\);</li>
-<li>\(h\neq-5\): \(\operatorname{rg}(A|B)=3\neq2\): <b>incompatibile</b>.</li>
+<li>\(h\neq-5\): si arriva a \(0=h+5\neq0\), impossibile: \(\operatorname{rg}(A|B)=3\neq2\), <b>incompatibile</b>.</li>
 </ul>
 
 <p><b>Interpretazione geometrica</b> (ogni equazione è un piano):</p>
@@ -43,16 +48,24 @@ Risolvendo (sottraiamo la 2ª dalla 1ª: \(-3x+3y=6\Rightarrow y=x+2\); sostitue
 <tr><td>\(k\neq1,-2\)</td><td>3</td><td>3</td><td>una</td><td>3 piani per un punto</td></tr>
 <tr><td>\(k=1,\ h=1\)</td><td>1</td><td>1</td><td>\(\infty^2\)</td><td>3 piani coincidenti</td></tr>
 <tr><td>\(k=1,\ h\neq1\)</td><td>1</td><td>2</td><td>nessuna</td><td>\(\pi_1\equiv\pi_3\), \(\pi_2\) parallelo distinto</td></tr>
-<tr><td>\(k=-2,\ h=-5\)</td><td>2</td><td>2</td><td>\(\infty^1\)</td><td>3 piani distinti per una retta (fascio)</td></tr>
-<tr><td>\(k=-2,\ h\neq-5\)</td><td>2</td><td>3</td><td>nessuna</td><td>3 piani a due a due incidenti, senza punti comuni: un “<b>prisma</b>”</td></tr>
+<tr><td>\(k=-2,\ h=-5\)</td><td>2</td><td>2</td><td>\(\infty^1\)</td><td>3 piani distinti per una retta: <b>fascio</b></td></tr>
+<tr><td>\(k=-2,\ h\neq-5\)</td><td>2</td><td>3</td><td>nessuna</td><td>3 piani a due a due incidenti senza punti comuni: <b>prisma</b></td></tr>
 </table>
-<p>Per \(k=-2\) i vettori normali \((-2,1,1),(1,-2,1),(1,1,-2)\) sono a due a due non proporzionali (nessuna coppia di piani paralleli) ma sono
-<b>complanari</b> (somma nulla): i tre piani sono tutti paralleli alla direzione \((1,1,1)\). Se hanno una retta in comune (per \(h=-5\), la retta
-\((t+1,t+3,t)\), che ha proprio direzione \((1,1,1)\)) formano un fascio; altrimenti si tagliano a due a due in tre rette parallele, come le facce di un prisma.</p>
+<p>Cosa vogliono dire queste due parole:</p>
+<ul style="margin:0.1em 0 0.3em 1.2em;padding:0">
+<li>un <b>fascio di piani</b> è un insieme di piani che passano tutti per una stessa retta, come le pagine di un libro aperto attorno alla costola.
+Per \(k=-2,\ h=-5\) la retta comune è \((t+1,\ t+3,\ t)\);</li>
+<li>un <b>prisma</b> si ha quando i tre piani si tagliano a due a due in <b>tre rette parallele</b> ma non hanno nessun punto comune a tutti e tre, come le tre facce
+laterali di una tenda (un prisma a base triangolare).</li>
+</ul>
+<p>Per \(k=-2\) nessuna coppia di piani è parallela (le normali \((-2,1,1),(1,-2,1),(1,1,-2)\) non sono proporzionali), ma le tre normali hanno somma nulla, quindi
+sono <b>complanari</b>: sono tutte perpendicolari al vettore \((1,1,1)\). Allora tutti e tre i piani sono paralleli alla direzione \((1,1,1)\), e le rette in cui si tagliano
+hanno tutte questa direzione: o coincidono (fascio) o sono tre rette parallele (prisma).</p>
 
-<p><b>Soluzioni per \(k=2,\ h=-2\).</b> \(\det A=(4)(1)^2=4\neq0\): una sola soluzione. Il sistema è
+<p><b>Soluzioni per \(k=2,\ h=-2\)</b> con la <b>regola di Cramer</b>. Siamo nel caso \(k\neq1,-2\): \(\det A=(2+2)(2-1)^2=4\neq0\), una sola soluzione. Il sistema è
 \[\begin{cases}2x+y+z=1\\x+2y+z=-2\\x+y+2z=4\end{cases}\]
-Usiamo <b>Cramer</b>: \(x=\frac{\det A_x}{\det A}\), dove \(A_x\) si ottiene sostituendo la colonna dei termini noti al posto della colonna della \(x\), ecc.:
+La regola di Cramer dice: \(x=\frac{\det A_x}{\det A},\ y=\frac{\det A_y}{\det A},\ z=\frac{\det A_z}{\det A}\), dove \(A_x\) è la matrice \(A\) in cui la
+<b>colonna della \(x\)</b> è sostituita dalla colonna dei termini noti \((1,-2,4)\); allo stesso modo \(A_y\) e \(A_z\). Sviluppiamo ogni determinante lungo la prima riga:
 \[\det A_x=\begin{vmatrix}1&1&1\\-2&2&1\\4&1&2\end{vmatrix}=1(4-1)-1(-4-4)+1(-2-8)=3+8-10=1\ \rightarrow\ x=\frac14\]
 \[\det A_y=\begin{vmatrix}2&1&1\\1&-2&1\\1&4&2\end{vmatrix}=2(-4-4)-1(2-1)+1(4+2)=-16-1+6=-11\ \rightarrow\ y=-\frac{11}4\]
 \[\det A_z=\begin{vmatrix}2&1&1\\1&2&-2\\1&1&4\end{vmatrix}=2(8+2)-1(4+2)+1(1-2)=20-6-1=13\ \rightarrow\ z=\frac{13}4\]
@@ -128,8 +141,14 @@ Le colonne di \(A\) sono \(T(e_1),T(e_2),T(e_3)\):
 \[T(b_1)=A\begin{pmatrix}2\\0\\1\end{pmatrix}=\begin{pmatrix}\frac{13}2\\0\\\frac{11}2\end{pmatrix}=1\cdot b_1+\tfrac92\,b_2+0\cdot b_3\]
 \[T(b_2)=A\begin{pmatrix}1\\0\\1\end{pmatrix}=\begin{pmatrix}\frac72\\0\\\frac52\end{pmatrix}=1\cdot b_1+\tfrac32\,b_2+0\cdot b_3\qquad
 T(b_3)=A\begin{pmatrix}1\\1\\0\end{pmatrix}=\begin{pmatrix}\frac92\\2\\\frac72\end{pmatrix}=-1\cdot b_1+\tfrac92\,b_2+2\,b_3\]
-(Come si trovano i coefficienti \(\alpha,\beta,\gamma\) di \(\alpha b_1+\beta b_2+\gamma b_3=(\alpha',\beta',\gamma')\)? La 2ª componente dà subito \(\gamma\), perché solo
-\(b_3\) ha la seconda componente non nulla; poi la 1ª e la 3ª danno un sistema \(2\times2\) in \(\alpha,\beta\).)
+<b>Come si trovano questi coefficienti?</b> Scriviamo un vettore generico come combinazione dei vettori di \(b\):
+\[\alpha\begin{pmatrix}2\\0\\1\end{pmatrix}+\beta\begin{pmatrix}1\\0\\1\end{pmatrix}+\gamma\begin{pmatrix}1\\1\\0\end{pmatrix}=\begin{pmatrix}2\alpha+\beta+\gamma\\\gamma\\\alpha+\beta\end{pmatrix}\]
+La 2ª componente è subito \(\gamma\) (solo \(b_3\) ha la seconda componente non nulla); poi la 1ª e la 3ª danno un sistema \(2\times2\) in \(\alpha,\beta\).
+Per \(T(b_1)=\left(\frac{13}2,0,\frac{11}2\right)\):
+\[\gamma=0,\qquad\begin{cases}2\alpha+\beta=\frac{13}2\\\alpha+\beta=\frac{11}2\end{cases}\ \xrightarrow{\text{sottraggo}}\ \alpha=1,\ \ \beta=\tfrac{11}2-1=\tfrac92\]
+Per \(T(b_2)=\left(\frac72,0,\frac52\right)\): \(\gamma=0\), \(2\alpha+\beta=\frac72\), \(\alpha+\beta=\frac52\ \Rightarrow\ \alpha=1,\ \beta=\frac32\).
+Per \(T(b_3)=\left(\frac92,2,\frac72\right)\): \(\gamma=2\), \(2\alpha+\beta+2=\frac92\Rightarrow2\alpha+\beta=\frac52\), \(\alpha+\beta=\frac72\ \Rightarrow\ \alpha=-1,\ \beta=\frac92\).
+I coefficienti trovati sono le colonne di \(A_b\):
 \[\boxed{A_b=\begin{pmatrix}1&1&-1\\\frac92&\frac32&\frac92\\0&0&2\end{pmatrix}}\qquad(\text{equivalentemente }A_b=B^{-1}AB,\ B=(b_1|b_2|b_3))\]</p></li>
 
 <li><p>Vedi sopra: la matrice canonica è \(A\).</p></li>

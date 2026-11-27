@@ -1,0 +1,45 @@
+<div class="esercizio"><span class="num">4)</span><div class="testo">
+<p>Data la conica \(2xy+4x-2y+1=0\)</p>
+<ol>
+<li>darne la classificazione affine;</li>
+<li>determinarne assi, vertici, fuochi ed eventuali asintoti (nel riferimento originale);</li>
+<li>si riduca a forma normale (metrica) e si individui una trasformazione normalizzante.</li>
+</ol>
+</div></div>
+
+<div class="rimando">
+<p><b>Punto a): procedimento identico</b> all'<b>Es. 4 a) dell'11 settembre</b> (matrice completa \(B\) e matrice \(A\) della parte quadratica; \(\det B\neq0\) vuol dire
+non degenere, il segno di \(\det A\) dà il tipo). Risultati: \(a_{11}=0,\ a_{12}=1,\ a_{22}=0,\ a_{13}=2,\ a_{23}=-1,\ a_{33}=1\);
+\(\ \det B=-5\neq0\), \(\ \det A=\begin{vmatrix}0&1\\1&0\end{vmatrix}=-1<0\ \Rightarrow\ \boxed{\text{iperbole non degenere}}\).</p>
+<p><b>In più</b> (nuovo): la traccia di \(A\) è \(0+0=0\). Quando la traccia è nulla, i coefficienti di \(X^2\) e \(Y^2\) nella forma ridotta sono opposti (\(\lambda\) e \(-\lambda\)), quindi
+\(a=b\) e gli asintoti sono <b>perpendicolari</b>: è un'<b>iperbole equilatera</b>.</p>
+</div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b> dei punti b) e c): qui c'è un trucco nuovo. L'equazione si può <b>fattorizzare</b> nella forma
+\((x-x_0)(y-y_0)=\text{costante}\), che è l'iperbole equilatera <b>riferita ai suoi asintoti</b> (come la \(xy=k\) del liceo, ma con il centro spostato in \((x_0,y_0)\)).</p>
+
+<div class="svolg"><ol start="2" style="counter-reset: lett 1">
+<li><p><b>Fattorizzazione.</b> Cerchiamo di scrivere \(2xy+4x-2y\) come \(2(x-x_0)(y-y_0)\) più una costante. Sviluppando
+\(2(x-1)(y+2)=2xy+4x-2y-4\): sono proprio i termini con \(x\) e \(y\) dell'equazione. Quindi
+\[2xy+4x-2y+1=\underbrace{2xy+4x-2y-4}_{2(x-1)(y+2)}+5=0\ \rightarrow\ (x-1)(y+2)=-\tfrac52\]
+<b>Centro</b> \(\boxed{C=(1,-2)}\). <b>Asintoti</b>: le rette su cui si annullano i fattori, \(\boxed{x=1\ \ \text{e}\ \ y=-2}\).</p>
+<p><b>Assi.</b> Sono le bisettrici degli asintoti (uno verticale e uno orizzontale), quindi hanno coefficiente angolare \(\pm1\) e passano per \(C\). Il prodotto
+\((x-1)(y+2)\) è <b>negativo</b>: i punti della curva hanno \(x-1\) e \(y+2\) di segno opposto, cioè stanno nel 2° e nel 4° “quadrante” attorno a \(C\). Lì passa la
+bisettrice con coefficiente angolare \(-1\), che è quindi l'asse trasverso:
+\[\boxed{\text{asse trasverso: } x+y+1=0}\qquad\boxed{\text{asse non trasverso: } x-y-3=0}\]</p>
+<div class="fig-center"><img src="fig/a7_iperbole.svg" width="260"><div class="didascalia">l'iperbole equilatera dell'esercizio 4</div></div>
+<p><b>Vertici.</b> I punti dell'asse trasverso sono \(C+d\,(1,-1)\), cioè \(x-1=d,\ y+2=-d\). Sostituendo nell'equazione: \(d\cdot(-d)=-\frac52\Rightarrow d^2=\frac52\Rightarrow d=\pm\frac{\sqrt{10}}2\):
+\[\boxed{V_{1,2}=\left(1\pm\tfrac{\sqrt{10}}2,\ -2\mp\tfrac{\sqrt{10}}2\right)}\]
+La distanza vertice-centro è \(a=|d|\cdot|(1,-1)|=\frac{\sqrt{10}}2\cdot\sqrt2=\sqrt5\).</p>
+<p><b>Fuochi.</b> Per l'iperbole equilatera \(b=a=\sqrt5\), quindi \(c=\sqrt{a^2+b^2}=\sqrt{10}\). I fuochi sono sull'asse trasverso a distanza \(\sqrt{10}\) da \(C\):
+\(|d|\sqrt2=\sqrt{10}\Rightarrow d=\pm\sqrt5\):
+\[\boxed{F_{1,2}=\left(1\pm\sqrt5,\ -2\mp\sqrt5\right)}\]
+<i>Verifica</i>: \(|\overline{V_1F_2}-\overline{V_1F_1}|=2\sqrt5=2a\) ✓.</p></li>
+
+<li><p><b>Forma normale.</b> Origine in \(C\), asse \(X\) lungo l'asse trasverso (versore \(\frac1{\sqrt2}(1,-1)\)), asse \(Y\) lungo l'altro (versore \(\frac1{\sqrt2}(1,1)\)):
+\[\boxed{\begin{cases}X=\dfrac{(x-1)-(y+2)}{\sqrt2}=\dfrac{x-y-3}{\sqrt2}\\[2mm]Y=\dfrac{(x-1)+(y+2)}{\sqrt2}=\dfrac{x+y+1}{\sqrt2}\end{cases}}\qquad\det\begin{pmatrix}\frac1{\sqrt2}&-\frac1{\sqrt2}\\\frac1{\sqrt2}&\frac1{\sqrt2}\end{pmatrix}=\tfrac12+\tfrac12=1\]
+(determinante \(+1\): è una rotazione di \(-45^\circ\) più una traslazione). Sommando e sottraendo le due equazioni si ottiene l'inversa:
+\(x-1=\frac{X+Y}{\sqrt2}\), \(y+2=\frac{Y-X}{\sqrt2}\). Sostituendo nell'equazione fattorizzata:
+\[(x-1)(y+2)=\frac{(Y+X)(Y-X)}{2}=\frac{Y^2-X^2}2=-\frac52\ \rightarrow\ X^2-Y^2=5\ \rightarrow\ \boxed{\frac{X^2}{5}-\frac{Y^2}{5}=1}\]
+(\(a^2=b^2=5\): equilatera, come previsto).</p></li>
+</ol></div>

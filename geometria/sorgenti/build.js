@@ -37,7 +37,7 @@ fs.writeFileSync(path.join(ROOT, "out.html"), html);
   await page.evaluate(() => document.fonts.ready);
   await page.pdf({
     path: outPdf, format: "A4", printBackground: true,
-    margin: { top: "18mm", bottom: "18mm", left: "20mm", right: "20mm" },
+    margin: { top: "14mm", bottom: "15mm", left: "16mm", right: "16mm" },
     displayHeaderFooter: true, headerTemplate: "<span></span>",
     footerTemplate: '<div style="width:100%;text-align:center;font-size:8pt;color:#777;font-family:serif"><span class="pageNumber"></span></div>',
   });

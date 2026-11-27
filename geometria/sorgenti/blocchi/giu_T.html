@@ -1,0 +1,46 @@
+<div class="teoria">
+<div class="esercizio"><span class="num">T)</span><div class="testo"><p><b>Prova teorica</b> — T.1: Definizione di spazio vettoriale; nozioni di <i>dipendenza</i> e
+<i>indipendenza lineare</i>, <i>basi</i> e <i>dimensione</i>. <i>Teorema di sostituzione</i> (con dim.). &nbsp; T.2: Matrici <i>simili</i>: definizione, diagramma di
+similitudine e significato geometrico. Dimostrare che se \(A\) e \(B\) sono simili, allora lo sono anche \(A^n\) e \(B^n\) per ogni intero positivo \(n\).</p></div></div>
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b> (traccia di risposta, da esporre in quest'ordine):</p>
+
+<p><b>T.1 — Spazi vettoriali, basi, teorema di sostituzione</b></p>
+<p class="punto"><b>1. Spazio vettoriale.</b> È un insieme \(V\) con una <b>somma</b> tra vettori e un <b>prodotto per un numero reale</b>, che soddisfano: la somma è
+associativa e commutativa, esiste il vettore nullo \(\vec0\), ogni vettore ha l'opposto; inoltre \(\alpha(u+v)=\alpha u+\alpha v\), \((\alpha+\beta)v=\alpha v+\beta v\),
+\((\alpha\beta)v=\alpha(\beta v)\), \(1\cdot v=v\). Esempi: \(\mathbb{R}^n\), le matrici \(m\times n\), i polinomi.</p>
+<p class="punto"><b>2. Dipendenza e indipendenza.</b> I vettori \(v_1,\dots,v_k\) sono <b>linearmente indipendenti</b> se l'unica combinazione nulla è quella banale:
+\(a_1v_1+\dots+a_kv_k=\vec0\Rightarrow a_1=\dots=a_k=0\). Altrimenti sono <b>dipendenti</b>, cioè almeno uno è combinazione lineare degli altri.</p>
+<p class="punto"><b>3. Base e dimensione.</b> Una <b>base</b> è un insieme di vettori <b>indipendenti</b> che <b>genera</b> \(V\) (ogni vettore è loro combinazione lineare).
+Ogni vettore si scrive in <b>un solo modo</b> come combinazione dei vettori della base: i coefficienti sono le sue <b>componenti</b>. Tutte le basi hanno lo stesso numero
+di vettori: è la <b>dimensione</b> \(\dim V\) (lo dimostra proprio il teorema di sostituzione).</p>
+<p class="punto"><b>4. Teorema di sostituzione.</b> Sia \(\{e_1,\dots,e_n\}\) una base di \(V\) e sia \(v=a_1e_1+\dots+a_ne_n\) con \(a_1\neq0\). Allora
+\(\{v,e_2,\dots,e_n\}\) (cioè la base in cui \(e_1\) è sostituito da \(v\)) è ancora una base.</p>
+<p class="punto"><b>5. Dimostrazione.</b> Bisogna verificare le due proprietà di una base.</p>
+<ul style="margin:0 0 0.2em 1.2em;padding:0">
+<li><i>Generano.</i> Da \(v=a_1e_1+\dots+a_ne_n\), poiché \(a_1\neq0\), si ricava \(e_1=\frac1{a_1}\left(v-a_2e_2-\dots-a_ne_n\right)\): \(e_1\) è combinazione di
+\(v,e_2,\dots,e_n\). Allora tutti i vettori della vecchia base sono combinazioni dei nuovi, e quindi lo è ogni vettore di \(V\).</li>
+<li><i>Sono indipendenti.</i> Sia \(\beta v+\beta_2e_2+\dots+\beta_ne_n=\vec0\). Sostituendo \(v\):
+\(\beta a_1e_1+(\beta a_2+\beta_2)e_2+\dots+(\beta a_n+\beta_n)e_n=\vec0\). Gli \(e_i\) sono indipendenti, quindi tutti i coefficienti sono nulli. Il primo dà
+\(\beta a_1=0\), cioè \(\beta=0\) (perché \(a_1\neq0\)); allora gli altri danno \(\beta_2=\dots=\beta_n=0\). \(\blacksquare\)</li>
+</ul>
+<p class="punto"><b>6. Conseguenza.</b> Ripetendo la sostituzione, \(k\) vettori indipendenti possono prendere il posto di \(k\) vettori di una base. Quindi in uno spazio
+con una base di \(n\) vettori non ci possono essere più di \(n\) vettori indipendenti, e tutte le basi hanno \(n\) vettori.</p>
+
+<p><b>T.2 — Matrici simili</b></p>
+<p class="punto"><b>1. Definizione.</b> Due matrici quadrate \(A\) e \(B\) sono <b>simili</b> se esiste una matrice \(P\) invertibile tale che \(B=P^{-1}AP\).</p>
+<p class="punto"><b>2. Diagramma di similitudine.</b> Sia \(A\) la matrice di \(T\) in una base e \(P\) la matrice del cambiamento di base (colonne = nuovi vettori di
+base scritti nella vecchia base). Per calcolare \(T\) nella nuova base: con \(P\) passo alle vecchie coordinate, applico \(A\), con \(P^{-1}\) torno alle nuove.
+In tutto \(B=P^{-1}AP\):</p>
+\[\begin{array}{ccc}\text{coord. vecchie}&\xrightarrow{\ \ A\ \ }&\text{coord. vecchie}\\ \uparrow P&&\downarrow P^{-1}\\ \text{coord. nuove}&\xrightarrow{\ \ B=P^{-1}AP\ \ }&\text{coord. nuove}\end{array}\]
+<p class="punto"><b>3. Significato geometrico.</b> Matrici simili rappresentano <b>la stessa trasformazione</b> vista in riferimenti diversi. Per questo hanno lo stesso
+determinante, la stessa traccia, lo stesso polinomio caratteristico e gli stessi autovalori (lo abbiamo usato nell'Es. 3 del 19 ottobre).</p>
+<p class="punto"><b>4. Teorema.</b> Se \(B=P^{-1}AP\), allora \(B^n=P^{-1}A^nP\) per ogni intero \(n\ge1\): \(A^n\) e \(B^n\) sono simili, con la stessa \(P\).</p>
+<p class="punto"><b>5. Dimostrazione</b> (per induzione su \(n\)).</p>
+<ul style="margin:0 0 0.2em 1.2em;padding:0">
+<li><i>\(n=1\)</i>: è l'ipotesi \(B=P^{-1}AP\).</li>
+<li><i>Da \(n\) a \(n+1\)</i>: supponiamo \(B^n=P^{-1}A^nP\). Allora
+\(B^{n+1}=B^n\,B=(P^{-1}A^nP)(P^{-1}AP)=P^{-1}A^n(PP^{-1})AP=P^{-1}A^nAP=P^{-1}A^{n+1}P\), perché \(PP^{-1}=I\) si “cancella” in mezzo. \(\blacksquare\)</li>
+</ul>
+<p class="punto"><b>6. Utilità.</b> Se \(A\) è diagonalizzabile, \(A=PDP^{-1}\) e quindi \(A^n=PD^nP^{-1}\): calcolare \(D^n\) è facilissimo, basta elevare alla \(n\) gli
+elementi della diagonale.</p>
+</div>

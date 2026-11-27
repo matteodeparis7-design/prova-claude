@@ -79,23 +79,18 @@ volte</b>: il piano tocca il cono lungo una sola generatrice ✓. E per \(z=1\) 
 Si caratterizzi \(W^\perp\) e si dia la rappresentazione matriciale (canonica) del proiettore ortogonale \(P_{W^\perp}\).</p>
 </div></div>
 
-<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: è lo stesso tipo di esercizio dell'appello di febbraio (Es. 3), quindi seguiamo lo stesso schema: i
-coefficienti delle equazioni generano \(W^\perp\), si proietta su \(W^\perp\) e si ottiene \(P_W(\vec v)=\vec v-P_{W^\perp}(\vec v)\).</p>
-
-<div class="svolg"><ol>
-<li><p><b>\(W\) e \(W^\perp\).</b> \(\dim W=4-2=2\). Da \(x=-z\) e \(w=-x+y+z=y+2z\); con \(y=a,\ z=b\):
-\(\ W=\{(-b,\ a,\ b,\ a+2b)\}=\operatorname{span}\{(0,1,0,1),\ (-1,0,1,2)\}\).
-\[\boxed{W^\perp=\operatorname{span}\{\vec n_1=(1,-1,-1,1),\ \vec n_2=(1,0,1,0)\}}\qquad\boxed{W^\perp:\ \begin{cases}y+w=0\\-x+z+2w=0\end{cases}}\]
-\(\dim W^\perp=2\). Anche qui \(\vec n_1\cdot\vec n_2=1+0-1+0=0\): base <b>ortogonale</b>.</p></li>
-<li><p><b>Proiezione.</b> \(\vec v\cdot\vec n_1=4-8=-4\), \(|\vec n_1|^2=4\); \(\ \vec v\cdot\vec n_2=4+8=12\), \(|\vec n_2|^2=2\):
-\[P_{W^\perp}(\vec v)=\frac{-4}{4}(1,-1,-1,1)+\frac{12}{2}(1,0,1,0)=(-1,1,1,-1)+(6,0,6,0)=(5,1,7,-1)\]
-\[P_W(\vec v)=(4,0,8,0)-(5,1,7,-1)=\boxed{(-1,-1,1,1)}\]
-<i>Verifica</i>: \(-1+1-1+1=0\) e \(-1+1=0\): sta in \(W\) ✓.</p></li>
-<li><p><b>Matrice del proiettore.</b>
-\[P_{W^\perp}=\frac{\vec n_1\vec n_1^{\,T}}4+\frac{\vec n_2\vec n_2^{\,T}}2=\frac14\begin{pmatrix}1&-1&-1&1\\-1&1&1&-1\\-1&1&1&-1\\1&-1&-1&1\end{pmatrix}+\frac12\begin{pmatrix}1&0&1&0\\0&0&0&0\\1&0&1&0\\0&0&0&0\end{pmatrix}\]
-\[\boxed{P_{W^\perp}=\frac14\begin{pmatrix}3&-1&1&1\\-1&1&1&-1\\1&1&3&-1\\1&-1&-1&1\end{pmatrix}}\]
-<i>Controlli</i>: simmetrica, \(P^2=P\), traccia \(\frac{3+1+3+1}4=2=\dim W^\perp\), e \(P_{W^\perp}\vec v=\frac14(12+8,\ -4+8,\ 4+24,\ 4-8)=(5,1,7,-1)\) ✓.</p></li>
-</ol></div>
+<div class="rimando">
+<p><b>Procedimento identico</b> all'<b>Es. 3 del 13 febbraio</b>: i coefficienti delle equazioni generano \(W^\perp\); se sono ortogonali tra loro si proietta su ciascuno e si
+somma; \(P_W(\vec v)=\vec v-P_{W^\perp}(\vec v)\); la matrice è \(\frac{\vec n_1\vec n_1^T}{|\vec n_1|^2}+\frac{\vec n_2\vec n_2^T}{|\vec n_2|^2}\). Rifallo seguendo quei passaggi; risultati:</p>
+<ul>
+<li>\(W=\{(-b,\ a,\ b,\ a+2b)\}=\operatorname{span}\{(0,1,0,1),(-1,0,1,2)\}\), \(\dim W=2\).</li>
+<li>\(\boxed{W^\perp=\operatorname{span}\{\vec n_1=(1,-1,-1,1),\ \vec n_2=(1,0,1,0)\}:\ \begin{cases}y+w=0\\-x+z+2w=0\end{cases},\ \dim=2}\);
+anche qui \(\vec n_1\cdot\vec n_2=0\) (base ortogonale).</li>
+<li>\(\vec v\cdot\vec n_1=-4,\ |\vec n_1|^2=4\); \(\ \vec v\cdot\vec n_2=12,\ |\vec n_2|^2=2\ \Rightarrow\ P_{W^\perp}(\vec v)=(5,1,7,-1)\),
+\(\ \boxed{P_W(\vec v)=(-1,-1,1,1)}\).</li>
+<li>\(\boxed{P_{W^\perp}=\frac14\begin{pmatrix}3&-1&1&1\\-1&1&1&-1\\1&1&3&-1\\1&-1&-1&1\end{pmatrix}}\) (controllo: \(P_{W^\perp}\vec v=(5,1,7,-1)\), traccia \(=2\)).</li>
+</ul>
+</div>
 
 <!-- ======================= ESERCIZIO 4 ======================= -->
 <div class="esercizio"><span class="num">4)</span><div class="testo">
@@ -131,8 +126,14 @@ Nel riferimento ridotto (punto b) l'equazione è \(\frac{X^2}{a^2}-\frac{Y^2}{3a
 <li><p><b>Trasformazione e forma normale.</b> Origine in \(C\), asse \(X\) lungo \(\hat u=\left(-\frac{\sqrt3}2,\frac12\right)\), asse \(Y\) lungo
 \(\hat v=\left(-\frac12,-\frac{\sqrt3}2\right)\) (ruotato di \(+90^\circ\)):
 \[\boxed{\begin{cases}x=\sqrt3-\frac{\sqrt3}2X-\frac12Y\\[1mm] y=1+\frac12X-\frac{\sqrt3}2Y\end{cases}}\qquad\det\begin{pmatrix}-\frac{\sqrt3}2&-\frac12\\\frac12&-\frac{\sqrt3}2\end{pmatrix}=\frac34+\frac14=1\]
-(rotazione di \(150^\circ\) più traslazione). Per \(P\): da \(P-C=(-\sqrt3,0)\) si ha \(X=\hat u\cdot(P-C)=\frac32\), \(Y=\hat v\cdot(P-C)=\frac{\sqrt3}2\), come usato sopra.
-Sostituendo nell'equazione si ottiene \(\frac32X^2-\frac12Y^2-3=0\), cioè
+(rotazione di \(150^\circ\) più traslazione). Le nuove coordinate di un punto sono le componenti di \(P-C\) lungo i due versori:
+\(X=\hat u\cdot(P-C)\), \(Y=\hat v\cdot(P-C)\). Per \(P=(0,1)\): \(P-C=(-\sqrt3,0)\), quindi \(X=\left(-\frac{\sqrt3}2\right)(-\sqrt3)+\frac12\cdot0=\frac32\) e
+\(Y=\left(-\frac12\right)(-\sqrt3)+\left(-\frac{\sqrt3}2\right)\cdot0=\frac{\sqrt3}2\), come usato sopra.</p>
+<p><b>Sostituzione</b> (un fattore alla volta, come nell'appello di febbraio). L'equazione è \((x-\sqrt3y)(x-\sqrt3)=3\):
+\[x-\sqrt3=-\tfrac{\sqrt3}2X-\tfrac12Y\]
+\[x-\sqrt3y=\sqrt3-\tfrac{\sqrt3}2X-\tfrac12Y-\sqrt3\left(1+\tfrac12X-\tfrac{\sqrt3}2Y\right)=\sqrt3-\tfrac{\sqrt3}2X-\tfrac12Y-\sqrt3-\tfrac{\sqrt3}2X+\tfrac32Y=-\sqrt3X+Y\]
+\[(x-\sqrt3y)(x-\sqrt3)=(-\sqrt3X+Y)\left(-\tfrac{\sqrt3}2X-\tfrac12Y\right)=\tfrac32X^2+\tfrac{\sqrt3}2XY-\tfrac{\sqrt3}2XY-\tfrac12Y^2=\tfrac32X^2-\tfrac12Y^2\]
+Quindi \(\frac32X^2-\frac12Y^2=3\); dividendo per 3:
 \[\boxed{\frac{X^2}{2}-\frac{Y^2}{6}=1}\]
 <i>Controllo con gli invarianti</i>: la parte quadratica \(x^2-\sqrt3xy\) ha matrice \(\begin{pmatrix}1&-\frac{\sqrt3}2\\-\frac{\sqrt3}2&0\end{pmatrix}\), traccia \(1\), determinante
 \(-\frac34\): autovalori \(\frac32\) e \(-\frac12\), proprio i coefficienti di \(X^2\) e \(Y^2\) trovati ✓.</p></li>

@@ -1,0 +1,39 @@
+<div class="teoria">
+<div class="esercizio"><span class="num">T)</span><div class="testo"><p><b>Prova teorica</b> — T.1: Endomorfismi diagonalizzabili – Teorema spettrale.
+&nbsp; T.2: Omomorfismi tra spazi vettoriali: definizione, nucleo, immagine e relazione dimensionale. Dimostrare che un omomorfismo \(T\) è iniettivo
+(<i>monomorfismo</i>) se e solo se \(\ker T=\{\vec0\}\).</p></div></div>
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b> (traccia di risposta, da esporre in quest'ordine):</p>
+
+<p><b>T.1 — Endomorfismi diagonalizzabili e teorema spettrale</b></p>
+<p class="punto"><b>1. Definizione.</b> Un endomorfismo \(T:V\to V\) (con \(\dim V=n\)) è <b>diagonalizzabile</b> se esiste una <b>base di \(V\) formata da autovettori</b>
+di \(T\). Per una matrice: \(A\) è diagonalizzabile se è <b>simile</b> a una matrice diagonale, cioè esiste \(P\) invertibile con \(P^{-1}AP=D\) diagonale.</p>
+<p class="punto"><b>2. Perché si chiama così.</b> Se \(v_1,\dots,v_n\) è una base di autovettori, \(T(v_i)=\lambda_iv_i\): la colonna \(i\)-esima della matrice in questa base
+ha \(\lambda_i\) al posto \(i\) e zeri altrove. La matrice è <b>diagonale</b>, con gli autovalori sulla diagonale; \(P\) ha per colonne gli autovettori.</p>
+<p class="punto"><b>3. Molteplicità.</b> Per ogni autovalore \(\lambda\): la <b>molteplicità algebrica</b> \(m_a\) è quante volte \(\lambda\) è radice del polinomio caratteristico;
+la <b>molteplicità geometrica</b> \(m_g=\dim\ker(A-\lambda I)\) è il numero di autovettori indipendenti per \(\lambda\). Vale sempre \(1\le m_g\le m_a\).</p>
+<p class="punto"><b>4. Criterio.</b> \(T\) è diagonalizzabile \(\iff\) (a) il polinomio caratteristico ha <b>tutte le radici reali</b> e (b) per <b>ogni</b> autovalore
+\(m_g=m_a\). <i>Caso facile</i>: \(n\) autovalori distinti \(\Rightarrow\) diagonalizzabile (autovettori di autovalori distinti sono indipendenti).
+<i>Esempio di non diagonalizzabile</i>: \(\begin{pmatrix}1&1\\0&1\end{pmatrix}\) ha \(\lambda=1\) con \(m_a=2\) ma \(m_g=1\).</p>
+<p class="punto"><b>5. Teorema spettrale.</b> Se \(A\) è una matrice reale <b>simmetrica</b> (\(A^T=A\)), allora: (a) tutti i suoi autovalori sono reali; (b) autovettori di
+autovalori distinti sono <b>ortogonali</b>; (c) esiste una <b>base ortonormale</b> di autovettori, cioè \(A\) si diagonalizza con una matrice <b>ortogonale</b>:
+\(D=P^TAP\) con \(P^T=P^{-1}\).</p>
+<p class="punto"><b>6. Dove si usa.</b> Nella riduzione a forma normale delle <b>coniche</b> (esercizi 4): la matrice della parte quadratica è simmetrica, e la matrice
+ortogonale \(P\) è la <b>rotazione</b> che porta gli assi della conica sugli assi coordinati.</p>
+
+<p><b>T.2 — Omomorfismi, nucleo, immagine</b></p>
+<p class="punto"><b>1. Definizione.</b> Un <b>omomorfismo</b> (applicazione lineare) \(T:V\to W\) è una funzione che rispetta le operazioni:
+\(T(u+v)=T(u)+T(v)\) e \(T(\alpha v)=\alpha T(v)\). Conseguenza: \(T(\vec0)=\vec0\) (basta prendere \(\alpha=0\)).</p>
+<p class="punto"><b>2. Nucleo e immagine.</b> Il <b>nucleo</b> \(\ker T=\{v\in V:\ T(v)=\vec0\}\) è un sottospazio di \(V\); l'<b>immagine</b>
+\(\operatorname{Im}T=\{T(v):\ v\in V\}\) è un sottospazio di \(W\), generato dalle colonne della matrice di \(T\).</p>
+<p class="punto"><b>3. Relazione dimensionale</b> (teorema della dimensione): \(\ \dim V=\dim\ker T+\dim\operatorname{Im}T\).
+Esempio: nell'Es. 3 del 12 giugno \(\dim\ker T=1\) e \(\dim\operatorname{Im}T=2\), e infatti \(1+2=3\).</p>
+<p class="punto"><b>4. Teorema.</b> \(T\) è iniettivo (vettori diversi hanno immagini diverse) \(\iff\ker T=\{\vec0\}\).</p>
+<p class="punto"><b>5. Dimostrazione.</b></p>
+<ul style="margin:0 0 0.2em 1.2em;padding:0">
+<li>(\(\Rightarrow\)) Supponiamo \(T\) iniettivo e prendiamo \(v\in\ker T\). Allora \(T(v)=\vec0=T(\vec0)\): \(v\) e \(\vec0\) hanno la stessa immagine e, per
+l'iniettività, \(v=\vec0\). Quindi nel nucleo c'è solo \(\vec0\).</li>
+<li>(\(\Leftarrow\)) Supponiamo \(\ker T=\{\vec0\}\) e che \(T(u)=T(v)\). Per la linearità \(T(u-v)=T(u)-T(v)=\vec0\), quindi \(u-v\in\ker T\), cioè
+\(u-v=\vec0\) e \(u=v\): \(T\) è iniettivo. \(\blacksquare\)</li>
+</ul>
+<p class="punto"><b>6. Conseguenza.</b> Per un endomorfismo di \(\mathbb{R}^n\): iniettivo \(\iff\ker T=\{\vec0\}\iff\dim\operatorname{Im}T=n\iff\det A\neq0\) (la matrice è invertibile).</p>
+</div>

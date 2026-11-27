@@ -1,0 +1,48 @@
+<div class="teoria">
+<div class="esercizio"><span class="num">T)</span><div class="testo"><p><b>Prova teorica</b> — T.1: Si dia la definizione di <i>spazio euclideo</i> e si discuta la nozione di
+<i>base ortonormale</i>. &nbsp; T.2: Nozione di autovettore e autovalore. Dimostrare che autovettori relativi ad autovalori distinti sono indipendenti.</p></div></div>
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b> (traccia di risposta, da esporre in quest'ordine):</p>
+
+<p><b>T.1 — Spazio euclideo e base ortonormale</b></p>
+<p class="punto"><b>1. Definizione.</b> Uno <b>spazio euclideo</b> è uno spazio vettoriale reale \(V\) in cui è definito un <b>prodotto scalare</b>, cioè una regola che a due
+vettori \(u,v\) associa un numero \(\langle u,v\rangle\), con tre proprietà:</p>
+<ul style="margin:0 0 0.2em 1.2em;padding:0">
+<li><i>simmetrica</i>: \(\langle u,v\rangle=\langle v,u\rangle\);</li>
+<li><i>bilineare</i>: è lineare in ciascun vettore, per esempio \(\langle au+bw,\,v\rangle=a\langle u,v\rangle+b\langle w,v\rangle\);</li>
+<li><i>definita positiva</i>: \(\langle v,v\rangle>0\) per ogni \(v\neq\vec0\) (e \(\langle\vec0,\vec0\rangle=0\)).</li>
+</ul>
+<p class="punto"><b>2. A cosa serve.</b> Con il prodotto scalare si possono misurare le cose: la <b>norma</b> (lunghezza) \(\|v\|=\sqrt{\langle v,v\rangle}\), la
+<b>distanza</b> \(d(u,v)=\|u-v\|\), l'<b>angolo</b> \(\cos\theta=\frac{\langle u,v\rangle}{\|u\|\,\|v\|}\) e l'<b>ortogonalità</b>: \(u\perp v\iff\langle u,v\rangle=0\).</p>
+<p class="punto"><b>3. Esempio.</b> \(\mathbb{R}^n\) con il prodotto scalare standard \(\langle u,v\rangle=u_1v_1+u_2v_2+\dots+u_nv_n\).</p>
+<p class="punto"><b>4. Base ortonormale.</b> Una base \(\{e_1,\dots,e_n\}\) è <b>ortonormale</b> se i vettori sono a due a due <b>ortogonali</b> (\(\langle e_i,e_j\rangle=0\) per
+\(i\neq j\)) e tutti di <b>lunghezza 1</b> (\(\|e_i\|=1\)). Esempio: la base canonica di \(\mathbb{R}^n\).</p>
+<p class="punto"><b>5. Perché è comoda.</b> (a) Le componenti di un vettore si trovano con un prodotto scalare: se \(v=a_1e_1+\dots+a_ne_n\), facendo il prodotto
+scalare con \(e_j\) tutti i termini si annullano tranne uno, \(\langle v,e_j\rangle=a_j\langle e_j,e_j\rangle=a_j\). Quindi \(v=\sum_j\langle v,e_j\rangle\,e_j\).
+(b) Il prodotto scalare di due vettori è la somma dei prodotti delle loro componenti, come in \(\mathbb{R}^n\). (c) La matrice di cambiamento tra due basi ortonormali è
+<b>ortogonale</b>: \(P^{-1}=P^T\).</p>
+<p class="punto"><b>6. Esistenza (Gram-Schmidt).</b> Ogni spazio euclideo di dimensione finita ha una base ortonormale. Da una base qualunque \(v_1,v_2,\dots\) si costruisce
+così: \(e_1=\frac{v_1}{\|v_1\|}\); poi a \(v_2\) si toglie la sua proiezione su \(e_1\), \(w_2=v_2-\langle v_2,e_1\rangle e_1\), e si normalizza, \(e_2=\frac{w_2}{\|w_2\|}\);
+e così via, togliendo ogni volta le proiezioni sui vettori già trovati.</p>
+
+<p><b>T.2 — Autovettori e autovalori</b></p>
+<p class="punto"><b>1. Definizione.</b> Sia \(T:V\to V\) lineare. Un vettore \(v\neq\vec0\) è un <b>autovettore</b> di \(T\) con <b>autovalore</b> \(\lambda\in\mathbb{R}\) se
+\(T(v)=\lambda v\): \(T\) non cambia la direzione di \(v\), lo allunga o lo accorcia (o lo ribalta, se \(\lambda<0\)).</p>
+<p class="punto"><b>2. Come si calcolano.</b> \(Av=\lambda v\iff(A-\lambda I)v=\vec0\). Questo sistema omogeneo ha soluzioni non nulle se e solo se
+\(\det(A-\lambda I)=0\): gli autovalori sono le radici del <b>polinomio caratteristico</b> e gli autovettori sono le soluzioni non nulle di \((A-\lambda I)v=\vec0\).</p>
+<p class="punto"><b>3. Teorema.</b> Se \(v_1,\dots,v_k\) sono autovettori relativi ad autovalori <b>distinti</b> \(\lambda_1,\dots,\lambda_k\), allora sono linearmente indipendenti.</p>
+<p class="punto"><b>4. Dimostrazione</b> (per induzione sul numero \(k\) di vettori).</p>
+<ul style="margin:0 0 0.2em 1.2em;padding:0">
+<li><i>Passo 1 (\(k=1\)).</i> Un solo vettore è indipendente se non è nullo, e \(v_1\neq\vec0\) per definizione di autovettore.</li>
+<li><i>Passo 2 (ipotesi).</i> Supponiamo il teorema vero per \(k-1\) autovettori, e scriviamo una combinazione nulla dei \(k\) vettori:
+\(\ a_1v_1+\dots+a_kv_k=\vec0\ \ (1)\). Dobbiamo dimostrare che tutti gli \(a_i\) sono \(0\).</li>
+<li><i>Passo 3.</i> Applichiamo \(T\) alla (1) e usiamo \(T(v_i)=\lambda_iv_i\): \(\ a_1\lambda_1v_1+\dots+a_k\lambda_kv_k=\vec0\ \ (2)\).
+Moltiplichiamo la (1) per \(\lambda_k\): \(\ a_1\lambda_kv_1+\dots+a_k\lambda_kv_k=\vec0\ \ (3)\).</li>
+<li><i>Passo 4.</i> Sottraiamo (2) − (3): l'ultimo termine si cancella e resta
+\(\ a_1(\lambda_1-\lambda_k)v_1+\dots+a_{k-1}(\lambda_{k-1}-\lambda_k)v_{k-1}=\vec0\).</li>
+<li><i>Passo 5.</i> Per l'ipotesi induttiva \(v_1,\dots,v_{k-1}\) sono indipendenti, quindi tutti i coefficienti sono nulli: \(a_i(\lambda_i-\lambda_k)=0\). Poiché gli
+autovalori sono distinti, \(\lambda_i-\lambda_k\neq0\), e quindi \(a_1=\dots=a_{k-1}=0\).</li>
+<li><i>Passo 6.</i> La (1) si riduce a \(a_kv_k=\vec0\); essendo \(v_k\neq\vec0\), anche \(a_k=0\). Tutti i coefficienti sono nulli: i vettori sono indipendenti. \(\blacksquare\)</li>
+</ul>
+<p class="punto"><b>5. Conseguenza.</b> Se una matrice \(n\times n\) ha \(n\) autovalori distinti, ha \(n\) autovettori indipendenti, cioè una base di autovettori: è
+<b>diagonalizzabile</b> (lo abbiamo usato in molti esercizi 3).</p>
+</div>

@@ -1,0 +1,22 @@
+<div class="esercizio"><span class="num">1)</span><div class="testo">
+<p>Si studi al variare dei parametri \(h\) e \(k\) la compatibilità del sistema
+\[\begin{cases} k^2x+y=1\\ x+y=h\\ x+ky=h\end{cases}\]
+e se ne dia un'interpretazione geometrica in \(\mathbb{R}^2\) e in \(\mathbb{R}^3\).
+Si esprimano esplicitamente le soluzioni per \(k=2,\ h=\frac14\) (se esistono) con uno dei metodi conosciuti (Cramer, Gauss, ecc…).</p>
+</div></div>
+
+<div class="rimando">
+<p><b>Procedimento identico</b> all'<b>Es. 1 del 13 febbraio</b> (3 equazioni in 2 incognite): (1) rango di \(A\) con i minori di ordine 2; (2) determinante della
+completa \((A|B)\), che è \(3\times3\): se è \(\neq0\) il sistema è incompatibile; (3) casi particolari; (4) interpretazione con tre rette in \(\mathbb{R}^2\) e tre piani
+paralleli all'asse \(z\) in \(\mathbb{R}^3\). Rifallo seguendo quei passaggi; risultati:</p>
+<ul>
+<li>Minore delle righe 2-3: \(\begin{vmatrix}1&1\\1&k\end{vmatrix}=k-1\ \Rightarrow\ \operatorname{rg}A=2\) per \(k\neq1\), \(\ \operatorname{rg}A=1\) per \(k=1\).</li>
+<li>Con \(R_3\to R_3-R_2\): \(\ \det(A|B)=-(k-1)\,(hk^2-1)\).</li>
+<li>\(k\neq1\): compatibile \(\iff hk^2=1\) (impossibile per \(k=0\)), con una sola soluzione \(\boxed{(x,y)=\left(\tfrac1{k^2},\,0\right)}\); altrimenti incompatibile.</li>
+<li>\(k=1\): \(x+y=1,\ x+y=h,\ x+y=h\): compatibile solo per \(h=1\), \(\infty^1\) soluzioni \((1-t,\ t)\).</li>
+<li>Geometria in \(\mathbb{R}^2\) (osservazione utile): \(r_2:x+y=h\) e \(r_3:x+ky=h\) passano <b>sempre</b> per \((h,0)\) (basta sostituire); il sistema è compatibile
+quando anche \(r_1\) passa per \((h,0)\), cioè \(k^2h=1\) (tre rette per un punto). Per \(k=1\): \(r_2\equiv r_3\) e \(r_1\) parallela.
+In \(\mathbb{R}^3\): piani paralleli all'asse \(z\), soluzioni con un grado di libertà in più.</li>
+<li>\(k=2,\ h=\frac14\): \(hk^2=1\) ✓; \(\ 4x+y=1,\ x+y=\frac14,\ x+2y=\frac14\ \Rightarrow\ \boxed{(x,y)=\left(\tfrac14,\ 0\right)}\).</li>
+</ul>
+</div>

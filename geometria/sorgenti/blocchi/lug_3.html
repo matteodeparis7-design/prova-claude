@@ -1,0 +1,17 @@
+<div class="esercizio"><span class="num">3)</span><div class="testo">
+<p>Sia \(W\) il sottospazio di \(\mathbb{R}^4\) definito da \(\begin{cases}x-y-z+w=0\\x+z=0\end{cases}\). Si proietti su di esso il vettore \(\vec v=(4,0,8,0)\).
+Si caratterizzi \(W^\perp\) e si dia la rappresentazione matriciale (canonica) del proiettore ortogonale \(P_{W^\perp}\).</p>
+</div></div>
+
+<div class="rimando">
+<p><b>Procedimento identico</b> all'<b>Es. 3 del 13 febbraio</b>: i coefficienti delle equazioni generano \(W^\perp\); se sono ortogonali tra loro si proietta su ciascuno e si
+somma; \(P_W(\vec v)=\vec v-P_{W^\perp}(\vec v)\); la matrice è \(\frac{\vec n_1\vec n_1^T}{|\vec n_1|^2}+\frac{\vec n_2\vec n_2^T}{|\vec n_2|^2}\). Rifallo seguendo quei passaggi; risultati:</p>
+<ul>
+<li>\(W=\{(-b,\ a,\ b,\ a+2b)\}=\operatorname{span}\{(0,1,0,1),(-1,0,1,2)\}\), \(\dim W=2\).</li>
+<li>\(\boxed{W^\perp=\operatorname{span}\{\vec n_1=(1,-1,-1,1),\ \vec n_2=(1,0,1,0)\}:\ \begin{cases}y+w=0\\-x+z+2w=0\end{cases},\ \dim=2}\);
+anche qui \(\vec n_1\cdot\vec n_2=0\) (base ortogonale).</li>
+<li>\(\vec v\cdot\vec n_1=-4,\ |\vec n_1|^2=4\); \(\ \vec v\cdot\vec n_2=12,\ |\vec n_2|^2=2\ \Rightarrow\ P_{W^\perp}(\vec v)=(5,1,7,-1)\),
+\(\ \boxed{P_W(\vec v)=(-1,-1,1,1)}\).</li>
+<li>\(\boxed{P_{W^\perp}=\frac14\begin{pmatrix}3&-1&1&1\\-1&1&1&-1\\1&1&3&-1\\1&-1&-1&1\end{pmatrix}}\) (controllo: \(P_{W^\perp}\vec v=(5,1,7,-1)\), traccia \(=2\)).</li>
+</ul>
+</div>
