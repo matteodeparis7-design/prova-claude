@@ -1,0 +1,177 @@
+<section class="appello">
+<div class="titolo">Prova di Geometria del 17 luglio 2026</div>
+<p class="sottotitolo">Prof. Bruno A. Cifra</p>
+
+<!-- ======================= ESERCIZIO 1 ======================= -->
+<div class="esercizio"><span class="num">1)</span><div class="testo">
+<p>Si studi al variare dei parametri reali \(k\) ed \(h\) la compatibilità del sistema
+\[\begin{cases} 2k^2x+ky=h\\ 2kx+y=k\\ x+ky+z=h\end{cases}\]
+e se ne dia una <u>dettagliata</u> interpretazione geometrica in \(\mathbb{R}^3\).
+Si esprimano esplicitamente le soluzioni per \(k=2,\ h=4\) (se esistono) con uno dei metodi conosciuti (Cramer, Gauss, ecc…).</p>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo utilizzare il <b>teorema di Rouché-Capelli</b>. Attenzione: questa volta il determinante
+di \(A\) è <b>sempre nullo</b>, quindi il sistema non è mai “di Cramer” e bisogna ragionare sui ranghi.</p>
+
+<div class="svolg"><ol>
+<li><p><b>Rango di \(A\).</b>
+\[A=\begin{pmatrix}2k^2&k&0\\2k&1&0\\1&k&1\end{pmatrix}\qquad(A|B)=\left(\begin{array}{ccc|c}2k^2&k&0&h\\2k&1&0&k\\1&k&1&h\end{array}\right)\]
+Sviluppando lungo la terza colonna (un solo elemento non nullo, \(a_{33}=1\)):
+\[\det A=1\cdot\begin{vmatrix}2k^2&k\\2k&1\end{vmatrix}=2k^2-2k^2=0\qquad\text{per ogni }k\]
+Infatti la prima riga di \(A\) è \(k\) volte la seconda: \((2k^2,k,0)=k\,(2k,1,0)\). Il minore delle righe 2-3 e colonne 2-3 è
+\(\begin{vmatrix}1&0\\k&1\end{vmatrix}=1\neq0\), quindi \(\operatorname{rg}A=2\) <b>per ogni \(k\)</b>.</p>
+<p><b>Rango della completa.</b> Facciamo \(R_1\to R_1-k\,R_2\): la prima riga diventa
+\[(2k^2-2k^2,\ k-k,\ 0,\ h-k^2)=(0,\ 0,\ 0,\ h-k^2)\]
+Quindi \(\operatorname{rg}(A|B)=2\) se \(h=k^2\), altrimenti \(\operatorname{rg}(A|B)=3\). In conclusione:</p>
+\[\boxed{h=k^2:\ \text{compatibile con }\infty^{3-2}=\infty^1\text{ soluzioni};\qquad h\neq k^2:\ \text{incompatibile}}\]</li>
+
+<li><p><b>Interpretazione geometrica dettagliata.</b> Le equazioni sono tre piani:
+\(\pi_1:2k^2x+ky=h\), \(\pi_2:2kx+y=k\), \(\pi_3:x+ky+z=h\), con normali \(\vec n_1=k(2k,1,0)\), \(\vec n_2=(2k,1,0)\), \(\vec n_3=(1,k,1)\).</p>
+<ul style="margin:0.1em 0 0.3em 1.2em;padding:0">
+<li>\(\pi_2\) e \(\pi_3\) non sono mai paralleli (\(\vec n_3\) ha terza componente \(1\), \(\vec n_2\) ha terza componente \(0\)): si tagliano sempre in una retta \(s\).</li>
+<li>\(k\neq0\): \(\pi_1\) è <b>parallelo</b> a \(\pi_2\) (normali proporzionali). Dividendo per \(k\): \(\pi_1: 2kx+y=\frac hk\). Quindi
+ <ul style="margin:0.1em 0 0.1em 1.1em;padding:0">
+ <li>\(h=k^2\): \(\pi_1\equiv\pi_2\); i tre piani passano per la retta \(s\) (\(\infty^1\) soluzioni) — due piani coincidenti tagliati dal terzo;</li>
+ <li>\(h\neq k^2\): \(\pi_1\parallel\pi_2\) distinti; \(\pi_3\) li taglia in due <b>rette parallele</b>: nessun punto comune.</li>
+ </ul></li>
+<li>\(k=0\): la prima equazione diventa \(0=h\): per \(h=0\) è un'identità (non rappresenta un piano) e restano \(\pi_2:y=0\) e \(\pi_3:x+z=0\), che si tagliano nella
+retta \((-t,0,t)\); per \(h\neq0\) è impossibile.</li>
+</ul></li>
+
+<li><p><b>Soluzioni per \(k=2,\ h=4\).</b> \(h=k^2\) ✓: il sistema è compatibile con \(\infty^1\) soluzioni. Le equazioni sono
+\[\begin{cases}8x+2y=4\\4x+y=2\\x+2y+z=4\end{cases}\]
+La prima è il doppio della seconda, quindi la eliminiamo. Usiamo il metodo di Gauss con un <b>parametro</b>: poniamo \(x=t\). Dalla seconda \(y=2-4t\);
+dalla terza \(z=4-x-2y=4-t-4+8t=7t\).
+\[\boxed{(x,y,z)=(t,\ 2-4t,\ 7t),\quad t\in\mathbb{R}}\]
+È la retta per \((0,2,0)\) con direzione \((1,-4,7)\). <i>Verifica</i>: \(4t+2-4t=2\) ✓; \(t+4-8t+7t=4\) ✓.</p></li>
+</ol></div>
+
+<!-- ======================= ESERCIZIO 2 ======================= -->
+<div class="esercizio"><span class="num">2)</span><div class="testo">
+<p>Scrivere (se esiste) l'equazione cartesiana della superficie conica avente <i>vertice</i> sulla retta \(r:\ x+1=\frac{y+3}3=z-1\), <i>direttrice</i> la curva di
+equazione \(\begin{cases}x^2+4y^2=4\\z=1\end{cases}\) e tangente al piano \(\alpha:\ y+z=2\).</p>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo ricordare due fatti. (1) Il <b>cono</b> di vertice \(V\) e direttrice \(\gamma\) è l'unione delle rette
+(<b>generatrici</b>) che congiungono \(V\) con i punti di \(\gamma\). (2) Un piano è <b>tangente</b> a un cono se <b>passa per il vertice</b> e lo tocca lungo
+<b>una sola</b> generatrice; questo accade se la sua traccia sul piano della direttrice è <b>tangente</b> alla direttrice.</p>
+
+<div class="svolg"><ol>
+<li><p><b>La direttrice.</b> Nel piano \(z=1\) la curva \(x^2+4y^2=4\), cioè \(\frac{x^2}4+y^2=1\), è un'<b>ellisse</b> di semiassi \(2\) e \(1\).</p></li>
+<li><p><b>Traccia di \(\alpha\) sul piano \(z=1\).</b> Sostituendo \(z=1\) in \(y+z=2\): \(y=1\). La retta \(y=1\) (nel piano \(z=1\)) incontra l'ellisse dove
+\(x^2+4=4\), cioè solo in \(x=0\) (soluzione doppia): <b>è tangente</b> all'ellisse nel punto \((0,1,1)\). Quindi la condizione sulla traccia è già soddisfatta:
+basta che il vertice stia su \(\alpha\).</p></li>
+<li><p><b>Vertice.</b> Scriviamo \(r\) in forma parametrica ponendo tutti i rapporti uguali a \(t\): \(\ x=t-1,\ y=3t-3,\ z=t+1\).
+Imponiamo \(V\in\alpha\):
+\[(3t-3)+(t+1)=2\ \rightarrow\ 4t=4\ \rightarrow\ t=1\ \rightarrow\ \boxed{V=(0,0,2)}\]
+(il vertice non sta nel piano \(z=1\), quindi il cono non è degenere). Il cono <b>esiste ed è unico</b>.</p></li>
+<li><p><b>Equazione del cono.</b> Sia \(P=(x,y,z)\) un punto generico del cono. La retta \(VP\) ha equazioni \(V+s\,(P-V)=(sx,\ sy,\ 2+s(z-2))\).
+Essa incontra il piano \(z=1\) quando \(2+s(z-2)=1\), cioè \(s=\frac{1}{2-z}\), nel punto \(\left(\frac{x}{2-z},\ \frac{y}{2-z},\ 1\right)\).
+Questo punto deve stare sull'ellisse:
+\[\frac{x^2}{(2-z)^2}+\frac{4y^2}{(2-z)^2}=4\ \rightarrow\ \boxed{x^2+4y^2-4(z-2)^2=0}\]</p>
+<div class="nota"><p><b>Verifica della tangenza.</b> Intersechiamo con \(\alpha\) (\(z=2-y\)): \(x^2+4y^2-4y^2=x^2=0\). Si ottiene la retta \(x=0\) <b>contata due
+volte</b>: il piano tocca il cono lungo una sola generatrice ✓. E per \(z=1\) si ritrova \(x^2+4y^2=4\) ✓.</p></div></li>
+</ol></div>
+
+<!-- ======================= ESERCIZIO 3 ======================= -->
+<div class="esercizio"><span class="num">3)</span><div class="testo">
+<p>Sia \(W\) il sottospazio di \(\mathbb{R}^4\) definito da \(\begin{cases}x-y-z+w=0\\x+z=0\end{cases}\). Si proietti su di esso il vettore \(\vec v=(4,0,8,0)\).
+Si caratterizzi \(W^\perp\) e si dia la rappresentazione matriciale (canonica) del proiettore ortogonale \(P_{W^\perp}\).</p>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: è lo stesso tipo di esercizio dell'appello di febbraio (Es. 3), quindi seguiamo lo stesso schema: i
+coefficienti delle equazioni generano \(W^\perp\), si proietta su \(W^\perp\) e si ottiene \(P_W(\vec v)=\vec v-P_{W^\perp}(\vec v)\).</p>
+
+<div class="svolg"><ol>
+<li><p><b>\(W\) e \(W^\perp\).</b> \(\dim W=4-2=2\). Da \(x=-z\) e \(w=-x+y+z=y+2z\); con \(y=a,\ z=b\):
+\(\ W=\{(-b,\ a,\ b,\ a+2b)\}=\operatorname{span}\{(0,1,0,1),\ (-1,0,1,2)\}\).
+\[\boxed{W^\perp=\operatorname{span}\{\vec n_1=(1,-1,-1,1),\ \vec n_2=(1,0,1,0)\}}\qquad\boxed{W^\perp:\ \begin{cases}y+w=0\\-x+z+2w=0\end{cases}}\]
+\(\dim W^\perp=2\). Anche qui \(\vec n_1\cdot\vec n_2=1+0-1+0=0\): base <b>ortogonale</b>.</p></li>
+<li><p><b>Proiezione.</b> \(\vec v\cdot\vec n_1=4-8=-4\), \(|\vec n_1|^2=4\); \(\ \vec v\cdot\vec n_2=4+8=12\), \(|\vec n_2|^2=2\):
+\[P_{W^\perp}(\vec v)=\frac{-4}{4}(1,-1,-1,1)+\frac{12}{2}(1,0,1,0)=(-1,1,1,-1)+(6,0,6,0)=(5,1,7,-1)\]
+\[P_W(\vec v)=(4,0,8,0)-(5,1,7,-1)=\boxed{(-1,-1,1,1)}\]
+<i>Verifica</i>: \(-1+1-1+1=0\) e \(-1+1=0\): sta in \(W\) ✓.</p></li>
+<li><p><b>Matrice del proiettore.</b>
+\[P_{W^\perp}=\frac{\vec n_1\vec n_1^{\,T}}4+\frac{\vec n_2\vec n_2^{\,T}}2=\frac14\begin{pmatrix}1&-1&-1&1\\-1&1&1&-1\\-1&1&1&-1\\1&-1&-1&1\end{pmatrix}+\frac12\begin{pmatrix}1&0&1&0\\0&0&0&0\\1&0&1&0\\0&0&0&0\end{pmatrix}\]
+\[\boxed{P_{W^\perp}=\frac14\begin{pmatrix}3&-1&1&1\\-1&1&1&-1\\1&1&3&-1\\1&-1&-1&1\end{pmatrix}}\]
+<i>Controlli</i>: simmetrica, \(P^2=P\), traccia \(\frac{3+1+3+1}4=2=\dim W^\perp\), e \(P_{W^\perp}\vec v=\frac14(12+8,\ -4+8,\ 4+24,\ 4-8)=(5,1,7,-1)\) ✓.</p></li>
+</ol></div>
+
+<!-- ======================= ESERCIZIO 4 ======================= -->
+<div class="esercizio"><span class="num">4)</span><div class="testo">
+<p>Dopo aver scritto l'equazione dell'iperbole avente come asintoti le rette di equazione \(\sqrt3y=x,\ x=\sqrt3\) e passante per il punto \(P=(0,1)\),</p>
+<ol>
+<li>determinare assi e fuochi (nel riferimento originale);</li>
+<li>ridurre a forma normale (metrica) e scrivere le equazioni di una trasformazione ortogonale normalizzante.</li>
+</ol>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: come nell'appello di febbraio (Es. 4): l'iperbole ha equazione \(a_1\cdot a_2=\lambda\), dove \(a_1=0\),
+\(a_2=0\) sono gli asintoti; il centro è il loro punto d'incontro e gli assi sono le bisettrici.</p>
+
+<div class="svolg"><ol>
+<li><p><b>Equazione.</b> Asintoti: \(x-\sqrt3y=0\) e \(x-\sqrt3=0\). Quindi \((x-\sqrt3y)(x-\sqrt3)=\lambda\). Passaggio per \(P=(0,1)\):
+\((0-\sqrt3)(0-\sqrt3)=3=\lambda\).
+\[(x-\sqrt3y)(x-\sqrt3)=3\ \rightarrow\ \boxed{x^2-\sqrt3\,xy-\sqrt3\,x+3y-3=0}\]</p>
+<p><b>Centro.</b> \(x=\sqrt3\) e \(\sqrt3y=x\Rightarrow y=1\): \(\ C=(\sqrt3,\ 1)\).</p>
+<p><b>Assi.</b> L'asintoto \(y=\frac{x}{\sqrt3}\) è inclinato di \(30^\circ\), l'asintoto \(x=\sqrt3\) di \(90^\circ\). Le bisettrici sono inclinate di \(60^\circ\) e di \(150^\circ\):
+\[y-1=\sqrt3(x-\sqrt3)\ \rightarrow\ \sqrt3x-y-2=0\qquad\qquad y-1=-\tfrac1{\sqrt3}(x-\sqrt3)\ \rightarrow\ x+\sqrt3y-2\sqrt3=0\]
+<b>Quale è l'asse trasverso?</b> I rami dell'iperbole stanno nella coppia di angoli opposti che contiene \(P\). Visto da \(C\), il punto \(P\) è nella direzione
+\(P-C=(-\sqrt3,0)\), cioè a \(180^\circ\): sta nell'angolo compreso tra \(90^\circ\) e \(210^\circ\), la cui bisettrice è quella a \(150^\circ\). Quindi</p>
+\[\boxed{\text{asse trasverso: } x+\sqrt3y-2\sqrt3=0}\qquad\boxed{\text{asse non trasverso: } \sqrt3x-y-2=0}\]
+<div class="fig-center"><img src="fig/a5_iperbole.svg" width="270"><div class="didascalia">l'iperbole dell'esercizio 4: asintoti (rosso), assi (grigio)</div></div>
+<p><b>Semiassi.</b> L'angolo tra l'asse trasverso (\(150^\circ\)) e un asintoto (\(90^\circ\)) è \(60^\circ\), quindi \(\frac ba=\tan60^\circ=\sqrt3\), cioè \(b^2=3a^2\).
+Nel riferimento ridotto (punto b) l'equazione è \(\frac{X^2}{a^2}-\frac{Y^2}{3a^2}=1\); il punto \(P\) ha coordinate (vedi la trasformazione sotto)
+\(X=\frac32,\ Y=\frac{\sqrt3}2\). Sostituendo:
+\[\frac{9/4}{a^2}-\frac{3/4}{3a^2}=\frac{9/4-1/4}{a^2}=\frac{2}{a^2}=1\ \rightarrow\ a^2=2,\quad b^2=6,\quad c^2=a^2+b^2=8,\quad c=2\sqrt2\]
+<b>Fuochi.</b> Sull'asse trasverso, a distanza \(c\) da \(C\), nella direzione del versore \(\hat u=(\cos150^\circ,\sin150^\circ)=\left(-\frac{\sqrt3}2,\frac12\right)\):
+\[F_{1,2}=C\pm2\sqrt2\,\hat u\ \rightarrow\ \boxed{F_1=\left(\sqrt3-\sqrt6,\ 1+\sqrt2\right),\qquad F_2=\left(\sqrt3+\sqrt6,\ 1-\sqrt2\right)}\]
+<i>Verifica</i>: \(|\overline{PF_1}-\overline{PF_2}|=2\sqrt2=2a\) (controllato numericamente: \(2{,}828\ldots\)) ✓.</p></li>
+
+<li><p><b>Trasformazione e forma normale.</b> Origine in \(C\), asse \(X\) lungo \(\hat u=\left(-\frac{\sqrt3}2,\frac12\right)\), asse \(Y\) lungo
+\(\hat v=\left(-\frac12,-\frac{\sqrt3}2\right)\) (ruotato di \(+90^\circ\)):
+\[\boxed{\begin{cases}x=\sqrt3-\frac{\sqrt3}2X-\frac12Y\\[1mm] y=1+\frac12X-\frac{\sqrt3}2Y\end{cases}}\qquad\det\begin{pmatrix}-\frac{\sqrt3}2&-\frac12\\\frac12&-\frac{\sqrt3}2\end{pmatrix}=\frac34+\frac14=1\]
+(rotazione di \(150^\circ\) più traslazione). Per \(P\): da \(P-C=(-\sqrt3,0)\) si ha \(X=\hat u\cdot(P-C)=\frac32\), \(Y=\hat v\cdot(P-C)=\frac{\sqrt3}2\), come usato sopra.
+Sostituendo nell'equazione si ottiene \(\frac32X^2-\frac12Y^2-3=0\), cioè
+\[\boxed{\frac{X^2}{2}-\frac{Y^2}{6}=1}\]
+<i>Controllo con gli invarianti</i>: la parte quadratica \(x^2-\sqrt3xy\) ha matrice \(\begin{pmatrix}1&-\frac{\sqrt3}2\\-\frac{\sqrt3}2&0\end{pmatrix}\), traccia \(1\), determinante
+\(-\frac34\): autovalori \(\frac32\) e \(-\frac12\), proprio i coefficienti di \(X^2\) e \(Y^2\) trovati ✓.</p></li>
+</ol></div>
+
+<!-- ======================= ESERCIZIO 5 ======================= -->
+<div class="esercizio"><span class="num">5)</span><div class="testo">
+<p>Si scrivano le equazioni della <i>glissosimmetria</i> di <i>asse</i> \(x-y+1=0\), <i>traccia</i> \(\vec s=(3,5)\) e <i>glissé</i> \(\vec g=(5,5)\).
+Determinare eventuali direzioni invarianti, punti e rette uniti. Si dimostri che il quadrato \(Q\) di vertici \(A=(0,0),\ B=(1,0),\ C=(1,1),\ D=(0,1)\) si trasforma in
+un parallelogramma \(Q'\) avente la stessa area.</p>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: una <b>glissosimmetria</b> è la composizione di una <b>simmetria assiale</b> (ortogonale) con una
+<b>traslazione parallela all'asse</b> (il vettore glissé). Qui \(\vec g=(5,5)\) è parallelo all'asse \(x-y+1=0\), che ha direzione \((1,1)\) ✓.</p>
+<div class="nota"><p><b>Nota sul dato \(\vec s=(3,5)\).</b> Per costruire la glissosimmetria bastano asse e glissé. Il dato “traccia \(\vec s=(3,5)\)” non è coerente con gli altri:
+il punto \((3,5)\) non sta sull'asse (\(3-5+1\neq0\)) e il vettore \((3,5)\) non è parallelo all'asse. Probabilmente è un refuso del testo, quindi non lo usiamo.</p></div>
+
+<div class="svolg"><ol>
+<li><p><b>Simmetria rispetto a \(x-y+1=0\).</b> Per la retta \(y=x+1\) (bisettrice traslata) la simmetria scambia i ruoli di \(x\) e \(y\) con una correzione:
+\(\sigma(x,y)=(y-1,\ x+1)\). <i>Verifica</i>: il punto medio di \((x,y)\) e \((y-1,x+1)\) è \(\left(\frac{x+y-1}2,\frac{x+y+1}2\right)\), che sta sull'asse (\(\frac{x+y-1}2-\frac{x+y+1}2+1=0\) ✓);
+il vettore \((y-1-x,\ x+1-y)\) è proporzionale a \((1,-1)\), perpendicolare all'asse ✓.</p>
+<p><b>Glissosimmetria</b> \(=\) simmetria seguita dalla traslazione di \((5,5)\):
+\[\boxed{\begin{cases}x'=y+4\\y'=x+6\end{cases}}\qquad A=\begin{pmatrix}0&1\\1&0\end{pmatrix},\quad\det A=-1\]</p></li>
+<li><p><b>Direzioni invarianti.</b> \(\lambda^2-1=0\Rightarrow\lambda=\pm1\). \(\lambda=1\): \((1,1)\) (direzione dell'asse); \(\lambda=-1\): \((1,-1)\) (direzione perpendicolare).
+\[\boxed{(1,1)\ \text{e}\ (1,-1)}\]</p></li>
+<li><p><b>Punti uniti.</b> \(x=y+4\) e \(y=x+6\) danno \(x-y=4\) e \(x-y=-6\): impossibile. \(\boxed{\text{Nessun punto unito}}\) (la traslazione lungo l'asse
+sposta anche i punti dell'asse).</p></li>
+<li><p><b>Rette unite.</b> Direzione \((1,1)\), rette \(x-y=c\): \(x'-y'=(y+4)-(x+6)=-(x-y)-2=-c-2\); unita se \(c=-c-2\), cioè \(c=-1\): l'asse \(x-y+1=0\).
+Direzione \((1,-1)\), rette \(x+y=c\): \(x'+y'=x+y+10=c+10\neq c\): nessuna.
+\[\boxed{\text{unica retta unita: l'asse } x-y+1=0 \text{ (non puntualmente fissa)}}\]</p></li>
+<li><p><b>Il quadrato.</b> Applichiamo la trasformazione ai vertici:
+\[A=(0,0)\mapsto A'=(4,6),\quad B=(1,0)\mapsto B'=(4,7),\quad C=(1,1)\mapsto C'=(5,7),\quad D=(0,1)\mapsto D'=(5,6)\]
+\(\overrightarrow{A'B'}=(0,1)=\overrightarrow{D'C'}\) e \(\overrightarrow{A'D'}=(1,0)=\overrightarrow{B'C'}\): i lati opposti sono uguali e paralleli, quindi \(Q'\) è un
+<b>parallelogramma</b> (anzi, di nuovo un quadrato di lato 1, perché la glissosimmetria è un'<b>isometria</b>). Area:
+\[\text{Area}(Q')=|\det(\overrightarrow{A'B'},\overrightarrow{A'D'})|=\left|\det\begin{pmatrix}0&1\\1&0\end{pmatrix}\right|=1=\text{Area}(Q)\]
+In generale ogni trasformazione affine moltiplica le aree per \(|\det A|\), e qui \(|\det A|=1\): \(\boxed{\text{Area}(Q')=\text{Area}(Q)=1}\).
+(Il quadrato cambia però verso di percorrenza, perché \(\det A<0\).)</p></li>
+</ol></div>
+
+<div class="nota"><p><b>Prova teorica del 17 luglio</b> (T.1 endomorfismi diagonalizzabili – teorema spettrale; T.2 omomorfismi, nucleo, immagine, relazione
+dimensionale, iniettività \(\iff\ker T=\{\vec0\}\)): sono le stesse domande dell'appello del 13 febbraio. La traccia di risposta è alla fine di quell'appello.</p></div>
+</section>

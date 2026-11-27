@@ -1,0 +1,10 @@
+import sys; sys.path.insert(0,"/tmp/claude-0/-home-user-prova-claude/28117a8a-5f58-5be6-8483-71bef30eda1b/scratchpad/verify")
+from figlib import *
+s3=np.sqrt(3); s2=np.sqrt(2); C=(s3,1); u=(-s3/2,0.5)
+fig,ax=setup((-3,6),(-3.5,5),size=(3.8,3.6))
+line(ax,C,(s3,1),"--","#c0392b"); line(ax,C,(0,1),"--","#c0392b")
+line(ax,C,u,"-.","#888"); line(ax,C,(0.5,s3/2),"-.","#888")
+conic(ax,*C,u,"iperbole",s2,np.sqrt(6),rng=1.5)
+pt(ax,C,"C",(6,-4)); pt(ax,(0,1),"P",(-12,4))
+pt(ax,(s3-np.sqrt(6),1+s2),r"$F_1$",(4,3),"#1f4e9c"); pt(ax,(s3+np.sqrt(6),1-s2),r"$F_2$",(4,3),"#1f4e9c")
+save(fig,"a5_iperbole.svg"); print("ok")

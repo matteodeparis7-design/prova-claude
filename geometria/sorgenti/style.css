@@ -1,0 +1,72 @@
+@font-face { font-family: "Caladea"; font-style: normal; font-weight: 400;
+  src: url(FONTDIR/caladea/files/caladea-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: "Caladea"; font-style: italic; font-weight: 400;
+  src: url(FONTDIR/caladea/files/caladea-latin-400-italic.woff2) format("woff2"); }
+@font-face { font-family: "Caladea"; font-style: normal; font-weight: 700;
+  src: url(FONTDIR/caladea/files/caladea-latin-700-normal.woff2) format("woff2"); }
+@font-face { font-family: "Caladea"; font-style: italic; font-weight: 700;
+  src: url(FONTDIR/caladea/files/caladea-latin-700-italic.woff2) format("woff2"); }
+@font-face { font-family: "Cinzel Decorative"; font-weight: 700;
+  src: url(FONTDIR/cinzel-decorative/files/cinzel-decorative-latin-700-normal.woff2) format("woff2"); }
+
+:root { --blu: #2f6fc0; --blu-chiaro: #9fc3ee; --arancio: #c55a11; }
+html { font-size: 11.6pt; }
+body { font-family: "Caladea", "Cambria", serif; color: #000; line-height: 1.36; margin: 0; }
+p { margin: 0.2em 0 0.35em; text-align: justify; hyphens: auto; }
+.katex { font-size: 1.06em; }
+.katex-display { margin: 0.45em 0; }
+
+/* ---------- titoli ---------- */
+.titolo { font-family: "Cinzel Decorative", serif; font-weight: 700; color: var(--blu);
+  text-align: center; font-size: 15.5pt; letter-spacing: 0.02em; margin: 0 0 0.3em;
+  -webkit-text-stroke: 0.4px var(--blu-chiaro); text-shadow: 0.6px 0.6px 0 var(--blu-chiaro); }
+.sottotitolo { text-align: center; font-style: italic; margin: 0 0 1.1em; color: #333; }
+.appello { break-before: page; }
+.appello:first-of-type { break-before: auto; }
+.frontespizio { break-after: page; padding-top: 30mm; text-align: center; }
+.frontespizio .titolo { font-size: 22pt; line-height: 1.35; }
+.frontespizio .box { border: 1px solid #000; display: inline-block; text-align: left;
+  padding: 0.8em 1.2em; margin-top: 2.2em; max-width: 135mm; }
+.frontespizio .box p { text-align: left; }
+
+/* ---------- testo dell'esercizio (corsivo, numerato) ---------- */
+.esercizio { display: flex; align-items: baseline; gap: 0.5em; margin: 1.1em 0 0.6em 0; font-style: italic; }
+.esercizio > .num { flex: 0 0 auto; padding-left: 1.2em; }
+.esercizio > .testo { flex: 1; }
+.esercizio p { margin: 0.1em 0; }
+.esercizio ol, .svolg ol { margin: 0.15em 0 0.2em; padding-left: 1.6em; list-style: none; counter-reset: lett; }
+.esercizio ol > li, .svolg ol > li { counter-increment: lett; position: relative; margin: 0.1em 0; }
+.esercizio ol > li::before, .svolg ol > li::before { content: counter(lett, lower-alpha) ")"; display: inline-block; width: 1.5em; margin-left: -1.5em; font-style: normal; }
+.svolg ol > li > p:first-child, .esercizio ol > li > p:first-child { display: inline; }
+.svolg ol > li > p:first-child::after { content: ""; display: block; margin-bottom: 0.35em; }
+.esercizio ol.num > li::before, .svolg ol.num > li::before { content: counter(lett) ")"; }
+.esercizio .katex { font-style: normal; }
+
+/* ---------- svolgimento ---------- */
+.svolg-head { margin: 0.9em 0 0.4em; text-align: justify; }
+.svolg-head b.label { color: var(--arancio); text-decoration: underline; font-weight: 700; }
+.svolg > ol > li { margin-bottom: 0.55em; }
+.svolg > ol { padding-left: 1.7em; }
+
+.fig-right { float: right; margin: 0.1em 0 0.4em 0.9em; }
+.fig-right img { display: block; }
+.clear { clear: both; }
+.didascalia { font-size: 9pt; text-align: center; font-style: italic; color: #444; }
+
+/* tabella riassuntiva */
+table.riass { border-collapse: collapse; margin: 0.5em auto; font-size: 0.96em; }
+table.riass td, table.riass th { border: 1px solid #000; padding: 0.25em 0.6em; text-align: center; vertical-align: middle; }
+table.riass th { background: #eef3fb; }
+
+/* osservazioni / attenzione */
+.nota { border-left: 3px solid var(--blu); background: #f3f7fd; padding: 0.35em 0.7em; margin: 0.5em 0; break-inside: avoid; }
+.nota p { margin: 0.15em 0; }
+
+/* teoria */
+.teoria h3 { font-size: 1em; margin: 0.9em 0 0.2em; }
+.domanda { font-style: italic; }
+
+.katex-display, .fig-right, table.riass { break-inside: avoid; }
+
+.fig-center { text-align: center; margin: 0.4em 0; break-inside: avoid; }
+.fig-center img { display: inline-block; }

@@ -1,0 +1,238 @@
+<section class="appello">
+<div class="titolo">Prova di Geometria del 13 febbraio 2026</div>
+<p class="sottotitolo">Prof. Bruno A. Cifra</p>
+
+<!-- ======================= ESERCIZIO 1 ======================= -->
+<div class="esercizio"><span class="num">1)</span><div class="testo">
+<p>Si studi al variare dei parametri reali \(k\) ed \(h\) la compatibilità del sistema
+\[\begin{cases} 2k^2x+ky=h\\ 2kx+y=k+1\\ 2x+ky=h\end{cases}\]
+e se ne dia un'interpretazione geometrica in \(\mathbb{R}^2\) e in \(\mathbb{R}^3\).</p>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo utilizzare il <b>teorema di Rouché-Capelli</b> (compatibile \(\iff\)
+\(\operatorname{rg}A=\operatorname{rg}(A|B)\)). Qui ci sono <b>3 equazioni e 2 incognite</b>: la matrice \(A\) è \(3\times2\) (rango al
+massimo 2), mentre la completa \((A|B)\) è \(3\times3\). Quindi la strategia è: se \(\det(A|B)\neq0\) la completa ha rango 3 e il
+sistema è sicuramente incompatibile.</p>
+
+<div class="svolg"><ol>
+<li><p><b>Rango di \(A\).</b>
+\[A=\begin{pmatrix}2k^2&k\\2k&1\\2&k\end{pmatrix}\qquad\qquad (A|B)=\left(\begin{array}{cc|c}2k^2&k&h\\2k&1&k+1\\2&k&h\end{array}\right)\]
+Calcoliamo i tre minori di ordine 2 di \(A\) (righe 1-2, 1-3, 2-3):
+\[\begin{vmatrix}2k^2&k\\2k&1\end{vmatrix}=2k^2-2k^2=0,\qquad \begin{vmatrix}2k^2&k\\2&k\end{vmatrix}=2k^3-2k=2k(k-1)(k+1),\qquad
+\begin{vmatrix}2k&1\\2&k\end{vmatrix}=2k^2-2=2(k-1)(k+1)\]
+L'ultimo minore si annulla solo per \(k=\pm1\). Quindi \(\operatorname{rg}A=2\) per \(k\neq\pm1\), mentre per \(k=\pm1\) tutti i minori
+sono nulli e \(\operatorname{rg}A=1\) (la matrice non è nulla).</p>
+
+<p><b>Determinante della completa.</b> Facciamo \(R_1\to R_1-R_3\) (il determinante non cambia):
+\[\det(A|B)=\begin{vmatrix}2k^2-2&0&0\\2k&1&k+1\\2&k&h\end{vmatrix}=(2k^2-2)\begin{vmatrix}1&k+1\\k&h\end{vmatrix}
+=2(k-1)(k+1)\,\bigl(h-k^2-k\bigr)\]
+(abbiamo sviluppato lungo la prima riga, che ha due zeri).</p>
+
+<p><b>Caso \(k\neq\pm1\).</b> \(\operatorname{rg}A=2\). Se \(h\neq k^2+k\) allora \(\det(A|B)\neq0\), \(\operatorname{rg}(A|B)=3\neq2\):
+<b>incompatibile</b>. Se \(h=k^2+k\) allora \(\det(A|B)=0\) e \(\operatorname{rg}(A|B)=2\): <b>compatibile con una sola soluzione</b>
+(\(\infty^{2-2}=\infty^0\)). Calcoliamola: dalla 1ª e 3ª equazione \(2k^2x+ky=2x+ky\ \rightarrow\ 2(k^2-1)x=0\ \rightarrow\ x=0\) (perché \(k\neq\pm1\)); la 2ª dà \(y=k+1\).
+\[\boxed{(x,y)=(0,\,k+1)}\]</p>
+
+<p><b>Caso \(k=1\).</b> Il sistema è \(\ 2x+y=h,\ \ 2x+y=2,\ \ 2x+y=h\). \(\operatorname{rg}A=1\); la completa ha rango 1 solo se i termini
+noti coincidono: \(h=2\). Quindi: \(h=2\) <b>compatibile</b> con \(\infty^1\) soluzioni (\(y=2-2x\)); \(h\neq2\) incompatibile.</p>
+<p><b>Caso \(k=-1\).</b> Il sistema è \(\ 2x-y=h,\ \ -2x+y=0,\ \ 2x-y=h\). La seconda equivale a \(2x-y=0\): compatibile solo se \(h=0\),
+con \(\infty^1\) soluzioni (\(y=2x\)); per \(h\neq0\) incompatibile.</p>
+
+<div class="nota"><p><b>Osservazione.</b> In tutti i casi la condizione di compatibilità è la stessa: \(\boxed{h=k^2+k}\)
+(per \(k=1\) dà \(h=2\), per \(k=-1\) dà \(h=0\)). Cambia solo il numero delle soluzioni.</p></div>
+<table class="riass">
+<tr><th>valori</th><th>\(\operatorname{rg}A\)</th><th>\(\operatorname{rg}(A|B)\)</th><th>soluzioni in \(\mathbb R^2\)</th></tr>
+<tr><td>\(k\neq\pm1,\ h=k^2+k\)</td><td>2</td><td>2</td><td>una: \((0,k+1)\)</td></tr>
+<tr><td>\(k\neq\pm1,\ h\neq k^2+k\)</td><td>2</td><td>3</td><td>nessuna</td></tr>
+<tr><td>\(k=1,\ h=2\) &nbsp;/&nbsp; \(k=-1,\ h=0\)</td><td>1</td><td>1</td><td>\(\infty^1\)</td></tr>
+<tr><td>\(k=1,\ h\neq2\) &nbsp;/&nbsp; \(k=-1,\ h\neq0\)</td><td>1</td><td>2</td><td>nessuna</td></tr>
+</table></li>
+
+<li><p><b>Interpretazione geometrica in \(\mathbb{R}^2\).</b> Ogni equazione \(ax+by=c\) è una <b>retta</b> del piano:
+\(r_1:2k^2x+ky=h,\ r_2:2kx+y=k+1,\ r_3:2x+ky=h\). Osserviamo che, per \(k\neq0\), \(r_1\) si può dividere per \(k\):
+\(r_1:\ 2kx+y=\frac hk\). Quindi <b>\(r_1\) e \(r_2\) sono sempre parallele</b> e coincidono quando \(\frac hk=k+1\), cioè \(h=k^2+k\).</p>
+<ul style="margin:0.1em 0 0.3em 1.2em;padding:0">
+<li>\(k\neq0,\pm1,\ h=k^2+k\): \(r_1\equiv r_2\) e \(r_3\) la incontra in \((0,k+1)\): tre rette per un punto.</li>
+<li>\(k\neq0,\pm1,\ h\neq k^2+k\): \(r_1\parallel r_2\) distinte, tagliate entrambe da \(r_3\): nessun punto comune.</li>
+<li>\(k=0\): le equazioni sono \(0=h,\ y=1,\ 2x=h\). Se \(h=0\) la prima è un'identità (non è una retta) e le altre due, \(y=1\) e \(x=0\), si incontrano in \((0,1)\). Se \(h\neq0\) la prima è impossibile.</li>
+<li>\(k=1\): tre rette parallele \(2x+y=h,\ 2x+y=2,\ 2x+y=h\), con \(r_1\equiv r_3\); per \(h=2\) coincidono tutte.</li>
+<li>\(k=-1\): tre rette parallele \(2x-y=h,\ 2x-y=0,\ 2x-y=h\), con \(r_1\equiv r_3\); per \(h=0\) coincidono tutte.</li>
+</ul>
+<p><b>Interpretazione geometrica in \(\mathbb{R}^3\).</b> Se pensiamo \(x,y,z\) come incognite, le stesse equazioni (in cui la \(z\) non compare)
+rappresentano <b>piani paralleli all'asse \(z\)</b> (i vettori normali \((a,b,0)\) sono perpendicolari all'asse \(z\)). Tutto quanto detto sopra
+vale ancora, con le rette sostituite da piani, i punti da rette parallele all'asse \(z\), e le soluzioni aumentano di un grado di libertà (la \(z\) è libera):
+\(\infty^1\) soluzioni (la retta \(x=0,\ y=k+1\)) nel primo caso, \(\infty^2\) (un piano) quando \(\operatorname{rg}=1\).</p></li>
+</ol></div>
+
+<!-- ======================= ESERCIZIO 2 ======================= -->
+<div class="esercizio"><span class="num">2)</span><div class="testo">
+<p>Scrivere le equazioni delle sfere tangenti ai piani \(\alpha:\ 2x+2y+z-1=0\) e \(\beta:\ 3x+4y+5=0\) e aventi il centro sulla retta \(r\) di
+equazioni \(\begin{cases}x=y\\z=1+2x\end{cases}\).</p>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo ricordare che una sfera è <b>tangente a un piano</b> se e solo se la
+<b>distanza del centro dal piano è uguale al raggio</b>. La distanza di \(C=(x_0,y_0,z_0)\) dal piano \(ax+by+cz+d=0\) è
+\(\ d=\dfrac{|ax_0+by_0+cz_0+d|}{\sqrt{a^2+b^2+c^2}}\).</p>
+
+<div class="svolg"><ol>
+<li><p><b>Centro generico.</b> Scriviamo \(r\) in forma parametrica ponendo \(x=t\): \(\ y=t,\ z=1+2t\). Il centro è
+\[C_t=(t,\ t,\ 1+2t)\]</p></li>
+<li><p><b>Distanze dai due piani.</b>
+\[d(C_t,\alpha)=\frac{|2t+2t+(1+2t)-1|}{\sqrt{4+4+1}}=\frac{|6t|}{3}=2|t|\qquad\qquad d(C_t,\beta)=\frac{|3t+4t+5|}{\sqrt{9+16}}=\frac{|7t+5|}{5}\]</p></li>
+<li><p><b>La sfera è tangente a entrambi</b> se le due distanze sono uguali (e il raggio è il loro valore comune):
+\[2|t|=\frac{|7t+5|}{5}\ \rightarrow\ 10|t|=|7t+5|\ \rightarrow\ 10t=\pm(7t+5)\]
+<i>Segno +</i>: \(10t=7t+5\ \rightarrow\ t=\frac53\): centro \(C_1=\left(\frac53,\frac53,\frac{13}3\right)\), raggio \(R_1=2\cdot\frac53=\frac{10}3\).<br>
+<i>Segno −</i>: \(10t=-7t-5\ \rightarrow\ t=-\frac5{17}\): centro \(C_2=\left(-\frac5{17},-\frac5{17},\frac7{17}\right)\), raggio \(R_2=\frac{10}{17}\).</p>
+<p>L'equazione di una sfera di centro \((x_0,y_0,z_0)\) e raggio \(R\) è \((x-x_0)^2+(y-y_0)^2+(z-z_0)^2=R^2\). Le sfere cercate sono <b>due</b>:
+\[\boxed{\Sigma_1:\ \left(x-\tfrac53\right)^2+\left(y-\tfrac53\right)^2+\left(z-\tfrac{13}3\right)^2=\tfrac{100}9}
+\qquad\boxed{\Sigma_2:\ \left(x+\tfrac5{17}\right)^2+\left(y+\tfrac5{17}\right)^2+\left(z-\tfrac7{17}\right)^2=\tfrac{100}{289}}\]
+<i>Verifica per \(C_1\)</i>: \(d(C_1,\beta)=\frac{|5+\frac{20}3+5|}{5}=\frac{50/3}{5}=\frac{10}3=R_1\) ✓.</p>
+<div class="nota"><p><b>Perché due soluzioni?</b> I due piani \(\alpha\) e \(\beta\) si incontrano e formano quattro “spicchi” (diedri). I centri delle sfere tangenti a
+entrambi stanno sui due <b>piani bisettori</b> dei diedri. La retta \(r\) taglia ciascun piano bisettore in un punto: ecco i due centri.</p></div></li>
+</ol></div>
+
+<!-- ======================= ESERCIZIO 3 ======================= -->
+<div class="esercizio"><span class="num">3)</span><div class="testo">
+<p>Sia \(W\) il sottospazio di \(\mathbb{R}^4\) definito da \(\begin{cases}x+y-z+w=0\\x-y=0\end{cases}\).
+Si proietti su di esso il vettore \(\vec v=(0,2,2,4)\). Si caratterizzi \(W^\perp\) e si dia la rappresentazione matriciale (canonica) del
+proiettore ortogonale \(P_{W^\perp}\).</p>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo ricordare che <b>i coefficienti di un'equazione cartesiana omogenea sono un vettore
+ortogonale al sottospazio</b>: l'equazione \(a x+by+cz+dw=0\) dice proprio che \((a,b,c,d)\cdot(x,y,z,w)=0\). Inoltre ogni vettore si scrive
+in un solo modo come \(\vec v=P_W(\vec v)+P_{W^\perp}(\vec v)\).</p>
+
+<div class="svolg"><ol>
+<li><p><b>Caratterizziamo \(W\) e \(W^\perp\).</b> \(W\) è descritto da 2 equazioni indipendenti in \(\mathbb{R}^4\), quindi \(\dim W=4-2=2\). Dalle equazioni:
+\(y=x\) e \(z=x+y+w=2x+w\); ponendo \(x=a,\ w=b\):
+\[W=\{(a,\,a,\,2a+b,\,b)\}=\operatorname{span}\{(1,1,2,0),\ (0,0,1,1)\}\]
+\(W^\perp\) ha dimensione \(4-2=2\) ed è generato dai vettori dei coefficienti delle equazioni:
+\[\boxed{W^\perp=\operatorname{span}\{\vec n_1=(1,1,-1,1),\ \vec n_2=(1,-1,0,0)\}}\qquad\qquad
+\boxed{W^\perp:\ \begin{cases}x+y+2z=0\\z+w=0\end{cases}}\]
+(le equazioni cartesiane di \(W^\perp\) dicono che i suoi vettori sono ortogonali ai due vettori della base di \(W\)).</p>
+<p>Notiamo che \(\vec n_1\cdot\vec n_2=1-1+0+0=0\): la base di \(W^\perp\) è già <b>ortogonale</b>. Questo ci semplifica molto la vita!</p></li>
+
+<li><p><b>Proiezione di \(\vec v\).</b> Con una base ortogonale, la proiezione su \(W^\perp\) è la somma delle proiezioni sui singoli vettori:
+\[P_{W^\perp}(\vec v)=\frac{\vec v\cdot\vec n_1}{|\vec n_1|^2}\,\vec n_1+\frac{\vec v\cdot\vec n_2}{|\vec n_2|^2}\,\vec n_2\]
+\(\vec v\cdot\vec n_1=0+2-2+4=4\), \(|\vec n_1|^2=4\); \(\ \vec v\cdot\vec n_2=0-2=-2\), \(|\vec n_2|^2=2\). Quindi
+\[P_{W^\perp}(\vec v)=1\cdot(1,1,-1,1)-1\cdot(1,-1,0,0)=(0,2,-1,1)\]
+\[P_W(\vec v)=\vec v-P_{W^\perp}(\vec v)=(0,2,2,4)-(0,2,-1,1)=\boxed{(0,0,3,3)}\]
+<i>Verifica</i>: \((0,0,3,3)\) soddisfa \(0+0-3+3=0\) e \(0-0=0\), quindi sta in \(W\) ✓.</p></li>
+
+<li><p><b>Matrice del proiettore \(P_{W^\perp}\).</b> Per un vettore \(\vec n\) (colonna) la proiezione su di esso ha matrice \(\dfrac{\vec n\,\vec n^{\,T}}{|\vec n|^2}\).
+Essendo \(\vec n_1\perp\vec n_2\):
+\[P_{W^\perp}=\frac{\vec n_1\vec n_1^{\,T}}{4}+\frac{\vec n_2\vec n_2^{\,T}}{2}
+=\frac14\begin{pmatrix}1&1&-1&1\\1&1&-1&1\\-1&-1&1&-1\\1&1&-1&1\end{pmatrix}+\frac12\begin{pmatrix}1&-1&0&0\\-1&1&0&0\\0&0&0&0\\0&0&0&0\end{pmatrix}\]
+\[\boxed{P_{W^\perp}=\frac14\begin{pmatrix}3&-1&-1&1\\-1&3&-1&1\\-1&-1&1&-1\\1&1&-1&1\end{pmatrix}}\]
+<i>Controlli</i>: la matrice è <b>simmetrica</b>, \(P^2=P\) (verificato), la traccia vale \(\frac{3+3+1+1}4=2=\dim W^\perp\) ✓, e
+\(P_{W^\perp}\vec v=\frac14(0-2-2+4,\ 0+6-2+4,\ 0-2+2-4,\ 0+2-2+4)=(0,2,-1,1)\) ✓.</p></li>
+</ol></div>
+
+<!-- ======================= ESERCIZIO 4 ======================= -->
+<div class="esercizio"><span class="num">4)</span><div class="testo">
+<p>Dopo aver scritto l'equazione dell'iperbole avente come asintoti le rette di equazione \(y=0,\ y=\sqrt3x+\sqrt3\) e passante per il punto
+\(P=\left(0,\frac1{\sqrt3}\right)\),</p>
+<ol>
+<li>determinare assi e fuochi (nel riferimento originale);</li>
+<li>ridurre a forma normale (metrica) e scrivere le equazioni di una trasformazione ortogonale normalizzante.</li>
+</ol>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo ricordare che se \(a_1=0\) e \(a_2=0\) sono le equazioni dei due asintoti, tutte le
+iperboli con quegli asintoti hanno equazione \(\ a_1\cdot a_2=\lambda\ \) con \(\lambda\neq0\) (per \(\lambda=0\) si ottiene la coppia di asintoti).
+Il <b>centro</b> è il punto d'incontro degli asintoti e gli <b>assi</b> sono le <b>bisettrici</b> degli angoli formati dagli asintoti.</p>
+
+<div class="svolg"><ol>
+<li><div class="fig-right"><img src="fig/a2_iperbole.svg" width="245"><div class="didascalia">asintoti (rosso), assi (grigio)</div></div>
+<p><b>Equazione.</b> Gli asintoti sono \(y=0\) e \(\sqrt3x-y+\sqrt3=0\), quindi
+\[y\,(\sqrt3x-y+\sqrt3)=\lambda\]
+Passaggio per \(P=\left(0,\frac1{\sqrt3}\right)\): \(\ \frac1{\sqrt3}\left(0-\frac1{\sqrt3}+\sqrt3\right)=\frac1{\sqrt3}\cdot\frac{2}{\sqrt3}=\frac23=\lambda\). Quindi
+\[y(\sqrt3x-y+\sqrt3)=\frac23\ \rightarrow\ \boxed{3\sqrt3\,xy-3y^2+3\sqrt3\,y-2=0}\]</p>
+<p><b>Centro.</b> \(\ y=0\) e \(\sqrt3x+\sqrt3=0\ \rightarrow\ C=(-1,0)\).</p>
+<div class="clear"></div>
+<p><b>Assi.</b> L'asintoto \(y=0\) ha inclinazione \(0^\circ\); l'asintoto \(y=\sqrt3x+\sqrt3\) ha coefficiente angolare \(\sqrt3=\tan60^\circ\).
+Le bisettrici hanno quindi inclinazione \(30^\circ\) e \(120^\circ\) (coefficienti angolari \(\frac1{\sqrt3}\) e \(-\sqrt3\)) e passano per \(C\):
+\[a_1:\ y=\tfrac1{\sqrt3}(x+1)\ \rightarrow\ \boxed{x-\sqrt3y+1=0}\qquad\qquad a_2:\ y=-\sqrt3(x+1)\ \rightarrow\ \boxed{\sqrt3x+y+\sqrt3=0}\]
+Quale dei due è l'<b>asse trasverso</b> (quello che contiene vertici e fuochi)? Il punto \(P\) soddisfa \(0-\sqrt3\cdot\frac1{\sqrt3}+1=0\): \(P\) sta
+sull'asse \(a_1\), quindi \(a_1\) è l'asse trasverso e <b>\(P\) è un vertice</b>!</p>
+<div class="clear"></div>
+<p><b>Semiassi e fuochi.</b> Il semiasse trasverso è la distanza centro-vertice:
+\(a=\overline{CP}=\sqrt{1+\frac13}=\frac{2}{\sqrt3}\). L'asintoto forma con l'asse trasverso un angolo di \(30^\circ\), e per un'iperbole
+\(\frac ba=\tan(\text{angolo asintoto-asse})\), quindi \(b=a\tan30^\circ=\frac2{\sqrt3}\cdot\frac1{\sqrt3}=\frac23\). Allora
+\[c^2=a^2+b^2=\frac43+\frac49=\frac{16}9\ \rightarrow\ c=\frac43\]
+I fuochi stanno sull'asse trasverso a distanza \(c\) dal centro, nella direzione del versore \(\left(\cos30^\circ,\sin30^\circ\right)=\left(\frac{\sqrt3}2,\frac12\right)\):
+\[F_{1,2}=C\pm\frac43\left(\frac{\sqrt3}2,\frac12\right)\ \rightarrow\ \boxed{F_1=\left(-1+\tfrac{2\sqrt3}3,\ \tfrac23\right),\quad F_2=\left(-1-\tfrac{2\sqrt3}3,\ -\tfrac23\right)}\]
+<i>Verifica</i>: \(|\overline{PF_2}-\overline{PF_1}|=\frac23\left(\sqrt{7+4\sqrt3}-\sqrt{7-4\sqrt3}\right)=\frac23\bigl((2+\sqrt3)-(2-\sqrt3)\bigr)=\frac{4}{\sqrt3}=2a\) ✓.</p></li>
+
+<li><p><b>Forma normale.</b> Prendiamo un nuovo riferimento con origine in \(C\), asse \(X\) lungo l'asse trasverso (\(30^\circ\)) e asse \(Y\) lungo
+l'altro asse. È una <b>rotazione di \(30^\circ\)</b> seguita da una traslazione:
+\[\boxed{\begin{cases}x=-1+\frac{\sqrt3}2X-\frac12Y\\[1mm] y=\frac12X+\frac{\sqrt3}2Y\end{cases}}\qquad\text{matrice }\begin{pmatrix}\frac{\sqrt3}2&-\frac12\\\frac12&\frac{\sqrt3}2\end{pmatrix},\ \det=1\]
+Sostituiamo nell'equazione \(y(\sqrt3x-y+\sqrt3)=\frac23\), calcolando un fattore alla volta. Il primo fattore è \(y=\frac12X+\frac{\sqrt3}2Y\); il secondo:
+\[\sqrt3x-y+\sqrt3=\sqrt3\left(-1+\tfrac{\sqrt3}2X-\tfrac12Y\right)-\left(\tfrac12X+\tfrac{\sqrt3}2Y\right)+\sqrt3
+=-\sqrt3+\tfrac32X-\tfrac{\sqrt3}2Y-\tfrac12X-\tfrac{\sqrt3}2Y+\sqrt3=X-\sqrt3\,Y\]
+\[y(\sqrt3x-y+\sqrt3)=\left(\tfrac12X+\tfrac{\sqrt3}2Y\right)(X-\sqrt3Y)=\tfrac12X^2-\tfrac{\sqrt3}{2}XY+\tfrac{\sqrt3}2XY-\tfrac32Y^2=\tfrac12X^2-\tfrac32Y^2\]
+Quindi \(\frac12X^2-\frac32Y^2=\frac23\); moltiplicando per \(\frac32\):
+\[\boxed{\frac{X^2}{4/3}-\frac{Y^2}{4/9}=1}\qquad(a^2=\tfrac43,\ b^2=\tfrac49)\]
+in accordo con i semiassi trovati prima ✓.</p></li>
+</ol></div>
+
+<!-- ======================= ESERCIZIO 5 ======================= -->
+<div class="esercizio"><span class="num">5)</span><div class="testo">
+<p>Si scrivano le equazioni della trasformazione affine nel piano che lascia fissi i punti della retta \(2x-y+1=0\) e muta il punto \(C=(1,0)\) nel
+punto \(C'=(-1,2)\). Determinare direzioni invarianti, punti e rette uniti. Si dia una descrizione geometrica della trasformazione.</p>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo ricordare che una trasformazione affine \(\ x'=ax+by+e,\ \ y'=cx+dy+f\ \) ha <b>6 coefficienti</b>
+ed è determinata quando si conoscono le immagini di <b>3 punti non allineati</b>.</p>
+
+<div class="svolg"><ol>
+<li><p><b>Equazioni.</b> Prendiamo due punti della retta fissa: \(Q_1=(0,1)\) e \(Q_2=(1,3)\) (verificano \(2x-y+1=0\)). Le condizioni sono
+\(Q_1\mapsto Q_1,\ Q_2\mapsto Q_2,\ C\mapsto C'\) (i tre punti non sono allineati perché \(C\) non sta sulla retta):</p>
+\[\text{per } x':\ \begin{cases}b+e=0\\a+3b+e=1\\a+e=-1\end{cases}\qquad\qquad \text{per } y':\ \begin{cases}d+f=1\\c+3d+f=3\\c+f=2\end{cases}\]
+<p>Primo sistema: \(e=-b\), quindi \(a+2b=1\) e \(a-b=-1\); sottraendo \(3b=2\): \(b=\frac23,\ a=-\frac13,\ e=-\frac23\).<br>
+Secondo sistema: \(f=1-d\), quindi \(c+2d=2\) e \(c-d=1\); sottraendo \(3d=1\): \(d=\frac13,\ c=\frac43,\ f=\frac23\).</p>
+\[\boxed{\begin{cases}x'=\frac13(-x+2y-2)\\[1mm] y'=\frac13(4x+y+2)\end{cases}}\qquad A=\frac13\begin{pmatrix}-1&2\\4&1\end{pmatrix},\quad \det A=\frac19(-1-8)=-1\]
+<p><i>Verifica</i>: \(Q_1=(0,1)\mapsto\left(\frac{2-2}3,\frac{1+2}3\right)=(0,1)\) ✓; \(C=(1,0)\mapsto\left(\frac{-1-2}3,\frac{4+2}3\right)=(-1,2)\) ✓.</p></li>
+
+<li><p><b>Direzioni invarianti.</b> \(\operatorname{tr}A=0,\ \det A=-1\), quindi \(\lambda^2-0\cdot\lambda-1=0\ \rightarrow\ \lambda=\pm1\).<br>
+\(\lambda=1\): \(\ (A-I)\vec v=\vec 0\ \rightarrow\ -\frac43x+\frac23y=0\ \rightarrow\ y=2x\ \rightarrow\ \vec v_1=(1,2)\) (è la direzione della retta fissa, come doveva essere).<br>
+\(\lambda=-1\): \(\ (A+I)\vec v=\vec0\ \rightarrow\ \frac23x+\frac23y=0\ \rightarrow\ \vec v_2=(1,-1)\).
+\[\boxed{\text{direzioni invarianti: } (1,2)\ (\lambda=1),\quad (1,-1)\ (\lambda=-1)}\]</p></li>
+
+<li><p><b>Punti uniti.</b> \(x'=x,\ y'=y\ \rightarrow\ 3x=-x+2y-2\) e \(3y=4x+y+2\), cioè entrambe \(2x-y+1=0\).
+\[\boxed{\text{punti uniti: tutti e soli i punti della retta } 2x-y+1=0}\]</p></li>
+
+<li><p><b>Rette unite.</b> Devono avere direzione invariante.<br>
+<i>Direzione \((1,-1)\)</i>, rette \(x+y=c\): \(\ x'+y'=\frac13(-x+2y-2+4x+y+2)=x+y\). Quindi <b>ogni</b> retta \(x+y=c\) è unita (i punti si spostano su di essa).<br>
+<i>Direzione \((1,2)\)</i>, rette \(2x-y=c\): \(\ 2x'-y'=\frac13(-2x+4y-4-4x-y-2)=-2x+y-2=-c-2\). Unita se \(c=-c-2\), cioè \(c=-1\): è la retta \(2x-y+1=0\), che è addirittura di punti fissi.
+\[\boxed{\text{rette unite: } 2x-y+1=0\ \text{(puntualmente fissa) e tutte le rette } x+y=c}\]</p></li>
+
+<li><p><b>Descrizione geometrica.</b> \(A^2=I\) e c'è una retta di punti fissi: è una <b>simmetria obliqua (affine)</b> di <b>asse</b>
+\(2x-y+1=0\) e <b>direzione</b> \((1,-1)\). Ogni punto \(P\) va in \(P'\) muovendosi parallelamente a \((1,-1)\), e l'asse passa per il punto medio di \(PP'\):
+per \(C\) e \(C'\) il punto medio è \((0,1)\), che sta sull'asse ✓. Non è una simmetria ortogonale perché \((1,-1)\cdot(1,2)=-1\neq0\).
+Conserva le aree (\(|\det A|=1\)) e inverte l'orientamento (\(\det A<0\)).</p></li>
+</ol></div>
+
+<!-- ======================= TEORIA ======================= -->
+<div class="teoria">
+<div class="esercizio"><span class="num">T)</span><div class="testo"><p><b>Prova teorica</b> — T.1: Endomorfismi diagonalizzabili – Teorema spettrale.
+&nbsp; T.2: Omomorfismi tra spazi vettoriali: definizione, nucleo, immagine e relazione dimensionale. Dimostrare che un omomorfismo \(T\) è iniettivo
+(<i>monomorfismo</i>) se e solo se \(\ker T=\{\vec0\}\).</p></div></div>
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b> (traccia di risposta):</p>
+<p><b>T.1</b> Un endomorfismo \(T:V\to V\) (con \(\dim V=n\)) è <b>diagonalizzabile</b> se esiste una base di \(V\) formata da <b>autovettori</b> di \(T\);
+in tale base la matrice di \(T\) è diagonale, con gli autovalori sulla diagonale. Equivalentemente: la matrice \(A\) è simile a una diagonale,
+\(D=P^{-1}AP\), dove le colonne di \(P\) sono gli autovettori. <i>Criterio</i>: \(T\) è diagonalizzabile se e solo se (1) il polinomio caratteristico
+ha tutte le radici reali e (2) per ogni autovalore la molteplicità geometrica \(m_g=\dim\ker(A-\lambda I)\) è uguale alla molteplicità
+algebrica \(m_a\). In particolare, se ci sono \(n\) autovalori distinti \(T\) è diagonalizzabile.
+<b>Teorema spettrale</b>: se \(A\) è una matrice reale <b>simmetrica</b> (cioè \(T\) è un endomorfismo autoaggiunto di uno spazio euclideo), allora
+tutti i suoi autovalori sono reali, autovettori relativi ad autovalori distinti sono ortogonali e \(A\) è diagonalizzabile mediante una matrice
+<b>ortogonale</b>: esiste una base <b>ortonormale</b> di autovettori, \(D=P^TAP\) con \(P^T=P^{-1}\). È il teorema che si usa per ridurre a forma
+normale le coniche (rotazione degli assi).</p>
+<p><b>T.2</b> Un <b>omomorfismo</b> (applicazione lineare) \(T:V\to W\) è una funzione tale che \(T(u+v)=T(u)+T(v)\) e \(T(\alpha v)=\alpha T(v)\).
+Il <b>nucleo</b> è \(\ker T=\{v\in V:\ T(v)=\vec0\}\), sottospazio di \(V\); l'<b>immagine</b> è \(\operatorname{Im}T=\{T(v):v\in V\}\), sottospazio di
+\(W\). <b>Relazione dimensionale</b> (teorema nullità + rango): \(\ \dim V=\dim\ker T+\dim\operatorname{Im}T\).
+<i>Teorema</i>: \(T\) è iniettivo \(\iff\ker T=\{\vec0\}\).
+<i>Dim.</i> (\(\Rightarrow\)) Si ha sempre \(T(\vec0)=\vec0\). Se \(v\in\ker T\), allora \(T(v)=\vec0=T(\vec0)\) e, per l'iniettività, \(v=\vec0\).
+(\(\Leftarrow\)) Se \(T(u)=T(v)\), per la linearità \(T(u-v)=T(u)-T(v)=\vec0\), quindi \(u-v\in\ker T=\{\vec0\}\), cioè \(u=v\). \(\blacksquare\)</p>
+</div>
+</section>

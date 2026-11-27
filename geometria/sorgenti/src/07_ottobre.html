@@ -1,0 +1,189 @@
+<section class="appello">
+<div class="titolo">Prova di Geometria del 19 ottobre 2026</div>
+<p class="sottotitolo">Prof. Bruno A. Cifra — “Giustificare adeguatamente tutti i passaggi”</p>
+
+<!-- ======================= ESERCIZIO 1 ======================= -->
+<div class="esercizio"><span class="num">1)</span><div class="testo">
+<p>Si studi al variare dei parametri \(k\) e \(h\) la compatibilità del sistema
+\[\begin{cases} kx+y=2h\\ x+ky=k^2+1\\ kx+y+z=h\end{cases}\]
+e se ne dia un'interpretazione geometrica in \(\mathbb{R}^3\).
+Si esprimano esplicitamente le soluzioni (se esistono) per \(k=2\) e \(h=0\), con uno dei metodi conosciuti (Cramer, Gauss, ecc…).</p>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo utilizzare il <b>teorema di Rouché-Capelli</b>.</p>
+
+<div class="svolg"><ol>
+<li><p><b>Determinante.</b>
+\[A=\begin{pmatrix}k&1&0\\1&k&0\\k&1&1\end{pmatrix}\qquad(A|B)=\left(\begin{array}{ccc|c}k&1&0&2h\\1&k&0&k^2+1\\k&1&1&h\end{array}\right)\]
+Sviluppando lungo la terza colonna (solo \(a_{33}=1\) è non nullo):
+\[\det A=1\cdot\begin{vmatrix}k&1\\1&k\end{vmatrix}=\boxed{k^2-1=(k-1)(k+1)}\]</p>
+<p><b>Caso \(k\neq\pm1\).</b> \(\operatorname{rg}A=\operatorname{rg}(A|B)=3\): <b>una sola soluzione</b> per ogni \(h\). (Notiamo subito che sottraendo la 1ª equazione dalla 3ª
+si ottiene \(z=h-2h=-h\).) Tre piani per un punto.</p>
+<p><b>Caso \(k=1\).</b> Il sistema è \(\ x+y=2h,\ \ x+y=2,\ \ x+y+z=h\). \(\operatorname{rg}A=2\) (le prime due righe sono uguali, la terza ha la \(z\)). Le prime due equazioni
+sono compatibili solo se \(2h=2\), cioè \(h=1\):</p>
+<ul style="margin:0.1em 0 0.3em 1.2em;padding:0">
+<li>\(h=1\): \(\infty^1\) soluzioni: \(x+y=2\) e \(z=h-(x+y)=1-2=-1\), cioè \((x,y,z)=(2-t,\ t,\ -1)\);</li>
+<li>\(h\neq1\): incompatibile.</li>
+</ul>
+<p><b>Caso \(k=-1\).</b> Il sistema è \(\ -x+y=2h,\ \ x-y=2,\ \ -x+y+z=h\). La seconda equivale a \(-x+y=-2\): compatibile con la prima solo se \(2h=-2\), cioè \(h=-1\):</p>
+<ul style="margin:0.1em 0 0.3em 1.2em;padding:0">
+<li>\(h=-1\): \(\infty^1\) soluzioni: \(x=y+2\), \(z=h-(-x+y)=-1+2=1\), cioè \((x,y,z)=(t+2,\ t,\ 1)\);</li>
+<li>\(h\neq-1\): incompatibile.</li>
+</ul>
+<table class="riass">
+<tr><th>valori</th><th>\(\operatorname{rg}A\)</th><th>\(\operatorname{rg}(A|B)\)</th><th>soluzioni</th><th>geometria</th></tr>
+<tr><td>\(k\neq\pm1\)</td><td>3</td><td>3</td><td>una</td><td>3 piani per un punto</td></tr>
+<tr><td>\(k=1,h=1\) / \(k=-1,h=-1\)</td><td>2</td><td>2</td><td>\(\infty^1\)</td><td>\(\pi_1\equiv\pi_2\), tagliati da \(\pi_3\) in una retta</td></tr>
+<tr><td>\(k=1,h\neq1\) / \(k=-1,h\neq-1\)</td><td>2</td><td>3</td><td>nessuna</td><td>\(\pi_1\parallel\pi_2\) distinti, tagliati da \(\pi_3\) in due rette parallele</td></tr>
+</table>
+<p><b>Interpretazione geometrica.</b> I piani \(\pi_1:kx+y=2h\) e \(\pi_2:x+ky=k^2+1\) non contengono la \(z\): sono <b>paralleli all'asse \(z\)</b>. Sono paralleli tra loro quando le
+normali \((k,1,0)\) e \((1,k,0)\) sono proporzionali, cioè per \(k=\pm1\). Il piano \(\pi_3\) (normale \((k,1,1)\)) non è mai parallelo agli altri due.</p>
+
+<p><b>Soluzioni per \(k=2,\ h=0\).</b> \(\det A=3\neq0\). Il sistema è \(\ 2x+y=0,\ \ x+2y=5,\ \ 2x+y+z=0\).
+Dalla 3ª meno la 1ª: \(z=0\). Dalla 1ª: \(y=-2x\); nella 2ª: \(x-4x=5\Rightarrow x=-\frac53\), \(y=\frac{10}3\).
+\[\boxed{(x,y,z)=\left(-\tfrac53,\ \tfrac{10}3,\ 0\right)}\]
+<i>Verifica</i>: \(-\frac{10}3+\frac{10}3=0\) ✓; \(-\frac53+\frac{20}3=5\) ✓; \(0+0=0\) ✓.</p></li>
+</ol></div>
+
+<!-- ======================= ESERCIZIO 2 ======================= -->
+<div class="esercizio"><span class="num">2)</span><div class="testo">
+<p>Assegnate le rette \(\ r_1:\begin{cases}x=1-t\\y=t\\z=0\end{cases}\) e \(\ r_2:\begin{cases}x=1+s\\y=0\\z=s\end{cases}\)</p>
+<ol class="num">
+<li>si scriva l'equazione del piano \(\alpha\) a cui appartengono;</li>
+<li>si scrivano le equazioni delle rette passanti per \(A=(0,1,0)\) e formanti con \(r_1\) e \(r_2\) un triangolo di area \(2\sqrt3\).</li>
+</ol>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo ricordare che l'<b>area di un triangolo</b> di lati \(\vec a\) e \(\vec b\) (uscenti dallo stesso vertice) è
+\(\ \frac12|\vec a\wedge\vec b|\ \), cioè metà dell'area del parallelogramma.</p>
+
+<div class="svolg"><ol class="num">
+<li><p>Per \(t=0\) e \(s=0\) entrambe le rette passano per \(O'=(1,0,0)\): sono <b>incidenti</b>, quindi complanari. Direzioni: \(\vec u=(-1,1,0)\), \(\vec v=(1,0,1)\).
+\[\vec n=\vec u\wedge\vec v=\begin{vmatrix}\vec i&\vec j&\vec k\\-1&1&0\\1&0&1\end{vmatrix}=\vec i(1-0)-\vec j(-1-0)+\vec k(0-1)=(1,\ 1,\ -1)\]
+\[1\cdot(x-1)+1\cdot y-1\cdot z=0\ \rightarrow\ \boxed{\alpha:\ x+y-z-1=0}\]</p></li>
+
+<li><p><b>Osservazione importante.</b> Il punto \(A=(0,1,0)\) <b>sta su \(r_1\)</b> (per \(t=1\)). Quindi una retta \(\ell\) per \(A\) incontra \(r_1\) proprio in \(A\); per formare un
+triangolo deve incontrare anche \(r_2\) in un punto \(B\) (e quindi stare nel piano \(\alpha\)). Il triangolo è \(O'AB\), con \(O'=r_1\cap r_2\).</p>
+<p>Prendiamo \(B=(1+s,\ 0,\ s)\in r_2\). I lati uscenti da \(O'\) sono
+\(\ \overrightarrow{O'A}=(-1,1,0)\ \) e \(\ \overrightarrow{O'B}=(s,0,s)=s(1,0,1)\):
+\[\text{Area}=\frac12\left|\overrightarrow{O'A}\wedge\overrightarrow{O'B}\right|=\frac12|s|\,\bigl|(-1,1,0)\wedge(1,0,1)\bigr|=\frac12|s|\,|(1,1,-1)|=\frac{\sqrt3}2|s|\]
+Imponiamo l'area: \(\ \frac{\sqrt3}2|s|=2\sqrt3\ \Rightarrow\ |s|=4\ \Rightarrow\ s=\pm4\):
+\[B_1=(5,0,4),\qquad B_2=(-3,0,-4)\]
+<b>Rette \(AB_1\) e \(AB_2\).</b> Direzioni \(B_1-A=(5,-1,4)\) e \(B_2-A=(-3,-1,-4)\parallel(3,1,4)\):
+\[\ell_1:\begin{cases}x=5\lambda\\y=1-\lambda\\z=4\lambda\end{cases}\rightarrow\ \boxed{\ell_1:\begin{cases}x+5y-5=0\\z+4y-4=0\end{cases}}\qquad
+\ell_2:\begin{cases}x=3\lambda\\y=1+\lambda\\z=4\lambda\end{cases}\rightarrow\ \boxed{\ell_2:\begin{cases}x-3y+3=0\\z-4y+4=0\end{cases}}\]
+(per la forma cartesiana: in \(\ell_1\) \(\lambda=1-y\), da cui \(x=5-5y\) e \(z=4-4y\); in \(\ell_2\) \(\lambda=y-1\), da cui \(x=3y-3\) e \(z=4y-4\)).</p>
+<div class="nota"><p><b>Controllo con la trigonometria.</b> L'angolo in \(O'\) ha \(\cos\theta=\frac{\vec u\cdot\vec v}{|\vec u||\vec v|}=\frac{-1}{2}\), quindi \(\theta=120^\circ\).
+Con \(\overline{O'A}=\sqrt2\) e \(\overline{O'B}=4\sqrt2\): \(\ \text{Area}=\frac12\cdot\sqrt2\cdot4\sqrt2\cdot\sin120^\circ=4\cdot\frac{\sqrt3}2=2\sqrt3\) ✓.</p></div></li>
+</ol></div>
+
+<!-- ======================= ESERCIZIO 3 ======================= -->
+<div class="esercizio"><span class="num">3)</span><div class="testo">
+<p>Dopo aver mostrato che \(b=\left\{b_1=\begin{pmatrix}1\\1\\2\end{pmatrix},\ b_2=\begin{pmatrix}1\\0\\1\end{pmatrix},\ b_3=\begin{pmatrix}2\\0\\0\end{pmatrix}\right\}\) è una base per \(\mathbb{R}^3\),
+si consideri l'endomorfismo \(T:\mathbb{R}^3\to\mathbb{R}^3\) definito da \(\ Tb_1=3b_1,\ \ Tb_2=b_1-b_3,\ \ Tb_3=b_3\).</p>
+<ol>
+<li>Si determinino \(A\) (base canonica) e \(A_b\);</li>
+<li>si descrivano (dimensione ed equazioni cartesiane nella base canonica) gli insiemi \(\ker T\) e \(\operatorname{Im}T\);</li>
+<li>si discuta la diagonalizzabilità di \(A\) e si scriva l'eventuale matrice diagonalizzante.</li>
+</ol>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: le colonne di \(A_b\) sono le componenti in base \(b\) di \(Tb_1,Tb_2,Tb_3\), che il testo ci dà già. Per la matrice canonica
+scriviamo \(e_1,e_2,e_3\) come combinazioni di \(b_1,b_2,b_3\).</p>
+
+<div class="svolg"><ol>
+<li><p><b>\(b\) è una base</b>: \(\det(b_1|b_2|b_3)=\begin{vmatrix}1&1&2\\1&0&0\\2&1&0\end{vmatrix}\). Sviluppando lungo la 2ª riga: \(-1\cdot\begin{vmatrix}1&2\\1&0\end{vmatrix}=-1\cdot(0-2)=2\neq0\) ✓.</p>
+<p><b>Matrice \(A_b\).</b> \(Tb_1=3b_1=(3,0,0)_b\), \(Tb_2=b_1-b_3=(1,0,-1)_b\), \(Tb_3=b_3=(0,0,1)_b\):
+\[\boxed{A_b=\begin{pmatrix}3&1&0\\0&0&0\\0&-1&1\end{pmatrix}}\]</p>
+<p><b>Matrice canonica.</b> \(e_1=\frac12b_3\); \(\ e_3=b_2-e_1=b_2-\frac12b_3\); \(\ e_2=b_1-e_1-2e_3\) (perché \(b_1=e_1+e_2+2e_3\)). Per linearità:
+\[T(e_1)=\tfrac12Tb_3=\tfrac12b_3=(1,0,0)\]
+\[T(e_3)=Tb_2-\tfrac12Tb_3=b_1-b_3-\tfrac12b_3=b_1-\tfrac32b_3=(1,1,2)-(3,0,0)=(-2,1,2)\]
+\[T(e_2)=Tb_1-T(e_1)-2T(e_3)=(3,3,6)-(1,0,0)-(-4,2,4)=(6,1,2)\]
+\[\boxed{A=\begin{pmatrix}1&6&-2\\0&1&1\\0&2&2\end{pmatrix}}\]
+<i>Verifica</i>: \(Ab_1=(1+6-4,\ 1+2,\ 2+4)=(3,3,6)=3b_1\) ✓; \(Ab_3=(2,0,0)=b_3\) ✓.</p></li>
+
+<li><p><b>Nucleo.</b> \(A\vec x=\vec0\): \(\ x+6y-2z=0,\ \ y+z=0,\ \ 2y+2z=0\). Dalla seconda \(z=-y\); nella prima \(x+6y+2y=0\Rightarrow x=-8y\). Con \(y=-1\):
+\[\boxed{\ker T=\operatorname{span}\{(8,-1,1)\}:\ \begin{cases}x+6y-2z=0\\y+z=0\end{cases},\qquad\dim\ker T=1}\]
+<b>Immagine.</b> \(\dim\operatorname{Im}T=3-1=2\). Dalle immagini date: \(\operatorname{Im}T=\operatorname{span}\{3b_1,\ b_1-b_3,\ b_3\}=\operatorname{span}\{b_1,b_3\}=\operatorname{span}\{(1,1,2),(2,0,0)\}\).
+Normale al piano: \((1,1,2)\wedge(2,0,0)=(0,4,-2)\parallel(0,2,-1)\):
+\[\boxed{\operatorname{Im}T:\ 2y-z=0,\qquad\dim\operatorname{Im}T=2}\]
+(controllo: le colonne di \(A\), \((1,0,0),(6,1,2),(-2,1,2)\), soddisfano tutte \(2y-z=0\) ✓).</p></li>
+
+<li><p><b>Diagonalizzabilità.</b> Il polinomio caratteristico si calcola comodamente su \(A_b\) (matrici simili hanno lo stesso polinomio). Sviluppando lungo la 2ª riga:
+\[\det(A_b-\lambda I)=\begin{vmatrix}3-\lambda&1&0\\0&-\lambda&0\\0&-1&1-\lambda\end{vmatrix}=-\lambda\,(3-\lambda)(1-\lambda)\ \rightarrow\ \lambda=0,\ 1,\ 3\]
+Tre autovalori <b>distinti</b>: \(\boxed{A \text{ è diagonalizzabile}}\). Autovettori (in base canonica):
+\(\lambda=0\): il nucleo, \((8,-1,1)\); \(\ \lambda=1\): \(Tb_3=b_3\), quindi \(b_3\parallel(1,0,0)\); \(\ \lambda=3\): \(Tb_1=3b_1\), quindi \(b_1=(1,1,2)\).
+\[\boxed{P=\begin{pmatrix}8&1&1\\-1&0&1\\1&0&2\end{pmatrix},\qquad P^{-1}AP=\begin{pmatrix}0&0&0\\0&1&0\\0&0&3\end{pmatrix}}\]
+(\(\det P=3\neq0\); le colonne di \(P\) sono gli autovettori, nello stesso ordine degli autovalori sulla diagonale).</p></li>
+</ol></div>
+
+<!-- ======================= ESERCIZIO 4 ======================= -->
+<div class="esercizio"><span class="num">4)</span><div class="testo">
+<p>Data la conica \(2xy+4x-2y+1=0\)</p>
+<ol>
+<li>darne la classificazione affine;</li>
+<li>determinarne assi, vertici, fuochi ed eventuali asintoti (nel riferimento originale);</li>
+<li>si riduca a forma normale (metrica) e si individui una trasformazione normalizzante.</li>
+</ol>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo usare le matrici \(B\) (completa) e \(A\) (parte quadratica) come nell'appello di settembre. Qui c'è
+anche un trucco: l'equazione si può <b>fattorizzare</b> e scrivere nella forma \((x-x_0)(y-y_0)=\text{cost}\), tipica dell'<b>iperbole equilatera</b> riferita agli asintoti.</p>
+
+<div class="svolg"><ol>
+<li><p><b>Classificazione.</b> \(a_{11}=0,\ a_{12}=1,\ a_{22}=0,\ a_{13}=2,\ a_{23}=-1,\ a_{33}=1\):
+\[B=\begin{pmatrix}0&1&2\\1&0&-1\\2&-1&1\end{pmatrix},\quad\det B=0-1(1+2)+2(-1-0)=-5\neq0;\qquad A=\begin{pmatrix}0&1\\1&0\end{pmatrix},\quad\det A=-1<0\]
+\(\det B\neq0\) e \(\det A<0\): <b>iperbole</b> non degenere. Inoltre \(\operatorname{tr}A=0\): è un'<b>iperbole equilatera</b> (asintoti perpendicolari).</p></li>
+
+<li><p><b>Fattorizzazione.</b> Osserviamo che \(2(x-1)(y+2)=2xy+4x-2y-4\). Quindi
+\[2xy+4x-2y+1=2(x-1)(y+2)+5=0\ \rightarrow\ (x-1)(y+2)=-\tfrac52\]
+<b>Centro</b> \(C=(1,-2)\). <b>Asintoti</b>: \(\boxed{x=1\ \ \text{e}\ \ y=-2}\).
+<b>Assi</b>: le bisettrici degli asintoti per \(C\), con coefficiente angolare \(\pm1\). Poiché il prodotto \((x-1)(y+2)\) è <b>negativo</b>, i rami stanno nel 2° e nel 4° “quadrante”
+rispetto a \(C\), cioè attorno alla bisettrice di coefficiente angolare \(-1\):
+\[\boxed{\text{asse trasverso: } x+y+1=0}\qquad\boxed{\text{asse non trasverso: } x-y-3=0}\]</p>
+<div class="fig-center"><img src="fig/a7_iperbole.svg" width="270"><div class="didascalia">l'iperbole equilatera dell'esercizio 4</div></div>
+<p><b>Vertici e fuochi.</b> Sull'asse trasverso i punti hanno la forma \(C+d\,(1,-1)\), cioè \(x-1=d,\ y+2=-d\). Sostituendo: \(-d^2=-\frac52\Rightarrow d=\pm\frac{\sqrt{10}}2\).
+La distanza dal centro è \(a=|d|\sqrt2=\sqrt5\); per l'iperbole equilatera \(b=a=\sqrt5\) e \(c=\sqrt{a^2+b^2}=\sqrt{10}\), cioè \(d=\pm\frac{\sqrt{10}}{\sqrt2}=\pm\sqrt5\) per i fuochi:
+\[\boxed{V_{1,2}=\left(1\pm\tfrac{\sqrt{10}}2,\ -2\mp\tfrac{\sqrt{10}}2\right)}\qquad\boxed{F_{1,2}=\left(1\pm\sqrt5,\ -2\mp\sqrt5\right)}\]
+<i>Verifica</i>: \(|\overline{V_1F_2}-\overline{V_1F_1}|=2\sqrt5=2a\) ✓.</p></li>
+
+<li><p><b>Forma normale.</b> Asse \(X\) lungo l'asse trasverso (direzione \((1,-1)\)), asse \(Y\) lungo l'altro (direzione \((1,1)\)), origine in \(C\):
+\[\boxed{\begin{cases}X=\dfrac{x-y-3}{\sqrt2}\\[2mm]Y=\dfrac{x+y+1}{\sqrt2}\end{cases}}\qquad\det\begin{pmatrix}\frac1{\sqrt2}&-\frac1{\sqrt2}\\\frac1{\sqrt2}&\frac1{\sqrt2}\end{pmatrix}=1\]
+Inversa: \(x-1=\frac{X+Y}{\sqrt2}\), \(y+2=\frac{Y-X}{\sqrt2}\). Quindi \((x-1)(y+2)=\frac{(Y+X)(Y-X)}{2}=\frac{Y^2-X^2}2=-\frac52\), cioè
+\[\boxed{\frac{X^2}{5}-\frac{Y^2}{5}=1}\]</p></li>
+</ol></div>
+
+<!-- ======================= ESERCIZIO 5 ======================= -->
+<div class="esercizio"><span class="num">5)</span><div class="testo">
+<p>Data nel piano la seguente trasformazione \(\begin{cases}x'=2x-3y+1\\y'=x-2y-4\end{cases}\)
+determinare eventuali direzioni invarianti, punti e rette uniti. Si dia una descrizione geometrica della trasformazione.</p>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: è lo stesso tipo di trasformazione dell'appello di gennaio (Es. 5): seguiamo lo stesso schema.</p>
+
+<div class="svolg"><ol>
+<li><p><b>Matrice.</b> \(A=\begin{pmatrix}2&-3\\1&-2\end{pmatrix}\), \(B=\begin{pmatrix}1\\-4\end{pmatrix}\), \(\det A=-4+3=-1\): affine, <b>conserva le aree</b>, <b>inverte l'orientamento</b>;
+non è un'isometria (\(A\) non è ortogonale).</p></li>
+<li><p><b>Direzioni invarianti.</b> \(\operatorname{tr}A=0,\ \det A=-1\Rightarrow\lambda^2-1=0\Rightarrow\lambda=\pm1\).
+\(\lambda=1\): \(x-3y=0\Rightarrow(3,1)\); \(\lambda=-1\): \(3x-3y=0\Rightarrow(1,1)\).
+\[\boxed{(3,1)\ (\lambda=1),\qquad(1,1)\ (\lambda=-1)}\]</p></li>
+<li><p><b>Punti uniti.</b> \(x=2x-3y+1\Rightarrow x-3y=-1\); \(\ y=x-2y-4\Rightarrow x-3y=4\). Contraddittorie: \(\boxed{\text{nessun punto unito}}\).</p></li>
+<li><p><b>Rette unite.</b> Direzione \((3,1)\), rette \(x-3y=c\): \(x'-3y'=(2x-3y+1)-3(x-2y-4)=-x+3y+13=-c+13\); unita se \(c=\frac{13}2\).
+Direzione \((1,1)\), rette \(x-y=c\): \(x'-y'=x-y+5=c+5\neq c\): nessuna.
+\[\boxed{\text{unica retta unita: } 2x-6y-13=0}\]</p></li>
+<li><p><b>Descrizione.</b> \(A^2=\begin{pmatrix}4-3&-6+6\\2-2&-3+4\end{pmatrix}=I\): la parte lineare è una <b>simmetria obliqua</b>. Applicando due volte:
+\(P''=P+(A+I)B=P+\begin{pmatrix}3&-3\\1&-1\end{pmatrix}\begin{pmatrix}1\\-4\end{pmatrix}=P+\begin{pmatrix}15\\5\end{pmatrix}\), traslazione parallela a \((3,1)\).</p>
+\[\boxed{\text{glissosimmetria obliqua: asse } 2x-6y-13=0,\ \text{direzione } (1,1),\ \text{glissé } \vec w=\left(\tfrac{15}2,\tfrac52\right)}\]
+<p>È una trasformazione affine equivalente (conserva le aree), non isometrica, che inverte l'orientamento.</p></li>
+</ol></div>
+
+<!-- ======================= TEORIA ======================= -->
+<div class="teoria">
+<div class="esercizio"><span class="num">T)</span><div class="testo"><p><b>Prova teorica</b> — T.1: Matrici diagonalizzabili e condizioni di diagonalizzabilità. Teorema spettrale.
+&nbsp; T.2: Omomorfismi tra spazi vettoriali: definizione, nucleo, immagine e relazione dimensionale. Dimostrare che un omomorfismo \(T\) è iniettivo se e solo se \(\ker T=\{\vec0\}\).</p></div></div>
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: sono essenzialmente le domande dell'appello del 13 febbraio (vedi la traccia di risposta lì). In più, per T.1, conviene ricordare
+il collegamento con l'esercizio 3 appena svolto: una matrice \(A\in\mathbb{R}^{n\times n}\) è diagonalizzabile se esiste \(P\) invertibile con \(P^{-1}AP=D\) diagonale; le colonne di \(P\)
+sono autovettori e gli elementi di \(D\) i corrispondenti autovalori. Condizione necessaria e sufficiente: tutti gli autovalori reali e \(m_g(\lambda)=m_a(\lambda)\) per ognuno
+(sufficiente: \(n\) autovalori distinti, come nell'Es. 3). Per una matrice simmetrica il teorema spettrale garantisce che \(P\) si può scegliere <b>ortogonale</b>.</p>
+</div>
+</section>

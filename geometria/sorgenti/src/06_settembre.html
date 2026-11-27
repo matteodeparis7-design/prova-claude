@@ -1,0 +1,209 @@
+<section class="appello">
+<div class="titolo">Prova di Geometria dell'11 settembre 2026</div>
+<p class="sottotitolo">Prof. Bruno A. Cifra — “Giustificare adeguatamente tutti i passaggi”</p>
+
+<!-- ======================= ESERCIZIO 1 ======================= -->
+<div class="esercizio"><span class="num">1)</span><div class="testo">
+<p>Si studi al variare dei parametri reali \(k\) ed \(h\) la compatibilità del sistema
+\[\begin{cases} k^2x+ky+z=2\\ kx+k^2y+z=1+h\\ x+y+kz=2h^2\end{cases}\]
+e se ne dia un'interpretazione geometrica in \(\mathbb{R}^3\).
+Per \(k=2\) e \(h=-2\) si esplicitino, se esistono, le soluzioni con uno dei metodi conosciuti (Cramer, Gauss, ecc…).</p>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo utilizzare il <b>teorema di Rouché-Capelli</b>, partendo dal determinante di \(A\).</p>
+
+<div class="svolg"><ol>
+<li><p><b>Determinante.</b>
+\[A=\begin{pmatrix}k^2&k&1\\k&k^2&1\\1&1&k\end{pmatrix}\qquad(A|B)=\left(\begin{array}{ccc|c}k^2&k&1&2\\k&k^2&1&1+h\\1&1&k&2h^2\end{array}\right)\]
+Facciamo \(R_1\to R_1-R_2\): la prima riga diventa \((k^2-k,\ k-k^2,\ 0)=k(k-1)\,(1,\ -1,\ 0)\). Raccogliamo \(k(k-1)\) e poi sommiamo la 1ª colonna alla 2ª
+(\(C_2\to C_2+C_1\)) per creare un altro zero:
+\[\det A=k(k-1)\begin{vmatrix}1&-1&0\\k&k^2&1\\1&1&k\end{vmatrix}=k(k-1)\begin{vmatrix}1&0&0\\k&k^2+k&1\\1&2&k\end{vmatrix}=k(k-1)\bigl[(k^2+k)k-2\bigr]\]
+\[\det A=k(k-1)(k^3+k^2-2)=k(k-1)(k-1)(k^2+2k+2)=\boxed{k(k-1)^2(k^2+2k+2)}\]
+(\(k^3+k^2-2\) si annulla per \(k=1\); con Ruffini \(k^3+k^2-2=(k-1)(k^2+2k+2)\)). Il fattore \(k^2+2k+2\) ha discriminante \(4-8<0\): <b>non si annulla mai</b>.
+Quindi \(\det A=0\iff k=0\) oppure \(k=1\).</p>
+
+<p><b>Caso \(k\neq0,1\).</b> \(\operatorname{rg}A=\operatorname{rg}(A|B)=3\): compatibile per ogni \(h\), <b>una sola soluzione</b>; tre piani per un punto.</p>
+
+<p><b>Caso \(k=0\).</b> Il sistema è \(\ z=2,\ \ z=1+h,\ \ x+y=2h^2\). \(\operatorname{rg}A=2\) (le prime due righe di \(A\) sono uguali, la terza no).
+Le prime due equazioni sono compatibili solo se \(1+h=2\), cioè \(h=1\):</p>
+<ul style="margin:0.1em 0 0.3em 1.2em;padding:0">
+<li>\(h=1\): \(\operatorname{rg}(A|B)=2\), <b>\(\infty^1\) soluzioni</b>: \((x,y,z)=(2-t,\ t,\ 2)\). Geometria: i piani \(z=2\) e \(z=1+h\) coincidono e il piano \(x+y=2\) li taglia in una retta.</li>
+<li>\(h\neq1\): \(\operatorname{rg}(A|B)=3\), <b>incompatibile</b>. Geometria: \(z=2\) e \(z=1+h\) sono piani paralleli distinti, tagliati dal piano \(x+y=2h^2\) in due rette parallele.</li>
+</ul>
+
+<p><b>Caso \(k=1\).</b> Tutte le equazioni hanno primo membro \(x+y+z\), con termini noti \(2,\ 1+h,\ 2h^2\): <b>è la stessa situazione dell'appello di gennaio</b>.
+\(\operatorname{rg}A=1\); compatibile solo se \(1+h=2\) e \(2h^2=2\), cioè \(h=1\) (\(\infty^2\) soluzioni, tre piani coincidenti).
+Per \(h\neq1\) incompatibile: per \(h=-1\) \(\pi_1\equiv\pi_3\) e \(\pi_2\) parallelo; per \(h=-\frac12\) \(\pi_2\equiv\pi_3\) e \(\pi_1\) parallelo; altrimenti tre piani paralleli distinti.</p>
+<table class="riass">
+<tr><th>valori</th><th>\(\operatorname{rg}A\)</th><th>\(\operatorname{rg}(A|B)\)</th><th>soluzioni</th></tr>
+<tr><td>\(k\neq0,1\)</td><td>3</td><td>3</td><td>una</td></tr>
+<tr><td>\(k=0,\ h=1\)</td><td>2</td><td>2</td><td>\(\infty^1\)</td></tr>
+<tr><td>\(k=0,\ h\neq1\)</td><td>2</td><td>3</td><td>nessuna</td></tr>
+<tr><td>\(k=1,\ h=1\)</td><td>1</td><td>1</td><td>\(\infty^2\)</td></tr>
+<tr><td>\(k=1,\ h\neq1\)</td><td>1</td><td>2</td><td>nessuna</td></tr>
+</table>
+
+<p><b>Soluzioni per \(k=2,\ h=-2\).</b> \(\det A=2\cdot1\cdot10=20\). Il sistema è
+\[\begin{cases}4x+2y+z=2\\2x+4y+z=-1\\x+y+2z=8\end{cases}\]
+Con Gauss: (1ª − 2ª) \(\ 2x-2y=3\ \Rightarrow\ x=y+\frac32\). Sostituiamo nella 2ª e nella 3ª:
+\[2y+3+4y+z=-1\Rightarrow 6y+z=-4\qquad\qquad y+\tfrac32+y+2z=8\Rightarrow 2y+2z=\tfrac{13}2\]
+Dalla prima \(z=-4-6y\); nella seconda: \(2y-8-12y=\frac{13}2\Rightarrow-10y=\frac{29}2\Rightarrow y=-\frac{29}{20}\). Quindi \(z=-4+\frac{174}{20}=\frac{94}{20}=\frac{47}{10}\) e
+\(x=-\frac{29}{20}+\frac{30}{20}=\frac1{20}\).
+\[\boxed{(x,y,z)=\left(\tfrac1{20},\ -\tfrac{29}{20},\ \tfrac{47}{10}\right)}\]
+<i>Verifica</i>: \(\frac{4-58+94}{20}=2\) ✓; \(\ \frac{2-116+94}{20}=-1\) ✓; \(\ \frac{1-29+188}{20}=8\) ✓.</p></li>
+</ol></div>
+
+<!-- ======================= ESERCIZIO 2 ======================= -->
+<div class="esercizio"><span class="num">2)</span><div class="testo">
+<p>Assegnate le rette \(\ r:\begin{cases}x=1+t\\y=2-t\\z=2t\end{cases}\) e \(\ s:\begin{cases}x=2-s\\y=2+s\\z=1+s\end{cases}\)</p>
+<ol class="num">
+<li>si dimostri che non sono complanari e si scrivano le equazioni dei piani paralleli \(\alpha\) e \(\beta\) a cui appartengono;</li>
+<li>si trovino i punti di minima distanza.</li>
+</ol>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo ricordare che due rette (con punti \(P,Q\) e direzioni \(\vec u,\vec v\)) sono <b>complanari</b> se e
+solo se il <b>prodotto misto</b> \(\ \overrightarrow{PQ}\cdot(\vec u\wedge\vec v)=\det(\overrightarrow{PQ}\,|\,\vec u\,|\,\vec v)\ \) è nullo. Se non lo è, le rette sono
+<b>sghembe</b>.</p>
+
+<div class="svolg"><ol class="num">
+<li><p>Dai dati: \(P=(1,2,0),\ \vec u=(1,-1,2)\) per \(r\); \(Q=(2,2,1),\ \vec v=(-1,1,1)\) per \(s\); \(\overrightarrow{PQ}=(1,0,1)\).
+\[\det\begin{pmatrix}1&0&1\\1&-1&2\\-1&1&1\end{pmatrix}=1(-1-2)-0+1(1-1)=-3\neq0\]
+Il prodotto misto non è nullo: le rette sono <b>sghembe</b> (non complanari).</p>
+<p>Due piani paralleli che contengono \(r\) e \(s\) devono avere entrambi come normale un vettore perpendicolare a \(\vec u\) e a \(\vec v\):
+\[\vec u\wedge\vec v=\begin{vmatrix}\vec i&\vec j&\vec k\\1&-1&2\\-1&1&1\end{vmatrix}=\vec i(-1-2)-\vec j(1+2)+\vec k(1-1)=(-3,-3,0)\ \parallel\ (1,1,0)\]
+\(\alpha\) passa per \(P\), \(\beta\) per \(Q\):
+\[\boxed{\alpha:\ x+y-3=0}\qquad\qquad\boxed{\beta:\ x+y-4=0}\]
+<i>Verifica</i>: i punti di \(r\) danno \((1+t)+(2-t)-3=0\) ✓, quelli di \(s\) danno \((2-s)+(2+s)-4=0\) ✓. La distanza tra i due piani (e quindi tra le rette) è
+\(\frac{|-3-(-4)|}{\sqrt{1+1}}=\frac1{\sqrt2}=\frac{\sqrt2}2\).</p></li>
+
+<li><p>I punti di minima distanza \(H\in r\) e \(K\in s\) sono quelli per cui il segmento \(HK\) è <b>perpendicolare a entrambe le rette</b> (è la
+“perpendicolare comune”). Con \(H=(1+t,\ 2-t,\ 2t)\) e \(K=(2-s,\ 2+s,\ 1+s)\):
+\[\overrightarrow{HK}=(1-s-t,\ \ s+t,\ \ 1+s-2t)\]
+\[\overrightarrow{HK}\cdot\vec u=(1-s-t)-(s+t)+2(1+s-2t)=3-6t=0\ \Rightarrow\ t=\tfrac12\]
+\[\overrightarrow{HK}\cdot\vec v=-(1-s-t)+(s+t)+(1+s-2t)=3s=0\ \Rightarrow\ s=0\]
+\[\boxed{H=\left(\tfrac32,\ \tfrac32,\ 1\right),\qquad K=(2,\ 2,\ 1)}\]
+<i>Verifica</i>: \(\overrightarrow{HK}=\left(\frac12,\frac12,0\right)\), parallelo alla normale \((1,1,0)\) ✓, e \(\overline{HK}=\sqrt{\frac14+\frac14}=\frac{\sqrt2}2\): la stessa distanza
+trovata con i piani ✓.</p></li>
+</ol></div>
+
+<!-- ======================= ESERCIZIO 3 ======================= -->
+<div class="esercizio"><span class="num">3)</span><div class="testo">
+<p>Siano \(M:\begin{cases}x-z=0\\y-w=0\end{cases}\) ed \(N=\operatorname{span}\left\{\begin{pmatrix}2\\1\\2\\1\end{pmatrix},\begin{pmatrix}1\\1\\0\\1\end{pmatrix},\begin{pmatrix}0\\1\\-2\\1\end{pmatrix}\right\}\)
+sottospazi di \(\mathbb{R}^4\).</p>
+<ol>
+<li>Si caratterizzino (dimensione ed equazioni cartesiane) i sottospazi \(V=(M+N)\) e \(W=(M\cap N)\);</li>
+<li>si dia la rappresentazione canonica del proiettore ortogonale \(W^\perp\).</li>
+</ol>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo usare la <b>formula di Grassmann</b>
+\(\ \dim(M+N)+\dim(M\cap N)=\dim M+\dim N\). Lo spazio somma è generato dall'unione delle basi; l'intersezione si trova imponendo ai vettori di \(N\) le equazioni di \(M\).</p>
+
+<div class="svolg"><ol>
+<li><p><b>Studiamo \(M\).</b> Due equazioni indipendenti in \(\mathbb{R}^4\): \(\dim M=2\). Da \(x=z,\ y=w\): \(\ M=\operatorname{span}\{(1,0,1,0),\ (0,1,0,1)\}\).</p>
+<p><b>Studiamo \(N\).</b> I tre generatori non sono indipendenti: \((2,1,2,1)-2(1,1,0,1)=(0,-1,2,-1)=-(0,1,-2,1)\). Quindi
+\[N=\operatorname{span}\{\vec n_1=(2,1,2,1),\ \vec n_2=(1,1,0,1)\},\qquad\dim N=2\]
+<p><b>Spazio somma \(V=M+N\).</b> È generato da \((1,0,1,0),\ (0,1,0,1),\ (2,1,2,1),\ (1,1,0,1)\). Osserviamo che <b>tutti</b> hanno seconda e quarta componente uguali
+(\(y=w\)), mentre \((1,0,1,0),(0,1,0,1),(1,1,0,1)\) sono indipendenti (il terzo ha \(x\neq z\)). Quindi \(\dim V=3\) e un'equazione basta:
+\[\boxed{V=M+N:\ \ y-w=0,\qquad\dim V=3}\]</p>
+<p><b>Intersezione \(W=M\cap N\).</b> Per Grassmann \(\dim W=2+2-3=1\). Un vettore di \(N\) è \(a\,\vec n_1+b\,\vec n_2=(2a+b,\ a+b,\ 2a,\ a+b)\); imponiamo le equazioni di \(M\):
+\(x-z=b=0\) e \(y-w=0\) (sempre vera). Quindi \(b=0\):
+\[W=\operatorname{span}\{(2,1,2,1)\}\qquad\boxed{W:\ \begin{cases}x-z=0\\y-w=0\\x-2y=0\end{cases},\qquad\dim W=1}\]
+(servono \(4-1=3\) equazioni; la terza si ottiene notando che i vettori di \(W\) hanno \(x=2y\)).</p></li>
+
+<li><p><b>Proiettore su \(W^\perp\).</b> \(W^\perp\) ha dimensione 3, ma è più comodo passare da \(W\), che ha dimensione 1: con \(\vec d=(2,1,2,1)\), \(|\vec d|^2=10\),
+\[P_W=\frac{\vec d\,\vec d^{\,T}}{10}=\frac1{10}\begin{pmatrix}4&2&4&2\\2&1&2&1\\4&2&4&2\\2&1&2&1\end{pmatrix}\qquad\text{e}\qquad P_{W^\perp}=I-P_W\]
+(perché ogni vettore è somma della sua proiezione su \(W\) e di quella su \(W^\perp\)):
+\[\boxed{P_{W^\perp}=\frac1{10}\begin{pmatrix}6&-2&-4&-2\\-2&9&-2&-1\\-4&-2&6&-2\\-2&-1&-2&9\end{pmatrix}}\]
+<i>Controlli</i>: simmetrica; traccia \(\frac{6+9+6+9}{10}=3=\dim W^\perp\) ✓; \(P_{W^\perp}\vec d=\frac1{10}(12-2-8-2,\ -4+9-4-1,\dots)=\vec 0\) ✓ (i vettori di \(W\) vengono annullati).</p></li>
+</ol></div>
+
+<!-- ======================= ESERCIZIO 4 ======================= -->
+<div class="esercizio"><span class="num">4)</span><div class="testo">
+<p>Data la conica di equazione \(x^2+2\sqrt3xy+3y^2-8y+5=0\)</p>
+<ol>
+<li>se ne dia la classificazione affine;</li>
+<li>determinarne assi, vertici, eventuali asintoti e fuochi (nel riferimento originale);</li>
+<li>si riduca a forma normale (metrica) e si scrivano le equazioni di una trasformazione ortogonale normalizzante;</li>
+<li>se ne tracci il grafico nel riferimento originale.</li>
+</ol>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo usare le due matrici associate alla conica: la matrice completa \(B\) (\(3\times3\)) e la matrice della
+parte quadratica \(A\) (\(2\times2\)). Se \(\det B\neq0\) la conica è <b>non degenere</b>; poi il segno di \(\det A\) dice il tipo: \(>0\) ellisse, \(<0\) iperbole,
+\(=0\) <b>parabola</b>.</p>
+
+<div class="svolg"><ol>
+<li><p><b>Classificazione.</b> Scriviamo \(a_{11}x^2+2a_{12}xy+a_{22}y^2+2a_{13}x+2a_{23}y+a_{33}=0\) con \(a_{11}=1,\ a_{12}=\sqrt3,\ a_{22}=3,\ a_{13}=0,\ a_{23}=-4,\ a_{33}=5\):
+\[B=\begin{pmatrix}1&\sqrt3&0\\\sqrt3&3&-4\\0&-4&5\end{pmatrix},\qquad A=\begin{pmatrix}1&\sqrt3\\\sqrt3&3\end{pmatrix}\]
+\[\det B=1(15-16)-\sqrt3(5\sqrt3-0)+0=-1-15=-16\neq0,\qquad\det A=3-3=0\]
+\[\boxed{\text{parabola non degenere}}\]
+Del resto la parte quadratica è un quadrato perfetto: \(x^2+2\sqrt3xy+3y^2=(x+\sqrt3y)^2\).</p></li>
+
+<li><p><b>Rotazione.</b> Gli autovalori di \(A\) sono \(0\) e \(4\) (traccia 4, determinante 0). Autovettori: \(\lambda=0\to(-\sqrt3,1)\) (direzione dell'<b>asse</b> della
+parabola: è la direzione in cui la parte quadratica si annulla), \(\lambda=4\to(1,\sqrt3)\). Prendiamo i versori \(\hat u=\left(-\frac{\sqrt3}2,\frac12\right)\) e
+\(\hat v=\left(\frac12,\frac{\sqrt3}2\right)\) e poniamo \(x=-\frac{\sqrt3}2X+\frac12Y,\ y=\frac12X+\frac{\sqrt3}2Y\). Allora \(x+\sqrt3y=2Y\) e
+\[4Y^2-8\left(\tfrac12X+\tfrac{\sqrt3}2Y\right)+5=0\ \rightarrow\ 4Y^2-4\sqrt3Y-4X+5=0\]
+<b>Completiamo il quadrato</b>: \(4\left(Y^2-\sqrt3Y+\frac34\right)-3-4X+5=0\ \rightarrow\ 4\left(Y-\frac{\sqrt3}2\right)^2=4\left(X-\frac12\right)\):
+\[\left(Y-\tfrac{\sqrt3}2\right)^2=X-\tfrac12\]
+È una parabola con vertice in \(X=\frac12,\ Y=\frac{\sqrt3}2\), asse \(Y=\frac{\sqrt3}2\), parametro: \(2p=1\Rightarrow p=\frac12\); fuoco a distanza \(\frac p2=\frac14\) dal vertice
+(\(X=\frac34\)), direttrice \(X=\frac14\).</p>
+<p><b>Torniamo alle coordinate originali</b> (usando \(X=\hat u\cdot(x,y)=\frac{-\sqrt3x+y}2\) e \(Y=\hat v\cdot(x,y)=\frac{x+\sqrt3y}2\)):</p>
+<ul style="margin:0.1em 0 0.3em 1.2em;padding:0">
+<li><b>Vertice</b>: \(x=-\frac{\sqrt3}2\cdot\frac12+\frac12\cdot\frac{\sqrt3}2=0,\ \ y=\frac12\cdot\frac12+\frac{\sqrt3}2\cdot\frac{\sqrt3}2=1\): \(\ \boxed{V=(0,1)}\) (infatti \(3-8+5=0\) ✓);</li>
+<li><b>Asse</b>: \(Y=\frac{\sqrt3}2\ \rightarrow\ \boxed{x+\sqrt3y-\sqrt3=0}\);</li>
+<li><b>Fuoco</b>: \(X=\frac34,\ Y=\frac{\sqrt3}2\ \rightarrow\ x=-\frac{3\sqrt3}8+\frac{\sqrt3}4=-\frac{\sqrt3}8,\ y=\frac38+\frac34=\frac98\): \(\ \boxed{F=\left(-\tfrac{\sqrt3}8,\ \tfrac98\right)}\);</li>
+<li><b>Direttrice</b>: \(X=\frac14\ \rightarrow\ \frac{-\sqrt3x+y}{2}=\frac14\ \rightarrow\ \boxed{2\sqrt3x-2y+1=0}\);</li>
+<li><b>Asintoti</b>: nessuno (una parabola non ha asintoti). La parabola ha un solo asse e un solo vertice.</li>
+</ul></li>
+
+<li><p><b>Forma normale e trasformazione.</b> Ponendo \(\tilde X=X-\frac12\) e \(\tilde Y=-\left(Y-\frac{\sqrt3}2\right)\) (il segno meno serve solo ad avere determinante \(+1\), cioè una
+rotazione e non una riflessione; \(\tilde Y^2\) non cambia):
+\[\boxed{\begin{cases}\tilde X=\dfrac{-\sqrt3x+y-1}2\\[2mm]\tilde Y=\dfrac{-x-\sqrt3y+\sqrt3}2\end{cases}}\qquad\det\begin{pmatrix}-\frac{\sqrt3}2&\frac12\\-\frac12&-\frac{\sqrt3}2\end{pmatrix}=\frac34+\frac14=1\qquad
+\boxed{\tilde Y^2=\tilde X}\]
+<i>Verifica</i>: sostituendo la trasformazione inversa \(x=-\frac{\sqrt3}2\tilde X-\frac12\tilde Y,\ y=\frac12\tilde X-\frac{\sqrt3}2\tilde Y+1\) nell'equazione si ottiene
+\(4\tilde Y^2-4\tilde X=0\) ✓.</p></li>
+
+<li><p><b>Grafico.</b> Disegniamo vertice, fuoco, asse e direttrice trovati sopra; la parabola è “stretta” perché il parametro \(p=\frac12\) è piccolo, e si apre verso il fuoco (direzione \((-\sqrt3,1)\)).</p>
+<div class="fig-center"><img src="fig/a6_parabola.svg" width="290"><div class="didascalia">la parabola dell'esercizio 4 nel riferimento originale</div></div></li>
+</ol></div>
+
+<!-- ======================= ESERCIZIO 5 ======================= -->
+<div class="esercizio"><span class="num">5)</span><div class="testo">
+<p>Si scriva l'equazione di una trasformazione affine composizione di una rotazione di centro \((0,-2)\) e angolo \(\alpha=\frac\pi3\) seguita da una simmetria ortogonale rispetto alla
+retta \(y=x\). Determinare direzioni invarianti, punti e rette uniti. Si tratta di una trasformazione notevole?</p>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo ricordare che la rotazione di centro \(C\) e angolo \(\alpha\) si scrive \(P'=C+R_\alpha(P-C)\), con
+\(R_\alpha=\begin{pmatrix}\cos\alpha&-\sin\alpha\\\sin\alpha&\cos\alpha\end{pmatrix}\), e che la simmetria rispetto a \(y=x\) scambia le coordinate: \((x,y)\mapsto(y,x)\).
+La composizione di due <b>isometrie</b> è un'isometria.</p>
+
+<div class="svolg"><ol>
+<li><p><b>Rotazione.</b> \(\cos\frac\pi3=\frac12,\ \sin\frac\pi3=\frac{\sqrt3}2\), \(C=(0,-2)\), quindi \(P-C=(x,\ y+2)\):
+\[\rho:\ \begin{cases}x_1=\frac12x-\frac{\sqrt3}2(y+2)\\[1mm] y_1=-2+\frac{\sqrt3}2x+\frac12(y+2)\end{cases}\ \rightarrow\ \begin{cases}x_1=\frac12x-\frac{\sqrt3}2y-\sqrt3\\[1mm] y_1=\frac{\sqrt3}2x+\frac12y-1\end{cases}\]
+<b>Simmetria</b> \(x'=y_1,\ y'=x_1\). La composizione \(f=\sigma\circ\rho\) è:
+\[\boxed{\begin{cases}x'=\frac{\sqrt3}2x+\frac12y-1\\[1mm] y'=\frac12x-\frac{\sqrt3}2y-\sqrt3\end{cases}}\qquad A=\begin{pmatrix}\frac{\sqrt3}2&\frac12\\\frac12&-\frac{\sqrt3}2\end{pmatrix},\quad\det A=-\frac34-\frac14=-1\]
+\(A\) è ortogonale con determinante \(-1\): la trasformazione è un'<b>isometria inversa</b> (una simmetria assiale oppure una glissosimmetria).</p></li>
+<li><p><b>Direzioni invarianti.</b> \(A\) è simmetrica con traccia 0 e determinante \(-1\): \(\lambda^2-1=0\Rightarrow\lambda=\pm1\).
+\(\lambda=1\): \(\left(\frac{\sqrt3}2-1\right)x+\frac12y=0\Rightarrow\vec v_1=(2+\sqrt3,\ 1)\), inclinata di \(15^\circ\) (infatti \(\tan15^\circ=2-\sqrt3=\frac1{2+\sqrt3}\));
+\(\lambda=-1\): \(\vec v_2=(1,\ -(2+\sqrt3))\), perpendicolare.
+\[\boxed{\text{direzioni invarianti: } (2+\sqrt3,\,1)\ (\lambda=1),\qquad (1,\,-2-\sqrt3)\ (\lambda=-1)}\]</p></li>
+<li><p><b>Punti uniti.</b> \(x'=x,\ y'=y\):
+\[\begin{cases}\left(1-\frac{\sqrt3}2\right)x-\frac12y=-1\\[1mm]-\frac12x+\left(1+\frac{\sqrt3}2\right)y=-\sqrt3\end{cases}\]
+Il determinante dei coefficienti è \(\left(1-\frac34\right)-\frac14=0\), ma moltiplicando la prima per \(2+\sqrt3\) si ottiene
+\(\frac12x-\frac{2+\sqrt3}{2}y=-(2+\sqrt3)\), cioè \(-\frac12x+\left(1+\frac{\sqrt3}2\right)y=2+\sqrt3\neq-\sqrt3\): le equazioni sono incompatibili.
+\(\boxed{\text{Nessun punto unito}}\). Quindi non è una simmetria: è una <b>glissosimmetria</b>.</p></li>
+<li><p><b>Rette unite.</b> Rette con direzione \(\vec v_1\): \((\sqrt3-2)x+y=c\). Calcolando
+\((\sqrt3-2)x'+y'=-\bigl[(\sqrt3-2)x+y\bigr]+2-2\sqrt3\), la retta \(c\) va nella retta \(-c+2-2\sqrt3\): è unita se \(c=1-\sqrt3\).
+Le rette perpendicolari non sono unite (vengono spostate dalla traslazione).
+\[\boxed{\text{unica retta unita (asse): } y=(2-\sqrt3)\,x+1-\sqrt3}\]</p></li>
+<li><p><b>Trasformazione notevole.</b> Applicando due volte \(f\) si trova \(f(f(P))=P+\left(-1-\sqrt3,\ 1-\sqrt3\right)\): una traslazione parallela all'asse. Quindi
+\[\boxed{f \text{ è una glissosimmetria di asse } y=(2-\sqrt3)x+1-\sqrt3 \text{ e vettore glissé } \vec g=\left(-\tfrac{1+\sqrt3}2,\ \tfrac{1-\sqrt3}2\right)}\]
+<i>Controllo</i>: \(\vec g\) è parallelo a \(\vec v_1\) (\(\frac{1+\sqrt3}{\sqrt3-1}=2+\sqrt3\)) ✓; il centro \(C=(0,-2)\) va in \(f(C)=(-2,0)\) e il punto medio \((-1,-1)\) sta
+sull'asse (\(-1=-(2-\sqrt3)+1-\sqrt3\)) ✓.</p></li>
+</ol></div>
+
+<div class="nota"><p><b>Prova teorica dell'11 settembre</b> (T.1 spazio euclideo e base ortonormale; T.2 autovettori di autovalori distinti sono indipendenti): sono le stesse
+domande dell'appello del 16 gennaio. La traccia di risposta è alla fine di quell'appello.</p></div>
+</section>

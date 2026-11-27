@@ -1,0 +1,212 @@
+<section class="appello">
+<div class="titolo">Prova di Geometria del 16 marzo 2026</div>
+<p class="sottotitolo">Prof. Bruno A. Cifra — “Giustificare adeguatamente tutti i passaggi”</p>
+
+<!-- ======================= ESERCIZIO 1 ======================= -->
+<div class="esercizio"><span class="num">1)</span><div class="testo">
+<p>Si studi al variare dei parametri reali \(k\) ed \(h\) la compatibilità del sistema
+\[\begin{cases} kx+y+z=1\\ x+ky+z=h\\ x+y+kz=k^2\end{cases}\]
+e se ne dia un'interpretazione geometrica in \(\mathbb{R}^3\).
+Per \(k=2\) e \(h=-2\) si esplicitino, se esistono, le soluzioni con uno dei metodi conosciuti (Cramer, Gauss, ecc…).</p>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo utilizzare il <b>teorema di Rouché-Capelli</b>, come nell'appello di gennaio:
+si parte dal determinante della matrice dei coefficienti e si studiano a parte i valori che lo annullano.</p>
+
+<div class="svolg"><ol>
+<li><p><b>Determinante.</b>
+\[A=\begin{pmatrix}k&1&1\\1&k&1\\1&1&k\end{pmatrix}\qquad (A|B)=\left(\begin{array}{ccc|c}k&1&1&1\\1&k&1&h\\1&1&k&k^2\end{array}\right)\]
+Un trucco utile: <b>sommiamo tutte le colonne alla prima</b> (il determinante non cambia); la prima colonna diventa \((k+2,k+2,k+2)\) e possiamo raccogliere \(k+2\):
+\[\det A=(k+2)\begin{vmatrix}1&1&1\\1&k&1\\1&1&k\end{vmatrix}\ \xrightarrow{R_2-R_1,\ R_3-R_1}\ (k+2)\begin{vmatrix}1&1&1\\0&k-1&0\\0&0&k-1\end{vmatrix}=\boxed{(k+2)(k-1)^2}\]
+(il determinante di una matrice triangolare è il prodotto degli elementi della diagonale).</p>
+
+<p><b>Caso \(k\neq1,\ k\neq-2\).</b> \(\operatorname{rg}A=3=\operatorname{rg}(A|B)\): compatibile per ogni \(h\), con <b>una sola soluzione</b>.</p>
+
+<p><b>Caso \(k=1\).</b> Tutte e tre le equazioni hanno primo membro \(x+y+z\); i termini noti sono \(1,\ h,\ 1\). \(\operatorname{rg}A=1\) e
+\[(A|B)\ \xrightarrow{R_2-R_1,\ R_3-R_1}\ \left(\begin{array}{ccc|c}1&1&1&1\\0&0&0&h-1\\0&0&0&0\end{array}\right)\]
+Quindi per \(h=1\) \(\operatorname{rg}(A|B)=1\): <b>compatibile</b> con \(\infty^2\) soluzioni; per \(h\neq1\) \(\operatorname{rg}(A|B)=2\): <b>incompatibile</b>.</p>
+
+<p><b>Caso \(k=-2\).</b>
+\[(A|B)=\left(\begin{array}{ccc|c}-2&1&1&1\\1&-2&1&h\\1&1&-2&4\end{array}\right)\]
+Il minore \(\begin{vmatrix}-2&1\\1&-2\end{vmatrix}=3\neq0\), quindi \(\operatorname{rg}A=2\). Osserviamo che la <b>somma delle tre righe di \(A\) è nulla</b>:
+\(R_1+R_2+R_3=(0,0,0)\). Sommando anche i termini noti, il sistema implica \(0=1+h+4\). Quindi:</p>
+<ul style="margin:0.1em 0 0.3em 1.2em;padding:0">
+<li>\(h=-5\): l'ultima riga diventa combinazione delle altre, \(\operatorname{rg}(A|B)=2\): <b>compatibile</b> con \(\infty^{3-2}=\infty^1\) soluzioni.
+Risolvendo (sottraiamo la 2ª dalla 1ª: \(-3x+3y=6\Rightarrow y=x+2\); sostituendo nella 3ª: \(2x+2-2z=4\Rightarrow x=z+1\)):
+\((x,y,z)=(t+1,\ t+3,\ t)\);</li>
+<li>\(h\neq-5\): \(\operatorname{rg}(A|B)=3\neq2\): <b>incompatibile</b>.</li>
+</ul>
+
+<p><b>Interpretazione geometrica</b> (ogni equazione è un piano):</p>
+<table class="riass">
+<tr><th>valori</th><th>\(\operatorname{rg}A\)</th><th>\(\operatorname{rg}(A|B)\)</th><th>soluzioni</th><th>geometria</th></tr>
+<tr><td>\(k\neq1,-2\)</td><td>3</td><td>3</td><td>una</td><td>3 piani per un punto</td></tr>
+<tr><td>\(k=1,\ h=1\)</td><td>1</td><td>1</td><td>\(\infty^2\)</td><td>3 piani coincidenti</td></tr>
+<tr><td>\(k=1,\ h\neq1\)</td><td>1</td><td>2</td><td>nessuna</td><td>\(\pi_1\equiv\pi_3\), \(\pi_2\) parallelo distinto</td></tr>
+<tr><td>\(k=-2,\ h=-5\)</td><td>2</td><td>2</td><td>\(\infty^1\)</td><td>3 piani distinti per una retta (fascio)</td></tr>
+<tr><td>\(k=-2,\ h\neq-5\)</td><td>2</td><td>3</td><td>nessuna</td><td>3 piani a due a due incidenti, senza punti comuni: un “<b>prisma</b>”</td></tr>
+</table>
+<p>Per \(k=-2\) i vettori normali \((-2,1,1),(1,-2,1),(1,1,-2)\) sono a due a due non proporzionali (nessuna coppia di piani paralleli) ma sono
+<b>complanari</b> (somma nulla): i tre piani sono tutti paralleli alla direzione \((1,1,1)\). Se hanno una retta in comune (per \(h=-5\), la retta
+\((t+1,t+3,t)\), che ha proprio direzione \((1,1,1)\)) formano un fascio; altrimenti si tagliano a due a due in tre rette parallele, come le facce di un prisma.</p>
+
+<p><b>Soluzioni per \(k=2,\ h=-2\).</b> \(\det A=(4)(1)^2=4\neq0\): una sola soluzione. Il sistema è
+\[\begin{cases}2x+y+z=1\\x+2y+z=-2\\x+y+2z=4\end{cases}\]
+Usiamo <b>Cramer</b>: \(x=\frac{\det A_x}{\det A}\), dove \(A_x\) si ottiene sostituendo la colonna dei termini noti al posto della colonna della \(x\), ecc.:
+\[\det A_x=\begin{vmatrix}1&1&1\\-2&2&1\\4&1&2\end{vmatrix}=1(4-1)-1(-4-4)+1(-2-8)=3+8-10=1\ \rightarrow\ x=\frac14\]
+\[\det A_y=\begin{vmatrix}2&1&1\\1&-2&1\\1&4&2\end{vmatrix}=2(-4-4)-1(2-1)+1(4+2)=-16-1+6=-11\ \rightarrow\ y=-\frac{11}4\]
+\[\det A_z=\begin{vmatrix}2&1&1\\1&2&-2\\1&1&4\end{vmatrix}=2(8+2)-1(4+2)+1(1-2)=20-6-1=13\ \rightarrow\ z=\frac{13}4\]
+\[\boxed{(x,y,z)=\left(\tfrac14,\ -\tfrac{11}4,\ \tfrac{13}4\right)}\]
+<i>Verifica</i>: \(\frac{2-11+13}4=1\) ✓; \(\ \frac{1-22+13}4=-2\) ✓; \(\ \frac{1-11+26}4=4\) ✓.</p></li>
+</ol></div>
+
+<!-- ======================= ESERCIZIO 2 ======================= -->
+<div class="esercizio"><span class="num">2)</span><div class="testo">
+<p>Assegnata la retta \(r:\begin{cases}2x+y=3\\y+z=4\end{cases}\), si scriva l'equazione delle rette passanti per il punto \(P=(0,1,3)\) e incidenti \(r\)
+con un angolo di \(\pi/3\).</p>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo usare il <b>piede della perpendicolare</b> da \(P\) a \(r\) e un po' di
+<b>trigonometria</b> del triangolo rettangolo: se \(H\) è il piede della perpendicolare e \(Q\) il punto in cui la retta cercata incontra \(r\), il
+triangolo \(PHQ\) è rettangolo in \(H\) e l'angolo in \(Q\) deve valere \(60^\circ\).</p>
+
+<div class="svolg"><ol>
+<li><p><b>Forma parametrica di \(r\).</b> Ponendo \(x=t\): \(\ y=3-2t\), \(z=4-y=1+2t\). Quindi
+\[r:\ (t,\ 3-2t,\ 1+2t),\qquad \vec u=(1,-2,2),\qquad|\vec u|=3\]
+\(P\notin r\): per \(x=0\) si avrebbe \(y=3\neq1\).</p></li>
+
+<li><p><b>Piede della perpendicolare \(H\).</b> Un punto di \(r\) è \(Q_t=(t,3-2t,1+2t)\) e \(\overrightarrow{PQ_t}=(t,\ 2-2t,\ -2+2t)\).
+Imponiamo \(\overrightarrow{PQ_t}\perp\vec u\):
+\[\overrightarrow{PQ_t}\cdot\vec u=t-2(2-2t)+2(-2+2t)=9t-8=0\ \rightarrow\ t=\tfrac89\ \rightarrow\ H=\left(\tfrac89,\tfrac{11}9,\tfrac{25}9\right)\]
+\[\overline{PH}=\left|\left(\tfrac89,\tfrac29,-\tfrac29\right)\right|=\frac{\sqrt{64+4+4}}9=\frac{\sqrt{72}}9=\frac{2\sqrt2}3\]</p></li>
+
+<li><p><b>Dove deve stare \(Q\).</b> Nel triangolo rettangolo \(PHQ\) l'angolo in \(Q\) è \(60^\circ\), quindi
+\[\tan60^\circ=\frac{\overline{PH}}{\overline{HQ}}\ \rightarrow\ \overline{HQ}=\frac{\overline{PH}}{\sqrt3}=\frac{2\sqrt2}{3\sqrt3}=\frac{2\sqrt6}9\]
+\(Q\) sta su \(r\) a questa distanza da \(H\), da una parte o dall'altra: \(Q=H\pm\overline{HQ}\cdot\frac{\vec u}{|\vec u|}\). Poiché \(|\vec u|=3\), in termini del
+parametro: \(t=\frac89\pm\frac{2\sqrt6}{9\cdot3}=\frac{24\pm2\sqrt6}{27}\). <b>Ci sono due rette.</b></p></li>
+
+<li><p><b>Direzioni delle rette.</b> \(\overrightarrow{PQ}=\overrightarrow{PH}\pm\frac{2\sqrt6}{27}\,\vec u=\frac1{27}\bigl[(24,6,-6)\pm2\sqrt6\,(1,-2,2)\bigr]\).
+Moltiplicando per \(\frac{27}2\) otteniamo vettori direttori più semplici:
+\[\vec d_{1,2}=\left(12\pm\sqrt6,\ \ 3\mp2\sqrt6,\ \ -3\pm2\sqrt6\right)\]
+\[\boxed{s_{1,2}:\ \begin{cases}x=(12\pm\sqrt6)\,\lambda\\ y=1+(3\mp2\sqrt6)\,\lambda\\ z=3+(-3\pm2\sqrt6)\,\lambda\end{cases}}\]
+<div class="nota"><p><b>Verifica.</b> Con \(\vec d=(12+\sqrt6,\ 3-2\sqrt6,\ -3+2\sqrt6)\): \(\vec d\cdot\vec u=12+\sqrt6-6+4\sqrt6-6+4\sqrt6=9\sqrt6\) e
+\(|\vec d|^2=(12+\sqrt6)^2+2(3-2\sqrt6)^2=150+24\sqrt6+2(33-12\sqrt6)=216\), \(|\vec d|=6\sqrt6\). Quindi
+\(\cos\theta=\frac{9\sqrt6}{6\sqrt6\cdot3}=\frac12\ \Rightarrow\ \theta=\frac\pi3\) ✓. (Allo stesso modo per l'altra retta.)</p></div></li>
+</ol></div>
+
+<!-- ======================= ESERCIZIO 3 ======================= -->
+<div class="esercizio"><span class="num">3)</span><div class="testo">
+<p>Dopo aver mostrato che \(b=\left\{b_1=\begin{pmatrix}2\\0\\1\end{pmatrix},\ b_2=\begin{pmatrix}1\\0\\1\end{pmatrix},\ b_3=\begin{pmatrix}1\\1\\0\end{pmatrix}\right\}\) è una
+base in \(\mathbb{R}^3\), si consideri l'applicazione lineare \(T:\mathbb{R}^3\to\mathbb{R}^3\) tale che
+\(\ T(1,0,2)=2b_1,\ \ T(1,0,0)=3b_2,\ \ T(0,1,1)=2b_3\).</p>
+<ol>
+<li>Si scriva la rappresentazione matriciale di \(T\) nella base \(b\) di \(\mathbb{R}^3\);</li>
+<li>si scriva la rappresentazione matriciale di \(T\) nella base canonica di \(\mathbb{R}^3\);</li>
+<li>discutere la diagonalizzabilità di \(T\).</li>
+</ol>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo ricordare che la matrice di \(T\) in una base ha per <b>colonne le immagini dei
+vettori della base</b> (scritte in quella base). Conviene calcolare prima la matrice canonica (punto b), perché i vettori dati si legano facilmente
+alla base canonica, e poi passare alla base \(b\).</p>
+
+<div class="svolg"><ol>
+<li><p><b>\(b\) è una base</b>: \(\det(b_1|b_2|b_3)=\begin{vmatrix}2&1&1\\0&0&1\\1&1&0\end{vmatrix}=2(0-1)-1(0-1)+1(0)=-1\neq0\) ✓. Anche
+\(w_1=(1,0,2),\ w_2=(1,0,0),\ w_3=(0,1,1)\) sono una base (\(\det=2\neq0\)), quindi \(T\) è ben definita.</p>
+<p>Le immagini date, in coordinate canoniche, sono
+\[T(w_1)=2b_1=(4,0,2),\qquad T(w_2)=3b_2=(3,0,3),\qquad T(w_3)=2b_3=(2,2,0)\]</p>
+<p><b>(Punto b) Matrice canonica \(A\).</b> Scriviamo i vettori canonici come combinazioni dei \(w_i\):
+\[e_1=(1,0,0)=w_2\qquad e_3=\tfrac12\bigl[(1,0,2)-(1,0,0)\bigr]=\tfrac12(w_1-w_2)\qquad e_2=(0,1,1)-e_3=w_3-\tfrac12(w_1-w_2)\]
+Per linearità:
+\[T(e_1)=T(w_2)=(3,0,3)\]
+\[T(e_3)=\tfrac12\bigl[(4,0,2)-(3,0,3)\bigr]=\left(\tfrac12,\,0,\,-\tfrac12\right)\]
+\[T(e_2)=T(w_3)-T(e_3)=(2,2,0)-\left(\tfrac12,0,-\tfrac12\right)=\left(\tfrac32,\,2,\,\tfrac12\right)\]
+Le colonne di \(A\) sono \(T(e_1),T(e_2),T(e_3)\):
+\[\boxed{A=\begin{pmatrix}3&\frac32&\frac12\\0&2&0\\3&\frac12&-\frac12\end{pmatrix}}\]
+<i>Verifica</i>: \(A\,(1,0,2)^T=(3+1,\ 0,\ 3-1)=(4,0,2)=2b_1\) ✓.</p>
+<p><b>(Punto a) Matrice \(A_b\) nella base \(b\).</b> Calcoliamo \(T(b_j)=A\,b_j\) e scriviamo il risultato come combinazione di \(b_1,b_2,b_3\):
+\[T(b_1)=A\begin{pmatrix}2\\0\\1\end{pmatrix}=\begin{pmatrix}\frac{13}2\\0\\\frac{11}2\end{pmatrix}=1\cdot b_1+\tfrac92\,b_2+0\cdot b_3\]
+\[T(b_2)=A\begin{pmatrix}1\\0\\1\end{pmatrix}=\begin{pmatrix}\frac72\\0\\\frac52\end{pmatrix}=1\cdot b_1+\tfrac32\,b_2+0\cdot b_3\qquad
+T(b_3)=A\begin{pmatrix}1\\1\\0\end{pmatrix}=\begin{pmatrix}\frac92\\2\\\frac72\end{pmatrix}=-1\cdot b_1+\tfrac92\,b_2+2\,b_3\]
+(Come si trovano i coefficienti \(\alpha,\beta,\gamma\) di \(\alpha b_1+\beta b_2+\gamma b_3=(\alpha',\beta',\gamma')\)? La 2ª componente dà subito \(\gamma\), perché solo
+\(b_3\) ha la seconda componente non nulla; poi la 1ª e la 3ª danno un sistema \(2\times2\) in \(\alpha,\beta\).)
+\[\boxed{A_b=\begin{pmatrix}1&1&-1\\\frac92&\frac32&\frac92\\0&0&2\end{pmatrix}}\qquad(\text{equivalentemente }A_b=B^{-1}AB,\ B=(b_1|b_2|b_3))\]</p></li>
+
+<li><p>Vedi sopra: la matrice canonica è \(A\).</p></li>
+
+<li><p><b>Diagonalizzabilità.</b> Il polinomio caratteristico (sviluppando \(\det(A-\lambda I)\) lungo la 2ª riga, che ha un solo elemento non nullo):
+\[\det(A-\lambda I)=(2-\lambda)\begin{vmatrix}3-\lambda&\frac12\\3&-\frac12-\lambda\end{vmatrix}=(2-\lambda)\left[(3-\lambda)\left(-\tfrac12-\lambda\right)-\tfrac32\right]
+=(2-\lambda)\left(\lambda^2-\tfrac52\lambda-3\right)\]
+\[\lambda^2-\tfrac52\lambda-3=0\ \rightarrow\ 2\lambda^2-5\lambda-6=0\ \rightarrow\ \lambda=\frac{5\pm\sqrt{25+48}}4=\frac{5\pm\sqrt{73}}4\]
+Gli autovalori \(\ 2,\ \frac{5+\sqrt{73}}4\approx3{,}39,\ \frac{5-\sqrt{73}}4\approx-0{,}89\ \) sono <b>reali e distinti</b>: tre autovalori distinti in
+\(\mathbb{R}^3\) danno tre autovettori indipendenti, quindi \(\boxed{T \text{ è diagonalizzabile}}\).
+(Gli autospazi: \(\lambda=2\to(1,-1,1)\); \(\lambda=\frac{5\pm\sqrt{73}}4\to\left(\frac{7\pm\sqrt{73}}{12},0,1\right)\).)
+Lo stesso risultato si ottiene con \(A_b\): matrici simili hanno lo stesso polinomio caratteristico.</p></li>
+</ol></div>
+
+<!-- ======================= ESERCIZIO 4 ======================= -->
+<div class="esercizio"><span class="num">4)</span><div class="testo">
+<p>Si consideri la parabola avente come <i>direttrice</i> la retta \(y=x\) e come <i>vertice</i> il punto \(V=(1,-2)\).</p>
+<ol>
+<li>determinare <i>fuoco</i> e <i>asse</i> (nel riferimento originale);</li>
+<li>si scriva l'equazione della parabola nel riferimento originale;</li>
+<li>si riduca a forma normale (metrica) e si scrivano le equazioni di una trasformazione ortogonale normalizzante.</li>
+</ol>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo usare la definizione di parabola come <b>luogo dei punti equidistanti dal fuoco e
+dalla direttrice</b>. Ricordiamo che l'asse è perpendicolare alla direttrice e che il vertice è il <b>punto medio</b> tra il fuoco e la direttrice.</p>
+
+<div class="svolg"><ol>
+<li><div class="fig-right"><img src="fig/a3_parabola.svg" width="235"><div class="didascalia">\(D\) = piede dell'asse sulla direttrice</div></div>
+<p><b>Asse.</b> È perpendicolare alla direttrice \(y=x\) (coefficiente angolare \(-1\)) e passa per \(V\):
+\[y+2=-(x-1)\ \rightarrow\ \boxed{x+y+1=0}\]
+<b>Fuoco.</b> L'asse incontra la direttrice in \(D\): \(\ y=x\) e \(x+y+1=0\ \Rightarrow\ D=\left(-\frac12,-\frac12\right)\). Il vertice è il punto medio di \(DF\), quindi \(F=2V-D\):
+\[F=\bigl(2\cdot1+\tfrac12,\ 2\cdot(-2)+\tfrac12\bigr)\ \rightarrow\ \boxed{F=\left(\tfrac52,\,-\tfrac72\right)}\]</p>
+<div class="clear"></div></li>
+
+<li><p><b>Equazione.</b> \(P=(x,y)\) sta sulla parabola se \(\overline{PF}=d(P,\text{direttrice})\). Eleviamo al quadrato:
+\[\left(x-\tfrac52\right)^2+\left(y+\tfrac72\right)^2=\frac{(x-y)^2}{2}\]
+Moltiplichiamo per 2 e sviluppiamo:
+\[2x^2-10x+\tfrac{25}2+2y^2+14y+\tfrac{49}2=x^2-2xy+y^2\ \rightarrow\ \boxed{x^2+2xy+y^2-10x+14y+37=0}\]
+<i>Verifica</i> con \(V=(1,-2)\): \(1-4+4-10-28+37=0\) ✓.</p></li>
+
+<li><p><b>Forma normale.</b> Il parametro \(p\) è la distanza del fuoco dalla direttrice:
+\(\ p=\frac{|\frac52+\frac72|}{\sqrt2}=\frac6{\sqrt2}=3\sqrt2\). La forma normale è quindi \(X^2=2pY\):
+\[\boxed{X^2=6\sqrt2\,Y}\]
+Trasformazione: origine in \(V\), asse \(Y\) lungo l'asse della parabola, orientato verso il fuoco (direzione \((1,-1)\)), asse \(X\) parallelo alla
+direttrice. Scegliamo i versori in modo da avere una <b>rotazione</b> (determinante \(+1\)):
+\[\boxed{\begin{cases}X=\dfrac{-x-y-1}{\sqrt2}\\[2mm] Y=\dfrac{x-y-3}{\sqrt2}\end{cases}}\qquad\begin{pmatrix}-\frac1{\sqrt2}&-\frac1{\sqrt2}\\\frac1{\sqrt2}&-\frac1{\sqrt2}\end{pmatrix},\ \ \det=\tfrac12+\tfrac12=1\]
+<i>Controllo per sostituzione.</i> Riscriviamo l'equazione mettendo in evidenza \(x+y+1\) e \(x-y-3\):
+\[(x+y)^2-10x+14y+37=(x+y+1)^2-2(x+y)-1-10x+14y+37=(x+y+1)^2-12(x-y-3)\]
+Poiché \((x+y+1)^2=2X^2\) e \(x-y-3=\sqrt2\,Y\): \(\ 2X^2-12\sqrt2\,Y=0\ \Rightarrow\ X^2=6\sqrt2\,Y\) ✓.</p></li>
+</ol></div>
+
+<!-- ======================= ESERCIZIO 5 ======================= -->
+<div class="esercizio"><span class="num">5)</span><div class="testo">
+<p>Data nel piano la seguente trasformazione \(\begin{cases}x'=x-2y+4\\y'=2x+y+2\end{cases}\)
+determinare direzioni invarianti, punti e rette uniti. Si dia una descrizione geometrica della trasformazione.
+Se \(\mathcal C\) è un'ellisse di perimetro 10, cosa possiamo dire sul perimetro dell'ellisse trasformata \(\mathcal C'\)?</p>
+</div></div>
+
+<p class="svolg-head"><b class="label">SVOLGIMENTO</b>: dobbiamo riconoscere la struttura della matrice: una matrice del tipo
+\(\begin{pmatrix}a&-b\\b&a\end{pmatrix}\) è \(\sqrt{a^2+b^2}\) per una <b>matrice di rotazione</b>, quindi rappresenta una <b>similitudine</b>.</p>
+
+<div class="svolg"><ol>
+<li><p><b>Matrice.</b> \(A=\begin{pmatrix}1&-2\\2&1\end{pmatrix}=\sqrt5\begin{pmatrix}\frac1{\sqrt5}&-\frac2{\sqrt5}\\\frac2{\sqrt5}&\frac1{\sqrt5}\end{pmatrix}\),
+\(\ \det A=1+4=5\). Quindi \(A=\sqrt5\,R_\theta\) con \(\cos\theta=\frac1{\sqrt5},\ \sin\theta=\frac2{\sqrt5}\) (\(\theta=\arctan2\approx63{,}4^\circ\)).</p></li>
+<li><p><b>Direzioni invarianti.</b> \(\det(A-\lambda I)=(1-\lambda)^2+4=0\ \rightarrow\ (1-\lambda)^2=-4\): nessuna soluzione reale (\(\lambda=1\pm2i\)).
+\(\boxed{\text{Non ci sono direzioni invarianti}}\): ogni direzione viene ruotata di \(\theta\).</p></li>
+<li><p><b>Punti uniti.</b> \(\ x=x-2y+4\Rightarrow y=2\); \(\ y=2x+y+2\Rightarrow x=-1\). \(\ \boxed{C=(-1,2)}\) è l'unico punto unito.</p></li>
+<li><p><b>Rette unite.</b> Una retta unita dovrebbe avere direzione invariante, ma non ce ne sono: \(\boxed{\text{nessuna retta unita}}\).</p></li>
+<li><p><b>Descrizione.</b> Riscriviamo rispetto al punto fisso: \(P'-C=A(P-C)\) (infatti \(C=AC+B\)). Quindi la trasformazione è una <b>rotazione di centro
+\(C=(-1,2)\) e angolo \(\theta=\arctan2\)</b>, composta con un'<b>omotetia di centro \(C\) e rapporto \(\sqrt5\)</b>: una <b>rotomotetia</b>, cioè una
+<b>similitudine diretta</b> di rapporto \(k=\sqrt5\) (conserva l'orientamento, \(\det A>0\)).</p></li>
+<li><p><b>Perimetro.</b> Una similitudine di rapporto \(k\) moltiplica <b>tutte le lunghezze</b> per \(k\) (e le aree per \(k^2=\det A=5\)). L'immagine di un'ellisse è
+un'ellisse simile e il suo perimetro è
+\[\boxed{\text{perimetro}(\mathcal C')=\sqrt5\cdot10=10\sqrt5\approx22{,}4}\]</p></li>
+</ol></div>
+
+<div class="nota"><p><b>Prova teorica del 16 marzo</b> (T.1 spazio euclideo e base ortonormale; T.2 autovettori di autovalori distinti sono indipendenti):
+sono le stesse domande dell'appello del 16 gennaio. La traccia di risposta è alla fine di quell'appello.</p></div>
+</section>
