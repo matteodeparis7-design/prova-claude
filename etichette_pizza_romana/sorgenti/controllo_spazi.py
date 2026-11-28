@@ -3,10 +3,10 @@ import json, sys
 import numpy as np
 from PIL import Image
 SOGLIA = 2.0
-ACCOSTAMENTI_VOLUTI = {('nastro artigianale', 'panorama'), ('fregio inferiore', 'panorama'), ('cornice', 'logo')}
+ACCOSTAMENTI_VOLUTI = {('titolo nutrizionale', 'tabella nutrizionale'), ('ingredienti', 'tracce'), ('titolo ingredienti', 'ingredienti'), ('titolo preparazione', 'preparazione'), ('titolo conservazione', 'conservazione'), ('conservazione', 'avviso'), ('nastro artigianale', 'panorama'), ('fregio inferiore', 'panorama'), ('cornice', 'logo')}
 dati = json.load(open(sys.argv[1]))
 for pag, lista in dati.items():
-    W, H = (150, 100) if pag == 'fronte' else (130, 88)
+    W, H = 150, 100
     box = {}
     for nome, f in lista:
         a = np.asarray(Image.open(f))[..., 3]

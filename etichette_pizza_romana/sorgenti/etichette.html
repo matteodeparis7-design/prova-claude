@@ -49,7 +49,7 @@ body{-webkit-print-color-adjust:exact;print-color-adjust:exact;color:var(--ink);
 .rif > *{position:absolute}
 .crocini{position:absolute;inset:0;pointer-events:none}
 .fronte{--w:150mm;--h:100mm;--tex:url(assets/carta_fronte.jpg)}
-.retro{--w:130mm;--h:88mm;--tex:url(assets/carta_retro.jpg)}
+.retro{--w:150mm;--h:100mm;--tex:url(assets/carta_retro.jpg)}
 .nascosto{display:none}
 
 /* ---------- FRONTE ---------- */
@@ -80,116 +80,114 @@ body{-webkit-print-color-adjust:exact;print-color-adjust:exact;color:var(--ink);
 .sigillo{left:11.4mm;top:13.4mm;width:23.4mm;height:23.4mm}
 .bollino{right:11.4mm;top:13.4mm;width:23.4mm;height:23.4mm}
 
-/* ---------- RETRO ---------- */
+/* versione termica: decorazioni disegnate in CSS anch'esse in nero */
+html.bn .denominazione i{border-top-color:#000}
+html.bn .denominazione i::after{background:#000}
+/* ---------- RETRO 150 x 100 mm ---------- */
 .r-cornice{inset:2.4mm}
 .r-cornice svg{width:100%;height:100%;overflow:visible}
-.r-logo{left:6.6mm;top:5.5mm;width:29mm}
+.r-logo{left:6.6mm;top:5.3mm;width:31mm}
 .r-logo img{width:100%;display:block}
-.r-testa{left:40mm;right:6.6mm;top:5.6mm;text-align:right}
-.r-testa .t{font-family:Cinzel;font-weight:700;font-size:14pt;letter-spacing:.06em;color:var(--rosso);line-height:1}
-.r-testa .d{font-family:Cormorant;font-style:italic;font-weight:600;font-size:9.6pt;color:var(--ink);margin-top:1.1mm;line-height:1}
-.r-testa .d b{font-family:BarlowC;font-style:normal;font-weight:600;font-size:7pt;letter-spacing:.14em;color:var(--gelo);
-  border:.2mm solid var(--gelo);border-radius:.5mm;padding:.15mm 1mm 0 1.15mm;margin-left:1.2mm;position:relative;top:-.35mm}
-.r-greca{left:6.6mm;right:6.6mm;top:17.3mm;height:2.6mm}
-.r-peso{left:41.6mm;top:5.55mm;width:25mm;height:9.8mm;text-align:center}
+.r-peso{left:44mm;top:5.6mm;width:27mm;height:10.4mm;text-align:center}
 .r-peso .cart{position:absolute;inset:0;width:100%;height:100%}
-.r-peso .et{position:absolute;left:0;right:0;top:1.05mm;font-family:BarlowC;font-weight:600;font-size:6.2pt;letter-spacing:.22em;color:var(--seppia);padding-left:.22em;line-height:1}
-.r-peso .val{position:absolute;left:0;right:0;top:2.85mm;font-family:BarlowC;font-weight:700;font-size:17pt;line-height:.9;color:var(--ink);white-space:nowrap}
-.r-peso .val .vuoto{display:inline-block;width:9.5mm;margin-right:.8mm;border-bottom:.3mm solid var(--ink);height:4.6mm;vertical-align:-.4mm}
+.r-peso .et{position:absolute;left:0;right:0;top:1.1mm;font-family:BarlowC;font-weight:600;font-size:6.2pt;letter-spacing:.22em;color:var(--seppia);padding-left:.22em;line-height:1}
+.r-peso .val{position:absolute;left:0;right:0;top:3.05mm;font-family:BarlowC;font-weight:700;font-size:17pt;line-height:.9;color:var(--ink);white-space:nowrap}
+.r-peso .val .vuoto{display:inline-block;width:10.5mm;margin-right:.8mm;border-bottom:.3mm solid var(--ink);height:4.6mm;vertical-align:-.4mm}
 .r-peso .val svg{height:3.4mm;vertical-align:-.1mm;margin-left:1mm}
+.r-testa{left:74mm;right:6.6mm;top:5.5mm;text-align:right}
+.r-testa .t{font-family:Cinzel;font-weight:700;font-size:15pt;letter-spacing:.06em;color:var(--rosso);line-height:1;white-space:nowrap}
+.r-testa .d{font-family:Cormorant;font-style:italic;font-weight:600;font-size:10pt;color:var(--ink);margin-top:1.2mm;line-height:1;white-space:nowrap}
+.r-greca{left:6.6mm;right:6.6mm;top:18.4mm;height:2.6mm}
 .r-greca svg{width:100%;height:100%;display:block}
-h3{font-family:BarlowC;font-weight:700;font-size:7.6pt;letter-spacing:.16em;text-transform:uppercase;color:var(--rosso);line-height:1;margin-bottom:1.15mm}
-.txt{font-family:Barlow;font-size:7pt;line-height:1.24;color:var(--ink)}
+h3{font-family:BarlowC;font-weight:700;font-size:7.6pt;letter-spacing:.16em;text-transform:uppercase;color:var(--rosso);line-height:1;margin:0 0 1.2mm}
+.txt{font-family:BarlowC;font-weight:500;font-size:7.2pt;line-height:1.17;color:var(--ink);margin:0}
 .txt b{font-weight:700}
-.col{top:21.8mm}
-.c1{left:6.6mm;width:38.6mm}
-.c2{left:48.8mm;width:38.4mm}
-.c3{left:89.8mm;width:33.6mm}
+.col{top:23.3mm;bottom:5.9mm;display:flex;flex-direction:column}
+.c1{left:6.6mm;width:40mm}
+.c2{left:50mm;width:47mm}
+.c3{left:100.4mm;width:43mm}
 
 table.nutri{width:100%;border-collapse:collapse;font-family:BarlowC;font-weight:500;font-size:7.2pt;line-height:1.05;color:var(--ink);
   border-top:.55mm solid var(--ink);border-bottom:.55mm solid var(--ink)}
 table.nutri th{font-weight:700;font-size:7pt;text-align:left;padding:.7mm 0 .55mm;letter-spacing:.03em;border-bottom:.3mm solid var(--ink)}
 table.nutri th:last-child{text-align:right}
-table.nutri td{padding:.43mm 0 .33mm;border-bottom:.12mm solid rgba(35,31,32,.35)}
+table.nutri td{padding:.5mm 0 .4mm;border-bottom:.12mm solid rgba(35,31,32,.35)}
 table.nutri td:last-child{text-align:right;white-space:nowrap;font-weight:600}
 table.nutri tr.sub td:first-child{padding-left:2mm;font-weight:400;font-style:italic;white-space:nowrap}
 table.nutri tr.e td{font-weight:700}
 table.nutri tr:last-child td{border-bottom:0}
+table.nutri td.vuoto-n{color:transparent}
+
+.campi{margin-top:2.6mm;border:.22mm solid var(--seppia);border-radius:.7mm;background:rgba(255,255,255,.6);padding:1.1mm 1.3mm 1mm;
+  font-family:BarlowC;font-weight:600;font-size:7pt;color:var(--seppia);line-height:1}
+.campi .val{display:block;height:3.4mm;margin-top:.6mm;color:var(--ink);font-weight:700}
+.campi hr{border:0;border-top:.12mm dashed var(--seppia);margin:.7mm 0 1mm}
+.campi .lot{display:flex;align-items:baseline;gap:1mm}
+.campi .lot .val{flex:1;display:inline-block;margin:0;height:3mm}
+.prod{margin-top:auto}
+
+.ingr{margin-bottom:.9mm}
+.riciclo{margin-top:auto;display:flex;align-items:center;gap:1.4mm}
+.riciclo svg{flex:none}
+.riciclo .txt{font-size:6.8pt;line-height:1.12}
+.riciclo .cod{display:inline-block;min-width:11mm;font-weight:700}
 
 .conserva{width:100%;border-collapse:collapse;font-family:BarlowC;font-size:7.2pt;line-height:1.05}
-.conserva td{padding:.45mm 0 .35mm;border-bottom:.12mm solid rgba(62,100,112,.45);color:var(--ink);font-weight:500}
+.conserva td{padding:.5mm 0 .4mm;border-bottom:.12mm solid rgba(62,100,112,.45);color:var(--ink);font-weight:500}
 .conserva td:first-child{color:var(--gelo);font-weight:600;white-space:nowrap}
 .conserva td:last-child{text-align:right;font-weight:600}
 .stelle svg{height:2.2mm;width:auto;vertical-align:-.35mm;margin-right:.3mm}
-.avviso{margin-top:1.3mm;background:var(--gelo);color:#fff;font-family:BarlowC;font-weight:600;font-size:7.2pt;letter-spacing:.03em;
+.avviso{margin-top:1.4mm;background:var(--gelo);color:#fff;font-family:BarlowC;font-weight:600;font-size:7.2pt;letter-spacing:.03em;
   line-height:1.12;padding:1mm 1.2mm .9mm;border-radius:.6mm;text-align:center}
-.campi{top:62.3mm;left:6.6mm;width:38.6mm;height:10.4mm;border:.22mm solid var(--seppia);border-radius:.7mm;background:rgba(255,255,255,.6)}
-.campi div{position:absolute;left:1.3mm;right:1.3mm;font-family:BarlowC;font-weight:600;font-size:7pt;color:var(--seppia);line-height:1}
-.campi div em{font-style:normal;color:var(--ink);font-weight:700;margin-left:1mm}
-.campi .tmc{top:1.2mm}
-.campi .tmc em{display:block;margin:1mm 0 0;height:2.6mm}
-.campi .lot{top:7.15mm}
-.campi hr{position:absolute;left:1.3mm;right:1.3mm;top:6.15mm;border:0;border-top:.12mm dashed var(--seppia)}
-.riciclo{left:6.6mm;width:41mm;top:74.55mm;display:flex;align-items:center;gap:1.5mm}
-.riciclo svg{flex:none}
-.riciclo .txt{font-family:BarlowC;font-size:6.8pt;line-height:1.08}
-.prod{top:68.6mm;left:48.8mm;width:38.4mm}
-.barre{top:58.4mm;left:89.8mm;width:33.6mm;height:23.4mm;background:#fff;border-radius:.8mm;padding:.8mm .7mm}
-.barre img{width:100%;height:100%;display:block}
-.barre .manca{height:100%;border:.25mm dashed #A08C6E;border-radius:.5mm;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  font-family:BarlowC;font-size:7pt;color:#A08C6E;font-style:italic;text-align:center;line-height:1.25}
-/* campi da compilare (modello vuoto) */
-.vuoto-campo{color:#A08C6E;font-style:italic;font-weight:400}
-.righe-vuote{display:block;height:var(--hr,9mm);margin-top:.6mm;
-  background:repeating-linear-gradient(to bottom,transparent 0,transparent 2.85mm,rgba(160,140,110,.55) 2.85mm,rgba(160,140,110,.55) 3mm)}
-table.nutri td.vuoto-n{color:#A08C6E;font-weight:400}
-.area-patch{height:23.4mm}
-.barre-n{left:91mm;width:32.4mm;top:78.9mm;text-align:center;font-family:BarlowC;font-weight:500;font-size:5.6pt;letter-spacing:.12em;color:var(--seppia)}
+.barre{margin-top:auto;background:#fff;border-radius:.7mm;padding:.3mm 0}
+.barre img{width:100%;display:block}
+.barre .manca{height:28mm;border:.25mm dashed #A08C6E;display:flex;align-items:center;justify-content:center;font-family:BarlowC;font-size:7pt;color:#A08C6E}
 </style>
 </head>
 <body>
 
 <!-- ===================== DATI DEI PRODOTTI ===================== -->
 <!--
-  COMUNI = dati uguali per tutti i gusti.  GUSTI = dati di ogni pizza (uno per etichetta).
-  Il gusto si sceglie con ?gusto=margherita | diavola | ortolana (vedi build.js).
-  Valori nutrizionali: si scrivono ESATTAMENTE come forniti dal produttore; l'etichetta applica
-  da sola gli arrotondamenti delle linee guida UE (Commissione europea, dicembre 2012).
-  Un campo vuoto ('') compare in etichetta come spazio "da compilare".
+  COMUNI = dati uguali per tutti i gusti.  GUSTI = dati di ogni pizza, nell'ordine indicato dal produttore.
+  Fonti: valori nutrizionali "valori-nutrizionali-pizze.pdf"; codici a barre: cartelle "BARCODE <GUSTO>" del produttore;
+  ingredienti e preparazione: messaggi del produttore (copia letterale in dati/ingredienti_produttore.txt).
+  Allergeni tra **asterischi doppi** = grassetto (Reg. UE 1169/2011 art. 21).
+  Valori nutrizionali scritti come forniti: l'etichetta applica gli arrotondamenti UE. Valore vuoto = campo compilabile nel PDF.
 -->
 <script>
 const COMUNI = {
   produttore: { ragione: 'Gustoso di Boccuccia Angelo', indirizzo: 'Contrada Toce, 9 – 00033 Cave (RM)', piva: '13331521008', origine: 'Italia' },
-  preparazione: '',          // es. 'Cuocere senza scongelare in forno statico preriscaldato a 250 °C per 6–8 minuti.'
-  imballaggio: { componente: '', materiale: '', codice: '', raccolta: '' },   // es. 'Sacchetto', 'Plastica', 'PP 5', 'Plastica'
-  lotto: '',                 // vuoto = spazio per timbratura
-  tmc: ''                    // vuoto = spazio per timbratura
+  preparazione: "Cottura in forno: preriscaldare a 220 °C. Togliere l'involucro e cuocere per 8–10 minuti, o fino a doratura desiderata (i tempi possono variare in base al forno).",
+  tracce: '**frutta a guscio** e **sesamo**',
+  // etichettatura ambientale (D.Lgs. 152/2006 art. 219 c.5, modificato dal D.Lgs. 116/2020): busta in plastica.
+  // Il codice del materiale (Decisione 97/129/CE) si sceglie nel PDF: dipende dalla busta acquistata.
+  imballaggio: { componente: 'Busta', materiale: 'Plastica', raccolta: 'Plastica' }
 };
 const GUSTI = {
-  // fonte: "valori-nutrizionali-pizze.pdf" del produttore, nell'ordine del messaggio (Margherita, Diavola, Ortolana)
   margherita: {
-    nome: 'Margherita',
-    fonte_nutrizione: 'PIZZA MARGHERITA',
-    ean: '8052675470048',    // fonte: cartella "BARCODE MARGHERITA" del produttore
-    peso: '',
+    nome: 'Margherita', fonte_nutrizione: 'PIZZA MARGHERITA', ean: '8052675470048',
     nutrizione: { energia_kj: '1036', energia_kcal: '248', grassi: '8,0', saturi: '3,8', carboidrati: '32,0', zuccheri: '2,5', fibre: '1,8', proteine: '11,0', sale: '1,3' },
-    ingredienti: '', tracce: ''          // sulla patch adesiva del gusto
+    ingredienti: 'Acqua, farina di **grano** tenero tipo "0", polpa di pomodoro 20%, mozzarella 20% (**latte**, sale, caglio, fermenti lattici), semola rimacinata di **grano** duro, farina di **soia**, pasta acida (**glutine**), farina di riso, olio extra vergine di oliva, olio di semi di girasole, sale, lievito naturale.'
   },
   diavola: {
-    nome: 'Diavola',
-    fonte_nutrizione: 'PIZZA MOZZARELLA E SALUMI / INSACCATI',   // confermato dal produttore: e' la Diavola
-    ean: '8052675470062',    // fonte: cartella "BARCODE DIAVOLA" del produttore
-    peso: '',
+    nome: 'Diavola', fonte_nutrizione: 'PIZZA MOZZARELLA E SALUMI / INSACCATI', ean: '8052675470062',   // confermato dal produttore: e' la Diavola
     nutrizione: { energia_kj: '1076', energia_kcal: '257', grassi: '9,4', saturi: '4,3', carboidrati: '30,6', zuccheri: '2,4', fibre: '1,7', proteine: '11,6', sale: '1,4' },
-    ingredienti: '', tracce: ''
+    ingredienti: 'Farina di **grano** tenero tipo "0", acqua, polpa di pomodoro 18%, mozzarella 18% (**latte**, sale, caglio, fermenti lattici), salame piccante 10% [carne di suino, sale, peperoncino, spezie, destrosio, antiossidante: ascorbato di sodio; conservanti: nitrito di sodio, nitrato di potassio], semola rimacinata di **grano** duro, farina di **soia**, pasta acida (**glutine**), farina di riso, olio extra vergine di oliva, olio di semi di girasole, sale, lievito naturale, aromi.'
   },
   ortolana: {
-    nome: 'Ortolana',
-    fonte_nutrizione: 'PIZZA ORTOLANA',
-    ean: '8052675470055',    // fonte: cartella "BARCODE ORTOLANA" del produttore
-    peso: '',
+    nome: 'Ortolana', fonte_nutrizione: 'PIZZA ORTOLANA', ean: '8052675470055',
     nutrizione: { energia_kj: '1000', energia_kcal: '239', grassi: '7,5', saturi: '3,5', carboidrati: '31,0', zuccheri: '2,8', fibre: '2,0', proteine: '10,5', sale: '1,2' },
-    ingredienti: '', tracce: ''
+    ingredienti: 'Farina di **grano** tenero tipo "0", mozzarella 24% (**latte**, sale, caglio, fermenti lattici), acqua, zucchine 8%, melanzane 8%, peperoni 6%, semola rimacinata di **grano** duro, farina di **soia**, pasta acida (**glutine**), farina di riso, olio extra vergine di oliva, olio di semi di girasole, sale, lievito naturale, aromi.'
+  },
+  broccoletti: {
+    nome: 'Broccoletti e salsiccia', fonte_nutrizione: '', ean: '8052675470079',   // valori nutrizionali non ancora forniti: campi compilabili
+    nutrizione: { energia_kj: '', energia_kcal: '', grassi: '', saturi: '', carboidrati: '', zuccheri: '', fibre: '', proteine: '', sale: '' },
+    ingredienti: 'Farina di **grano** tenero tipo "0", mozzarella 22% (**latte**, sale, caglio, fermenti lattici), acqua, broccoletti 14%, salsiccia di suino 12% [carne di suino, sale, pepe, aglio, destrosio, antiossidante: acido ascorbico], semola rimacinata di **grano** duro, farina di **soia**, pasta acida (**glutine**), farina di riso, olio extra vergine di oliva, olio di semi di girasole, sale, lievito naturale, aromi.'
+  },
+  patate: {
+    nome: 'Patate e salsiccia', fonte_nutrizione: '', ean: '8052675470086',          // valori nutrizionali non ancora forniti: campi compilabili
+    nutrizione: { energia_kj: '', energia_kcal: '', grassi: '', saturi: '', carboidrati: '', zuccheri: '', fibre: '', proteine: '', sale: '' },
+    ingredienti: 'Farina di **grano** tenero tipo "0", mozzarella 21% (**latte**, sale, caglio, fermenti lattici), acqua, patate 19%, salsiccia di suino 12% [carne di suino, sale, pepe, aglio, destrosio, antiossidante: acido ascorbico], semola rimacinata di **grano** duro, farina di **soia**, pasta acida (**glutine**), farina di riso, olio extra vergine di oliva, olio di semi di girasole, sale, rosmarino, lievito naturale, aromi.'
   }
 };
 const GUSTO = new URLSearchParams(location.search).get('gusto') || Object.keys(GUSTI)[0];
@@ -313,38 +311,32 @@ const DATI = Object.assign({ gusto: GUSTO }, COMUNI, GUSTI[GUSTO]);
   <svg class="crocini"></svg>
 </section>
 
-<!-- ===================== RETRO 130 × 88 mm ===================== -->
+<!-- ===================== RETRO 150 × 100 mm ===================== -->
 <section class="foglio retro" id="retro">
   <div class="fondo"></div>
   <div class="rif">
     <div class="r-cornice">
-      <svg viewBox="0 0 125.2 83.2" preserveAspectRatio="none">
-        <rect x=".25" y=".25" width="124.7" height="82.7" rx="1.2" fill="none" stroke="#8E3424" stroke-width=".45"/>
-        <rect x="1.05" y="1.05" width="123.1" height="81.1" rx=".8" fill="none" stroke="#8E3424" stroke-width=".13"/>
+      <svg viewBox="0 0 145.2 95.2" preserveAspectRatio="none">
+        <rect x=".25" y=".25" width="144.7" height="94.7" rx="1.2" fill="none" stroke="#8E3424" stroke-width=".45"/>
+        <rect x="1.05" y="1.05" width="143.1" height="93.1" rx=".8" fill="none" stroke="#8E3424" stroke-width=".13"/>
       </svg>
     </div>
     <div class="r-logo"><img src="assets/logo_gustoso.svg" alt="Gustoso – Cucina Italiana"></div>
-    <div class="r-testa">
-      <div class="t">Pizza Romana</div>
-      <div class="d" id="denomRetro"></div>
-    </div>
     <div class="r-peso">
-      <svg class="cart" viewBox="0 0 25 9.8" preserveAspectRatio="none">
-        <path d="M1.6,.3 H23.4 A1.3,1.3 0 0 0 24.7,1.6 V8.2 A1.3,1.3 0 0 0 23.4,9.5 H1.6 A1.3,1.3 0 0 0 .3,8.2 V1.6 A1.3,1.3 0 0 0 1.6,.3Z" fill="#F6EEDF" stroke="#6E5133" stroke-width=".28"/>
-        <path d="M2,1 H23 A1,1 0 0 0 24,2 V7.8 A1,1 0 0 0 23,8.8 H2 A1,1 0 0 0 1,7.8 V2 A1,1 0 0 0 2,1Z" fill="none" stroke="#6E5133" stroke-width=".1"/>
+      <svg class="cart" viewBox="0 0 27 10.4" preserveAspectRatio="none">
+        <path d="M1.6,.3 H25.4 A1.3,1.3 0 0 0 26.7,1.6 V8.8 A1.3,1.3 0 0 0 25.4,10.1 H1.6 A1.3,1.3 0 0 0 .3,8.8 V1.6 A1.3,1.3 0 0 0 1.6,.3Z" fill="#F6EEDF" stroke="#6E5133" stroke-width=".28"/>
+        <path d="M2,1 H25 A1,1 0 0 0 26,2 V8.4 A1,1 0 0 0 25,9.4 H2 A1,1 0 0 0 1,8.4 V2 A1,1 0 0 0 2,1Z" fill="none" stroke="#6E5133" stroke-width=".1"/>
       </svg>
       <div class="et">PESO NETTO</div>
       <div class="val"><span id="pesoVal"></span> g<svg viewBox="0 0 10 12"><use href="#eStimato"/></svg></div>
     </div>
-    <div class="r-greca">
-      <svg viewBox="0 0 116.8 2.6" preserveAspectRatio="none">
-        <line x1="0" y1=".2" x2="116.8" y2=".2" stroke="#8E3424" stroke-width=".14"/>
-        <g transform="translate(0,.55)"><g transform="scale(0.17176) translate(-1,0)"><path d="M1,9.42 V1 H9 V7 H4 V4 H6.5 M11,9.42 V1 H19 V7 H14 V4 H16.5 M21,9.42 V1 H29 V7 H24 V4 H26.5 M31,9.42 V1 H39 V7 H34 V4 H36.5 M41,9.42 V1 H49 V7 H44 V4 H46.5 M51,9.42 V1 H59 V7 H54 V4 H56.5 M61,9.42 V1 H69 V7 H64 V4 H66.5 M71,9.42 V1 H79 V7 H74 V4 H76.5 M81,9.42 V1 H89 V7 H84 V4 H86.5 M91,9.42 V1 H99 V7 H94 V4 H96.5 M101,9.42 V1 H109 V7 H104 V4 H106.5 M111,9.42 V1 H119 V7 H114 V4 H116.5 M121,9.42 V1 H129 V7 H124 V4 H126.5 M131,9.42 V1 H139 V7 H134 V4 H136.5 M141,9.42 V1 H149 V7 H144 V4 H146.5 M151,9.42 V1 H159 V7 H154 V4 H156.5 M161,9.42 V1 H169 V7 H164 V4 H166.5 M171,9.42 V1 H179 V7 H174 V4 H176.5 M181,9.42 V1 H189 V7 H184 V4 H186.5 M191,9.42 V1 H199 V7 H194 V4 H196.5 M201,9.42 V1 H209 V7 H204 V4 H206.5 M211,9.42 V1 H219 V7 H214 V4 H216.5 M221,9.42 V1 H229 V7 H224 V4 H226.5 M231,9.42 V1 H239 V7 H234 V4 H236.5 M241,9.42 V1 H249 V7 H244 V4 H246.5 M251,9.42 V1 H259 V7 H254 V4 H256.5 M261,9.42 V1 H269 V7 H264 V4 H266.5 M271,9.42 V1 H279 V7 H274 V4 H276.5 M281,9.42 V1 H289 V7 H284 V4 H286.5 M291,9.42 V1 H299 V7 H294 V4 H296.5 M301,9.42 V1 H309 V7 H304 V4 H306.5 M311,9.42 V1 H319 V7 H314 V4 H316.5 M321,9.42 V1 H329 V7 H324 V4 H326.5 M331,9.42 V1 H339 V7 H334 V4 H336.5 M341,9.42 V1 H349 V7 H344 V4 H346.5 M351,9.42 V1 H359 V7 H354 V4 H356.5 M361,9.42 V1 H369 V7 H364 V4 H366.5 M371,9.42 V1 H379 V7 H374 V4 H376.5 M381,9.42 V1 H389 V7 H384 V4 H386.5 M391,9.42 V1 H399 V7 H394 V4 H396.5 M401,9.42 V1 H409 V7 H404 V4 H406.5 M411,9.42 V1 H419 V7 H414 V4 H416.5 M421,9.42 V1 H429 V7 H424 V4 H426.5 M431,9.42 V1 H439 V7 H434 V4 H436.5 M441,9.42 V1 H449 V7 H444 V4 H446.5 M451,9.42 V1 H459 V7 H454 V4 H456.5 M461,9.42 V1 H469 V7 H464 V4 H466.5 M471,9.42 V1 H479 V7 H474 V4 H476.5 M481,9.42 V1 H489 V7 H484 V4 H486.5 M491,9.42 V1 H499 V7 H494 V4 H496.5 M501,9.42 V1 H509 V7 H504 V4 H506.5 M511,9.42 V1 H519 V7 H514 V4 H516.5 M521,9.42 V1 H529 V7 H524 V4 H526.5 M531,9.42 V1 H539 V7 H534 V4 H536.5 M541,9.42 V1 H549 V7 H544 V4 H546.5 M551,9.42 V1 H559 V7 H554 V4 H556.5 M561,9.42 V1 H569 V7 H564 V4 H566.5 M571,9.42 V1 H579 V7 H574 V4 H576.5 M581,9.42 V1 H589 V7 H584 V4 H586.5 M591,9.42 V1 H599 V7 H594 V4 H596.5 M601,9.42 V1 H609 V7 H604 V4 H606.5 M611,9.42 V1 H619 V7 H614 V4 H616.5 M621,9.42 V1 H629 V7 H624 V4 H626.5 M631,9.42 V1 H639 V7 H634 V4 H636.5 M641,9.42 V1 H649 V7 H644 V4 H646.5 M651,9.42 V1 H659 V7 H654 V4 H656.5 M661,9.42 V1 H669 V7 H664 V4 H666.5 M671,9.42 V1 H679 V7 H674 V4 H676.5 M681,9.42 V1 M1,9.42 H681" fill="none" stroke="#8E3424" stroke-width="1.15" stroke-linecap="square" stroke-linejoin="miter"/></g></g>
-        <line x1="0" y1="2.4" x2="116.8" y2="2.4" stroke="#8E3424" stroke-width=".14"/>
-      </svg>
+    <div class="r-testa">
+      <div class="t">Pizza Romana</div>
+      <div class="d" id="denomRetro"></div>
     </div>
+    <div class="r-greca"><svg viewBox="0 0 136.8 2.6" preserveAspectRatio="none"><line x1="0" y1=".2" x2="136.8" y2=".2" stroke="#8E3424" stroke-width=".14"/><g transform="translate(0,.55)"><g transform="scale(0.17100) translate(-1,0)"><path d="M1,9.42 V1 H9 V7 H4 V4 H6.5 M11,9.42 V1 H19 V7 H14 V4 H16.5 M21,9.42 V1 H29 V7 H24 V4 H26.5 M31,9.42 V1 H39 V7 H34 V4 H36.5 M41,9.42 V1 H49 V7 H44 V4 H46.5 M51,9.42 V1 H59 V7 H54 V4 H56.5 M61,9.42 V1 H69 V7 H64 V4 H66.5 M71,9.42 V1 H79 V7 H74 V4 H76.5 M81,9.42 V1 H89 V7 H84 V4 H86.5 M91,9.42 V1 H99 V7 H94 V4 H96.5 M101,9.42 V1 H109 V7 H104 V4 H106.5 M111,9.42 V1 H119 V7 H114 V4 H116.5 M121,9.42 V1 H129 V7 H124 V4 H126.5 M131,9.42 V1 H139 V7 H134 V4 H136.5 M141,9.42 V1 H149 V7 H144 V4 H146.5 M151,9.42 V1 H159 V7 H154 V4 H156.5 M161,9.42 V1 H169 V7 H164 V4 H166.5 M171,9.42 V1 H179 V7 H174 V4 H176.5 M181,9.42 V1 H189 V7 H184 V4 H186.5 M191,9.42 V1 H199 V7 H194 V4 H196.5 M201,9.42 V1 H209 V7 H204 V4 H206.5 M211,9.42 V1 H219 V7 H214 V4 H216.5 M221,9.42 V1 H229 V7 H224 V4 H226.5 M231,9.42 V1 H239 V7 H234 V4 H236.5 M241,9.42 V1 H249 V7 H244 V4 H246.5 M251,9.42 V1 H259 V7 H254 V4 H256.5 M261,9.42 V1 H269 V7 H264 V4 H266.5 M271,9.42 V1 H279 V7 H274 V4 H276.5 M281,9.42 V1 H289 V7 H284 V4 H286.5 M291,9.42 V1 H299 V7 H294 V4 H296.5 M301,9.42 V1 H309 V7 H304 V4 H306.5 M311,9.42 V1 H319 V7 H314 V4 H316.5 M321,9.42 V1 H329 V7 H324 V4 H326.5 M331,9.42 V1 H339 V7 H334 V4 H336.5 M341,9.42 V1 H349 V7 H344 V4 H346.5 M351,9.42 V1 H359 V7 H354 V4 H356.5 M361,9.42 V1 H369 V7 H364 V4 H366.5 M371,9.42 V1 H379 V7 H374 V4 H376.5 M381,9.42 V1 H389 V7 H384 V4 H386.5 M391,9.42 V1 H399 V7 H394 V4 H396.5 M401,9.42 V1 H409 V7 H404 V4 H406.5 M411,9.42 V1 H419 V7 H414 V4 H416.5 M421,9.42 V1 H429 V7 H424 V4 H426.5 M431,9.42 V1 H439 V7 H434 V4 H436.5 M441,9.42 V1 H449 V7 H444 V4 H446.5 M451,9.42 V1 H459 V7 H454 V4 H456.5 M461,9.42 V1 H469 V7 H464 V4 H466.5 M471,9.42 V1 H479 V7 H474 V4 H476.5 M481,9.42 V1 H489 V7 H484 V4 H486.5 M491,9.42 V1 H499 V7 H494 V4 H496.5 M501,9.42 V1 H509 V7 H504 V4 H506.5 M511,9.42 V1 H519 V7 H514 V4 H516.5 M521,9.42 V1 H529 V7 H524 V4 H526.5 M531,9.42 V1 H539 V7 H534 V4 H536.5 M541,9.42 V1 H549 V7 H544 V4 H546.5 M551,9.42 V1 H559 V7 H554 V4 H556.5 M561,9.42 V1 H569 V7 H564 V4 H566.5 M571,9.42 V1 H579 V7 H574 V4 H576.5 M581,9.42 V1 H589 V7 H584 V4 H586.5 M591,9.42 V1 H599 V7 H594 V4 H596.5 M601,9.42 V1 H609 V7 H604 V4 H606.5 M611,9.42 V1 H619 V7 H614 V4 H616.5 M621,9.42 V1 H629 V7 H624 V4 H626.5 M631,9.42 V1 H639 V7 H634 V4 H636.5 M641,9.42 V1 H649 V7 H644 V4 H646.5 M651,9.42 V1 H659 V7 H654 V4 H656.5 M661,9.42 V1 H669 V7 H664 V4 H666.5 M671,9.42 V1 H679 V7 H674 V4 H676.5 M681,9.42 V1 H689 V7 H684 V4 H686.5 M691,9.42 V1 H699 V7 H694 V4 H696.5 M701,9.42 V1 H709 V7 H704 V4 H706.5 M711,9.42 V1 H719 V7 H714 V4 H716.5 M721,9.42 V1 H729 V7 H724 V4 H726.5 M731,9.42 V1 H739 V7 H734 V4 H736.5 M741,9.42 V1 H749 V7 H744 V4 H746.5 M751,9.42 V1 H759 V7 H754 V4 H756.5 M761,9.42 V1 H769 V7 H764 V4 H766.5 M771,9.42 V1 H779 V7 H774 V4 H776.5 M781,9.42 V1 H789 V7 H784 V4 H786.5 M791,9.42 V1 H799 V7 H794 V4 H796.5 M801,9.42 V1 M1,9.42 H801" fill="none" stroke="#8E3424" stroke-width="1.15" stroke-linecap="square" stroke-linejoin="miter"/></g></g><line x1="0" y1="2.4" x2="136.8" y2="2.4" stroke="#8E3424" stroke-width=".14"/></svg></div>
 
-    <!-- colonna 1: dichiarazione nutrizionale -->
+    <!-- colonna 1: valori nutrizionali, scadenza e lotto, operatore -->
     <div class="col c1">
       <h3 style="letter-spacing:.075em">Dichiarazione nutrizionale</h3>
       <table class="nutri">
@@ -358,33 +350,28 @@ const DATI = Object.assign({ gusto: GUSTO }, COMUNI, GUSTI[GUSTO]);
         <tr><td>Proteine</td><td data-n="proteine"></td></tr>
         <tr><td>Sale</td><td data-n="sale"></td></tr>
       </table>
-    </div>
-    <div class="campi">
-      <div class="tmc">Da consumarsi preferibilmente entro il:<em id="tmcVal"></em></div>
-      <hr>
-      <div class="lot">Lotto:<em id="lottoVal"></em></div>
-    </div>
-    <div class="riciclo">
-      <svg id="iconaRiciclo" viewBox="0 0 24 22" width="7mm" height="6.4mm"><path d="M13.80,4.73 L19.42,14.48" stroke="#231F20" stroke-width="1.25" stroke-linecap="round"/><path d="M21.12,17.42 L17.77,15.43 L21.07,13.53Z" fill="#231F20"/><path d="M19.00,20.00 L7.76,20.00" stroke="#231F20" stroke-width="1.25" stroke-linecap="round"/><path d="M4.37,20.00 L7.76,18.10 L7.76,21.90Z" fill="#231F20"/><path d="M3.20,16.87 L8.82,7.12" stroke="#231F20" stroke-width="1.25" stroke-linecap="round"/><path d="M10.52,4.18 L10.47,8.07 L7.17,6.17Z" fill="#231F20"/><text id="codiceRiciclo" x="12" y="16.2" text-anchor="middle" font-family="BarlowC" font-weight="700" font-size="5.6" fill="#231F20"></text></svg>
-      <p class="txt" id="testoRiciclo"></p>
+      <div class="campi">
+        <div class="tmc">Da consumarsi preferibilmente entro il:<span class="val" id="tmcVal"></span></div>
+        <hr>
+        <div class="lot">Lotto:<span class="val" id="lottoVal"></span></div>
+      </div>
+      <p class="txt prod" id="testoProduttore"></p>
     </div>
 
-    <!-- colonna 2: ingredienti, preparazione, operatore -->
+    <!-- colonna 2: ingredienti, preparazione, riciclo -->
     <div class="col c2">
       <h3>Ingredienti</h3>
-      <!-- area riservata alla patch adesiva degli ingredienti (una per ogni gusto) -->
-      <div class="area-patch">
-        <p class="txt" id="testoIngredienti"></p>
-        <p class="txt" id="testoTracce" style="margin-top:.8mm"></p>
-      </div>
-      <h3 style="margin-top:2.2mm">Preparazione</h3>
+      <p class="txt ingr" id="testoIngredienti"></p>
+      <p class="txt" id="testoTracce"></p>
+      <h3 style="margin-top:2.4mm">Preparazione</h3>
       <p class="txt" id="testoPreparazione"></p>
-    </div>
-    <div class="prod">
-      <p class="txt" id="testoProduttore"></p>
+      <div class="riciclo">
+        <svg id="iconaRiciclo" viewBox="0 0 24 22" width="7mm" height="6.4mm"><path d="M13.80,4.73 L19.42,14.48" stroke="#231F20" stroke-width="1.25" stroke-linecap="round"/><path d="M21.12,17.42 L17.77,15.43 L21.07,13.53Z" fill="#231F20"/><path d="M19.00,20.00 L7.76,20.00" stroke="#231F20" stroke-width="1.25" stroke-linecap="round"/><path d="M4.37,20.00 L7.76,18.10 L7.76,21.90Z" fill="#231F20"/><path d="M3.20,16.87 L8.82,7.12" stroke="#231F20" stroke-width="1.25" stroke-linecap="round"/><path d="M10.52,4.18 L10.47,8.07 L7.17,6.17Z" fill="#231F20"/></svg>
+        <p class="txt" id="testoRiciclo"></p>
+      </div>
     </div>
 
-    <!-- colonna 3: conservazione + codice a barre -->
+    <!-- colonna 3: conservazione, avvertenza, codice a barre -->
     <div class="col c3">
       <h3>Conservazione</h3>
       <table class="conserva">
@@ -395,8 +382,8 @@ const DATI = Object.assign({ gusto: GUSTO }, COMUNI, GUSTI[GUSTO]);
         <tr><td>Frigorifero</td><td>24 ore</td></tr>
       </table>
       <div class="avviso">Una volta scongelato, il prodotto non deve essere ricongelato</div>
+      <div class="barre" id="barre"></div>
     </div>
-    <div class="barre" id="barre"></div>
   </div>
   <svg class="crocini"></svg>
 </section>
@@ -404,96 +391,138 @@ const DATI = Object.assign({ gusto: GUSTO }, COMUNI, GUSTI[GUSTO]);
 <script>
 const q = new URLSearchParams(location.search);
 const pag = q.get('p'), bleed = parseFloat(q.get('bleed') || 0);
+const MODULO = !!q.get('modulo');     // PDF compilabile: i campi da compilare restano vuoti e se ne esportano le posizioni
+const BN = !!q.get('bn');             // versione per stampante termica: solo nero pieno su bianco
 if (pag) document.querySelectorAll('.foglio').forEach(s => { if (s.id !== pag) s.classList.add('nascosto'); });
-const mark = 0;   // nessuna fascia bianca per i crocini: il fondo arriva fino al bordo (abbondanza)
 document.documentElement.style.setProperty('--b', bleed + 'mm');
-document.documentElement.style.setProperty('--m', mark + 'mm');
+document.documentElement.style.setProperty('--m', '0mm');
 
-document.getElementById('pesoVal').innerHTML = DATI.peso ? DATI.peso : '<span class="vuoto"></span>';
-document.getElementById('lottoVal').textContent = DATI.lotto;
-// --- rendering dei campi di composizione (vuoti = spazi da compilare)
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const conGrassetto = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
-  .replace(/(\d+\s?[–-]\s?\d+\s(?:minuti|min|°C|g|ore|secondi))/g, '<span style="white-space:nowrap">$1</span>');   // intervalli numerici non spezzati
-const vuoto = (etichetta, righe) => `<span class="vuoto-campo">${etichetta}</span><span class="righe-vuote" style="--hr:${(righe*3).toFixed(1)}mm"></span>`;
-const num = v => String(v).trim().replace('.', ',');
-// ingredienti e tracce: di norma vuoti, perche' vanno sulla patch adesiva di ogni gusto
-document.getElementById('testoIngredienti').innerHTML = DATI.ingredienti ? conGrassetto(DATI.ingredienti) : '';
-document.getElementById('testoTracce').innerHTML = DATI.tracce ? 'Può contenere tracce di ' + conGrassetto(DATI.tracce) + '.' : '';
-document.getElementById('testoPreparazione').innerHTML = DATI.preparazione ? conGrassetto(DATI.preparazione) : vuoto('Modalità di cottura', 2);
-// --- denominazione e gusto
+  .replace(/(\d+\s?[–-]\s?\d+\s(?:minuti|min|°C|g|ore|secondi))/g, '<span style="white-space:nowrap">$1</span>')   // intervalli non spezzati
+  .replace(/(\d+) °C/g, '<span style="white-space:nowrap">$1 °C</span>')
+  .replace(/ (\d+%)/g, '&nbsp;$1');   // la percentuale resta attaccata al suo ingrediente
+
+// --- denominazione
 document.getElementById('gustoFronte').textContent = DATI.nome;
 document.getElementById('denomRetro').textContent = `Pizza romana ${DATI.nome} surgelata`;
 document.title = `Gustoso · Pizza Romana ${DATI.nome}`;
+// --- testi
+document.getElementById('testoIngredienti').innerHTML = conGrassetto(DATI.ingredienti);
+document.getElementById('testoTracce').innerHTML = 'Può contenere tracce di ' + conGrassetto(DATI.tracce) + '.';
+document.getElementById('testoPreparazione').innerHTML = conGrassetto(DATI.preparazione);
+const pr = DATI.produttore;
+document.getElementById('testoProduttore').innerHTML = `Prodotto e confezionato da:<br><b>${esc(pr.ragione)}</b><br>${esc(pr.indirizzo)}<br>P.IVA ${esc(pr.piva)} · Origine: ${esc(pr.origine)}`;
+const im = DATI.imballaggio;
+document.getElementById('testoRiciclo').innerHTML =
+  `<b>${esc(im.componente.toUpperCase())}</b> · ${esc(im.materiale)} <span class="cod" id="codImb">${MODULO ? '' : '___'}</span><br>Raccolta: <b>${esc(im.raccolta.toUpperCase())}</b>. Verifica le disposizioni del tuo Comune.`;
+// --- peso (si compila nel PDF)
+document.getElementById('pesoVal').innerHTML = MODULO ? '<span style="display:inline-block;width:11.5mm"></span>' : '<span class="vuoto"></span>';
 // --- codice a barre
-document.getElementById('barre').innerHTML = DATI.ean
-  ? `<img src="assets/barcode_${DATI.ean}.svg" alt="EAN ${DATI.ean}">`
-  : '<div class="manca">Codice a barre EAN-13<br>da inserire</div>';
-// --- arrotondamenti delle linee guida UE sulle tolleranze (dicembre 2012)
+document.getElementById('barre').innerHTML = DATI.ean ? `<img src="assets/barcode_${DATI.ean}.svg" alt="EAN ${DATI.ean}">` : '<div class="manca">Codice a barre da inserire</div>';
+// --- valori nutrizionali con gli arrotondamenti delle linee guida UE (dicembre 2012)
 const v2n = v => parseFloat(String(v).replace(/\./g, '').replace(',', '.'));   // "1.036" -> 1036 ; "8,0" -> 8
 const virgola = (x, dec) => x.toFixed(dec).replace('.', ',');
 function arrotonda(k, v) {
   const x = v2n(v);
   if (k === 'saturi') return x >= 10 ? virgola(Math.round(x), 0) : x < .1 ? '< 0,1' : virgola(x, 1);
   if (k === 'sale') return x >= 1 ? virgola(x, 1) : x < .0125 ? '0' : virgola(x, 2);
-  return x >= 10 ? virgola(Math.round(x), 0) : x < .5 ? '< 0,5' : virgola(x, 1);   // grassi, carboidrati, zuccheri, fibre, proteine
+  return x >= 10 ? virgola(Math.round(x), 0) : x < .5 ? '< 0,5' : virgola(x, 1);
 }
 const n = DATI.nutrizione;
 document.querySelectorAll('table.nutri td[data-n]').forEach(td => {
   const k = td.dataset.n;
   if (k === 'energia') {
     if (n.energia_kj && n.energia_kcal) td.textContent = `${Math.round(v2n(n.energia_kj))} kJ / ${Math.round(v2n(n.energia_kcal))} kcal`;
-    else { td.textContent = '… kJ / … kcal'; td.classList.add('vuoto-n'); }
+    else { td.textContent = '0000 kJ / 000 kcal'; td.classList.add('vuoto-n'); }
   } else if (n[k] !== '') td.textContent = arrotonda(k, n[k]) + ' g';
-  else { td.textContent = '… g'; td.classList.add('vuoto-n'); }
+  else { td.textContent = '00,0 g'; td.classList.add('vuoto-n'); }
 });
-const im = DATI.imballaggio;
-document.getElementById('codiceRiciclo').textContent = im.codice ? im.codice.replace(/\D/g, '') : '';
-document.getElementById('testoRiciclo').innerHTML = im.materiale
-  ? `<b>${esc(im.componente || 'Imballaggio')}: ${esc(im.materiale.toUpperCase())}${im.codice ? ' ' + esc(im.codice) : ''}</b><br>Raccolta ${esc((im.raccolta || im.materiale).toLowerCase())}. Verifica le<br>disposizioni del tuo Comune.`
-  : '<b class="vuoto-campo" style="font-weight:600">Imballaggio: materiale e codice</b><br>Raccolta … Verifica le<br>disposizioni del tuo Comune.';
-const pr = DATI.produttore;
-document.getElementById('testoProduttore').innerHTML = `Prodotto e confezionato da:<br><b>${esc(pr.ragione)}</b><br>${esc(pr.indirizzo)}<br>P.IVA ${esc(pr.piva)} · Origine: ${esc(pr.origine)}`;
-document.getElementById('tmcVal').textContent = DATI.tmc;
+// --- denominazione del retro: nome lungo -> corpo ridotto (minimo 9 pt, altezza della x 1,23 mm); dopo il caricamento dei caratteri
+const adattaDenominazione = () => {
+  // fronte: con nomi lunghi i filetti laterali si accorciano per non toccare i rametti d'alloro
+  const fil = document.querySelectorAll('#fronte .denominazione i'), al = document.querySelector('#fronte .alloro.sx');
+  if (al) for (let w = 15; w >= 4; w -= .5) {
+    fil.forEach(i => i.style.width = w + 'mm');
+    if (fil[0].getBoundingClientRect().left - al.getBoundingClientRect().right > 3 * 96 / 25.4) break;
+  }
+  const d = document.getElementById('denomRetro'), box = d.parentNode;
+  let pt = 10;
+  while (d.scrollWidth > box.clientWidth + .5 && pt > 9) { pt -= .1; d.style.fontSize = pt.toFixed(1) + 'pt'; }
+};
 
-// --- modalita' Excel (?excel=1): svuota i campi compilabili dal cliente e ne espone le posizioni (mm)
-if (q.get('excel')) {
-  const vuotaPeso = document.getElementById('pesoVal'); vuotaPeso.innerHTML = '<span style="display:inline-block;width:10.5mm"></span>';
-  document.getElementById('testoPreparazione').innerHTML = '';
-  document.getElementById('testoRiciclo').innerHTML = '';
-  document.getElementById('codiceRiciclo').textContent = '';
-  const R = document.querySelector('#retro .rif').getBoundingClientRect(), mm = v => v * 25.4 / 96;
-  const box = el => el.getBoundingClientRect();
-  const h3 = [...document.querySelectorAll('#retro .c2 h3')].map(box);
-  const prod = box(document.querySelector('#retro .prod p'));
-  const c2 = box(document.querySelector('#retro .c2'));
-  const pesoBox = box(document.querySelector('#retro .r-peso'));
-  const g = box(vuotaPeso);
-  const ric = box(document.getElementById('testoRiciclo').parentNode), icona = box(document.getElementById('iconaRiciclo'));
-  const rect = (x0, y0, x1, y1) => ({ x: mm(x0 - R.left), y: mm(y0 - R.top), w: mm(x1 - x0), h: mm(y1 - y0) });
-  window.CAMPI_EXCEL = {
-    ingredienti: rect(c2.left, h3[0].bottom + 3, c2.right, h3[1].top - 5),
-    preparazione: rect(c2.left, h3[1].bottom + 3, c2.right, prod.top - 4),
-    peso: (() => {   // dal bordo interno del riquadro fino alla "g", sotto la scritta PESO NETTO
-      const rg = document.createRange(), t = vuotaPeso.nextSibling; rg.setStart(t, 1); rg.setEnd(t, 2);
-      const gl = rg.getBoundingClientRect(), et = box(document.querySelector('#retro .r-peso .et'));
-      const base = box(vuotaPeso.firstChild).bottom;          // linea di base delle cifre (= base della "g")
-      const asc = 0.905 * 16 * 96 / 72;                        // ascendente di Arial Narrow a 16 pt, in px
-      return Object.assign(rect(pesoBox.left + 6.5, base - asc, gl.left - 2, base + 6), { base: (base - R.top) * 25.4 / 96 });
-    })(),
-    imballaggio: rect(icona.right + 4, ric.top - 3, c2.left - 10, ric.bottom + 9),
+// --- versione bianco/nero per stampante termica
+if (BN) {
+  document.documentElement.classList.add('bn');
+  document.querySelectorAll('.fondo').forEach(f => f.style.display = 'none');
+  document.querySelectorAll('.foglio').forEach(f => f.style.background = '#fff');
+  document.querySelectorAll('img').forEach(i => {
+    const m = i.getAttribute('src').match(/assets\/(logo_gustoso|panorama_roma|alloro)\.svg$/);
+    if (m) i.setAttribute('src', `assets/bn/${m[1]}.svg`);
+  });
+  const lum = c => {
+    const m = c && c.match(/rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)(?:,\s*([\d.]+))?/);
+    if (!m) return null;
+    return { l: (0.2126*m[1] + 0.7152*m[2] + 0.0722*m[3]) / 255, a: m[4] === undefined ? 1 : +m[4] };
   };
+  const bw = c => { const v = lum(c); return !v ? null : v.a === 0 ? 'transparent' : (v.l < 0.62 ? '#000' : '#fff'); };
+  const probe = document.createElement('span'); document.body.appendChild(probe);
+  const norm = c => { probe.style.color = ''; probe.style.color = c; return getComputedStyle(probe).color; };
+  document.querySelectorAll('.foglio *, symbol *, defs *').forEach(el => {
+    if (el.tagName === 'IMG') return;
+    if (el instanceof SVGElement) {
+      for (const at of ['fill', 'stroke', 'stop-color']) {
+        const v = el.getAttribute(at);
+        if (v && v !== 'none' && !v.startsWith('url(') && v !== 'currentColor') { const b = bw(norm(v)); if (b) el.setAttribute(at, b); }
+      }
+      const op = parseFloat(el.getAttribute('opacity') || '1');
+      if (op < 0.5 && el.tagName !== 'svg') el.setAttribute('display', 'none');   // sfumature e riflessi: in termica diventerebbero puntinati
+      else if (op < 1) el.setAttribute('opacity', '1');
+    }
+    const cs = getComputedStyle(el);
+    for (const p of ['color', 'backgroundColor', 'borderTopColor', 'borderBottomColor', 'borderLeftColor', 'borderRightColor']) {
+      const b = bw(cs[p]); if (b) el.style[p] = b;
+    }
+    if (cs.backgroundImage && cs.backgroundImage !== 'none') el.style.backgroundImage = 'none';
+  });
+  probe.remove();
 }
 
-// crocini di taglio (solo con abbondanza)
-if (bleed && mark) document.querySelectorAll(".foglio").forEach(s => {
-  const w = parseFloat(getComputedStyle(s).getPropertyValue('--w')), h = parseFloat(getComputedStyle(s).getPropertyValue('--h'));
-  const W = w + 2*(bleed+mark), H = h + 2*(bleed+mark), o = bleed + mark, L = mark - 1;
-  const svg = s.querySelector('.crocini'); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-  let d = '';
-  for (const x of [o, o + w]) d += `M${x},0 V${L} M${x},${H} V${H-L} `;
-  for (const y of [o, o + h]) d += `M0,${y} H${L} M${W},${y} H${W-L} `;
-  svg.innerHTML = `<path d="${d}" stroke="#000" stroke-width=".12" fill="none"/>`;
+// --- modalita' modulo: posizioni (mm) dei campi compilabili del retro (misurate a caratteri caricati)
+const misuraCampi = () => {
+  const R = document.querySelector('#retro .rif').getBoundingClientRect(), MM = v => v * 25.4 / 96;
+  const box = el => el.getBoundingClientRect();
+  const rect = (x0, y0, x1, y1) => ({ x: MM(x0 - R.left), y: MM(y0 - R.top), w: MM(x1 - x0), h: MM(y1 - y0) });
+  const campi = [];
+  // peso netto: cifre a 16 pt (altezza 4 mm, minimo di legge tra 200 g e 1 kg) allineate alla "g" stampata
+  {
+    const v = document.getElementById('pesoVal'), rg = document.createRange(), t = v.nextSibling; rg.setStart(t, 1); rg.setEnd(t, 2);
+    const gl = rg.getBoundingClientRect(), base = box(v.firstChild).bottom, pb = box(document.querySelector('#retro .r-peso'));
+    campi.push(Object.assign(rect(pb.left + 6, base - 20, gl.left - 2, base + 4), { nome: 'Peso netto (g)', tipo: 'peso', base: MM(base - R.top),
+      aiuto: 'Solo il numero dei grammi, es. 350 (la g e il simbolo e sono già stampati).' }));
+  }
+  const tmc = box(document.getElementById('tmcVal')), lot = box(document.getElementById('lottoVal'));
+  campi.push(Object.assign(rect(tmc.left, tmc.top - 1, tmc.right, tmc.bottom + 1.5), { nome: 'Da consumarsi entro', tipo: 'testo', pt: 8, grassetto: true,
+    aiuto: 'Data, es. 31/12/2027' }));
+  campi.push(Object.assign(rect(lot.left, lot.top - 3, lot.right, lot.bottom + 2), { nome: 'Lotto', tipo: 'testo', pt: 8, grassetto: true, aiuto: 'Numero di lotto' }));
+  const cod = box(document.getElementById('codImb')), rtx = box(document.getElementById('testoRiciclo').parentNode);
+  const cc = (cod.top + cod.bottom) / 2;      // campo di testo centrato sulla riga "BUSTA · Plastica"
+  const rigaBusta = (() => { const rg = document.createRange(); rg.setStart(document.getElementById('testoRiciclo').firstChild, 0); rg.setEnd(document.getElementById('testoRiciclo').firstChild, 1); return rg.getBoundingClientRect(); })();
+  const cB = (rigaBusta.top + rigaBusta.bottom) / 2;
+  campi.push(Object.assign(rect(cod.left - 1, cB - 7, rtx.right, cB + 7), { nome: 'Codice materiale busta', tipo: 'testo', pt: 6.8, grassetto: true,
+    aiuto: 'Codice del materiale della busta, indicato dal fornitore delle buste: PP 5, LDPE 4, HDPE 2, PET 1 oppure O 7 per i materiali accoppiati.' }));
+  document.querySelectorAll('table.nutri td.vuoto-n').forEach(td => {
+    const r = box(td), et = td.previousElementSibling.textContent.trim();
+    const lab = box(td.previousElementSibling.firstChild ? (() => { const rg = document.createRange(); rg.selectNodeContents(td.previousElementSibling); return { getBoundingClientRect: () => rg.getBoundingClientRect() }; })() : td);
+    campi.push(Object.assign(rect(et === 'Energia' ? lab.right + 6 : r.right - 40, r.top, r.right, r.bottom), { nome: 'Valore ' + et, tipo: 'nutri', pt: 6.8, grassetto: true,
+      aiuto: et === 'Energia' ? 'Energia per 100 g, es. 1036 kJ / 248 kcal' : 'Valore per 100 g, es. 8,0 g' }));
+  });
+  window.CAMPI = campi;
+};
+document.fonts.ready.then(() => {
+  adattaDenominazione();
+  if (MODULO) misuraCampi();
+  window.PRONTO = true;      // build.js attende questo segnale prima di stampare e leggere le posizioni
 });
 </script>
 </body>

@@ -1,0 +1,19 @@
+# Testo degli ingredienti COSI' COME INVIATO DAL PRODUTTORE (copia letterale dei messaggi).
+# Serve alla verifica automatica: l'etichetta deve riportare esattamente queste parole, nello stesso ordine.
+[margherita]
+Acqua, farina di grano tenero tipo "0", polpa di pomodoro 20%, mozzarella 20% (latte, sale, caglio, fermenti lattici), semola rimacinata di grano duro, farina di soia, pasta acida (glutine), farina di riso, olio extra vergine di oliva, olio di semi di girasole, sale, lievito naturale.
+Può contenere tracce di frutta a guscio e sesamo.
+[diavola]
+Farina di grano tenero tipo "0", acqua, polpa di pomodoro 18%, mozzarella 18% (latte, sale, caglio, fermenti lattici), salame piccante 10% [carne di suino, sale, peperoncino, spezie, destrosio, antiossidante: ascorbato di sodio; conservanti: nitrito di sodio, nitrato di potassio], semola rimacinata di grano duro, farina di soia, pasta acida (glutine), farina di riso, olio extra vergine di oliva, olio di semi di girasole, sale, lievito naturale, aromi.
+Può contenere tracce di frutta a guscio e sesamo.
+[ortolana]
+Farina di grano tenero tipo "0", mozzarella 24% (latte, sale, caglio, fermenti lattici), acqua, zucchine 8%, melanzane 8%, peperoni 6%, semola rimacinata di grano duro, farina di soia, pasta acida (glutine), farina di riso, olio extra vergine di oliva, olio di semi di girasole, sale, lievito naturale, aromi.
+Può contenere tracce di frutta a guscio e sesamo.
+[broccoletti]
+Farina di grano tenero tipo "0", mozzarella 22% (latte, sale, caglio, fermenti lattici), acqua, broccoletti 14%, salsiccia di suino 12% [carne di suino, sale, pepe, aglio, destrosio, antiossidante: acido ascorbico], semola rimacinata di grano duro, farina di soia, pasta acida (glutine), farina di riso, olio extra vergine di oliva, olio di semi di girasole, sale, lievito naturale, aromi.
+Può contenere tracce di frutta a guscio e sesamo.
+[patate]
+Farina di grano tenero tipo "0", mozzarella 21% (latte, sale, caglio, fermenti lattici), acqua, patate 19%, salsiccia di suino 12% [carne di suino, sale, pepe, aglio, destrosio, antiossidante: acido ascorbico], semola rimacinata di grano duro, farina di soia, pasta acida (glutine), farina di riso, olio extra vergine di oliva, olio di semi di girasole, sale, rosmarino, lievito naturale, aromi.
+Può contenere tracce di frutta a guscio e sesamo.
+[preparazione]
+Cottura in forno: Preriscaldare a 220 °C. Togliere l'involucro e cuocere per 8 /10 minuti, o fino a doratura desiderata (i tempi possono variare in base al forno).

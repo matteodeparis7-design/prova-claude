@@ -25,7 +25,7 @@ def converti_neri(obj, visti):
         x.set_data(nero_k(x.get_data()))
         converti_neri(x, visti)
 MM = 72/25.4
-pagine = [(150, 100), (130, 88)]
+pagine = [(150, 100), (150, 100)]   # fronte e retro: 150 x 100 mm (rotolo standard 100 x 150)
 def rifila(path, bleed, marks, titolo='Gustoso – Pizza romana surgelata – etichette fronte/retro'):
     r = PdfReader(path); w = PdfWriter()
     for pg, (tw, th) in zip(r.pages, pagine):

@@ -10,21 +10,23 @@ const ELEMENTI = {
   fronte: [['fregio superiore', '.cornice svg g[transform="translate(9.4,2.6)"]'], ['fregio inferiore', '.cornice svg g[transform="translate(9.4,85.6)"]'],
     ['logo', '.logo'], ['sigillo surgelato', '.sigillo'], ['bollino tricolore', '.bollino'], ['titolo PIZZA ROMANA', '.titolo'],
     ['alloro sx', '.alloro.sx'], ['alloro dx', '.alloro.dx'], ['surgelata', '.denominazione'], ['nastro artigianale', '.nastro'], ['panorama', '.skyline']],
-  retro: [['cornice', '.r-cornice'], ['logo', '.r-logo'], ['titolo', '.r-testa .t'], ['sottotitolo', '.r-testa .d'], ['peso netto', '.r-peso'], ['greca', '.r-greca'],
-    ['nutrizionale', '.c1'], ['ingredienti', '.c2'], ['conservazione', '.c3'], ['TMC/lotto', '.campi'], ['riciclo', '.riciclo'],
-    ['produttore', '.prod'], ['codice a barre', '.barre']],
-};
+  retro: [['cornice', '.r-cornice'], ['logo', '.r-logo'], ['peso netto', '.r-peso'], ['titolo', '.r-testa .t'], ['sottotitolo', '.r-testa .d'], ['greca', '.r-greca'],
+    ['titolo nutrizionale', '.c1 h3'], ['tabella nutrizionale', 'table.nutri'], ['scadenza/lotto', '.campi'], ['produttore', '.prod'],
+    ['titolo ingredienti', '.c2 h3:first-child'], ['ingredienti', '#testoIngredienti'], ['tracce', '#testoTracce'], ['titolo preparazione', '.c2 h3:nth-of-type(2)'],
+    ['preparazione', '#testoPreparazione'], ['riciclo', '.riciclo'],
+    ['titolo conservazione', '.c3 h3'], ['conservazione', '.conserva'], ['avviso', '.avviso'], ['codice a barre', '.barre']],
+};;
 (async () => {
   const b = await chromium.launch();
   const p = await b.newPage({ deviceScaleFactor: DPR });
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'qc-'));
   const ris = {};
   for (const [pag, lista] of Object.entries(ELEMENTI)) {
-    const [W, H] = pag === 'fronte' ? [150, 100] : [130, 88];
+    const [W, H] = [150, 100];
     await p.setViewportSize({ width: Math.ceil(W / 25.4 * 96), height: Math.ceil(H / 25.4 * 96) });
     ris[pag] = [];
     for (const [nome, sel] of lista) {
-      await p.goto(`${SRC}?p=${pag}&gusto=${process.env.GUSTO || ''}`); await p.evaluate(() => document.fonts.ready);
+      await p.goto(`${SRC}?p=${pag}&gusto=${process.env.GUSTO || ''}`); await p.waitForFunction(() => window.PRONTO);
       await p.evaluate(([pag, sel]) => {
         document.documentElement.style.background = 'transparent'; document.body.style.background = 'transparent';
         const f = document.getElementById(pag); f.style.background = 'transparent';
